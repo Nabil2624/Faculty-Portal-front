@@ -1,0 +1,20 @@
+{
+  "personalData": "البيانات الشخصية",
+  "title": "اللقب",
+  "name": "الاسم",
+  "university": "الجامعة",
+  "nationalId": "الرقم القومي",
+  "college": "الجهة",
+  "gender": "النوع",
+  "department": "القسم",
+  "birthPlace": "محل الميلاد",
+  "generalSpecialization": "التخصص العام",
+  "birthDate": "تاريخ الميلاد",
+  "field": "المجال",
+  "maritalStatus": "الحالة الاجتماعية",
+  "exactSpecialization": "التخصص الدقيق",
+  "roles": "الاسم في المؤلفات",
+  "positions": "المواقع الرسمية الحالية",
+  "edit": "تعديل",
+  "back": "عودة"
+}

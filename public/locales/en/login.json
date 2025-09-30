@@ -1,0 +1,13 @@
+{
+  "loginTitle": "Login",
+  "loginSubtitle": "Please enter your login details",
+  "username": "Username",
+  "password": "Password",
+  "loginButton": "Log In",
+  "or": "or",
+  "noAccount": "Don't have an account?",
+  "signUp": "Sign Up",
+  "welcome": "Welcome to the faculty portal — Helwan University",
+  "sub": "Your administrative portal in one place",
+  "forgotPassword": "Forgot Password?"
+}

@@ -1,0 +1,20 @@
+{
+  "personalData": "Personal Data",
+  "title": "Title",
+  "name": "Name",
+  "university": "University",
+  "nationalId": "National ID",
+  "college": "Entity",
+  "gender": "Gender",
+  "department": "Department",
+  "birthPlace": "Birth Place",
+  "generalSpecialization": "General Specialization",
+  "birthDate": "Birth Date",
+  "field": "Field",
+  "maritalStatus": "Marital Status",
+  "exactSpecialization": "Exact Specialization",
+  "roles": "Name in Publications",
+  "positions": "Current Official Positions",
+  "edit": "Edit",
+  "back": "Back"
+}
