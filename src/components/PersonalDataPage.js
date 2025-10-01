@@ -1,100 +1,80 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import Layout from "../components/Layout"; // adjust path if needed
+import Layout from "../components/Layout";
 import subPicture from "../images/golani.png";
-import "../styles/PersonalDataPage.css";
 
 export default function PersonalDataPage() {
   const { t, i18n } = useTranslation("PersonalData");
   const isArabic = i18n.language === "ar";
 
+  const personalInfo = [
+    { label: t("title"), value: "أ.د" },
+    { label: t("name"), value: "صبواي" },
+    { label: t("university"), value: "جامعة حلوان" },
+    { label: t("nationalId"), value: "30XXXXXXXXXXX" },
+    { label: t("college"), value: "كلية الحاسبات والذكاء الاصطناعي" },
+    { label: t("gender"), value: "ذكر" },
+    { label: t("department"), value: "هندسة البرمجيات" },
+    { label: t("birthPlace"), value: "القاهرة، مصر" },
+    { label: t("generalSpecialization"), value: "هندسة البرمجيات" },
+    { label: t("birthDate"), value: "26/11/2026" },
+    { label: t("field"), value: "مجال علوم الحاسبات" },
+    { label: t("maritalStatus"), value: "أعزب" },
+    { label: t("exactSpecialization"), value: "مهندس حوسبة سحابية" },
+    { label: t("roles"), value: "لا يوجد" },
+    { label: t("positions"), value: "لا يوجد" },
+  ];
+
   return (
     <Layout>
-      <div className={`personal-data-page ${isArabic ? "rtl" : "ltr"}`}>
+      <div className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col min-h-screen`}>
         {/* Page title */}
-        <h2 className="page-title">{t("personalData")}</h2>
+        <h2 className="text-3xl font-bold mb-6 inline-block relative text-start mb-[90px]">
+          {t("personalData")}
+          <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
+        </h2>
 
-        <div className="personal-data-container">
-          {/* Profile photo */}
-          <div className="profile-photo">
-            <img src={subPicture} alt="Profile" className="photo" />
-          </div>
-
-          {/* Information grid */}
-          <div className="personal-info">
-            <div className="info-grid">
-              <div className="info-item">
-                <span className="label">{t("title")}</span>
-                <span className="value">أ.د</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("name")}</span>
-                <span className="value">صبواي</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("university")}</span>
-                <span className="value">جامعة حلوان</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("nationalId")}</span>
-                <span className="value">30XXXXXXXXXXX</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("college")}</span>
-                <span className="value">كلية الحاسبات والذكاء الاصطناعي</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("gender")}</span>
-                <span className="value">ذكر</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("department")}</span>
-                <span className="value">هندسة البرمجيات</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("birthPlace")}</span>
-                <span className="value">القاهرة، مصر</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("generalSpecialization")}</span>
-                <span className="value">هندسة البرمجيات</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("birthDate")}</span>
-                <span className="value">26/11/2026</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("field")}</span>
-                <span className="value">مجال علوم الحاسبات</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("maritalStatus")}</span>
-                <span className="value">أعزب</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("exactSpecialization")}</span>
-                <span className="value">مهندس حوسبة سحابية</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("roles")}</span>
-                <span className="value">لا يوجد</span>
-              </div>
-              <div className="info-item">
-                <span className="label">{t("positions")}</span>
-                <span className="value">لا يوجد</span>
-              </div>
+        {/* Main content */}
+        <div className={`flex flex-wrap justify-center flex-row-reverse gap-x-8`}>
+          
+          {/* Profile photo + buttons */}
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-[210px] h-[300px] rounded-lg overflow-hidden flex-shrink-0">
+              <img
+                src={subPicture}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
             </div>
 
-            {/* Action buttons */}
-            <div className="buttons">
-              <button className={`btn-edit ${isArabic ? "btn-ar" : "btn-en"}`}>
+            {/* Buttons under the photo */}
+            <div className="flex gap-4 mt-[80px]">
+              <button className={`bg-[#b38e19] text-white w-[100px] h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}>
                 {t("edit")}
               </button>
-              <button className={`btn-back ${isArabic ? "btn-ar" : "btn-en"}`}>
+              <button className={`bg-gray-300 text-black w-[100px] h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}>
                 {t("back")}
               </button>
             </div>
           </div>
+
+          {/* Personal info */}
+          <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-6">
+            {/* Info grid */}
+            <div className="grid grid-cols-3 gap-6">
+              {personalInfo.map((item, index) => (
+                <div key={index} className="flex h-[45px] rounded-md overflow-hidden text-sm">
+                  <div className="bg-[#19355a] text-white w-32 flex items-center justify-center font-bold px-2">
+                    {item.label}
+                  </div>
+                  <div className="bg-gray-200 text-black flex-1 flex items-center justify-center px-2">
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
     </Layout>

@@ -23,9 +23,13 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+.p-3 {
+    padding: 0.5rem !important; /* قللت من 0.75rem لـ 0.5rem */
+}
 
 .App-link {
   color: #61dafb;
+  
 }
 
 @keyframes App-logo-spin {
