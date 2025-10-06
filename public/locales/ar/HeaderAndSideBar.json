@@ -9,5 +9,10 @@
     "leavesDocs": "الإجازات والوثائق",
     "trainingsCourses": "التدريب /الدورات",
     "settings": "الإعدادات",
-    "support": " الدعم الفني"  
+    "support": " الدعم الفني" ,
+    "personalInfo" : "المعلومات الشخصية",
+    "personalData" : "البيانات الشخصية",
+    "contactInfo"  : "بيانات الاتصال",
+    "socialNetworking" : "صفحات التواصل ",
+    "identificationCard" : "البطاقة التعريفية"
 }

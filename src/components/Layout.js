@@ -39,7 +39,7 @@ export default function Layout({ children }) {
         </div>
 
         {/* Page content */}
-        <div className="flex-1 p-4 bg-white rounded-lg mt-4 transition-all duration-300 ease-in-out">
+        <div className="flex-1 p-4 bg-white rounded-lg transition-all duration-300 ease-in-out">
           {children}
         </div>
       </div>

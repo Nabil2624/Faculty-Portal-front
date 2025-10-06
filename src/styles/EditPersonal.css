@@ -1,0 +1,12 @@
+/* src/styles/dateInput.css */
+
+/* اللون الدهبي لأيقونة الكاليندر */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(47%) sepia(90%) saturate(600%) hue-rotate(20deg);
+  cursor: pointer;
+}
+
+/* تثبيت مظهر الكاليندر */
+input[type="date"] {
+  color-scheme: light;
+}

@@ -1,0 +1,9 @@
+{
+  "title": "Enter OTP",
+  "subtitle": "Please enter the One-Time Password sent to your email.",
+  "verifyButton": "Verify OTP",
+  "welcome": "Welcome to Helwan University",
+  "sub": "Securely access your account and continue your journey with us.",
+  "fillAllDigits": "Please enter all 6 digits.",
+  "otpEntered": "OTP Entered"
+}

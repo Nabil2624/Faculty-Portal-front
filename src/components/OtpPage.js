@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDown } from "lucide-react";
+import { Info, ChevronDown } from "lucide-react";
 import helwanImage from "../images/helwan-university.jpeg";
 import egyptFlag from "../images/egyptFlag.png";
 import ukFlag from "../images/americaFlag.png";
 
-export default function RegisterPage() {
-  const { t, i18n } = useTranslation("Registration");
-  const [openDropdown, setOpenDropdown] = React.useState(false);
-  const dropdownRef = React.useRef(null);
+export default function OtpPage() {
+  const { t, i18n } = useTranslation("OTP");
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+  const [otp, setOtp] = useState(Array(6).fill(""));
+  const inputRefs = useRef([]);
 
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
@@ -38,6 +40,35 @@ export default function RegisterPage() {
   }, []);
 
   const isArabic = i18n.language === "ar";
+
+  // Handle OTP input change
+  const handleChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return; // Only allow numbers
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Move focus
+    if (value && index < 5) {
+      inputRefs.current[index + 1].focus();
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputRefs.current[index - 1].focus();
+    }
+  };
+
+  const handleSubmit = () => {
+    if (otp.some((digit) => digit === "")) {
+      alert(t("fillAllDigits"));
+      return;
+    }
+    const otpValue = otp.join("");
+    alert(`${t("otpEntered")}: ${otpValue}`);
+    // Call your OTP verification API here
+  };
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden p-5">
@@ -88,35 +119,35 @@ export default function RegisterPage() {
 
         {/* Form Content */}
         <div className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}>
-          <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">
-            {t("signUp")}
-          </h1>
-          <p className="text-gray-600 mb-12">{t("subtitle")}</p>
+          <h1 className="text-4xl font-bold mt-[50px] mb-12 text-gray-900">{t("title")}</h1>
 
-          <input
-            type="text"
-            placeholder={t("nationalID")}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 mb-5 text-base focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-
-          <button className="w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition">
-            {t("signUp")}
-          </button>
-
-          {/* Divider */}
-          <div className="flex items-center my-6">
-            <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="px-2 text-gray-500">{t("or")}</span>
-            <div className="flex-1 h-px bg-gray-300"></div>
+          <div className="flex items-start gap-2 mb-6">
+            <Info size={20} className="text-yellow-600 mt-1" />
+            <p className="text-gray-600 text-base">{t("subtitle")}</p>
           </div>
 
-          {/* Login link */}
-          <p className="text-sm text-center">
-            {t("loginText")}{" "}
-            <a href="#" className="text-yellow-600 font-semibold hover:underline">
-              {t("login")}
-            </a>
-          </p>
+          {/* OTP Inputs */}
+          <div className="flex justify-between mb-6 gap-2">
+            {otp.map((digit, index) => (
+              <input
+                key={index}
+                ref={(el) => (inputRefs.current[index] = el)}
+                type="text"
+                maxLength="1"
+                value={digit}
+                onChange={(e) => handleChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                className="w-12 h-12 border border-gray-300 rounded-md text-center text-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={handleSubmit}
+            className="w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition"
+          >
+            {t("verifyButton")}
+          </button>
         </div>
       </div>
 
@@ -132,8 +163,8 @@ export default function RegisterPage() {
           <h3
             className={`font-bold ${
               isArabic
-                ? "text-[2.6rem] text-right mr-5"
-                : "text-[3rem] text-left ml-5"
+                ? "text-[2.5rem] text-right mr-5"
+                : "text-[2.5rem] text-left ml-5"
             }`}
           >
             {t("welcome")}

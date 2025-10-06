@@ -162,7 +162,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-black/45 rounded-[35px] z-0"></div>
 
         <div className="relative z-10 flex flex-col items-center w-full text-center px-6">
-          <h3 className={`font-bold ${isArabic ? "text-[2.5rem] text-right mr-5" : "text-[3rem] text-left ml-5"}`}>
+          <h3 className={`font-bold ${isArabic ? "text-[2.6rem] text-right mr-5" : "text-[3rem] text-left ml-5"}`}>
             {t("welcome")}
           </h3>
           <p className="text-lg mt-3 text-gray-200 max-w-[80%]">{t("sub")}</p>

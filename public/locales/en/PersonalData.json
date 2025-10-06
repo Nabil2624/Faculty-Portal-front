@@ -16,5 +16,8 @@
   "roles": "Name in Publications",
   "positions": "Current Official Positions",
   "edit": "Edit",
-  "back": "Back"
+  "back": "Back",
+  "save": "Save",
+  "cancel": "Cancel",
+  "uploadPhoto" : "Upload photo"
 }

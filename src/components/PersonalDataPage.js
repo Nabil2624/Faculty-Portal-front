@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
-import subPicture from "../images/golani.png";
+import subPicture from "../images/sub.png";
 
 export default function PersonalDataPage() {
   const { t, i18n } = useTranslation("PersonalData");
@@ -9,37 +9,37 @@ export default function PersonalDataPage() {
 
   const personalInfo = [
     { label: t("title"), value: "أ.د" },
-    { label: t("name"), value: "صبواي" },
     { label: t("university"), value: "جامعة حلوان" },
-    { label: t("nationalId"), value: "30XXXXXXXXXXX" },
-    { label: t("college"), value: "كلية الحاسبات والذكاء الاصطناعي" },
-    { label: t("gender"), value: "ذكر" },
-    { label: t("department"), value: "هندسة البرمجيات" },
-    { label: t("birthPlace"), value: "القاهرة، مصر" },
-    { label: t("generalSpecialization"), value: "هندسة البرمجيات" },
     { label: t("birthDate"), value: "26/11/2026" },
-    { label: t("field"), value: "مجال علوم الحاسبات" },
+    { label: t("name"), value: "صبواي" },
+    { label: t("department"), value: "هندسة البرمجيات" },
+    { label: t("college"), value: "كلية الحاسبات والذكاء الاصطناعي" },    
+    { label: t("nationalId"), value: "30XXXXXXXXXXX" },
+    { label: t("generalSpecialization"), value: "هندسة البرمجيات" }, 
+    { label: t("field"), value: "مجال علوم الحاسبات" },       
+    { label: t("gender"), value: "ذكر" },
+    { label: t("roles"), value: "لا يوجد" },       
+    { label: t("exactSpecialization"), value: "مهندس حوسبة سحابية" },   
+    { label: t("birthPlace"), value: "القاهرة، مصر" },     
     { label: t("maritalStatus"), value: "أعزب" },
-    { label: t("exactSpecialization"), value: "مهندس حوسبة سحابية" },
-    { label: t("roles"), value: "لا يوجد" },
     { label: t("positions"), value: "لا يوجد" },
+
   ];
 
   return (
     <Layout>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col min-h-screen`}>
+      <div className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col`}>
         {/* Page title */}
-        <h2 className="text-3xl font-bold mb-6 inline-block relative text-start mb-[90px]">
+        <h2 className="text-3xl font-bold mb-6 inline-block relative text-start mb-[80px]">
           {t("personalData")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
 
         {/* Main content */}
-        <div className={`flex flex-wrap justify-center flex-row-reverse gap-x-8`}>
-          
+        <div className="flex flex-wrap justify-center flex-row-reverse gap-x-20">
           {/* Profile photo + buttons */}
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-[210px] h-[300px] rounded-lg overflow-hidden flex-shrink-0">
+          <div className="flex flex-col items-center gap-[100px]">
+            <div className="w-[200px] h-[280px] rounded-lg overflow-hidden flex-shrink-0">
               <img
                 src={subPicture}
                 alt="Profile"
@@ -48,22 +48,33 @@ export default function PersonalDataPage() {
             </div>
 
             {/* Buttons under the photo */}
-            <div className="flex gap-4 mt-[80px]">
-              <button className={`bg-[#b38e19] text-white w-[100px] h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}>
+            <div className="flex gap-3 mt-4">
+              <button
+                className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
+                  isArabic ? "cairo" : "roboto"
+                } text-sm`}
+              >
                 {t("edit")}
               </button>
-              <button className={`bg-gray-300 text-black w-[100px] h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}>
+              <button
+                className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
+                  isArabic ? "cairo" : "roboto"
+                } text-sm`}
+              >
                 {t("back")}
               </button>
             </div>
           </div>
 
           {/* Personal info */}
-          <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-6">
+          <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-4 ml-10">
             {/* Info grid */}
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-5">
               {personalInfo.map((item, index) => (
-                <div key={index} className="flex h-[45px] rounded-md overflow-hidden text-sm">
+                <div
+                  key={index}
+                  className="flex h-[40px] rounded-md overflow-hidden text-sm"
+                >
                   <div className="bg-[#19355a] text-white w-32 flex items-center justify-center font-bold px-2">
                     {item.label}
                   </div>
@@ -74,7 +85,6 @@ export default function PersonalDataPage() {
               ))}
             </div>
           </div>
-
         </div>
       </div>
     </Layout>

@@ -32,51 +32,52 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
       icon: <GraduationCap size={22} />,
       sub: [
         {
-          key: "grades",
+          key: "personalInfo",
           link: "/academic-data/grades",
           sub: [
-            { key: "gradeDetails", link: "/academic-data/grades/details" },
-            { key: "gradeHistory", link: "/academic-data/grades/history" },
+            { key: "personalData", link: "/academic-data/grades/details" },
+            { key: "contactInfo", link: "/academic-data/grades/history" },
+            { key: "socialNetworking", link: "/academic-data/grades/history" },
+            { key: "identificationCard", link: "/academic-data/grades/history" },
           ],
         },
-        { key: "schedule", link: "/academic-data/schedule" },
+        // { key: "schedule", link: "/academic-data/schedule" },
       ],
     },
     {
       key: "studyAndExams",
       icon: <Briefcase size={22} />,
       sub: [
-        { key: "midterms", link: "/study-exams/midterms" },
-        { key: "finals", link: "/study-exams/finals" },
+        // { key: "midterms", link: "/study-exams/midterms" },
+        // { key: "finals", link: "/study-exams/finals" },
       ],
     },
     {
       key: "financialDues",
       icon: <CreditCard size={22} />,
       sub: [
-        { key: "tuition", link: "/financial-dues/tuition" },
-        { key: "payments", link: "/financial-dues/payments" },
+        // { key: "tuition", link: "/financial-dues/tuition" },
+        // { key: "payments", link: "/financial-dues/payments" },
       ],
     },
     {
       key: "leavesDocs",
       icon: <FileText size={22} />,
       sub: [
-        { key: "leaveRequest", link: "/leaves-docs/request" },
-        { key: "certificates", link: "/leaves-docs/certificates" },
+        // { key: "leaveRequest", link: "/leaves-docs/request" },
+        // { key: "certificates", link: "/leaves-docs/certificates" },
       ],
     },
     {
       key: "trainingsCourses",
       icon: <BookOpen size={22} />,
       sub: [
-        { key: "onlineTraining", link: "/trainings-courses/online" },
-        { key: "onsiteTraining", link: "/trainings-courses/onsite" },
+        // { key: "onlineTraining", link: "/trainings-courses/online" },
+        // { key: "onsiteTraining", link: "/trainings-courses/onsite" },
       ],
     },
   ];
-
-  // 🔹 FIXED renderSubMenu (continuous line, no overlapping)
+  
   const renderSubMenu = (sub, level = 1) => (
     <ul className={`mt-1 ml-2 ${isArabic ? "mr-5" : "ml-5"}`}>
       {sub.map((item) => (

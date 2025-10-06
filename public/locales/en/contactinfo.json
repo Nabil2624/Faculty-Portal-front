@@ -1,0 +1,15 @@
+{
+    "contactInfo" : "Contact Information" ,
+    "officialEmail" : "Official Email",
+    "personalEmail" : "Personal Email",
+    "alternativeEmail" : "Alternative Email",
+    "mainMobile": "Main Mobile",
+    "homePhone": "Home Phone",
+    "workPhone": "Work Phone",
+    "fax": "Fax",
+    "address": "Address",
+    "edit": "Edit",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel"
+}

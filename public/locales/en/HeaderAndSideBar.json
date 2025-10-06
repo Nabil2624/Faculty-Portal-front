@@ -1,7 +1,7 @@
 {
-        "logout": "Logout",
+    "logout": "Logout",
     "searchPlaceholder": "Search for faculty members",
-     "helwanUniversity":"Helwan University",
+    "helwanUniversity":"Helwan University",
     "home": "Home",
     "academicData": "Academic Data",
     "studyAndExams": "Study & Exams",
@@ -9,5 +9,10 @@
     "leavesDocs": "Leaves & Documents",
     "trainingsCourses": "Trainings & Courses",
     "settings": "Settings",
-    "support": " Support" 
+    "support": " Support" ,
+    "personalInfo" : "Personal Information",
+    "personalData" : "Personal Data",
+    "contactInfo"  : "Contact Information",
+    "socialNetworking" : "Social Networking Pages",
+    "identificationCard" : "Identification card"
 }
