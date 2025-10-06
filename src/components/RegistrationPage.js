@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom"; // ✅ Import navigation
 import { ChevronDown } from "lucide-react";
 import helwanImage from "../images/helwan-university.jpeg";
 import egyptFlag from "../images/egyptFlag.png";
@@ -7,6 +8,7 @@ import ukFlag from "../images/americaFlag.png";
 
 export default function RegisterPage() {
   const { t, i18n } = useTranslation("Registration");
+  const navigate = useNavigate(); // ✅ Initialize navigate
   const [openDropdown, setOpenDropdown] = React.useState(false);
   const dropdownRef = React.useRef(null);
 
@@ -110,12 +112,15 @@ export default function RegisterPage() {
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
-          {/* Login link */}
+          {/* ✅ Login link uses navigate */}
           <p className="text-sm text-center">
             {t("loginText")}{" "}
-            <a href="#" className="text-yellow-600 font-semibold hover:underline">
+            <button
+              onClick={() => navigate("/login")}
+              className="text-yellow-600 font-semibold hover:underline"
+            >
               {t("login")}
-            </a>
+            </button>
           </p>
         </div>
       </div>

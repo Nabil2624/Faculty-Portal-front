@@ -1,10 +1,21 @@
 {
-    "error": "Error",
-    "defaultMessage": "Something went wrong",
-    "defaultDetails": "Sorry — we couldn’t complete your request. If you think this is a bug, please contact support.",
-    "goHome": "Go to home",
-    "goBack": "Go back",
-    "reportThis": "Report this",
-    "reportBody": "I encountered an error code:",
-    "footerNote": "If you keep seeing this page, try clearing your browser cache or contact support."
+  "defaultMessage": "An unexpected error occurred.",
+  "defaultDetails": "Please try again later or contact support if the problem persists.",
+  "back": "Go Back",
+  "home": "Go Home",
+  "footerNote": "© 2025 Faculty Portal System. All rights reserved.",
+  "codes": {
+    "404": {
+      "message": "Page Not Found",
+      "details": "The page you’re looking for might have been removed or is temporarily unavailable."
+    },
+    "500": {
+      "message": "Server Error",
+      "details": "We’re experiencing issues on our end. Please try again later."
+    },
+    "0": {
+      "message": "Network Error",
+      "details": "Please check your internet connection and try again."
+    }
+  }
 }

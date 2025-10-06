@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom"; // ✅ React Router navigation
 import { Eye, EyeOff, ChevronDown } from "lucide-react";
 import helwanImage from "../images/helwan-university.jpeg";
 import egyptFlag from "../images/egyptFlag.png";
@@ -7,6 +8,7 @@ import ukFlag from "../images/americaFlag.png";
 
 export default function LoginPage() {
   const { t, i18n } = useTranslation("Login");
+  const navigate = useNavigate(); // ✅ Initialize navigate
   const [showPassword, setShowPassword] = React.useState(false);
   const [openDropdown, setOpenDropdown] = React.useState(false);
   const dropdownRef = React.useRef(null);
@@ -19,12 +21,8 @@ export default function LoginPage() {
   React.useEffect(() => {
     const isArabic = i18n.language === "ar";
     document.documentElement.dir = isArabic ? "rtl" : "ltr";
-
-    if (isArabic) {
-      document.documentElement.classList.add("arabic-font");
-    } else {
-      document.documentElement.classList.remove("arabic-font");
-    }
+    if (isArabic) document.documentElement.classList.add("arabic-font");
+    else document.documentElement.classList.remove("arabic-font");
   }, [i18n.language]);
 
   // close dropdown on outside click or ESC
@@ -51,9 +49,8 @@ export default function LoginPage() {
     <div className="flex h-screen bg-gray-100 overflow-hidden p-5">
       {/* Left Side - Form */}
       <div className="flex flex-col flex-1 px-8 py-6 relative">
-        {/* Language Selector Wrapper */}
+        {/* Language Selector */}
         <div className="flex mb-6">
-          {/* The wrapper below is inline-block and will be pushed to correct side */}
           <div
             ref={dropdownRef}
             className={`relative inline-block ${isArabic ? "mr-auto" : "ml-auto"}`}
@@ -97,7 +94,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Form Content */}
+        {/* Form */}
         <div className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}>
           <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">
             {t("loginTitle")}
@@ -132,10 +129,14 @@ export default function LoginPage() {
             {t("loginButton")}
           </button>
 
+          {/* ✅ Forgot Password uses navigate */}
           <div className={`mt-3 text-sm ${isArabic ? "text-right" : "text-left"}`}>
-            <a href="/forgot-password" className="text-gray-800 hover:underline">
+            <button
+              onClick={() => navigate("/forgot-password")}
+              className="text-gray-800 hover:underline"
+            >
               {t("forgotPassword")}
-            </a>
+            </button>
           </div>
 
           <div className="flex items-center my-6">
@@ -144,11 +145,15 @@ export default function LoginPage() {
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
+          {/* ✅ Sign Up uses navigate */}
           <p className="text-sm text-center">
             {t("noAccount")}{" "}
-            <a href="#" className="text-yellow-600 font-semibold hover:underline">
+            <button
+              onClick={() => navigate("/")}
+              className="text-yellow-600 font-semibold hover:underline"
+            >
               {t("signUp")}
-            </a>
+            </button>
           </p>
         </div>
       </div>
@@ -162,7 +167,11 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-black/45 rounded-[35px] z-0"></div>
 
         <div className="relative z-10 flex flex-col items-center w-full text-center px-6">
-          <h3 className={`font-bold ${isArabic ? "text-[2.6rem] text-right mr-5" : "text-[3rem] text-left ml-5"}`}>
+          <h3
+            className={`font-bold ${
+              isArabic ? "text-[2.6rem] text-right mr-5" : "text-[3rem] text-left ml-5"
+            }`}
+          >
             {t("welcome")}
           </h3>
           <p className="text-lg mt-3 text-gray-200 max-w-[80%]">{t("sub")}</p>

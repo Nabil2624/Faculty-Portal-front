@@ -1,8 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
+import { useNavigate } from "react-router-dom";
 
 export default function SocialNetworkingPages() {
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation("socialNetworkingPages");
   const isArabic = i18n.language === "ar";
 
@@ -60,6 +62,7 @@ export default function SocialNetworkingPages() {
             {t("edit")}
           </button>
           <button
+            onClick={() => navigate(-1)}
             className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"
             } text-sm`}

@@ -1,9 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
-import subPicture from "../images/sub.png";
+import subPicture from "../images/profileImage.png";
+import { useNavigate } from "react-router-dom";
 
 export default function PersonalDataPage() {
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation("PersonalData");
   const isArabic = i18n.language === "ar";
 
@@ -11,7 +13,7 @@ export default function PersonalDataPage() {
     { label: t("title"), value: "أ.د" },
     { label: t("university"), value: "جامعة حلوان" },
     { label: t("birthDate"), value: "26/11/2026" },
-    { label: t("name"), value: "صبواي" },
+    { label: t("name"), value: "احمد هشام محمد" },
     { label: t("department"), value: "هندسة البرمجيات" },
     { label: t("college"), value: "كلية الحاسبات والذكاء الاصطناعي" },    
     { label: t("nationalId"), value: "30XXXXXXXXXXX" },
@@ -50,6 +52,7 @@ export default function PersonalDataPage() {
             {/* Buttons under the photo */}
             <div className="flex gap-3 mt-4">
               <button
+                onClick={() => navigate("/editpersonal")}
                 className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
@@ -57,6 +60,7 @@ export default function PersonalDataPage() {
                 {t("edit")}
               </button>
               <button
+                onClick={() => navigate(-1)}
                 className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}

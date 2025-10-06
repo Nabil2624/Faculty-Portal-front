@@ -3,10 +3,11 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import subPicture from "../images/sub.png";
 import { FiUpload, FiCalendar } from "react-icons/fi";
-
+import { useNavigate } from "react-router-dom";
 export default function EditPersonalInfo() {
   const { t, i18n } = useTranslation("PersonalData");
   const isArabic = i18n.language === "ar";
+  const navigate = useNavigate();
 
   const initialInfo = {
     title: "أ.د",
@@ -90,6 +91,7 @@ export default function EditPersonalInfo() {
 
             <div className="flex gap-3 mt-11">
               <button
+                onClick={()=>{navigate("/personal")}}
                 className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
@@ -97,6 +99,7 @@ export default function EditPersonalInfo() {
                 {t("save")}
               </button>
               <button
+                onClick={()=>{navigate("/personal")}}
                 className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}

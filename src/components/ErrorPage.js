@@ -1,123 +1,75 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import errorImage from "../images/errorr.png"; // حط صورتك هنا
+import { TriangleAlert } from "lucide-react";
 
-export default function ErrorPage({
-  code: propCode = null,
-  message = null,
-  details = null,
-  showHomeButton = true,
-  showBackButton = true,
-  homePath = "/",
-}) {
+export default function ErrorPage({ code: propCode = null }) {
+  const { t, i18n } = useTranslation("error");
   const params = useParams();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation("error");
 
-  const code = params?.code ?? (propCode ?? "");
+  const code = params?.code ?? propCode ?? "0";
   const isArabic = i18n.language === "ar";
+
+  const message = t(`codes.${code}.message`, t("defaultMessage"));
+  const details = t(`codes.${code}.details`, t("defaultDetails"));
 
   return (
     <main
-      dir={isArabic ? "rtl" : "ltr"} // ده عشان النصوص تكتب RTL/LTR
-      className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#19355A]/5 to-white p-6"
+      dir={isArabic ? "rtl" : "ltr"}
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#19355A] via-[#142947] to-[#0e1d34] p-6"
     >
-      <div className="max-w-4xl w-full bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg rounded-2xl p-8 md:p-12">
-        
-        {/* الصورة + النص */}
-        <div
-          className={`flex flex-col md:flex-row items-center gap-8 ${
-            isArabic ? "md:flex-row-reverse" : "md:flex-row"
-          }`}
-          style={{ direction: "ltr" }} // منع RTL يأثر على flex
-        >
-          {/* الصورة */}
-          <div className="flex-shrink-0 flex items-center justify-center w-40 h-40">
-            <img
-              src={errorImage}
-              alt="Error"
-              className="w-full h-full object-contain"
-            />
+      <div className="relative bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-[#B38E19]/20 max-w-4xl w-full p-10 md:p-16 text-center transition-all duration-300 hover:shadow-[#B38E19]/30">
+        {/* Icon & Code */}
+        <div className="flex flex-col items-center space-y-6 mb-10">
+          <div className="p-6 rounded-full bg-[#B38E19]/10">
+            <TriangleAlert className="text-[#B38E19]" size={90} />
           </div>
-
-          {/* النص */}
-          <section className="flex-1">
-            <h1
-              className={`text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 ${
-                isArabic ? "text-right" : "text-left"
-              }`}
-            >
-              {code && (
-                <span
-                  className={`text-[#B38E19] ${
-                    isArabic ? "ml-4" : "mr-4"
-                  }`}
-                >
-                  {code}
-                </span>
-              )}
-              <span className="align-middle">
-                {message || t("defaultMessage")}
-              </span>
-            </h1>
-
-            <p
-              className={`mt-4 text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl ${
-                isArabic ? "text-right" : "text-left"
-              }`}
-            >
-              {details || t("defaultDetails")}
-            </p>
-
-            {/* الأزرار */}
-            <div
-              className={`mt-8 flex flex-col sm:flex-row sm:items-center gap-3 ${
-                isArabic ? "sm:justify-end" : "sm:justify-start"
-              }`}
-            >
-              {showHomeButton && (
-                <button
-                  onClick={() => navigate(homePath)}
-                  className="inline-flex items-center px-5 py-3 rounded-lg shadow-sm border border-transparent text-sm font-medium transition hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#B38E19]/40 bg-[#19355A] text-white"
-                >
-                  {t("goHome")}
-                </button>
-              )}
-
-              {showBackButton && (
-                <button
-                  onClick={() => navigate(-1)}
-                  className="inline-flex items-center px-5 py-3 rounded-lg bg-white border border-gray-200 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#19355A]/40 text-[#19355A]"
-                >
-                  {t("goBack")}
-                </button>
-              )}
-
-              <a
-                href="#report"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.href = `mailto:support@example.com?subject=Error%20Report${
-                    code ? `%20${code}` : ""
-                  }&body=${encodeURIComponent(
-                    `${t("reportBody")} ${code || ""}`
-                  )}`;
-                }}
-                className="mt-2 sm:mt-0 text-sm text-[#19355A] underline"
-              >
-                {t("reportThis")}
-              </a>
-            </div>
-          </section>
+          <h1 className="text-6xl md:text-7xl font-extrabold text-[#B38E19] tracking-wider">
+            {code}
+          </h1>
         </div>
 
-        {/* الفوتر */}
-        <footer
-          className={`mt-8 text-xs text-gray-400 text-center${
+        {/* Message */}
+        <h2
+          className={`text-2xl md:text-3xl font-bold text-[#19355A] mb-4 ${
+            isArabic ? "text-right mr-12" : "text-left ml-12"
+          }`}
+        >
+          {message}
+        </h2>
+
+        <p
+          className={`text-gray-600 text-lg leading-relaxed max-w-2xl mx-auto mb-8 ${
             isArabic ? "text-right" : "text-left"
           }`}
         >
+          {details}
+        </p>
+
+        {/* Buttons */}
+        <div
+          className={`flex flex-col sm:flex-row gap-4 justify-center ${
+            isArabic ? "sm:flex-row-reverse" : ""
+          }`}
+        >
+          <button
+            onClick={() => navigate(-1)}
+            className="px-6 py-3 rounded-xl bg-[#B38E19] text-white font-semibold hover:bg-[#a07c14] shadow-md hover:shadow-lg transition-all"
+          >
+            {t("back")}
+          </button>
+
+          <button
+            onClick={() => navigate("/")}
+            className="px-6 py-3 rounded-xl bg-[#19355A] text-white font-semibold hover:bg-[#142947] shadow-md hover:shadow-lg transition-all"
+          >
+            {t("home")}
+          </button>
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-10 text-sm text-gray-500">
           {t("footerNote")}
         </footer>
       </div>

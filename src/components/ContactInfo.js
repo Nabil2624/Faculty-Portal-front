@@ -1,8 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
+import { useNavigate } from "react-router-dom";
 
 export default function ContactInfo() {
+  const navigate = useNavigate();  
   const { t, i18n } = useTranslation("contactinfo");
   const isArabic = i18n.language === "ar";
 
@@ -56,6 +58,7 @@ export default function ContactInfo() {
           className={`flex gap-3 absolute ${isArabic ? "left-[53px]" : "right-[53px]"} bottom-[52px]`}
         >
           <button
+            onClick={() => navigate("/edit-contact-info")}
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"
             } text-sm`}
@@ -63,6 +66,7 @@ export default function ContactInfo() {
             {t("edit")}
           </button>
           <button
+            onClick={() => navigate(-1)}
             className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"
             } text-sm`}

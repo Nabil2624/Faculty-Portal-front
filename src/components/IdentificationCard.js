@@ -1,14 +1,16 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
+import { useNavigate } from "react-router-dom";
 
 export default function IdentificationCard() {
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation("identification");
   const isArabic = i18n.language === "ar";
 
   const identificationCard = [
     { label: t("officialEmail"), value: "Email01@gmail.com" },
-    { label: t("ResearchGateProfile"), value: "https://www.researchgate.net/profile/a." },
+    { label: t("ResearchGateProfile"), value: "https://www.researchgate.net" },
     { label: t("Academia.Eduprofile"), value: "لا يوجد" },
     { label: t("ORCID-ID"), value: "https://orcid.org/0000-0002-2987" },
     { label: t("ResearcherID"), value: "لا يوجد " },
@@ -52,6 +54,7 @@ export default function IdentificationCard() {
           className={`flex gap-3 absolute ${isArabic ? "left-[53px]" : "right-[53px]"} bottom-[52px]`}
         >
           <button
+          onClick={()=>navigate("/edit-identification-card")}
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"
             } text-sm`}
@@ -59,6 +62,7 @@ export default function IdentificationCard() {
             {t("edit")}
           </button>
           <button
+            onClick={() => navigate(-1)}
             className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"
             } text-sm`}

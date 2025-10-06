@@ -33,12 +33,12 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
       sub: [
         {
           key: "personalInfo",
-          link: "/academic-data/grades",
+          link: "/academic-data/personal-data",
           sub: [
-            { key: "personalData", link: "/academic-data/grades/details" },
-            { key: "contactInfo", link: "/academic-data/grades/history" },
-            { key: "socialNetworking", link: "/academic-data/grades/history" },
-            { key: "identificationCard", link: "/academic-data/grades/history" },
+            { key: "personalData", link: "/personal" },
+            { key: "contactInfo", link: "/contact-info" },
+            { key: "socialNetworking", link: "/social-networking" },
+            { key: "identificationCard", link: "/identification-card" },
           ],
         },
         // { key: "schedule", link: "/academic-data/schedule" },
@@ -64,7 +64,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
       key: "leavesDocs",
       icon: <FileText size={22} />,
       sub: [
-        // { key: "leaveRequest", link: "/leaves-docs/request" },
+        { key: "leaveRequest", link: "/under-development" },
         // { key: "certificates", link: "/leaves-docs/certificates" },
       ],
     },
