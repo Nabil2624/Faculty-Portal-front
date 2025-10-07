@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 // ✅ Checks for authentication before rendering protected pages
 export default function ProtectedRoute() {
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("token");
 
   // If no token → redirect to login
  if (!token) {

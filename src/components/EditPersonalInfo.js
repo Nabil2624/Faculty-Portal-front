@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
-import subPicture from "../images/sub.png";
+import subPicture from "../images/profileImage.png";
 import { FiUpload, FiCalendar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 export default function EditPersonalInfo() {
@@ -13,7 +13,7 @@ export default function EditPersonalInfo() {
     title: "أ.د",
     university: "جامعة حلوان",
     birthDate: "2026-11-26",
-    name: "صبواي",
+    name: "احمد هشام محمد",
     department: "هندسة البرمجيات",
     college: "كلية الحاسبات والذكاء الاصطناعي",
     nationalId: "30XXXXXXXXXXX",

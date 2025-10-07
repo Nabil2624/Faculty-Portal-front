@@ -1,31 +1,60 @@
-import React from "react";
+// pages/PersonalDataPage.jsx
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import subPicture from "../images/profileImage.png";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function PersonalDataPage() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation("PersonalData");
   const isArabic = i18n.language === "ar";
 
-  const personalInfo = [
-    { label: t("title"), value: "أ.د" },
-    { label: t("university"), value: "جامعة حلوان" },
-    { label: t("birthDate"), value: "26/11/2026" },
-    { label: t("name"), value: "احمد هشام محمد" },
-    { label: t("department"), value: "هندسة البرمجيات" },
-    { label: t("college"), value: "كلية الحاسبات والذكاء الاصطناعي" },    
-    { label: t("nationalId"), value: "30XXXXXXXXXXX" },
-    { label: t("generalSpecialization"), value: "هندسة البرمجيات" }, 
-    { label: t("field"), value: "مجال علوم الحاسبات" },       
-    { label: t("gender"), value: "ذكر" },
-    { label: t("roles"), value: "لا يوجد" },       
-    { label: t("exactSpecialization"), value: "مهندس حوسبة سحابية" },   
-    { label: t("birthPlace"), value: "القاهرة، مصر" },     
-    { label: t("maritalStatus"), value: "أعزب" },
-    { label: t("positions"), value: "لا يوجد" },
+  const [personalData, setPersonalData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const fetchPersonalData = async () => {
+      setLoading(true);
+      try {
+        // Get token from localStorage
+        const token = localStorage.getItem("token");
+        const response = await axiosInstance.get("/PersonalData", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setPersonalData(response.data.data || response.data);
+      } catch (err) {
+        console.error("Failed to fetch personal data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPersonalData();
+  }, []);
+
+  if (loading) return <LoadingSpinner />;
+
+  const infoList = [
+    { label: t("title"), value: personalData?.title },
+    { label: t("name"), value: personalData?.name },
+    { label: t("ssn"), value: personalData?.ssn?.trim() },
+    { label: t("gender"), value: personalData?.gender },
+    { label: t("birthPlace"), value: personalData?.birthPlace },
+    { label: t("university"), value: personalData?.universityName },
+    { label: t("department"), value: personalData?.departmentName },
+    { label: t("faculty"), value: personalData?.facultyName },
+    { label: t("generalSpecialization"), value: personalData?.generalSpecialization },
+    { label: t("field"), value: personalData?.fieldOfStudy },
+    { label: t("exactSpecialization"), value: personalData?.accurateSpecialization },
+    { label: t("compositionTopic"), value: personalData?.compositionTopic },
+    { label: t("nameInComposition"), value: personalData?.nameInComposition },
+    { label: t("birthDate"), value: personalData?.birthDate },
+    { label: t("maritalStatus"), value: personalData?.socialStatus },
   ];
 
   return (
@@ -49,7 +78,6 @@ export default function PersonalDataPage() {
               />
             </div>
 
-            {/* Buttons under the photo */}
             <div className="flex gap-3 mt-4">
               <button
                 onClick={() => navigate("/editpersonal")}
@@ -70,20 +98,19 @@ export default function PersonalDataPage() {
             </div>
           </div>
 
-          {/* Personal info */}
+          {/* Personal info grid */}
           <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-4 ml-10">
-            {/* Info grid */}
             <div className="grid grid-cols-3 gap-5">
-              {personalInfo.map((item, index) => (
+              {infoList.map((item, index) => (
                 <div
                   key={index}
                   className="flex h-[40px] rounded-md overflow-hidden text-sm"
                 >
-                  <div className="bg-[#19355a] text-white w-32 flex items-center justify-center font-bold px-2">
+                  <div className="bg-[#19355a] text-white w-32 flex items-center justify-center font-bold px-2 text-center">
                     {item.label}
                   </div>
-                  <div className="bg-gray-200 text-black flex-1 flex items-center justify-center px-2">
-                    {item.value}
+                  <div className="bg-gray-200 text-black flex-1 flex items-center justify-center px-2 text-center">
+                    {item.value || t("none")}
                   </div>
                 </div>
               ))}

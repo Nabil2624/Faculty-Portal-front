@@ -1,23 +1,30 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Eye, EyeOff, ChevronDown } from "lucide-react";
+import axiosInstance from "../utils/axiosInstance";
 import helwanImage from "../images/helwan-university.jpeg";
 import egyptFlag from "../images/egyptFlag.png";
 import ukFlag from "../images/americaFlag.png";
 import LoadingSpinner from "../components/LoadingSpinner";
-import axiosInstance from "../utils/axiosInstance";
 
-export default function RegisterPage() {
-  const { t, i18n } = useTranslation("Registration");
+export default function ResetPasswordPage() {
+  const { t, i18n } = useTranslation("ResetPassword");
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
-  const [nationalID, setNationalID] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  const token = new URLSearchParams(location.search).get("token");
 
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
@@ -27,14 +34,10 @@ export default function RegisterPage() {
   useEffect(() => {
     const isArabic = i18n.language === "ar";
     document.documentElement.dir = isArabic ? "rtl" : "ltr";
-    if (isArabic) {
-      document.documentElement.classList.add("arabic-font");
-    } else {
-      document.documentElement.classList.remove("arabic-font");
-    }
+    if (isArabic) document.documentElement.classList.add("arabic-font");
+    else document.documentElement.classList.remove("arabic-font");
   }, [i18n.language]);
 
-  // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -54,37 +57,40 @@ export default function RegisterPage() {
 
   const isArabic = i18n.language === "ar";
 
-  // Handle Registration
-  const handleRegister = async (e) => {
+  const handleReset = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(null);
+    setSuccess(null);
 
-    // Validation
-    if (!/^[0-9]+$/.test(nationalID)) {
-      setError(t("onlyNumbersError") || "National ID must contain only numbers");
+    // Password regex: one upper, one lower, one number, one special, min 8 chars
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()[\]{}\-_=+\\|;:'",.<>/?`~]).{8,}$/;
+
+    if (!passwordRegex.test(newPassword)) {
+      setError(t("passwordRequirements"));
       return;
     }
 
-    try {
-      setLoading(true);
+    if (newPassword !== confirmPassword) {
+      setError(t("passwordMismatch"));
+      return;
+    }
 
-      // 1️⃣ Register API
-      const registerRes = await axiosInstance.post("/Auth/Register", {
-        ssn: nationalID, // backend property
+    setLoading(true);
+    try {
+      await axiosInstance.post("/Auth/Reset-Password", {
+        newPassword: newPassword,
+        newPasswordConifrmed: confirmPassword,
       });
 
-      if (registerRes.data?.status) {
-        // 2️⃣ Send Email
-        await axiosInstance.post("/Auth/Send-Credintials-Email");
-
-        navigate("/login");
-      } else {
-        setError(
-          registerRes.data?.message || t("serverError") || "Something went wrong."
-        );
-      }
+      setSuccess(t("resetSuccess"));
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || t("serverError"));
+      if (err.response?.status === 400 || err.response?.status === 401) {
+        setError(t("invalidToken"));
+      } else {
+        setError(t("unexpectedError"));
+      }
     } finally {
       setLoading(false);
     }
@@ -92,7 +98,6 @@ export default function RegisterPage() {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden p-5 relative">
-      {/* Full-page loading overlay like Login */}
       {loading && (
         <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
           <LoadingSpinner />
@@ -132,14 +137,14 @@ export default function RegisterPage() {
                   className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-100 text-sm"
                 >
                   <img src={egyptFlag} alt="Arabic" className="w-5 h-5" />
-                  <span className="whitespace-nowrap">العربية</span>
+                  <span>العربية</span>
                 </button>
                 <button
                   onClick={() => handleLanguageChange("en")}
                   className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-100 text-sm"
                 >
                   <img src={ukFlag} alt="English" className="w-5 h-5" />
-                  <span className="whitespace-nowrap">English</span>
+                  <span>English</span>
                 </button>
               </div>
             )}
@@ -148,29 +153,76 @@ export default function RegisterPage() {
 
         {/* Form */}
         <form
-          onSubmit={handleRegister}
+          onSubmit={handleReset}
           className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}
         >
           <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">
-            {t("signUp")}
+            {t("resetTitle")}
           </h1>
-          <p className="text-gray-600 mb-12">{t("subtitle")}</p>
-
-          <input
-            type="text"
-            placeholder={t("nationalID")}
-            value={nationalID}
-            onChange={(e) => setNationalID(e.target.value)}
-            disabled={loading}
-            dir={isArabic ? "rtl" : "ltr"}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3 text-base focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60"
-          />
+          <p className="text-gray-600 mb-12">{t("resetSubtitle")}</p>
 
           {error && (
-            <div className="mb-3 text-red-600 text-sm border border-red-400 p-2 rounded-md bg-red-50">
+            <div className="mb-4 text-red-600 text-sm border border-red-400 p-2 rounded-md bg-red-50">
               {error}
             </div>
           )}
+          {success && (
+            <div className="mb-4 text-green-600 text-sm border border-green-400 p-2 rounded-md bg-green-50">
+              {success}
+            </div>
+          )}
+
+          {/* New Password */}
+          <div className="relative w-full mb-5">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder={t("newPassword")}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              disabled={loading}
+              dir={isArabic ? "rtl" : "ltr"}
+              className={`w-full border border-gray-300 rounded-md px-3 py-2 ${
+                isArabic ? "pl-10" : "pr-10"
+              } focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              disabled={loading}
+              className={`absolute top-1/2 -translate-y-1/2 text-yellow-600 ${
+                isArabic ? "left-2" : "right-2"
+              }`}
+            >
+              {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+            </button>
+          </div>
+
+          {/* Confirm Password */}
+          <div className="relative w-full mb-5">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder={t("confirmPassword")}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              disabled={loading}
+              dir={isArabic ? "rtl" : "ltr"}
+              className={`w-full border border-gray-300 rounded-md px-3 py-2 ${
+                isArabic ? "pl-10" : "pr-10"
+              } focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              disabled={loading}
+              className={`absolute top-1/2 -translate-y-1/2 text-yellow-600 ${
+                isArabic ? "left-2" : "right-2"
+              }`}
+            >
+              {showConfirmPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+            </button>
+          </div>
 
           <button
             type="submit"
@@ -179,26 +231,19 @@ export default function RegisterPage() {
               loading ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
-            {t("signUp")}
+            {t("resetButton")}
           </button>
 
-          <div className="flex items-center my-6">
-            <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="px-2 text-gray-500">{t("or")}</span>
-            <div className="flex-1 h-px bg-gray-300"></div>
-          </div>
-
-          <p className="text-sm text-center">
-            {t("loginText")}{" "}
+          <div className="mt-4 text-center">
             <button
-              onClick={() => navigate("/login")}
               type="button"
-              className="text-yellow-600 font-semibold hover:underline"
+              onClick={() => navigate("/login")}
+              className="text-yellow-600 hover:underline text-sm"
               disabled={loading}
             >
-              {t("login")}
+              {t("backToLogin")}
             </button>
-          </p>
+          </div>
         </form>
       </div>
 

@@ -6,5 +6,7 @@
         "login": "Login",
         "or": "or",
         "welcome": "Welcome to the faculty portal — Helwan University",
-        "sub": "Your administrative portal in one place"
+        "sub": "Your administrative portal in one place",
+        "onlyNumbersError": "National ID must contain only numbers.",
+        "serverError": "A server error occurred. Please try again later."
 }

@@ -1,16 +1,16 @@
+// utils/axiosInstance.js
 import axios from "axios";
-import { createBrowserHistory } from "history";
 
-// Create browser history to allow redirects from outside React components
-export const history = createBrowserHistory();
+// Create a small event target to emit errors
+export const axiosEvent = new EventTarget();
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  baseURL: process.env.REACT_APP_API_BASE_URL || "https://localhost:7098/api",
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
 
-// ✅ Request Interceptor: add auth token if present
+// ✅ Add Authorization header if token exists
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authToken");
@@ -20,31 +20,38 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ Response Interceptor: redirect on error
+// ✅ Global error handling via custom event
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
       const { status } = error.response;
 
+      let targetRoute;
       switch (status) {
         case 401:
           localStorage.removeItem("authToken");
-          history.push("/login");
+          targetRoute = "/login";
           break;
         case 404:
-          history.push("/error/404");
+          targetRoute = "/error/404";
           break;
         case 500:
-          history.push("/error/500");
+          targetRoute = "/error/500";
           break;
         default:
-          history.push(`/error/${status}`);
+          targetRoute = `/error/${status}`;
           break;
       }
+
+      axiosEvent.dispatchEvent(
+        new CustomEvent("axios-error", { detail: targetRoute })
+      );
     } else {
-      // Network or unknown error
-      history.push("/error/0");
+      // Network error
+      axiosEvent.dispatchEvent(
+        new CustomEvent("axios-error", { detail: "/error/0" })
+      );
     }
 
     return Promise.reject(error);

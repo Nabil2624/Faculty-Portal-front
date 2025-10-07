@@ -3,13 +3,12 @@ import myImage from "../images/helwanload.png"; // replace with your image
 
 export default function LoadingSpinner() {
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100  ">
+    <div className="fixed inset-0 flex items-center justify-center bg-transparent z-50">
       <img
         src={myImage}
         alt="Loading..."
-        className="w-25 h-24 animate-spin-zoom-pulse "
+        className="w-25 h-24 animate-spin-zoom-continuous"
       />
-
     </div>
   );
 }

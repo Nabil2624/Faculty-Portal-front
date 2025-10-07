@@ -8,24 +8,26 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    lang: "ar",                 // 👈 default language
-    fallbackLng: "ar",            // 👈 default to Arabic
+    lng: "ar", // ✅ instead of "lang"
+    fallbackLng: "ar",
     supportedLngs: ["ar", "en"],
 
-    // shared stuff
-    ns: [],                       // 👈 dynamic namespaces
+    ns: ["translation"], // ✅ default namespace
+    defaultNS: "translation",
 
     backend: {
-      loadPath: "locales/{{lng}}/{{ns}}.json"
+      loadPath: "/locales/{{lng}}/{{ns}}.json", // ✅ تأكد المسار يبدأ بـ "/"
     },
 
     detection: {
       order: ["localStorage", "cookie", "navigator", "htmlTag"],
-      caches: ["localStorage", "cookie"]
+      caches: ["localStorage", "cookie"],
     },
 
-    load: "languageOnly",         // so "ar-EG" → "ar"
-    debug: true
+    load: "languageOnly",
+    debug: true,
+
+    react: { useSuspense: true }, // ✅ عشان الترجمة تشتغل حتى في صفحات global
   });
 
 export default i18n;

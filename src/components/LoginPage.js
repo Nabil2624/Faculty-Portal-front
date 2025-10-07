@@ -1,17 +1,28 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom"; // ✅ React Router navigation
+import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ChevronDown } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
+import axiosInstance from "../utils/axiosInstance";
 import helwanImage from "../images/helwan-university.jpeg";
 import egyptFlag from "../images/egyptFlag.png";
 import ukFlag from "../images/americaFlag.png";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function LoginPage() {
   const { t, i18n } = useTranslation("Login");
-  const navigate = useNavigate(); // ✅ Initialize navigate
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = React.useState(false);
   const [openDropdown, setOpenDropdown] = React.useState(false);
   const dropdownRef = React.useRef(null);
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(null);
+
+  const redirectTo =
+    new URLSearchParams(window.location.search).get("redirect") || "/";
 
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
@@ -25,16 +36,15 @@ export default function LoginPage() {
     else document.documentElement.classList.remove("arabic-font");
   }, [i18n.language]);
 
-  // close dropdown on outside click or ESC
   React.useEffect(() => {
-    function handleClickOutside(e) {
+    const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpenDropdown(false);
       }
-    }
-    function handleKey(e) {
+    };
+    const handleKey = (e) => {
       if (e.key === "Escape") setOpenDropdown(false);
-    }
+    };
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleKey);
     return () => {
@@ -45,8 +55,60 @@ export default function LoginPage() {
 
   const isArabic = i18n.language === "ar";
 
+  // ✅ Handle login
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const { data } = await axiosInstance.post("/Auth/Login", {
+        username,
+        password,
+      });
+
+      // ✅ Extract token from "data" field (your backend format)
+      const token = data?.data;
+
+      if (!token) {
+        throw new Error("Token not found in response");
+      }
+
+      // ✅ Save token
+      localStorage.setItem("token", token);
+
+      // ✅ Decode token
+      const decoded = jwtDecode(token);
+    
+      const userType = decoded.Role;
+      console.log(userType);
+
+      // ✅ Redirect based on user type
+      if (userType === "Faculty Member") {
+        navigate("/personal");
+      } else {
+        navigate(redirectTo);
+      }
+    } catch (err) {
+      if (err.response?.status === 400 || err.response?.status === 401) {
+        setError(t("invalidCredentials") || "Invalid username or password.");
+      } else {
+        setError(t("unexpectedError") || "An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden p-5">
+    <div className="flex h-screen bg-gray-100 overflow-hidden p-5 relative">
+      {/* ✅ Full-page loading overlay */}
+      {loading && (
+        <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
+          <LoadingSpinner />
+        </div>
+      )}
+
       {/* Left Side - Form */}
       <div className="flex flex-col flex-1 px-8 py-6 relative">
         {/* Language Selector */}
@@ -95,28 +157,49 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <div className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}>
+        <form
+          onSubmit={handleLogin}
+          className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}
+        >
           <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">
             {t("loginTitle")}
           </h1>
-
           <p className="text-gray-600 mb-12">{t("loginSubtitle")}</p>
+
+          {error && (
+            <div className="mb-4 text-red-600 text-sm border border-red-400 p-2 rounded-md bg-red-50">
+              {error}
+            </div>
+          )}
 
           <input
             type="text"
             placeholder={t("username")}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 mb-5 text-base focus:ring-2 focus:ring-blue-500 outline-none"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            disabled={loading}
+            dir={isArabic ? "rtl" : "ltr"}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 mb-5 text-base focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60"
           />
 
           <div className="relative w-full mb-5">
             <input
               type={showPassword ? "text" : "password"}
               placeholder={t("password")}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-500 outline-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+              dir={isArabic ? "rtl" : "ltr"}
+              className={`w-full border border-gray-300 rounded-md px-3 py-2 ${
+                isArabic ? "pl-10" : "pr-10"
+              } focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60`}
             />
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
+              disabled={loading}
               className={`absolute top-1/2 -translate-y-1/2 text-yellow-600 ${
                 isArabic ? "left-2" : "right-2"
               }`}
@@ -125,15 +208,22 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <button className="w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition">
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition ${
+              loading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
+          >
             {t("loginButton")}
           </button>
 
-          {/* ✅ Forgot Password uses navigate */}
           <div className={`mt-3 text-sm ${isArabic ? "text-right" : "text-left"}`}>
             <button
               onClick={() => navigate("/forgot-password")}
+              type="button"
               className="text-gray-800 hover:underline"
+              disabled={loading}
             >
               {t("forgotPassword")}
             </button>
@@ -145,17 +235,18 @@ export default function LoginPage() {
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
-          {/* ✅ Sign Up uses navigate */}
           <p className="text-sm text-center">
             {t("noAccount")}{" "}
             <button
               onClick={() => navigate("/")}
+              type="button"
               className="text-yellow-600 font-semibold hover:underline"
+              disabled={loading}
             >
               {t("signUp")}
             </button>
           </p>
-        </div>
+        </form>
       </div>
 
       {/* Right Side - Image */}

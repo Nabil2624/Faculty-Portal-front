@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Bell, Mail, Search, ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // 👈 Add this
 
 import egyptFlag from "../images/egyptFlag.png";
 import ukFlag from "../images/americaFlag.png";
@@ -10,6 +11,7 @@ export default function Header({ isExpanded }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate(); // 👈 navigation hook
 
   useEffect(() => {
     const isArabic = i18n.language === "ar";
@@ -27,6 +29,12 @@ export default function Header({ isExpanded }) {
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
     setDropdownOpen(false);
+  };
+
+  // ✅ Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // ✅ clear token
+    navigate("/login", { replace: true }); // ✅ redirect to login
   };
 
   // close dropdown on outside click
@@ -101,11 +109,13 @@ export default function Header({ isExpanded }) {
           >
             {isArabic ? (
               <>
-                <img src={egyptFlag} alt="Arabic" className="w-5 h-4" /> <span className="text-black">ع</span>
+                <img src={egyptFlag} alt="Arabic" className="w-5 h-4" />{" "}
+                <span className="text-black">ع</span>
               </>
             ) : (
               <>
-                <img src={ukFlag} alt="English" className="w-5 h-4" /> <span className="text-black">En</span>
+                <img src={ukFlag} alt="English" className="w-5 h-4" />{" "}
+                <span className="text-black">En</span>
               </>
             )}
             <ChevronDown size={14} className="text-gray-600" />
@@ -133,8 +143,13 @@ export default function Header({ isExpanded }) {
           )}
         </div>
 
-        {/* Logout button */}
-        <button className="font-semibold text-sm">{t("logout")}</button>
+        {/* ✅ Logout button */}
+        <button
+          onClick={handleLogout}
+          className="font-semibold text-sm hover:underline"
+        >
+          {t("logout")}
+        </button>
       </div>
     </header>
   );

@@ -9,5 +9,7 @@
   "signUp": "Sign Up",
   "welcome": "Welcome to the faculty portal — Helwan University",
   "sub": "Your administrative portal in one place",
-  "forgotPassword": "Forgot Password?"
+  "forgotPassword": "Forgot Password?",
+  "invalidCredentials": "Invalid username or password.",
+  "unexpectedError": "An unexpected error occurred. Please try again later."
 }

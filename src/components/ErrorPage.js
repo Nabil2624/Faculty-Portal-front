@@ -73,6 +73,6 @@ export default function ErrorPage({ code: propCode = null }) {
           {t("footerNote")}
         </footer>
       </div>
-    </main>
-  );
+    </main>
+  );
 }

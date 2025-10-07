@@ -1,6 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Info, ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 import helwanImage from "../images/helwan-university.jpeg";
 import egyptFlag from "../images/egyptFlag.png";
 import ukFlag from "../images/americaFlag.png";
@@ -8,8 +11,13 @@ import ukFlag from "../images/americaFlag.png";
 export default function ForgotPasswordPage() {
   const { t, i18n } = useTranslation("ForgotPassword");
   const [openDropdown, setOpenDropdown] = React.useState(false);
+  const [identifier, setIdentifier] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
   const dropdownRef = React.useRef(null);
+  const navigate = useNavigate();
 
+  // 🔹 Language change logic
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
     setOpenDropdown(false);
@@ -18,15 +26,11 @@ export default function ForgotPasswordPage() {
   React.useEffect(() => {
     const isArabic = i18n.language === "ar";
     document.documentElement.dir = isArabic ? "rtl" : "ltr";
-
-    if (isArabic) {
-      document.documentElement.classList.add("arabic-font");
-    } else {
-      document.documentElement.classList.remove("arabic-font");
-    }
+    if (isArabic) document.documentElement.classList.add("arabic-font");
+    else document.documentElement.classList.remove("arabic-font");
   }, [i18n.language]);
 
-  // Close dropdown when clicking outside
+  // 🔹 Close dropdown when clicking outside
   React.useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -39,9 +43,50 @@ export default function ForgotPasswordPage() {
 
   const isArabic = i18n.language === "ar";
 
+  // 🔹 Email validation regex
+  const isValidEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+  // 🔹 Forgot Password Submit Handler
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!identifier.trim()) {
+      setError(t("errors.empty"));
+      return;
+    }
+
+    if (!isValidEmail(identifier)) {
+      setError(t("errors.invalidEmail"));
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await axiosInstance.post("/Auth/Send-Verification-Email", {
+        email: identifier,
+      });
+      navigate("/OTP");
+    } catch (error) {
+      const code = error.response?.status ?? 0;
+      window.location.href = `/error/${code}`;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden p-5">
-      {/* Left Side - Form */}
+    <div className="relative flex h-screen bg-gray-100 overflow-hidden p-5">
+      {/* 🔹 Spinner overlay */}
+      {loading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+          <LoadingSpinner />
+        </div>
+      )}
+
+      {/* Left Side */}
       <div className="flex flex-col flex-1 px-8 py-6 relative">
         {/* Language Selector */}
         <div className="flex mb-6">
@@ -86,31 +131,41 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
 
-        {/* Form Content */}
-        <div className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}>
-          {/* Page Title */}
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}
+        >
           <h1 className="text-4xl font-bold mt-[50px] mb-12 text-gray-900">
             {t("title")}
           </h1>
 
-          {/* Subtitle with Icon */}
           <div className="flex items-start gap-2 mb-2">
             <Info size={20} className="text-yellow-600 mt-1" />
             <p className="text-gray-600 text-base">{t("subtitle")}</p>
           </div>
 
-          {/* Email or National ID input */}
           <input
             type="text"
             placeholder={t("identifier")}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 mb-6 text-base focus:ring-2 focus:ring-blue-500 outline-none"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 mb-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
           />
 
-          {/* Reset password button */}
-          <button className="w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition">
+          {/* 🔹 Error Message */}
+          {error && (
+            <p className="text-red-600 text-sm mb-4">{error}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition disabled:opacity-70"
+          >
             {t("resetButton")}
           </button>
-        </div>
+        </form>
       </div>
 
       {/* Right Side - Image */}
@@ -118,11 +173,9 @@ export default function ForgotPasswordPage() {
         className="hidden md:flex w-1/2 relative rounded-[35px] mr-5 justify-center items-center text-white text-center bg-cover bg-right"
         style={{ backgroundImage: `url(${helwanImage})` }}
       >
-        {/* Overlays */}
         <div className="absolute inset-0 bg-black/10 backdrop-blur-sm rounded-[35px] z-0"></div>
         <div className="absolute inset-0 bg-black/45 rounded-[35px] z-0"></div>
 
-        {/* Text */}
         <div className="relative z-10 flex flex-col items-center w-full text-center px-6">
           <h3
             className={`font-bold ${

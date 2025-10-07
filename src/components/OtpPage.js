@@ -1,6 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Info, ChevronDown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 import helwanImage from "../images/helwan-university.jpeg";
 import egyptFlag from "../images/egyptFlag.png";
 import ukFlag from "../images/americaFlag.png";
@@ -8,19 +11,22 @@ import ukFlag from "../images/americaFlag.png";
 export default function OtpPage() {
   const { t, i18n } = useTranslation("OTP");
   const [openDropdown, setOpenDropdown] = useState(false);
-  const dropdownRef = useRef(null);
   const [otp, setOtp] = useState(Array(6).fill(""));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const inputRefs = useRef([]);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
+  // 🔹 Language Handling
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
     setOpenDropdown(false);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const isArabic = i18n.language === "ar";
     document.documentElement.dir = isArabic ? "rtl" : "ltr";
-
     if (isArabic) {
       document.documentElement.classList.add("arabic-font");
     } else {
@@ -28,8 +34,8 @@ export default function OtpPage() {
     }
   }, [i18n.language]);
 
-  // Close dropdown when clicking outside
-  React.useEffect(() => {
+  // 🔹 Close dropdown on outside click
+  useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpenDropdown(false);
@@ -41,14 +47,13 @@ export default function OtpPage() {
 
   const isArabic = i18n.language === "ar";
 
-  // Handle OTP input change
+  // 🔹 OTP Input Handling
   const handleChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return; // Only allow numbers
+    if (!/^\d*$/.test(value)) return; // Only numbers
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Move focus
     if (value && index < 5) {
       inputRefs.current[index + 1].focus();
     }
@@ -60,19 +65,54 @@ export default function OtpPage() {
     }
   };
 
-  const handleSubmit = () => {
+  // 🔹 Handle OTP Submit
+  const handleSubmit = async () => {
+    setError("");
+
     if (otp.some((digit) => digit === "")) {
-      alert(t("fillAllDigits"));
+      setError(t("fillAllDigits"));
       return;
     }
+
     const otpValue = otp.join("");
-    alert(`${t("otpEntered")}: ${otpValue}`);
-    // Call your OTP verification API here
+    setLoading(true);
+
+    try {
+      await axiosInstance.post("/Auth/Verify-Sent-Email", { otp: otpValue });
+
+      // ✅ Success → move to reset password page
+      navigate("/reset-password");
+    } catch (err) {
+      console.error("OTP verification error:", err);
+
+      const code = err?.response?.status || 500;
+      const backendMsg = err?.response?.data?.message;
+
+      // Show local message or fallback before redirect
+      setError(
+        backendMsg ||
+          (code === 400
+            ? t("errors.invalidOtp") || "Invalid OTP"
+            : t("errors.unexpected") || "Something went wrong")
+      );
+
+      // ✅ Navigate to error page safely
+      navigate(`/error/${code}`, { replace: true });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden p-5">
-      {/* Left Side - Form */}
+    <div className="relative flex h-screen bg-gray-100 overflow-hidden p-5">
+      {/* 🔹 Spinner overlay */}
+      {loading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+          <LoadingSpinner />
+        </div>
+      )}
+
+      {/* Left Side */}
       <div className="flex flex-col flex-1 px-8 py-6 relative">
         {/* Language Selector */}
         <div className="flex mb-6">
@@ -119,7 +159,9 @@ export default function OtpPage() {
 
         {/* Form Content */}
         <div className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}>
-          <h1 className="text-4xl font-bold mt-[50px] mb-12 text-gray-900">{t("title")}</h1>
+          <h1 className="text-4xl font-bold mt-[50px] mb-12 text-gray-900">
+            {t("title")}
+          </h1>
 
           <div className="flex items-start gap-2 mb-6">
             <Info size={20} className="text-yellow-600 mt-1" />
@@ -127,7 +169,7 @@ export default function OtpPage() {
           </div>
 
           {/* OTP Inputs */}
-          <div className="flex justify-between mb-6 gap-2">
+          <div className="flex justify-between mb-4 gap-2">
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -142,9 +184,13 @@ export default function OtpPage() {
             ))}
           </div>
 
+          {/* 🔹 Error Message */}
+          {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+
           <button
             onClick={handleSubmit}
-            className="w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition"
+            disabled={loading}
+            className="w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition disabled:opacity-70"
           >
             {t("verifyButton")}
           </button>
