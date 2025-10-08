@@ -1,24 +1,89 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance"; // ✅ use shared axios instance
 
 export default function EditContactInfo() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation("contactinfo");
   const isArabic = i18n.language === "ar";
 
+  const [contactData, setContactData] = useState({
+    mainPhoneNumber: "",
+    workPhoneNumber: "",
+    homePhoneNumber: "",
+    officialEmail: "",
+    personalEmail: "",
+    alternativeEmail: "",
+    faxNumber: "",
+    address: "",
+  });
+
+  // ✅ Fetch data on mount
+  useEffect(() => {
+    const fetchContactData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axiosInstance.get("/PersonalData/contact-data", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setContactData(response.data);
+      } catch (error) {
+        console.error("❌ Error fetching contact info:", error);
+        if (error.response?.status === 401) navigate("/login");
+      }
+    };
+
+    fetchContactData();
+  }, [navigate]);
+
+  // ✅ Handle input changes
+  const handleChange = (field, value) => {
+    setContactData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // ✅ Handle save (PUT request)
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axiosInstance.put(
+        "/PersonalData/contact-data",
+        {
+          workPhoneNumber: contactData.workPhoneNumber,
+          homePhoneNumber: contactData.homePhoneNumber,
+          personalEmail: contactData.personalEmail,
+          alternativeEmail: contactData.alternativeEmail,
+          faxNumber: contactData.faxNumber,
+          address: contactData.address,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      navigate("/contact-info");
+    } catch (error) {
+      console.error("❌ Error updating contact info:", error);
+      if (error.response?.status === 401) navigate("/login");
+    }
+  };
+
   const contactInfo = [
-    { label: t("officialEmail"), value: "Email01@gmail.com" },
-    { label: t("mainMobile"), value: "01XXXXXXXX" },    
-    { label: t("fax"), value: "لا يوجد" },
-    { label: t("personalEmail"), value: "Email02@gmail.com" },
-    { label: t("homePhone"), value: "02XXXXXXXX" },
-    { label: t("address"), value: "العاشر" },    
-    { label: t("alternativeEmail"), value: "لا يوجد" },
-    { label: t("workPhone"), value: "02XXXXXXXX" },
-
-
+    { label: t("officialEmail"), key: "officialEmail", editable: false },
+    { label: t("mainMobile"), key: "mainPhoneNumber", editable: false },
+    { label: t("fax"), key: "faxNumber", editable: true },
+    { label: t("personalEmail"), key: "personalEmail", editable: true },
+    { label: t("homePhone"), key: "homePhoneNumber", editable: true },
+    { label: t("address"), key: "address", editable: true },
+    { label: t("alternativeEmail"), key: "alternativeEmail", editable: true },
+    { label: t("workPhone"), key: "workPhoneNumber", editable: true },
   ];
 
   return (
@@ -40,13 +105,18 @@ export default function EditContactInfo() {
                   focus-within:border-[#B38E19] focus-within:ring-2 focus-within:ring-[#B38E19] transition"
               >
                 {/* Label */}
-                <div className="bg-[#19355a] text-white w-[120px] flex items-center justify-center font-bold px-2">
+                <div className="bg-[#19355a] text-white w-[120px] flex items-center justify-center font-bold px-2 text-center">
                   {item.label}
                 </div>
+
                 {/* Input */}
                 <input
-                  defaultValue={item.value}
-                  className="bg-gray-200 text-black flex-1 px-2 outline-none border-0 text-center"
+                  value={contactData[item.key] || ""}
+                  onChange={(e) => item.editable && handleChange(item.key, e.target.value)}
+                  disabled={!item.editable}
+                  className={`bg-gray-200 text-black flex-1 px-2 outline-none border-0 text-center ${
+                    !item.editable ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
                 />
               </div>
             ))}
@@ -55,14 +125,16 @@ export default function EditContactInfo() {
 
         {/* Buttons */}
         <div className={`flex gap-3 absolute ${isArabic ? "left-[53px]" : "right-[53px]"} bottom-[52px]`}>
-          <button 
-          onClick={()=>navigate("/contact-info")}
-          className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}>
+          <button
+            onClick={handleSave}
+            className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}
+          >
             {t("save")}
           </button>
           <button
-          onClick={()=>navigate("/contact-info")} 
-          className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}>
+            onClick={() => navigate("/contact-info")}
+            className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}
+          >
             {t("cancel")}
           </button>
         </div>

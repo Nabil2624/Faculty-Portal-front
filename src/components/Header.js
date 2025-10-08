@@ -77,7 +77,7 @@ export default function Header({ isExpanded }) {
               placeholder={t("searchPlaceholder") || "بحث..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 text-sm text-center outline-none bg-transparent placeholder:text-center"
+              className="flex-1 text-sm text-center outline-none bg-transparent placeholder:text-center text-black"
             />
             <button type="button" className="p-1">
               <Search size={16} className="text-[#19355a]" />
@@ -93,7 +93,7 @@ export default function Header({ isExpanded }) {
               placeholder={t("searchPlaceholder") || "Search..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 text-sm text-center outline-none bg-transparent placeholder:text-center"
+              className="flex-1 text-sm text-center outline-none bg-transparent placeholder:text-center text-black"
             />
           </>
         )}

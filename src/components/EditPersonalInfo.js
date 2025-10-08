@@ -1,39 +1,64 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import subPicture from "../images/profileImage.png";
 import { FiUpload, FiCalendar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+
 export default function EditPersonalInfo() {
   const { t, i18n } = useTranslation("PersonalData");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
 
-  const initialInfo = {
-    title: "أ.د",
-    university: "جامعة حلوان",
-    birthDate: "2026-11-26",
-    name: "احمد هشام محمد",
-    department: "هندسة البرمجيات",
-    college: "كلية الحاسبات والذكاء الاصطناعي",
-    nationalId: "30XXXXXXXXXXX",
-    generalSpecialization: "هندسة البرمجيات",
-    field: "مجال علوم الحاسبات",
-    gender: "ذكر",
-    roles: "لا يوجد",
-    exactSpecialization: "مهندس حوسبة سحابية",
-    birthPlace: "القاهرة، مصر",
-    maritalStatus: "أعزب",
-    positions: "لا يوجد",
-  };
-
-  const [personalInfo, setPersonalInfo] = useState(initialInfo);
+  const [personalInfo, setPersonalInfo] = useState({});
   const [profileImage, setProfileImage] = useState(subPicture);
-
+  const [loading, setLoading] = useState(true);
   const dateInputRef = useRef(null);
 
+  // ✅ Fetch data from backend
+  useEffect(() => {
+    const fetchPersonalData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        console.log("🔑 Current token:", token || "No token found");
+
+        const res = await axiosInstance.get("/PersonalData",{headers: {
+            Authorization: `Bearer ${token}`,
+      }});
+
+        const data = res.data;
+
+        setPersonalInfo({
+          title: data.title || "",
+          name: data.name || "",
+          ssn: data.ssn?.trim() || "",
+          gender: data.gender || "",
+          birthPlace: data.birthPlace || "",
+          university: data.universityName || "",
+          department: data.departmentName || "",
+          faculty: data.facultyName || "",
+          generalSpecialization: data.generalSpecialization || "",
+          field: data.fieldOfStudy || "",
+          exactSpecialization: data.accurateSpecialization || "",
+          compositionTopic: data.compositionTopic || "لا يوجد",
+          nameInComposition: data.nameInComposition || "",
+          birthDate: data.birthDate || "",
+          maritalStatus: data.socialStatus || "",
+
+        });
+      } catch (err) {
+        console.error("❌ Failed to fetch personal data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPersonalData();
+  }, []);
+
   const handleChange = (key, value) => {
-    setPersonalInfo({ ...personalInfo, [key]: value });
+    setPersonalInfo((prev) => ({ ...prev, [key]: value }));
   };
 
   const handlePhotoUpload = (e) => {
@@ -51,9 +76,44 @@ export default function EditPersonalInfo() {
     }
   };
 
+  // ✅ Save (PUT request)
+  const handleSave = async () => {
+    try {
+      const payload = {
+        title: personalInfo.title,
+        name: personalInfo.name,
+        birthPlace: personalInfo.birthPlace,
+        nameInComposition: personalInfo.nameInComposition,
+        socialStatus: personalInfo.maritalStatus,
+        birthDate: personalInfo.birthDate,
+        compositionTopic: personalInfo.compositionTopic,
+      };
+
+      console.log("📤 Sending updated data:", payload);
+      await axiosInstance.put("/PersonalData", payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      navigate("/personal");
+    } catch (err) {
+      console.error("❌ Failed to update personal data:", err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-screen text-xl font-semibold text-[#19355a]">
+          {t("loading")}...
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
-      {/* CSS to hide native date icon / spinner across browsers */}
       <style>{`
         input[type="date"]::-webkit-calendar-picker-indicator { display: none; -webkit-appearance: none; }
         input[type="date"]::-webkit-clear-button,
@@ -91,7 +151,7 @@ export default function EditPersonalInfo() {
 
             <div className="flex gap-3 mt-11">
               <button
-                onClick={()=>{navigate("/personal")}}
+                onClick={handleSave}
                 className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
@@ -99,7 +159,7 @@ export default function EditPersonalInfo() {
                 {t("save")}
               </button>
               <button
-                onClick={()=>{navigate("/personal")}}
+                onClick={() => navigate("/personal")}
                 className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
@@ -117,7 +177,7 @@ export default function EditPersonalInfo() {
                   className="flex h-[40px] rounded-md overflow-hidden text-sm border border-gray-300 
                     focus-within:border-[#B38E19] focus-within:ring-2 focus-within:ring-[#B38E19] transition"
                 >
-                  <label className="bg-[#19355a] text-white w-32 flex items-center justify-center font-bold px-2">
+                  <label className="bg-[#19355a] text-white w-32 flex items-center justify-center font-bold px-2 text-center">
                     {t(key)}
                   </label>
 
@@ -135,19 +195,19 @@ export default function EditPersonalInfo() {
                       <input
                         ref={dateInputRef}
                         type="date"
-                        value={personalInfo[key]}
+                        value={personalInfo[key] || ""}
                         onChange={(e) => handleChange(key, e.target.value)}
                         className="w-full h-full bg-gray-200 text-black outline-none [color-scheme:light] text-center"
                       />
                     </div>
-                  ) : key === "nationalId" ? (
+                  ) : key === "ssn" ? (
                     <div className="flex-1 bg-gray-200 flex items-center justify-center text-center">
                       {personalInfo[key]}
                     </div>
                   ) : (
                     <input
                       type="text"
-                      value={personalInfo[key]}
+                      value={personalInfo[key] || ""}
                       onChange={(e) => handleChange(key, e.target.value)}
                       className="flex-1 bg-gray-200 px-2 text-black outline-none text-center"
                     />

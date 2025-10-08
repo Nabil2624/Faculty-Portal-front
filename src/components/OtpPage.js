@@ -169,7 +169,7 @@ export default function OtpPage() {
           </div>
 
           {/* OTP Inputs */}
-          <div className="flex justify-between mb-4 gap-2">
+          <div className="flex justify-between mb-4 gap-2 ltr" style={{ direction: "ltr" }}>
             {otp.map((digit, index) => (
               <input
                 key={index}
