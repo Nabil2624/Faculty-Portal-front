@@ -1,5 +1,5 @@
 import React from "react";
-import myImage from "../images/helwanload.png"; // replace with your image
+import myImage from "../images/icons8-loading-50.png"; // replace with your image
 
 export default function LoadingSpinner() {
   return (
