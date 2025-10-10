@@ -105,7 +105,7 @@ export default function EditContactInfo() {
                   focus-within:border-[#B38E19] focus-within:ring-2 focus-within:ring-[#B38E19] transition"
               >
                 {/* Label */}
-                <div className="bg-[#19355a] text-white w-[120px] flex items-center justify-center font-bold px-2 text-center">
+                <div className="bg-[#19355a] text-white w-[120px] flex items-center justify-center px-2 text-center">
                   {item.label}
                 </div>
 

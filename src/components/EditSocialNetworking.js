@@ -45,7 +45,7 @@ export default function EditSocialNetworking() {
                   focus-within:border-[#B38E19] text-center focus-within:ring-2 focus-within:ring-[#B38E19] transition duration-150`}
               >
                 {/* Label */}
-                <div className="bg-[#19355a] text-center text-white w-[120px] flex items-center justify-center font-bold px-2">
+                <div className="bg-[#19355a] text-center text-white w-[120px] flex items-center justify-center px-2">
                   {item.label}
                 </div>
                 {/* Input */}

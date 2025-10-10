@@ -55,45 +55,43 @@ export default function LoginPage() {
 
   const isArabic = i18n.language === "ar";
 
-  // ✅ Handle login
+  // ✅ Handle login with error translation
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      const { data } = await axiosInstance.post("/Auth/Login", {
-        username,
-        password,
-      });
+      const { data } = await axiosInstance.post(
+        "/Auth/Login",
+        { username, password },
+        { skipGlobalErrorHandler: true } // prevent showing global error page
+      );
 
-      // ✅ Extract token from "data" field (your backend format)
       const token = data?.data;
+      if (!token) throw new Error("Token not found in response");
 
-      if (!token) {
-        throw new Error("Token not found in response");
-      }
-
-      // ✅ Save token
       localStorage.setItem("token", token);
-
-      // ✅ Decode token
       const decoded = jwtDecode(token);
-    
       const userType = decoded.Role;
-      console.log(userType);
 
-      // ✅ Redirect based on user type
       if (userType === "Faculty Member") {
         navigate("/personal");
       } else {
         navigate(redirectTo);
       }
     } catch (err) {
-      if (err.response?.status === 400 || err.response?.status === 401) {
-        setError(t("invalidCredentials") || "Invalid username or password.");
+      if (err.response) {
+        const { status, data } = err.response;
+
+        // Backend validation or auth errors
+        if (status === 400 || status === 401) {
+          setError(t("invalidCredentials")); // e.g. "Invalid username or password"
+        } else {
+          setError(t("unexpectedError")); // fallback translation
+        }
       } else {
-        setError(t("unexpectedError") || "An unexpected error occurred.");
+        setError(t("networkError")); // e.g. "Unable to connect to the server"
       }
     } finally {
       setLoading(false);
@@ -102,7 +100,6 @@ export default function LoginPage() {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden p-5 relative">
-      {/* ✅ Full-page loading overlay */}
       {loading && (
         <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
           <LoadingSpinner />
@@ -142,14 +139,14 @@ export default function LoginPage() {
                   className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-100 text-sm"
                 >
                   <img src={egyptFlag} alt="Arabic" className="w-5 h-5" />
-                  <span className="whitespace-nowrap">العربية</span>
+                  <span>العربية</span>
                 </button>
                 <button
                   onClick={() => handleLanguageChange("en")}
                   className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-100 text-sm"
                 >
                   <img src={ukFlag} alt="English" className="w-5 h-5" />
-                  <span className="whitespace-nowrap">English</span>
+                  <span>English</span>
                 </button>
               </div>
             )}
@@ -260,7 +257,7 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col items-center w-full text-center px-6">
           <h3
             className={`font-bold ${
-              isArabic ? "text-[2.6rem] text-right mr-5" : "text-[3rem] text-left ml-5"
+              isArabic ? "text-[2.5rem] text-right mr-5" : "text-[3rem] text-left ml-5"
             }`}
           >
             {t("welcome")}

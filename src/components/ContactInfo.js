@@ -78,7 +78,7 @@ export default function ContactInfo() {
                 key={index}
                 className="flex h-[40px] rounded-md overflow-hidden text-sm"
               >
-                <div className="bg-[#19355a] text-white w-[120px] flex items-center justify-center font-bold px-2 text-center">
+                <div className="bg-[#19355a] text-white w-[120px] flex items-center justify-center  px-2 text-center">
                   {item.label}
                 </div>
                 <div className="bg-gray-200 text-black flex-1 flex items-center justify-center px-2 text-center">

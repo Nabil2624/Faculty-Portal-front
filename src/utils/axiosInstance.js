@@ -24,33 +24,48 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      const { status } = error.response;
+    const originalRequest = error.config;
 
-      let targetRoute;
-      switch (status) {
-        case 401:
-          localStorage.removeItem("authToken");
-          targetRoute = "/login";
-          break;
-        case 404:
-          targetRoute = "/error/404";
-          break;
-        case 500:
-          targetRoute = "/error/500";
-          break;
-        default:
-          targetRoute = `/error/${status}`;
-          break;
+    // 🧠 Case 1: No response — likely backend/network issue
+    if (!error.response) {
+      if (!originalRequest?.skipGlobalErrorHandler) {
+        axiosEvent.dispatchEvent(
+          new CustomEvent("axios-error", { detail: "/error/0" })
+        );
       }
+      return Promise.reject(error);
+    }
 
+    const { status } = error.response;
+
+    // 🧠 Case 2: Expected user errors (no global error page)
+    if (
+      status === 400 || // validation error, wrong OTP, etc.
+      status === 401 || // invalid credentials
+      status === 409    // conflict (e.g. duplicate email)
+    ) {
+      return Promise.reject(error); // let component handle
+    }
+
+    // 🧠 Case 3: Real backend / DB / server-side / forbidden errors
+    let targetRoute;
+    switch (status) {
+      case 403:
+        targetRoute = "/error/403";
+        break;
+      case 404:
+        targetRoute = "/error/404";
+        break;
+      case 500:
+      default:
+        // any 5xx error or unexpected error
+        targetRoute = `/error/${status >= 500 ? 500 : status}`;
+        break;
+    }
+
+    if (!originalRequest?.skipGlobalErrorHandler) {
       axiosEvent.dispatchEvent(
         new CustomEvent("axios-error", { detail: targetRoute })
-      );
-    } else {
-      // Network error
-      axiosEvent.dispatchEvent(
-        new CustomEvent("axios-error", { detail: "/error/0" })
       );
     }
 

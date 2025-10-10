@@ -194,7 +194,7 @@ export default function EditPersonalInfo() {
                     className="flex h-[40px] rounded-md overflow-hidden text-sm border border-gray-300 
                       focus-within:border-[#B38E19] focus-within:ring-2 focus-within:ring-[#B38E19] transition"
                   >
-                    <label className="bg-[#19355a] text-white w-32 flex items-center justify-center font-bold px-2 text-center">
+                    <label className="bg-[#19355a] text-white w-32 flex items-center justify-center px-2 text-center">
                       {t(key)}
                     </label>
 
@@ -214,12 +214,13 @@ export default function EditPersonalInfo() {
                           type="date"
                           value={personalInfo[key] || ""}
                           onChange={(e) => handleChange(key, e.target.value)}
-                          className="w-full h-full bg-gray-200 text-black outline-none [color-scheme:light] text-center"
+                          className="w-full h-full bg-gray-200 text-black outline-none [color-scheme:light] text-center px-2"
                         />
                       </div>
                     ) : isNonEditable ? (
-                      <div className="flex-1 bg-gray-200 flex items-center justify-center text-center cursor-not-allowed opacity-70">
-                        {personalInfo[key]}
+                      // ✅ Updated disabled styling
+                      <div className="flex-1 bg-gray-100 text-gray-500 flex items-center justify-center text-center cursor-not-allowed">
+                        {personalInfo[key] || "-"}
                       </div>
                     ) : (
                       <input

@@ -27,14 +27,10 @@ export default function OtpPage() {
   useEffect(() => {
     const isArabic = i18n.language === "ar";
     document.documentElement.dir = isArabic ? "rtl" : "ltr";
-    if (isArabic) {
-      document.documentElement.classList.add("arabic-font");
-    } else {
-      document.documentElement.classList.remove("arabic-font");
-    }
+    document.documentElement.classList.toggle("arabic-font", isArabic);
   }, [i18n.language]);
 
-  // 🔹 Close dropdown on outside click
+  // 🔹 Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -49,7 +45,7 @@ export default function OtpPage() {
 
   // 🔹 OTP Input Handling
   const handleChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return; // Only numbers
+    if (!/^\d*$/.test(value)) return; // Only allow digits
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
@@ -70,7 +66,7 @@ export default function OtpPage() {
     setError("");
 
     if (otp.some((digit) => digit === "")) {
-      setError(t("fillAllDigits"));
+      setError(t("errors.fillAllDigits"));
       return;
     }
 
@@ -78,26 +74,33 @@ export default function OtpPage() {
     setLoading(true);
 
     try {
-      await axiosInstance.post("/Auth/Verify-Sent-Email", { otp: otpValue });
-
-      // ✅ Success → move to reset password page
-      navigate("/reset-password");
-    } catch (err) {
-      console.error("OTP verification error:", err);
-
-      const code = err?.response?.status || 500;
-      const backendMsg = err?.response?.data?.message;
-
-      // Show local message or fallback before redirect
-      setError(
-        backendMsg ||
-          (code === 400
-            ? t("errors.invalidOtp") || "Invalid OTP"
-            : t("errors.unexpected") || "Something went wrong")
+      await axiosInstance.post(
+        "/Auth/Verify-Sent-Email",
+        { otp: otpValue },
+        { skipGlobalErrorHandler: true } // ✅ prevent redirect for normal validation errors
       );
 
-      // ✅ Navigate to error page safely
-      navigate(`/error/${code}`, { replace: true });
+      // ✅ Success → go to reset password
+      navigate("/reset-password");
+    } catch (err) {
+      const status = err.response?.status;
+      const backendMsg = err.response?.data?.message;
+
+      // ✅ Expected user-level errors
+      if (status === 400) {
+        setError(t("errors.invalidOtp"));
+      } else if (status === 429) {
+        setError(t("errors.tooManyRequests"));
+      } else if (status === 404) {
+        setError(t("errors.notFound"));
+      } else if (status === 500) {
+        // Server failure → show global error page
+        navigate("/error/500", { replace: true });
+        return;
+      } else {
+        // Other unexpected
+        setError(t("errors.unexpected"));
+      }
     } finally {
       setLoading(false);
     }

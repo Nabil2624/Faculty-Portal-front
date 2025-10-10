@@ -11,5 +11,6 @@
   "sub": "Your administrative portal in one place",
   "forgotPassword": "Forgot Password?",
   "invalidCredentials": "Invalid username or password.",
-  "unexpectedError": "An unexpected error occurred. Please try again later."
+  "unexpectedError": "An unexpected error occurred. Please try again later.",
+  "networkError": "Unable to connect to the server."
 }
