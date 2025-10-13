@@ -14,7 +14,6 @@ export default function RegisterPage() {
 
   const [openDropdown, setOpenDropdown] = useState(false);
   const dropdownRef = useRef(null);
-
   const [nationalID, setNationalID] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -54,12 +53,11 @@ export default function RegisterPage() {
 
   const isArabic = i18n.language === "ar";
 
-  // Handle Registration
+  // ✅ Handle Registration
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
 
-    // Validation
     if (!/^[0-9]+$/.test(nationalID)) {
       setError(t("onlyNumbersError") || "National ID must contain only numbers");
       return;
@@ -68,23 +66,48 @@ export default function RegisterPage() {
     try {
       setLoading(true);
 
-      // 1️⃣ Register API
-      const registerRes = await axiosInstance.post("/Auth/Register", {
-        ssn: nationalID, // backend property
-      });
+      // Register API with skipGlobalErrorHandler
+      const registerRes = await axiosInstance.post(
+        "/Auth/Register",
+        { ssn: nationalID },
+        { skipGlobalErrorHandler: true }
+      );
 
+      // If backend responds successfully
       if (registerRes.data?.status) {
-        // 2️⃣ Send Email
-        await axiosInstance.post("/Auth/Send-Credintials-Email");
+        // Send credentials email
+        await axiosInstance.post(
+          "/Auth/Send-Credintials-Email",
+          {},
+          { skipGlobalErrorHandler: true }
+        );
 
         navigate("/login");
       } else {
         setError(
-          registerRes.data?.message || t("serverError") || "Something went wrong."
+          registerRes.data?.message ||
+            t("serverError") ||
+            "Something went wrong."
         );
       }
     } catch (err) {
-      setError(err.response?.data?.message || t("serverError"));
+      // Handle backend validation and other expected errors
+      if (err.response?.status === 400) {
+        setError(
+          err.response?.data?.message ||
+            t("invalidNationalID") ||
+            "Invalid national ID."
+        );
+      } else if (err.response?.status === 409) {
+        setError(t("alreadyRegistered") || "User already registered.");
+      } else if (err.response?.status >= 500) {
+        window.location.href = "/error/500"; // backend failure
+      } else {
+        setError(
+          t("unexpectedError") ||
+            "An unexpected error occurred. Please try again."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -92,7 +115,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden p-5 relative">
-      {/* Full-page loading overlay like Login */}
+      {/* ✅ Loading overlay */}
       {loading && (
         <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
           <LoadingSpinner />
@@ -154,7 +177,14 @@ export default function RegisterPage() {
           <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">
             {t("signUp")}
           </h1>
-          <p className="text-gray-600 mb-12">{t("subtitle")}</p>
+          <p className="text-gray-600 mb-10">{t("subtitle")}</p>
+
+          {/* 🔹 Error message ABOVE input */}
+          {error && (
+            <div className="mb-3 text-red-600 text-sm border border-red-400 p-2 rounded-md bg-red-50">
+              {error}
+            </div>
+          )}
 
           <input
             type="text"
@@ -165,12 +195,6 @@ export default function RegisterPage() {
             dir={isArabic ? "rtl" : "ltr"}
             className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3 text-base focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60"
           />
-
-          {error && (
-            <div className="mb-3 text-red-600 text-sm border border-red-400 p-2 rounded-md bg-red-50">
-              {error}
-            </div>
-          )}
 
           <button
             type="submit"
@@ -213,7 +237,9 @@ export default function RegisterPage() {
         <div className="relative z-10 flex flex-col items-center w-full text-center px-6">
           <h3
             className={`font-bold ${
-              isArabic ? "text-[2.6rem] text-right mr-5" : "text-[3rem] text-left ml-5"
+              isArabic
+                ? "text-[2.5rem] text-right mr-5"
+                : "text-[3rem] text-left ml-5"
             }`}
           >
             {t("welcome")}

@@ -26,7 +26,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const isArabic = lang === "ar";
 
   const navItems = [
-    { key: "home", icon: <Home size={22} />, link: "/", sub: [] },
+    { key: "home", icon: <Home size={22} />, link: "/under-development", sub: [] },
     {
       key: "academicData",
       icon: <GraduationCap size={22} />,

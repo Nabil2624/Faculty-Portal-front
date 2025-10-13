@@ -35,7 +35,7 @@ export default function IdentificationCard() {
                 className="flex h-[40px] rounded-md overflow-hidden text-sm border border-gray-300 
                   focus-within:border-[#B38E19] focus-within:ring-2 focus-within:ring-[#B38E19] transition"
               >
-                <div className="bg-[#19355a] text-white w-[150px] flex items-center justify-center font-bold px-2">
+                <div className="bg-[#19355a] text-white w-[150px] flex items-center text-center justify-center px-2">
                   {item.label}
                 </div>
                 <input

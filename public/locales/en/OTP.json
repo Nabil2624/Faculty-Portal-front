@@ -5,5 +5,12 @@
   "welcome": "Welcome to Helwan University",
   "sub": "Securely access your account and continue your journey with us.",
   "fillAllDigits": "Please enter all 6 digits.",
-  "otpEntered": "OTP Entered"
+  "otpEntered": "OTP Entered",
+    "errors": {
+    "fillAllDigits": "Please fill all 6 digits.",
+    "invalidOtp": "The entered OTP is incorrect.",
+    "tooManyRequests": "Too many attempts. Please try again later.",
+    "notFound": "Verification failed. Please try again.",
+    "unexpected": "An unexpected error occurred. Try again."
+  }
 }

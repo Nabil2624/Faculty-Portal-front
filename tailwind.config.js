@@ -7,28 +7,18 @@ module.exports = {
   theme: {
     extend: {
       keyframes: {
-        // دوران + زووم مستمر بدون توقف
-        "spin-zoom-continuous": {
-          "0%": {
-            transform: "rotate(0deg) scale(1)",
-          },
-          "25%": {
-            transform: "rotate(90deg) scale(1.15)",
-          },
-          "50%": {
-            transform: "rotate(180deg) scale(1.3)",
-          },
-          "75%": {
-            transform: "rotate(270deg) scale(1.15)",
-          },
-          "100%": {
-            transform: "rotate(360deg) scale(1)",
-          },
+        spin: {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        'spin-reverse': {
+          '0%': { transform: 'rotate(360deg)' },
+          '100%': { transform: 'rotate(0deg)' },
         },
       },
       animation: {
-    
-        "spin-zoom-continuous": "spin-zoom-continuous 1.3s linear infinite",
+        spin: "spin 1.3s linear infinite",
+        'spin-reverse': 'spin-reverse 2.5s linear infinite',
       },
     },
   },

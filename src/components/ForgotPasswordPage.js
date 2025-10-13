@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
   const dropdownRef = React.useRef(null);
   const navigate = useNavigate();
 
-  // 🔹 Language change logic
+  // 🔹 Handle language switching
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
     setOpenDropdown(false);
@@ -26,8 +26,7 @@ export default function ForgotPasswordPage() {
   React.useEffect(() => {
     const isArabic = i18n.language === "ar";
     document.documentElement.dir = isArabic ? "rtl" : "ltr";
-    if (isArabic) document.documentElement.classList.add("arabic-font");
-    else document.documentElement.classList.remove("arabic-font");
+    document.documentElement.classList.toggle("arabic-font", isArabic);
   }, [i18n.language]);
 
   // 🔹 Close dropdown when clicking outside
@@ -65,13 +64,32 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      await axiosInstance.post("/Auth/Send-Verification-Email", {
-        email: identifier,
-      });
+      await axiosInstance.post(
+        "/Auth/Send-Verification-Email",
+        { email: identifier },
+        { skipGlobalErrorHandler: true } // ✅ skip global redirect
+      );
       navigate("/OTP");
-    } catch (error) {
-      const code = error.response?.status ?? 0;
-      window.location.href = `/error/${code}`;
+    } catch (err) {
+      const status = err.response?.status;
+      const backendMessage = err.response?.data?.message;
+
+      // ✅ Choose best possible message
+      let errorMsg = "";
+      if (status === 400) errorMsg = t("errors.emailNotFound");
+      else if (status === 404) errorMsg = t("errors.notFound");
+      else if (status === 429) errorMsg = t("errors.tooManyRequests");
+      else if (status === 500) {
+        // Backend failure → redirect
+        window.location.href = "/error/500";
+        return;
+      } else {
+        errorMsg =
+          backendMessage ||
+          t("errors.unexpected", { message: err.message || "Unknown" });
+      }
+
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -145,6 +163,13 @@ export default function ForgotPasswordPage() {
             <p className="text-gray-600 text-base">{t("subtitle")}</p>
           </div>
 
+          {/* 🔹 Error Message (Box ABOVE Input) */}
+          {error && (
+            <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-md mb-4 text-sm font-medium">
+              {error}
+            </div>
+          )}
+
           <input
             type="text"
             placeholder={t("identifier")}
@@ -152,11 +177,6 @@ export default function ForgotPasswordPage() {
             onChange={(e) => setIdentifier(e.target.value)}
             className="w-full border border-gray-300 rounded-md px-3 py-2 mb-2 text-base focus:ring-2 focus:ring-blue-500 outline-none"
           />
-
-          {/* 🔹 Error Message */}
-          {error && (
-            <p className="text-red-600 text-sm mb-4">{error}</p>
-          )}
 
           <button
             type="submit"

@@ -8,5 +8,8 @@
         "welcome": "Welcome to the faculty portal — Helwan University",
         "sub": "Your administrative portal in one place",
         "onlyNumbersError": "National ID must contain only numbers.",
-        "serverError": "A server error occurred. Please try again later."
+        "invalidNationalID": "Invalid National ID.",
+        "alreadyRegistered": "This user is already registered.",
+        "serverError": "Server error. Please try again later.",
+        "unexpectedError": "An unexpected error occurred. Please try again."
 }
