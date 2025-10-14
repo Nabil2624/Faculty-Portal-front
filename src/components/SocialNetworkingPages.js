@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function SocialNetworkingPages() {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation("socialNetworkingPages");
+  const { t, i18n } = useTranslation("socialnetworkingpages");
   const isArabic = i18n.language === "ar";
 
   const socialNetworkingPages = [
@@ -52,7 +52,7 @@ export default function SocialNetworkingPages() {
 
         {/* Buttons at bottom-left (Arabic) or bottom-right (English) */}
         <div
-          className={`flex gap-3 absolute ${isArabic ? "left-[53px]" : "right-[53px]"} bottom-[52px]`}
+          className={`flex gap-3 absolute ${isArabic ? "left-[53px]" : "right-[53px]"} bottom-[28px]`}
         >
           <button
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${

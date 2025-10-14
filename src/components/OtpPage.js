@@ -9,7 +9,7 @@ import egyptFlag from "../images/egyptFlag.png";
 import ukFlag from "../images/americaFlag.png";
 
 export default function OtpPage() {
-  const { t, i18n } = useTranslation("OTP");
+  const { t, i18n } = useTranslation("otp");
   const [openDropdown, setOpenDropdown] = useState(false);
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [loading, setLoading] = useState(false);

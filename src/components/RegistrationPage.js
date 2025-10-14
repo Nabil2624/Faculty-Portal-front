@@ -9,7 +9,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import axiosInstance from "../utils/axiosInstance";
 
 export default function RegisterPage() {
-  const { t, i18n } = useTranslation("Registration");
+  const { t, i18n } = useTranslation("register");
   const navigate = useNavigate();
 
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -33,7 +33,6 @@ export default function RegisterPage() {
     }
   }, [i18n.language]);
 
-  // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -58,24 +57,29 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
 
-    if (!/^[0-9]+$/.test(nationalID)) {
-      setError(t("onlyNumbersError") || "National ID must contain only numbers");
+    const trimmedID = nationalID.trim(); // trim spaces
+
+    // 🔹 Validation rules
+    if (!/^[0-9]+$/.test(trimmedID)) {
+      setError(t("onlyNumbersError") || "National ID must contain only numbers.");
+      return;
+    }
+
+    if (trimmedID.length !== 14) {
+      setError(t("invalidLengthError") || "National ID must be exactly 14 digits.");
       return;
     }
 
     try {
       setLoading(true);
 
-      // Register API with skipGlobalErrorHandler
       const registerRes = await axiosInstance.post(
         "/Auth/Register",
-        { ssn: nationalID },
+        { ssn: trimmedID }, // use trimmed value
         { skipGlobalErrorHandler: true }
       );
 
-      // If backend responds successfully
       if (registerRes.data?.status) {
-        // Send credentials email
         await axiosInstance.post(
           "/Auth/Send-Credintials-Email",
           {},
@@ -91,7 +95,6 @@ export default function RegisterPage() {
         );
       }
     } catch (err) {
-      // Handle backend validation and other expected errors
       if (err.response?.status === 400) {
         setError(
           err.response?.data?.message ||
@@ -101,7 +104,7 @@ export default function RegisterPage() {
       } else if (err.response?.status === 409) {
         setError(t("alreadyRegistered") || "User already registered.");
       } else if (err.response?.status >= 500) {
-        window.location.href = "/error/500"; // backend failure
+        window.location.href = "/error/500";
       } else {
         setError(
           t("unexpectedError") ||
@@ -115,16 +118,14 @@ export default function RegisterPage() {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden p-5 relative">
-      {/* ✅ Loading overlay */}
       {loading && (
         <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
           <LoadingSpinner />
         </div>
       )}
 
-      {/* Left Side - Form */}
       <div className="flex flex-col flex-1 px-8 py-6 relative">
-        {/* Language Selector */}
+        {/* 🌍 Language Selector */}
         <div className="flex mb-6">
           <div
             ref={dropdownRef}
@@ -169,7 +170,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Form */}
+        {/* 🧾 Form */}
         <form
           onSubmit={handleRegister}
           className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}
@@ -179,7 +180,6 @@ export default function RegisterPage() {
           </h1>
           <p className="text-gray-600 mb-10">{t("subtitle")}</p>
 
-          {/* 🔹 Error message ABOVE input */}
           {error && (
             <div className="mb-3 text-red-600 text-sm border border-red-400 p-2 rounded-md bg-red-50">
               {error}
@@ -190,7 +190,7 @@ export default function RegisterPage() {
             type="text"
             placeholder={t("nationalID")}
             value={nationalID}
-            onChange={(e) => setNationalID(e.target.value)}
+            onChange={(e) => setNationalID(e.target.value)} // keep typing as is
             disabled={loading}
             dir={isArabic ? "rtl" : "ltr"}
             className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3 text-base focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60"

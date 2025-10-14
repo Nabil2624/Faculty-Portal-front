@@ -22,6 +22,19 @@ import OtpPage from "../components/OtpPage";
 import UnderDevelopment from "../components/UnderDevelopment";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ResetPasswordPage from "../components/ResetPasswordPage";
+import JobGradeForm from "../components/JobGradeForm";
+import EditJobGrade from "../components/EditJobGrade";
+import EditAdminPosition from "../components/EditAdminPosition";
+import AddAdministrativePosition from "../components/AddAdministrativePosition";
+import AddScientificTask from "../components/AddScientificTask";
+import EditScientificTask from "../components/EditScientificTask";
+import AddAcademicQualification from "../components/AddAcademicQualification";
+import EditAcademicQualification from "../components/EditAcademicQualification";
+import AddConference from "../components/AddConference";
+import EditConference from "../components/EditConference";
+import AddTrainingProgram from "../components/AddTrainingProgram";
+import EditTrainingProgram from "../components/EditTrainingProgram";
+
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -43,6 +56,14 @@ function AppRouterInner() {
       <Route path="/error/:code" element={<ErrorPage />} />
       <Route path="/OTP" element={<OtpPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/add-scientific-task" element={<AddScientificTask />} />
+      <Route path="/edit-scientific-task" element={<EditScientificTask />} />
+      <Route path="/add-academic-qualification" element={<AddAcademicQualification />} />
+      <Route path="/edit-academic-qualification" element={<EditAcademicQualification />} />
+      <Route path="/add-conference" element={<AddConference />} />
+      <Route path="/edit-conference" element={<EditConference />} />
+      <Route path="/add-Training-program" element={<AddTrainingProgram />} />
+      <Route path="/edit-Training-program" element={<EditTrainingProgram />} />
 
       {/* ✅ Protected Routes */}
       <Route element={<ProtectedRoute />}>
@@ -58,6 +79,10 @@ function AppRouterInner() {
         <Route path="/edit-contact-info" element={<EditContactInfo />} />
         <Route path="/edit-Social" element={<EditSocialNetworking />} />
         <Route path="/edit-identification-card" element={<EditIdentificationCard />} />
+        <Route path="/job-grade-form" element={<JobGradeForm />} />
+        <Route path="/edit-job-grade" element={<EditJobGrade />} />
+        <Route path="/edit-admin-pos" element={<EditAdminPosition />} />
+        <Route path="/add-admin-pos" element={<AddAdministrativePosition />} />
       </Route>
 
       {/* Catch-all */}

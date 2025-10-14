@@ -9,7 +9,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function PersonalDataPage() {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation("PersonalData");
+  const { t, i18n } = useTranslation("personaldata");
   const isArabic = i18n.language === "ar";
 
   const [personalData, setPersonalData] = useState(null);
@@ -61,7 +61,7 @@ export default function PersonalDataPage() {
     <Layout>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col`}>
         {/* Page title */}
-        <h2 className="text-3xl font-bold mb-6 inline-block relative text-start mb-[80px]">
+        <h2 className="text-3xl font-bold inline-block relative text-start mb-[104px]">
           {t("personalData")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>

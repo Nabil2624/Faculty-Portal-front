@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowLeft, ArrowRight, Construction } from "lucide-react";
 
 export default function UnderDevelopment() {
-  const { t, i18n } = useTranslation("UnderDevelopment");
+  const { t, i18n } = useTranslation("underdevelopment");
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
 

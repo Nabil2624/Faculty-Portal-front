@@ -15,5 +15,13 @@
     "personalData" : "Personal Data",
     "contactInfo"  : "Contact Information",
     "socialNetworking" : "Social Networking Pages",
-    "identificationCard" : "Identification card"
+    "identificationCard" : "Identification card",
+    "scientificProgression" : "Scientific Progression",
+    "academicQualifications" : "Academic Qualifications",
+    "jobGrades" : "Job Grades",
+    "administrativePositions" : "Administrative Positions",
+    "missions" : "Missions",
+    "scientificMissions" : "Scientific Missions",
+    "seminarsAndConferences" : "Seminars And Conferences",
+    "trainingPrograms" : "Training Programs"
 }

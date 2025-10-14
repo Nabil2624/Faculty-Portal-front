@@ -40,3 +40,31 @@ html, body {
 .p-3 {
   padding: 0.5rem !important; 
 }
+/* ... your existing styles ... */
+/* Hide mm/dd/yyyy for all date inputs */
+.hide-default-date::-webkit-datetime-edit,
+.hide-default-date::-webkit-datetime-edit-text,
+.hide-default-date::-webkit-datetime-edit-month-field,
+.hide-default-date::-webkit-datetime-edit-day-field,
+.hide-default-date::-webkit-datetime-edit-year-field {
+  color: transparent;
+}
+
+/* Keep it hidden even on focus */
+.hide-default-date:focus::-webkit-datetime-edit,
+.hide-default-date:focus::-webkit-datetime-edit-text,
+.hide-default-date:focus::-webkit-datetime-edit-month-field,
+.hide-default-date:focus::-webkit-datetime-edit-day-field,
+.hide-default-date:focus::-webkit-datetime-edit-year-field {
+  color: transparent;
+}
+
+/* Show real date when selected */
+.hide-default-date:valid::-webkit-datetime-edit,
+.hide-default-date:valid::-webkit-datetime-edit-text,
+.hide-default-date:valid::-webkit-datetime-edit-month-field,
+.hide-default-date:valid::-webkit-datetime-edit-day-field,
+.hide-default-date:valid::-webkit-datetime-edit-year-field {
+  color: black;
+}
+

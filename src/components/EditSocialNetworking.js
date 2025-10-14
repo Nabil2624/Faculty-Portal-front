@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 
 export default function EditSocialNetworking() {
-  const { t, i18n } = useTranslation("socialNetworkingPages");
+  const { t, i18n } = useTranslation("socialnetworkingpages");
   const isArabic = i18n.language === "ar";
 
   const socialNetworkingPages = [
@@ -63,7 +63,7 @@ export default function EditSocialNetworking() {
         <div
           className={`flex gap-3 absolute ${
             isArabic ? "left-[53px]" : "right-[53px]"
-          } bottom-[52px]`}
+          } bottom-[28px]`}
         >
           <button
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${

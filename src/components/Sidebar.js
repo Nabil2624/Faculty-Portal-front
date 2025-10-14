@@ -14,7 +14,7 @@ import {
 import logo from "../images/helwan-logo.png";
 
 export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
-  const { t } = useTranslation("HeaderAndSideBar");
+  const { t } = useTranslation("headerandsidebar");
   const [openMenu, setOpenMenu] = useState(null);
   const [openSubMenu, setOpenSubMenu] = useState(null);
 
@@ -41,7 +41,25 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
             { key: "identificationCard", link: "/identification-card" },
           ],
         },
-        // { key: "schedule", link: "/academic-data/schedule" },
+                {
+          key: "scientificProgression",
+          link: "/academic-data/scientific-progression",
+          sub: [
+            { key: "academicQualifications", link: "/personal" },
+            { key: "jobGrades", link: "/contact-info" },
+            { key: "administrativePositions", link: "/social-networking" },
+          ],
+        },
+                {
+          key: "missions",
+          link: "/academic-data/missions",
+          sub: [
+            { key: "scientificMissions", link: "/personal" },
+            { key: "seminarsAndConferences", link: "/contact-info" },
+            { key: "trainingPrograms", link: "/social-networking" },
+          ],
+        },
+   
       ],
     },
     {

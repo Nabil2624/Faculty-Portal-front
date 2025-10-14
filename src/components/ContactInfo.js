@@ -91,7 +91,7 @@ export default function ContactInfo() {
 
         {/* Buttons at bottom-left (Arabic) or bottom-right (English) */}
         <div
-          className={`flex gap-3 absolute ${isArabic ? "left-[53px]" : "right-[53px]"} bottom-[52px]`}
+          className={`flex gap-3 absolute ${isArabic ? "left-[53px]" : "right-[53px]"} bottom-[28px]`}
         >
           <button
             onClick={() => navigate("/edit-contact-info")}

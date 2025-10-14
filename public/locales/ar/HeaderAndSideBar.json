@@ -15,5 +15,13 @@
     "personalData" : "البيانات الشخصية",
     "contactInfo"  : "بيانات الاتصال",
     "socialNetworking" : "صفحات التواصل ",
-    "identificationCard" : "البطاقة التعريفية"
+    "identificationCard" : "البطاقة التعريفية",
+    "scientificProgression" : "التدرج العلمي",
+    "academicQualifications" : "المؤهلات العلمية",
+    "jobGrades" : "الدرجات الوظيفية",
+    "administrativePositions" : "المناصب الإدارية",
+    "missions" : "المهمات",
+    "scientificMissions" : "المهمات العلمية",
+    "seminarsAndConferences" : "الندوات و المؤتمرات",
+    "trainingPrograms" : "البرامج التدريبية"
 }
