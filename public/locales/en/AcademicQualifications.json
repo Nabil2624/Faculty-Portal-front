@@ -1,0 +1,11 @@
+{
+  "academicQualifications": "Academic Qualifications",
+  "certificateFile": "Certificate (PDF)",
+  "date": "Date",
+  "back": "Back",
+  "add": "Add",
+  "noQualifications": "No academic qualifications found.",
+  "unknownDegree": "Unknown Degree",
+   "edit": "Add",
+    "areYouSureDelete": "Are you sure you want to delete"
+}

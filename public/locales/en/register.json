@@ -11,5 +11,6 @@
         "invalidNationalID": "Invalid National ID.",
         "alreadyRegistered": "This user is already registered.",
         "serverError": "Server error. Please try again later.",
+        "invalidLengthError": "National ID must be exactly 14 digits.",
         "unexpectedError": "An unexpected error occurred. Please try again."
 }

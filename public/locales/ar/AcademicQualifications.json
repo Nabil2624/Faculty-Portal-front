@@ -1,0 +1,11 @@
+{
+  "academicQualifications": "المؤهلات العلمية",
+  "certificateFile": "شهادة .pdf",
+  "date": "التاريخ",
+  "back": "عودة",
+  "add": "إضافة",
+  "noQualifications": "لا توجد مؤهلات علمية حالياً.",
+  "unknownDegree": "درجة غير معروفة",
+  "edit": "إضافة",
+   "areYouSureDelete": "هل أنت متأكد أنك تريد حذف "
+}

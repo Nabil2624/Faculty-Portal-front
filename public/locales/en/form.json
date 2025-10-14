@@ -1,0 +1,15 @@
+{
+  "add_job_grade": "Add Job Grade",
+  "edit_job_grade": "Edit Job Grade",
+  "add_admin_pos" : "Add Administrative Position",
+  "edit_admin_pos" : "Edit Administrative Position",
+  "admin_pos" : "Administrative Position",  
+  "job_grade": "Job Grade",
+  "select_job_grade": "Select Job Grade",
+  "start_date": "Start Date",
+  "select_start_date": "Select Start Date",
+  "end_date": "End Date",
+  "select_end_date": "Select End Date",
+  "notes": "Notes",
+  "notes_placeholder": "Add any additional details such as promotion reason or administrative tasks"
+}

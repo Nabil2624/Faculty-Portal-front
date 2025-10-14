@@ -1,0 +1,32 @@
+{
+  "addTask": {
+    "title": "Add Scientific Mission"
+  },
+    "editTask": {
+    "title": "Edit Scientific Mission"
+  },
+  "fields": {
+    "task": "Mission",
+    "country": "Country",
+    "city": "City",
+    "university": "University",
+    "college": "College",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "description": "Description"
+  },
+  "placeholders": {
+    "task": "e.g. Research on AI in healthcare",
+    "selectCountry": "Select country",
+    "city": "e.g. Cairo",
+    "university": "e.g. Helwan University",
+    "college": "e.g. Faculty of Computers",
+    "description": "Write a short description of the task...",
+    "startDate": "Select start date",
+    "endDate": "Select an end date (leave blank if ongoing)"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}

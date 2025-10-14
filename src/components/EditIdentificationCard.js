@@ -48,7 +48,7 @@ export default function IdentificationCard() {
         </div>
 
         {/* Buttons */}
-        <div className={`flex gap-3 absolute ${isArabic ? "left-[53px]" : "right-[53px]"} bottom-[52px]`}>
+        <div className={`flex gap-3 absolute ${isArabic ? "left-[53px]" : "right-[53px]"} bottom-[28px]`}>
           <button 
           onClick={()=>navigate("/identification-card")}
           className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}>

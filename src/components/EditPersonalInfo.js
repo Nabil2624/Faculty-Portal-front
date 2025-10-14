@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 
 export default function EditPersonalInfo() {
-  const { t, i18n } = useTranslation("PersonalData");
+  const { t, i18n } = useTranslation("personaldata");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
 
@@ -151,7 +151,7 @@ export default function EditPersonalInfo() {
               />
             </label>
 
-            <div className="flex gap-3 mt-11">
+            <div className={`flex gap-3 mt-[68px] ${isArabic ? "left-[53px]" : "right-[53px]"}`}>
               <button
                 onClick={handleSave}
                 className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${

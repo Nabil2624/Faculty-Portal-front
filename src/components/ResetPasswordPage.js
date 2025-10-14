@@ -9,7 +9,7 @@ import ukFlag from "../images/americaFlag.png";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function ResetPasswordPage() {
-  const { t, i18n } = useTranslation("ResetPassword");
+  const { t, i18n } = useTranslation("resetpassword");
   const navigate = useNavigate();
   const location = useLocation();
 

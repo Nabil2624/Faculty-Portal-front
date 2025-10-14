@@ -7,7 +7,7 @@ import egyptFlag from "../images/egyptFlag.png";
 import ukFlag from "../images/americaFlag.png";
 
 export default function Header({ isExpanded }) {
-  const { t, i18n } = useTranslation("HeaderAndSideBar");
+  const { t, i18n } = useTranslation("headerandsidebar");
   const [searchQuery, setSearchQuery] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -54,7 +54,7 @@ export default function Header({ isExpanded }) {
     <header
       className={`flex items-center justify-between w-[calc(100%-0.5rem)] 
       bg-[#19355a] px-4 py-2 text-white 
-      ${isArabic ? "mr-2" : "ml-2"} mb-4 rounded-lg`}
+      ${isArabic ? "mr-1" : "ml-1"} mb-4 rounded-lg`}
       style={{
         transition: "margin 0.3s ease-in-out",
       }}

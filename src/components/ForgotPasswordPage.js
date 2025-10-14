@@ -9,7 +9,7 @@ import egyptFlag from "../images/egyptFlag.png";
 import ukFlag from "../images/americaFlag.png";
 
 export default function ForgotPasswordPage() {
-  const { t, i18n } = useTranslation("ForgotPassword");
+  const { t, i18n } = useTranslation("forgetpassword");
   const [openDropdown, setOpenDropdown] = React.useState(false);
   const [identifier, setIdentifier] = React.useState("");
   const [error, setError] = React.useState("");

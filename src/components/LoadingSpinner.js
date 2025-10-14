@@ -13,7 +13,7 @@ export default function LoadingSpinner() {
           width="w-[220px]"
           height="h-[220px]"
           borderColor="border-gray-300"
-          borderTopColor="border-t-[#B38E19]" // gold spinner color
+          borderTopColor="border-t-[#B38E19]" 
         />
         
         {/* Logo + Nucleus في نفس الـdiv */}
