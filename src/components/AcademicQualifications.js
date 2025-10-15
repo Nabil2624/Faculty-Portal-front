@@ -207,12 +207,12 @@ export default function AcademicQualificationsPage() {
         {/* Buttons */}
         {/* Buttons at bottom-left (Arabic) or bottom-right (English) */}
         <div
-          className={`flex gap-3 absolute ${
-            isArabic ? "left-[53px]" : "right-[53px]"
-          } bottom-[52px]`}
+           className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+                isArabic ? "left-[53px]" : "right-[53px]"
+              } bottom-[28px]`}
         >
           <button
-            onClick={() => navigate("/edit-contact-info")}
+            onClick={() => navigate("/add-academic-qualification")}
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"
             } text-sm`}

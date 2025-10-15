@@ -72,7 +72,6 @@ function AppRouterInner() {
       <Route path="/edit-conference" element={<EditConference />} />
       <Route path="/add-Training-program" element={<AddTrainingProgram />} />
       <Route path="/edit-Training-program" element={<EditTrainingProgram />} />
-
       <Route path="/academic-qualifications" element={<AcademicQualifications />} />
       <Route path="/job-rankings" element={<JobRanks/>} />
       <Route path="/administrative-positions" element={<AdministrativePositions/>} />

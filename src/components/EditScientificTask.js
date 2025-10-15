@@ -53,7 +53,7 @@ export default function EditScientificTask({ taskData }) {
         className="p-4 sm:p-6 flex flex-col bg-white min-h-screen"
       >
         {/* Page Title */}
-        <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-20 inline-block relative text-start">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-20 inline-block relative text-start">
           {t("editTask.title") /* Change translation key if needed */}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>

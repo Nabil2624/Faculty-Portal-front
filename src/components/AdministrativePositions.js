@@ -3,6 +3,9 @@ import Layout from "./Layout";
 import { Pencil, Trash2, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import AddAdministrativePosition from "../components/AddAdministrativePosition";
+import EditAdminPosition from "./EditAdminPosition";
+
 
 export default function AdministrativePositions() {
   const { t, i18n } = useTranslation("AdministrativePositions");
@@ -10,6 +13,8 @@ export default function AdministrativePositions() {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showPositionsForm, setShowPositionsForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
 
   const handleDeleteClick = (item) => {
     setSelectedItem(item);
@@ -32,7 +37,8 @@ export default function AdministrativePositions() {
     {
       title: "منسق برنامج هندسة البرمجيات",
       period: "من 1 أكتوبر 2021 - حتى 30 يونيو 2023",
-      description: "مسؤول عن إدارة مقررات هندسة البرمجيات وتقييم الأداء الأكاديمي.",
+      description:
+        "مسؤول عن إدارة مقررات هندسة البرمجيات وتقييم الأداء الأكاديمي.",
     },
     {
       title: "عضو لجنة الدراسات العليا والبحوث",
@@ -135,7 +141,13 @@ export default function AdministrativePositions() {
                         isArabic ? "left-4" : "right-4"
                       } flex gap-3`}
                     >
-                      <Pencil className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition" />
+                      <Pencil
+                        className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setShowEditForm(true);
+                        }}
+                      />
                       <Trash2
                         className="text-[#E53935] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
                         onClick={() => handleDeleteClick(item)}
@@ -167,18 +179,19 @@ export default function AdministrativePositions() {
 
         {/* Buttons */}
         <div
-          className={`flex gap-3 absolute ${
-            isArabic ? "left-[53px]" : "right-[53px]"
-          } bottom-[52px]`}
+          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+                isArabic ? "left-[53px]" : "right-[53px]"
+              } bottom-[28px]`}
         >
           <button
-            onClick={() => navigate("/edit-administrative-positions")}
+            onClick={() => setShowPositionsForm(true)}
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"
             } text-sm`}
           >
-            {t("edit") || "Edit"}
+            {t("edit") || "Add"}
           </button>
+
           <button
             onClick={() => navigate(-1)}
             className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
@@ -197,9 +210,7 @@ export default function AdministrativePositions() {
             <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3">
               {t("areYouSureDelete") || "Are you sure you want to delete this?"}
             </h3>
-            <p className="text-sm text-gray-600 mb-5">
-              {selectedItem?.title}
-            </p>
+            <p className="text-sm text-gray-600 mb-5">{selectedItem?.title}</p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={confirmDelete}
@@ -214,6 +225,28 @@ export default function AdministrativePositions() {
                 {t("cancel") || "Cancel"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/*  AdministrativePositionsForm Modal */}
+      {showPositionsForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="rounded-lg shadow-none p-0 w-[480px] relative bg-transparent">
+            <AddAdministrativePosition
+              onCancel={() => setShowPositionsForm(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {showEditForm && selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="rounded-lg shadow-none p-0 w-[480px] relative bg-transparent">
+            <EditAdminPosition
+              data={selectedItem}
+              onCancel={() => setShowEditForm(false)}
+            />
           </div>
         </div>
       )}

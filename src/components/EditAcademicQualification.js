@@ -70,7 +70,7 @@ export default function EditAcademicQualification({ existingData }) {
     <Layout>
       <div dir={isArabic ? "rtl" : "ltr"} className="p-4 sm:p-6 bg-white min-h-screen">
         {/* Page Title */}
-        <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-19 inline-block w-full max-w-6xl">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-19 inline-block w-full max-w-6xl">
           {t("edit-academic-qualification")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>

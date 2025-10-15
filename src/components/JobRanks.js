@@ -3,6 +3,8 @@ import Layout from "../components/Layout";
 import { Pencil, Trash2, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import JobGradeForm from "../components/JobGradeForm";
+import EditJobGrade from "../components/EditJobGrade";
 
 export default function JobRanks() {
   const { t, i18n } = useTranslation("JobRanks");
@@ -10,6 +12,8 @@ export default function JobRanks() {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showJobGradeForm, setShowJobGradeForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
 
   const handleDeleteClick = (item) => {
     setSelectedItem(item);
@@ -27,22 +31,18 @@ export default function JobRanks() {
     {
       title: "أستاذ مساعد",
       period: "من 1 أكتوبر 2020 - حتى الآن",
-      
     },
     {
       title: "مدرس",
       period: "من 1 أكتوبر 2016 - حتى 30 سبتمبر 2020",
-      
     },
     {
       title: "مدرس مساعد",
       period: "من 1 أكتوبر 2012 - حتى 30 سبتمبر 2016",
-     
     },
     {
       title: "معيد",
       period: "من 1 أكتوبر 2008 - حتى 30 سبتمبر 2012",
-      
     },
   ];
 
@@ -135,7 +135,14 @@ export default function JobRanks() {
                         isArabic ? "left-4" : "right-4"
                       } flex gap-3`}
                     >
-                      <Pencil className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition" />
+                      <Pencil
+                        className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setShowEditForm(true);
+                        }}
+                      />
+
                       <Trash2
                         className="text-[#E53935] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
                         onClick={() => handleDeleteClick(item)}
@@ -167,18 +174,19 @@ export default function JobRanks() {
 
         {/* Buttons */}
         <div
-          className={`flex gap-3 absolute ${
-            isArabic ? "left-[53px]" : "right-[53px]"
-          } bottom-[52px]`}
+          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+                isArabic ? "left-[53px]" : "right-[53px]"
+              } bottom-[28px]`}
         >
           <button
-            onClick={() => navigate("/edit-job-ranks")}
+            onClick={() => setShowJobGradeForm(true)}
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
+                  isArabic ? "cairo" : "roboto"
+                } text-sm`}
           >
-            {t("edit") || "Edit"}
+            {t("edit") || "Add"}
           </button>
+
           <button
             onClick={() => navigate(-1)}
             className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
@@ -197,9 +205,7 @@ export default function JobRanks() {
             <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3">
               {t("areYouSureDelete") || "Are you sure you want to delete this?"}
             </h3>
-            <p className="text-sm text-gray-600 mb-5">
-              {selectedItem?.title}
-            </p>
+            <p className="text-sm text-gray-600 mb-5">{selectedItem?.title}</p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={confirmDelete}
@@ -214,6 +220,26 @@ export default function JobRanks() {
                 {t("cancel") || "Cancel"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showJobGradeForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="rounded-lg shadow-none p-0 w-[480px] relative">
+            <JobGradeForm onCancel={() => setShowJobGradeForm(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Edit Job Grade Form Modal */}
+      {showEditForm && selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="rounded-lg shadow-none p-0 w-[480px] relative">
+            <EditJobGrade
+              data={selectedItem}
+              onCancel={() => setShowEditForm(false)}
+            />
           </div>
         </div>
       )}

@@ -78,7 +78,11 @@ export default function PersonalDataPage() {
               />
             </div>
 
-            <div className="flex gap-3 mt-4">
+           
+          </div>
+           <div  className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+                isArabic ? "left-[53px]" : "right-[53px]"
+              } bottom-[28px]`}>
               <button
                 onClick={() => navigate("/editpersonal")}
                 className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
@@ -96,7 +100,6 @@ export default function PersonalDataPage() {
                 {t("back")}
               </button>
             </div>
-          </div>
 
           {/* Personal info grid */}
           <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-4 ml-10">

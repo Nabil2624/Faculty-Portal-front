@@ -45,18 +45,18 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
           key: "scientificProgression",
           link: "/academic-data/scientific-progression",
           sub: [
-            { key: "academicQualifications", link: "/personal" },
-            { key: "jobGrades", link: "/contact-info" },
-            { key: "administrativePositions", link: "/social-networking" },
+            { key: "academicQualifications", link: "/academic-qualifications" },
+            { key: "jobGrades", link: "/job-rankings" },
+            { key: "administrativePositions", link: "/administrative-positions" },
           ],
         },
                 {
           key: "missions",
           link: "/academic-data/missions",
           sub: [
-            { key: "scientificMissions", link: "/personal" },
-            { key: "seminarsAndConferences", link: "/contact-info" },
-            { key: "trainingPrograms", link: "/social-networking" },
+            { key: "scientificMissions", link: "/scientific-missions" },
+            { key: "seminarsAndConferences", link: "/seminars-and-conferences" },
+            { key: "trainingPrograms", link: "/training-programs" },
           ],
         },
    

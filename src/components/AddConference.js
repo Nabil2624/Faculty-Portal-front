@@ -4,11 +4,11 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
 import { Info } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 export default function AddConference() {
   const { t, i18n } = useTranslation("add-conference");
   const isArabic = i18n.language === "ar";
-
+  const navigate = useNavigate();
   const startDateRef = useRef(null);
   const endDateRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -55,7 +55,7 @@ export default function AddConference() {
   return (
     <Layout>
       <div dir={isArabic ? "rtl" : "ltr"} className="p-4 sm:p-6 bg-white min-h-screen">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-8 inline-block w-full max-w-6xl">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-12 inline-block w-full max-w-6xl">
           {t("addConference")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
@@ -342,6 +342,7 @@ export default function AddConference() {
             >
               <button
                 type="submit"
+                onClick={() => navigate("/seminars-and-conferences")}
                 className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
@@ -350,6 +351,7 @@ export default function AddConference() {
               </button>
               <button
                 type="button"
+                 onClick={() => navigate("/seminars-and-conferences")}
                 className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}

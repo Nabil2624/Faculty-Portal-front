@@ -4,10 +4,12 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
 import { Info } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function AddAcademicQualification() {
   const { t, i18n } = useTranslation("add-academic-qualification");
   const isArabic = i18n.language === "ar";
+  const navigate = useNavigate();
 
   const graduationDateRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -26,7 +28,10 @@ export default function AddAcademicQualification() {
   });
 
   const openDatePicker = () => {
-    if (graduationDateRef.current && typeof graduationDateRef.current.showPicker === "function") {
+    if (
+      graduationDateRef.current &&
+      typeof graduationDateRef.current.showPicker === "function"
+    ) {
       graduationDateRef.current.showPicker();
     }
   };
@@ -51,9 +56,12 @@ export default function AddAcademicQualification() {
 
   return (
     <Layout>
-      <div dir={isArabic ? "rtl" : "ltr"} className="p-4 sm:p-6 bg-white min-h-screen">
+      <div
+        dir={isArabic ? "rtl" : "ltr"}
+        className="p-4 sm:p-6 bg-white min-h-screen"
+      >
         {/* Page Title */}
-        <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-19 inline-block w-full max-w-6xl">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-19 inline-block w-full max-w-6xl">
           {t("addAcademicQualification")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
@@ -68,7 +76,9 @@ export default function AddAcademicQualification() {
             <div className="space-y-6">
               {/* Degree */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("degree")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("degree")}
+                </label>
                 <div className="relative flex items-center">
                   <select
                     name="degree"
@@ -92,14 +102,16 @@ export default function AddAcademicQualification() {
 
               {/* Delegation */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("delegation")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("delegation")}
+                </label>
                 <div className="relative flex items-center">
                   <select
                     name="delegation"
                     className={`${inputBase} ${focusStyle} appearance-none flex-1`}
                     value={formData.delegation}
                     onChange={handleChange}
-                    placeholder = {t("delegation-placeholder")}
+                    placeholder={t("delegation-placeholder")}
                   >
                     <option value="">{t("delegation-placeholder")}</option>
                     <option value="internal">Egypt</option>
@@ -119,7 +131,9 @@ export default function AddAcademicQualification() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Country */}
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("country")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("country")}
+                  </label>
                   <div className="relative flex items-center">
                     <select
                       name="country"
@@ -142,7 +156,9 @@ export default function AddAcademicQualification() {
 
                 {/* City */}
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("city")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("city")}
+                  </label>
                   <input
                     type="text"
                     name="city"
@@ -156,7 +172,9 @@ export default function AddAcademicQualification() {
 
               {/* University */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("university")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("university")}
+                </label>
                 <input
                   type="text"
                   name="university"
@@ -169,7 +187,9 @@ export default function AddAcademicQualification() {
 
               {/* Attachments */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("attachments")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("attachments")}
+                </label>
                 <div className="flex items-start gap-2 mb-2">
                   <Info size={17} className="text-gray-600 mt-1" />
                   <p className="text-yellow-600 text-sm">{t("subtitle")}</p>
@@ -187,7 +207,9 @@ export default function AddAcademicQualification() {
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                    onClick={() =>
+                      fileInputRef.current && fileInputRef.current.click()
+                    }
                     className="bg-[#19355A] text-white px-9 py-1 rounded-md hover:bg-[#162d4a] transition-colors"
                   >
                     {t("chooseFile")}
@@ -206,7 +228,9 @@ export default function AddAcademicQualification() {
             <div className="space-y-6">
               {/* Specialization */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("specialization")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("specialization")}
+                </label>
                 <input
                   type="text"
                   name="specialization"
@@ -219,7 +243,9 @@ export default function AddAcademicQualification() {
 
               {/* Grade */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("grade")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("grade")}
+                </label>
                 <div className="relative flex items-center">
                   <select
                     name="grade"
@@ -243,7 +269,9 @@ export default function AddAcademicQualification() {
 
               {/* Graduation Date */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("graduationDate")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("graduationDate")}
+                </label>
                 <div className="relative">
                   <input
                     type="text"
@@ -266,7 +294,10 @@ export default function AddAcademicQualification() {
                     ref={graduationDateRef}
                     className="absolute opacity-0 pointer-events-none"
                     onChange={(e) =>
-                      setFormData({ ...formData, graduationDate: e.target.value })
+                      setFormData({
+                        ...formData,
+                        graduationDate: e.target.value,
+                      })
                     }
                   />
                 </div>
@@ -274,7 +305,9 @@ export default function AddAcademicQualification() {
 
               {/* College */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("college")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("college")}
+                </label>
                 <input
                   type="text"
                   name="college"
@@ -292,14 +325,21 @@ export default function AddAcademicQualification() {
                 isArabic ? "left-[53px]" : "right-[53px]"
               } bottom-[28px]`}
             >
+              {/* Save Button */}
               <button
+                type="submit"
+                onClick={() => navigate("/academic-qualifications")}
                 className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
               >
                 {t("save")}
               </button>
+
+              {/* Cancel Button */}
               <button
+                type="button"
+                onClick={() => navigate("/academic-qualifications")}
                 className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}

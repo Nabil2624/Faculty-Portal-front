@@ -11,5 +11,7 @@
   "end_date": "End Date",
   "select_end_date": "Select End Date",
   "notes": "Notes",
-  "notes_placeholder": "Add any additional details such as promotion reason or administrative tasks"
+  "notes_placeholder": "Add any additional details such as promotion reason or administrative tasks",
+  "add":"Add",
+  "cancel":"Cancel"
 }

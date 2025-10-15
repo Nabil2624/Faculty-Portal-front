@@ -3,10 +3,12 @@ import React, { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 export default function AddTrainingProgram() {
   const { t, i18n } = useTranslation("add-training-program");
   const isArabic = i18n.language === "ar";
+  const navigate = useNavigate();
 
   const startDateRef = useRef(null);
   const endDateRef = useRef(null);
@@ -46,8 +48,11 @@ export default function AddTrainingProgram() {
 
   return (
     <Layout>
-      <div dir={isArabic ? "rtl" : "ltr"} className="p-4 sm:p-6 bg-white min-h-screen">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-8 inline-block w-full max-w-6xl">
+      <div
+        dir={isArabic ? "rtl" : "ltr"}
+        className="p-4 sm:p-6 bg-white min-h-screen"
+      >
+        <h2 className="text-2xl sm:text-3xl font-bold mb-12 inline-block w-full max-w-6xl">
           {t("addTrainingProgram")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
@@ -62,7 +67,9 @@ export default function AddTrainingProgram() {
               {/* Program Type + Participation Type */}
               <div className="flex gap-8">
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("programType")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("programType")}
+                  </label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2">
                       <input
@@ -88,7 +95,9 @@ export default function AddTrainingProgram() {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("participationType")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("participationType")}
+                  </label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2">
                       <input
@@ -116,7 +125,9 @@ export default function AddTrainingProgram() {
 
               {/* Program Name */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("programName")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("programName")}
+                </label>
                 <input
                   type="text"
                   name="programName"
@@ -129,7 +140,9 @@ export default function AddTrainingProgram() {
 
               {/* Organizing Body */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("organizingBody")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("organizingBody")}
+                </label>
                 <input
                   type="text"
                   name="organizingBody"
@@ -143,7 +156,9 @@ export default function AddTrainingProgram() {
               {/* Dates */}
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("startDate")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("startDate")}
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
@@ -173,7 +188,9 @@ export default function AddTrainingProgram() {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("endDate")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("endDate")}
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
@@ -210,7 +227,9 @@ export default function AddTrainingProgram() {
                 {/* Country + City */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block mb-2 text-lg font-medium">{t("country")}</label>
+                    <label className="block mb-2 text-lg font-medium">
+                      {t("country")}
+                    </label>
                     <div className="relative flex items-center">
                       <select
                         name="country"
@@ -232,7 +251,9 @@ export default function AddTrainingProgram() {
                   </div>
 
                   <div>
-                    <label className="block mb-2 text-lg font-medium">{t("city")}</label>
+                    <label className="block mb-2 text-lg font-medium">
+                      {t("city")}
+                    </label>
                     <input
                       type="text"
                       name="city"
@@ -246,7 +267,9 @@ export default function AddTrainingProgram() {
 
                 {/* Description */}
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("description")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("description")}
+                  </label>
                   <textarea
                     name="description"
                     placeholder={t("descriptionPlaceholder")}
@@ -258,23 +281,29 @@ export default function AddTrainingProgram() {
               </div>
             </div>
           </form>
-          
+
+         
             {/* Buttons */}
             <div
               className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
                 isArabic ? "left-[53px]" : "right-[53px]"
               } bottom-[28px]`}
             >
+              {/* Save button */}
               <button
-                type="submit"
+                type="button"
+                onClick={() => navigate("/training-programs")}
                 className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
               >
                 {t("save")}
               </button>
+
+              {/* Cancel button */}
               <button
                 type="button"
+                onClick={() => navigate("/training-programs")}
                 className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
@@ -282,6 +311,7 @@ export default function AddTrainingProgram() {
                 {t("cancel")}
               </button>
             </div>
+         
         </div>
       </div>
     </Layout>

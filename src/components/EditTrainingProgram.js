@@ -65,7 +65,7 @@ export default function EditTrainingProgram({ existingData }) {
   return (
     <Layout>
       <div dir={isArabic ? "rtl" : "ltr"} className="p-4 sm:p-6 bg-white min-h-screen">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-8 inline-block w-full max-w-6xl">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-12 inline-block w-full max-w-6xl">
           {t("editTrainingProgram")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>

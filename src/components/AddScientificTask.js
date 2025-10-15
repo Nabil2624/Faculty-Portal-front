@@ -2,11 +2,12 @@ import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 export default function AddScientificTask() {
   const { t, i18n } = useTranslation("add-scientific-task");
   const isArabic = i18n.language === "ar";
-
+  const navigate = useNavigate();
   const startDateNativeRef = useRef(null);
   const endDateNativeRef = useRef(null);
 
@@ -32,7 +33,7 @@ export default function AddScientificTask() {
         className="p-4 sm:p-6 flex flex-col bg-white min-h-screen"
       >
         {/* Page Title */}
-        <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-19 inline-block relative text-start">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-19 inline-block relative text-start">
           {t("addTask.title")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
@@ -44,7 +45,7 @@ export default function AddScientificTask() {
             <div className="space-y-6">
               {/* Task Name */}
               <div>
-                <label className="block mb-2 text-lg  font-medium">
+                <label className="block mb-2 text-lg font-medium">
                   {t("fields.task")}
                 </label>
                 <input
@@ -58,7 +59,7 @@ export default function AddScientificTask() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Country */}
                 <div className="relative">
-                  <label className="block mb-2 text-lg  font-medium">
+                  <label className="block mb-2 text-lg font-medium">
                     {t("fields.country")}
                   </label>
                   <div className="relative">
@@ -82,12 +83,12 @@ export default function AddScientificTask() {
 
                 {/* City */}
                 <div>
-                  <label className="block mb-2 text-lg  font-medium">
+                  <label className="block mb-2 text-lg font-medium">
                     {t("fields.city")}
                   </label>
                   <input
                     type="text"
-                    className={`${inputBase} ${focusStyle} `}
+                    className={`${inputBase} ${focusStyle}`}
                     placeholder={t("placeholders.city")}
                   />
                 </div>
@@ -95,12 +96,12 @@ export default function AddScientificTask() {
 
               {/* Description */}
               <div>
-                <label className="block mb-2 text-lg  font-medium">
+                <label className="block mb-2 text-lg font-medium">
                   {t("fields.description")}
                 </label>
                 <textarea
                   rows="5"
-                  className={`${inputBase} ${focusStyle} resize-none `}
+                  className={`${inputBase} ${focusStyle} resize-none`}
                   placeholder={t("placeholders.description")}
                 />
               </div>
@@ -110,11 +111,10 @@ export default function AddScientificTask() {
             <div className="space-y-6">
               {/* Start Date */}
               <div className="relative">
-                <label className="block mb-2 text-lg  font-medium">
+                <label className="block mb-2 text-lg font-medium">
                   {t("fields.startDate")}
                 </label>
                 <div className="relative">
-                  {/* Visible text input */}
                   <input
                     type="text"
                     value={startDate}
@@ -123,7 +123,6 @@ export default function AddScientificTask() {
                     className={`${inputBase} ${focusStyle}`}
                     onFocus={() => openDatePicker(startDateNativeRef)}
                   />
-                  {/* Calendar icon */}
                   <FiCalendar
                     role="button"
                     aria-label="Open date picker"
@@ -133,7 +132,6 @@ export default function AddScientificTask() {
                       isArabic ? "left-3" : "right-3"
                     }`}
                   />
-                  {/* Hidden native date input */}
                   <input
                     type="date"
                     ref={startDateNativeRef}
@@ -145,11 +143,10 @@ export default function AddScientificTask() {
 
               {/* End Date */}
               <div className="relative">
-                <label className="block mb-2 text-lg  font-medium">
+                <label className="block mb-2 text-lg font-medium">
                   {t("fields.endDate")}
                 </label>
                 <div className="relative">
-                  {/* Visible text input */}
                   <input
                     type="text"
                     value={endDate}
@@ -158,7 +155,6 @@ export default function AddScientificTask() {
                     className={`${inputBase} ${focusStyle}`}
                     onFocus={() => openDatePicker(endDateNativeRef)}
                   />
-                  {/* Calendar icon */}
                   <FiCalendar
                     role="button"
                     aria-label="Open date picker"
@@ -168,7 +164,6 @@ export default function AddScientificTask() {
                       isArabic ? "left-3" : "right-3"
                     }`}
                   />
-                  {/* Hidden native date input */}
                   <input
                     type="date"
                     ref={endDateNativeRef}
@@ -180,24 +175,24 @@ export default function AddScientificTask() {
 
               {/* University */}
               <div>
-                <label className="block mb-2 text-lg  font-medium">
+                <label className="block mb-2 text-lg font-medium">
                   {t("fields.university")}
                 </label>
                 <input
                   type="text"
-                  className={`${inputBase} ${focusStyle} `}
+                  className={`${inputBase} ${focusStyle}`}
                   placeholder={t("placeholders.university")}
                 />
               </div>
 
               {/* College */}
               <div>
-                <label className="block mb-2 text-lg  font-medium">
+                <label className="block mb-2 text-lg font-medium">
                   {t("fields.college")}
                 </label>
                 <input
                   type="text"
-                  className={`${inputBase} ${focusStyle} `}
+                  className={`${inputBase} ${focusStyle}`}
                   placeholder={t("placeholders.college")}
                 />
               </div>
@@ -206,19 +201,28 @@ export default function AddScientificTask() {
 
           {/* Buttons */}
           <div
-            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${isArabic ? "left-[53px]" : "right-[53px]"} bottom-[28px]`}
+            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+              isArabic ? "left-[53px]" : "right-[53px]"
+            } bottom-[28px]`}
           >
+            {/* Save Button */}
             <button
+              type="button"
+              onClick={() => navigate("/scientific-missions")}
               className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
                 isArabic ? "cairo" : "roboto"
-              } text-lg `}
+              } text-sm`}
             >
               {t("buttons.save")}
             </button>
+
+            {/* Cancel Button */}
             <button
+              type="button"
+              onClick={() => navigate("/scientific-missions")}
               className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
                 isArabic ? "cairo" : "roboto"
-              } text-lg `}
+              } text-sm`}
             >
               {t("buttons.cancel")}
             </button>
@@ -227,4 +231,4 @@ export default function AddScientificTask() {
       </div>
     </Layout>
   );
-} 
+}

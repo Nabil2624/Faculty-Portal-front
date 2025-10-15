@@ -151,7 +151,11 @@ export default function EditPersonalInfo() {
               />
             </label>
 
-            <div className={`flex gap-3 mt-[68px] ${isArabic ? "left-[53px]" : "right-[53px]"}`}>
+            
+          </div>
+          <div className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+                isArabic ? "left-[53px]" : "right-[53px]"
+              } bottom-[28px]`}>
               <button
                 onClick={handleSave}
                 className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
@@ -169,7 +173,6 @@ export default function EditPersonalInfo() {
                 {t("cancel")}
               </button>
             </div>
-          </div>
 
           {/* Info Section */}
           <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-4 ml-10">

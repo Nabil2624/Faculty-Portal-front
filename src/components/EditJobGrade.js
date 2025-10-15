@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Calendar, ChevronDown, Pen } from "lucide-react";
-
-export default function EditJobGrade() {
+import { useEffect } from "react"; 
+export default function EditJobGrade({ data, onCancel }) {
   const { t, i18n } = useTranslation("form");
   const dir = i18n.dir();
-
+  const isArabic = i18n.language === "ar";
   const [formData, setFormData] = useState({
     jobGrade: "",
     startDate: "",
@@ -22,7 +22,14 @@ export default function EditJobGrade() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+useEffect(() => {
+  if (data) {
+    setFormData({
+      jobGrade: data.title || "",
+      startDate: data.period || "",
+    });
+  }
+}, [data]);
   // Open native date picker safely
   const openDatePicker = (ref) => {
     if (!ref?.current) return;
@@ -43,14 +50,15 @@ export default function EditJobGrade() {
   const inputClass =
     "w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 transition duration-150 bg-[#E2E2E2] text-sm";
 
-  const focusClasses = "focus:outline-none focus:ring-2 focus:ring-[#B38E19] transition duration-150 shadow";
+  const focusClasses =
+    "focus:outline-none focus:ring-2 focus:ring-[#B38E19] transition duration-150 shadow";
 
   return (
     <form
       key={i18n.language} // re-render when language changes
       dir={dir}
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto mt-6 bg-[#EDEDED] border border-gray-300 rounded-xl shadow-sm p-6"
+      className="max-w-md mx-auto mt-6 bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
     >
       {/* Header */}
       <div className="flex items-center justify-center mb-6">
@@ -186,6 +194,27 @@ export default function EditJobGrade() {
           placeholder={t("notes_placeholder")}
           className={`${inputClass} ${focusClasses} bg-[#f5f5f5] resize-none text-gray-600`}
         ></textarea>
+      </div>
+
+      <div className="flex justify-center gap-3">
+        <button
+          type="submit"
+          className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
+            isArabic ? "cairo" : "roboto"
+          } text-sm`}
+        >
+          {t("add") || "Add"}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onCancel && onCancel()}
+          className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
+            isArabic ? "cairo" : "roboto"
+          } text-sm`}
+        >
+          {t("cancel") || "Cancel"}
+        </button>
       </div>
     </form>
   );
