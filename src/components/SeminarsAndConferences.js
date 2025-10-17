@@ -4,6 +4,7 @@ import { Pencil, Trash2, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+
 export default function SeminarsAndConferences() {
   const { t, i18n } = useTranslation("SeminarsAndConferences");
   const isArabic = i18n.language === "ar";
@@ -148,7 +149,15 @@ export default function SeminarsAndConferences() {
                         isArabic ? "left-4" : "right-4"
                       } flex gap-3`}
                     >
-                      <Pencil className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition" />
+                      <Pencil
+                        className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
+                        onClick={() =>
+                          navigate("/edit-conference", {
+                            state: { existingData: item },
+                          })
+                        }
+                      />
+
                       <Trash2
                         className="text-[#E53935] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
                         onClick={() => handleDeleteClick(item)}
@@ -179,7 +188,9 @@ export default function SeminarsAndConferences() {
                           isArabic ? "flex-row-reverse" : "flex-row-reverse"
                         }`}
                       >
-                        <span className={`${isArabic ? "ml-3":"mr-3"}`}>{item.location}</span>
+                        <span className={`${isArabic ? "ml-3" : "mr-3"}`}>
+                          {item.location}
+                        </span>
 
                         <span>{item.type}</span>
                         <span>{item.role}</span>
@@ -224,10 +235,10 @@ export default function SeminarsAndConferences() {
 
         {/* Buttons */}
         <div
-         className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
-                isArabic ? "left-[53px]" : "right-[53px]"
-              } bottom-[28px]`}>
-        
+          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+            isArabic ? "left-[53px]" : "right-[53px]"
+          } bottom-[28px]`}
+        >
           <button
             onClick={() => navigate("/add-conference")}
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${

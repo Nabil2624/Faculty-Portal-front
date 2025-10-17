@@ -147,7 +147,15 @@ export default function TrainingPrograms() {
                         isArabic ? "left-4" : "right-4"
                       } flex gap-3`}
                     >
-                      <Pencil className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition" />
+                      <Pencil
+                        className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
+                        onClick={() =>
+                          navigate("/edit-training-program", {
+                            state: { program: item },
+                          })
+                        }
+                      />
+
                       <Trash2
                         className="text-[#E53935] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
                         onClick={() => handleDeleteClick(item)}
@@ -206,9 +214,9 @@ export default function TrainingPrograms() {
 
         {/* Bottom buttons */}
         <div
-         className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
-                isArabic ? "left-[53px]" : "right-[53px]"
-              } bottom-[28px]`}
+          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+            isArabic ? "left-[53px]" : "right-[53px]"
+          } bottom-[28px]`}
         >
           <button
             onClick={() => navigate("/add-Training-program")}

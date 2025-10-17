@@ -44,7 +44,8 @@ export default function ScientificMissions() {
       title: "زيارة علمية لتطوير مناهج نظم المعلومات",
       institution: "كلية الحاسبات والذكاء الاصطناعي جامعة القاهرة",
       period: "من 1 نوفمبر 2021 - حتى 25 نوفمبر 2021",
-      description: "تنسيق ورشة عمل حول تطوير مناهج نظم المعلومات وتحسين مخرجات التعليم الجامعي.",
+      description:
+        "تنسيق ورشة عمل حول تطوير مناهج نظم المعلومات وتحسين مخرجات التعليم الجامعي.",
       location: "القاهرة - مصر",
     },
   ];
@@ -138,7 +139,15 @@ export default function ScientificMissions() {
                         isArabic ? "left-4" : "right-4"
                       } flex gap-3`}
                     >
-                      <Pencil className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition" />
+                      <Pencil
+                        className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
+                        onClick={() =>
+                          navigate("/edit-scientific-task", {
+                            state: { taskData: item },
+                          })
+                        }
+                      />
+
                       <Trash2
                         className="text-[#E53935] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
                         onClick={() => handleDeleteClick(item)}
@@ -178,10 +187,10 @@ export default function ScientificMissions() {
 
         {/* Buttons */}
         <div
-         className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
-                isArabic ? "left-[53px]" : "right-[53px]"
-              } bottom-[28px]`}>
-        
+          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+            isArabic ? "left-[53px]" : "right-[53px]"
+          } bottom-[28px]`}
+        >
           <button
             onClick={() => navigate("/add-scientific-task")}
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
@@ -208,9 +217,7 @@ export default function ScientificMissions() {
             <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3">
               {t("areYouSureDelete") || "Are you sure you want to delete this?"}
             </h3>
-            <p className="text-sm text-gray-600 mb-5">
-              {selectedItem?.title}
-            </p>
+            <p className="text-sm text-gray-600 mb-5">{selectedItem?.title}</p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={confirmDelete}

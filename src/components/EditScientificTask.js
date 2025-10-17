@@ -2,13 +2,17 @@ import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export default function EditScientificTask({ taskData }) {
-  const { t, i18n } = useTranslation("add-scientific-task"); // can still use same translation
+export default function EditScientificTask() {
+  const location = useLocation();
+  const taskData = location.state?.taskData || null;
+  const { t, i18n } = useTranslation("add-scientific-task");
   const isArabic = i18n.language === "ar";
-
   const startDateNativeRef = useRef(null);
   const endDateNativeRef = useRef(null);
+  const navigate = useNavigate();
 
   // Initialize state with existing data (edit mode)
   const [taskName, setTaskName] = useState("");
@@ -23,14 +27,17 @@ export default function EditScientificTask({ taskData }) {
   // Load existing data into inputs
   useEffect(() => {
     if (taskData) {
-      setTaskName(taskData.taskName || "");
-      setCountry(taskData.country || "");
-      setCity(taskData.city || "");
+      setTaskName(taskData.title || "");
+      setCountry(taskData.location?.split("-")[1]?.trim() || "");
+      setCity(taskData.location?.split("-")[0]?.trim() || "");
       setDescription(taskData.description || "");
-      setStartDate(taskData.startDate || "");
-      setEndDate(taskData.endDate || "");
-      setUniversity(taskData.university || "");
-      setCollege(taskData.college || "");
+      setUniversity(taskData.institution || "");
+      setStartDate(
+        taskData.period?.split("-")[0]?.replace("من", "").trim() || ""
+      );
+      setEndDate(
+        taskData.period?.split("-")[1]?.replace("حتى", "").trim() || ""
+      );
     }
   }, [taskData]);
 
@@ -45,6 +52,22 @@ export default function EditScientificTask({ taskData }) {
 
   const focusStyle =
     "focus:border-gray-300 focus:shadow-[0_0_0_4px_rgba(179,142,25,0.5)]";
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = {
+      taskName,
+      country,
+      city,
+      description,
+      startDate,
+      endDate,
+      university,
+      college,
+    };
+    console.log("Submitted data:", formData);
+    navigate("/scientific-missions");
+  };
 
   return (
     <Layout>
@@ -126,7 +149,7 @@ export default function EditScientificTask({ taskData }) {
                   {t("fields.description")}
                 </label>
                 <textarea
-                  rows="5"
+                  rows="6"
                   className={`${inputBase} ${focusStyle} resize-none`}
                   placeholder={t("placeholders.description")}
                   value={description}
@@ -242,17 +265,24 @@ export default function EditScientificTask({ taskData }) {
               isArabic ? "left-[53px]" : "right-[53px]"
             } bottom-[28px]`}
           >
+            {/* Save Button */}
             <button
+              type="submit"
+              onClick={handleSubmit}
               className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
                 isArabic ? "cairo" : "roboto"
-              } text-lg`}
+              } text-sm`}
             >
               {t("buttons.save")}
             </button>
+
+            {/* Cancel Button */}
             <button
+              type="button"
+              onClick={() => navigate("/scientific-missions")}
               className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
                 isArabic ? "cairo" : "roboto"
-              } text-lg`}
+              } text-sm`}
             >
               {t("buttons.cancel")}
             </button>

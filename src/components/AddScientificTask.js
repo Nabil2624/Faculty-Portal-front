@@ -100,7 +100,7 @@ export default function AddScientificTask() {
                   {t("fields.description")}
                 </label>
                 <textarea
-                  rows="5"
+                  rows="6"
                   className={`${inputBase} ${focusStyle} resize-none`}
                   placeholder={t("placeholders.description")}
                 />

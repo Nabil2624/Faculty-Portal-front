@@ -1,10 +1,13 @@
-// src/pages/EditTrainingProgram.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
+import { useLocation, useNavigate } from "react-router-dom";
 
-export default function EditTrainingProgram({ existingData }) {
+export default function EditTrainingProgram() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const existingData = location.state?.program || null;
   const { t, i18n } = useTranslation("add-training-program");
   const isArabic = i18n.language === "ar";
 
@@ -23,7 +26,7 @@ export default function EditTrainingProgram({ existingData }) {
     endDate: "",
   });
 
-  // Populate formData with existing data when component mounts
+  // Populate formData with existing data when editing
   useEffect(() => {
     if (existingData) {
       setFormData({
@@ -51,10 +54,17 @@ export default function EditTrainingProgram({ existingData }) {
     setFormData({ ...formData, [name]: value });
   };
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Updated Training Program:", formData);
-    // Call API to update the program here
+    // Here you’d call your API to update the program
+    navigate("/training-programs");
+  };
+
+
+  const handleCancel = () => {
+    navigate("/training-programs");
   };
 
   const inputBase =
@@ -80,7 +90,9 @@ export default function EditTrainingProgram({ existingData }) {
               {/* Program Type + Participation Type */}
               <div className="flex gap-8">
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("programType")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("programType")}
+                  </label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2">
                       <input
@@ -106,7 +118,9 @@ export default function EditTrainingProgram({ existingData }) {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("participationType")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("participationType")}
+                  </label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2">
                       <input
@@ -134,7 +148,9 @@ export default function EditTrainingProgram({ existingData }) {
 
               {/* Program Name */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("programName")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("programName")}
+                </label>
                 <input
                   type="text"
                   name="programName"
@@ -147,7 +163,9 @@ export default function EditTrainingProgram({ existingData }) {
 
               {/* Organizing Body */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("organizingBody")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("organizingBody")}
+                </label>
                 <input
                   type="text"
                   name="organizingBody"
@@ -161,7 +179,9 @@ export default function EditTrainingProgram({ existingData }) {
               {/* Dates */}
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("startDate")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("startDate")}
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
@@ -191,7 +211,9 @@ export default function EditTrainingProgram({ existingData }) {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("endDate")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("endDate")}
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
@@ -228,7 +250,9 @@ export default function EditTrainingProgram({ existingData }) {
                 {/* Country + City */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block mb-2 text-lg font-medium">{t("country")}</label>
+                    <label className="block mb-2 text-lg font-medium">
+                      {t("country")}
+                    </label>
                     <div className="relative flex items-center">
                       <select
                         name="country"
@@ -250,7 +274,9 @@ export default function EditTrainingProgram({ existingData }) {
                   </div>
 
                   <div>
-                    <label className="block mb-2 text-lg font-medium">{t("city")}</label>
+                    <label className="block mb-2 text-lg font-medium">
+                      {t("city")}
+                    </label>
                     <input
                       type="text"
                       name="city"
@@ -264,7 +290,9 @@ export default function EditTrainingProgram({ existingData }) {
 
                 {/* Description */}
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("description")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("description")}
+                  </label>
                   <textarea
                     name="description"
                     placeholder={t("descriptionPlaceholder")}
@@ -275,32 +303,34 @@ export default function EditTrainingProgram({ existingData }) {
                 </div>
               </div>
             </div>
-          </form>
 
-          {/* Buttons */}
-          <div
-            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
-              isArabic ? "left-[53px]" : "right-[53px]"
-            } bottom-[28px]`}
-          >
-            <button
-              type="submit"
-              className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
-                isArabic ? "cairo" : "roboto"
-              } text-sm`}
-              onClick={handleSubmit}
+          </form>
+          
+            {/* Buttons */}
+            <div
+              className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+                isArabic ? "left-[53px]" : "right-[53px]"
+              } bottom-[28px]`}
             >
-              {t("save")}
-            </button>
-            <button
-              type="button"
-              className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
-                isArabic ? "cairo" : "roboto"
-              } text-sm`}
-            >
-              {t("cancel")}
-            </button>
-          </div>
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
+                  isArabic ? "cairo" : "roboto"
+                } text-sm`}
+              >
+                {t("save")}
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
+                  isArabic ? "cairo" : "roboto"
+                } text-sm`}
+              >
+                {t("cancel")}
+              </button>
+            </div>
         </div>
       </div>
     </Layout>
