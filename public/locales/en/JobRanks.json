@@ -1,5 +1,9 @@
 {
-  "jobRanks": "Job Ranks",
+  "jobRanks": "Job Grades",
+  "department": "Department",
+  "rankLevel": "Rank Level",
+  "supervisor": "Supervisor",
+  "salary": "Salary",
   "edit": "Add",
   "back": "Back",
   "delete": "Delete",

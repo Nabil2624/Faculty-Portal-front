@@ -1,16 +1,18 @@
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
-import { Pencil, Trash2, Filter } from "lucide-react";
+import { Pencil, Trash2, Filter, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-
 
 export default function SeminarsAndConferences() {
   const { t, i18n } = useTranslation("SeminarsAndConferences");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
+
   const [showModal, setShowModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleDeleteClick = (item) => {
     setSelectedItem(item);
@@ -23,6 +25,7 @@ export default function SeminarsAndConferences() {
     setSelectedItem(null);
   };
 
+  // Data
   const events = [
     {
       title: "المؤتمر الدولي للذكاء الاصطناعي التطبيقي",
@@ -62,6 +65,14 @@ export default function SeminarsAndConferences() {
     },
   ];
 
+  // Pagination logic
+  const itemsPerPage = 9;
+  const totalPages = Math.ceil(events.length / itemsPerPage);
+  const paginatedData = events.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <Layout>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
@@ -80,160 +91,90 @@ export default function SeminarsAndConferences() {
           </div>
         </div>
 
-        {/* Timeline */}
+        {/* Cards grid */}
         <div
-          className="relative transition-all duration-300"
-          style={{
-            transform: isArabic ? "translateX(65px)" : "translateX(-65px)",
-          }}
+          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${
+            isArabic ? "text-right" : "text-left"
+          }`}
         >
-          {/* Vertical gold line */}
-          <div
-            className={`absolute top-0 w-[4px] bg-[#b38e19]`}
-            style={{
-              height: "100%",
-              borderRadius: "2px",
-              right: isArabic ? "calc(4rem + 4px)" : "auto",
-              left: !isArabic ? "calc(4rem + 4px)" : "auto",
-            }}
-          ></div>
+          {paginatedData.map((item, idx) => (
+            <div
+              key={idx}
+              onClick={() => {
+                setSelectedItem(item);
+                setShowDetails(true);
+              }}
+              className={`relative bg-gray-100 rounded-[12px] shadow-md p-5 border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
+                isArabic ? "border-r-[19px]" : "border-l-[19px]"
+              }`}
+            >
+              {/* Icons */}
+              <div
+                className={`absolute top-4 ${
+                  isArabic ? "left-4" : "right-4"
+                } flex gap-3`}
+                onClick={(e) => e.stopPropagation()} // prevent card click
+              >
+                <Pencil
+                  className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
+                  onClick={() =>
+                    navigate("/edit-conference", { state: { existingData: item } })
+                  }
+                />
+                <Trash2
+                  className="text-[#E53935] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
+                  onClick={() => handleDeleteClick(item)}
+                />
+              </div>
 
-          {/* Cards */}
-          <div
-            className="relative pr-1 overflow-y-auto scrollbar-hide"
-            style={{ maxHeight: "calc(100vh - 250px)" }}
-          >
-            <div className="flex flex-col gap-16 relative">
-              {events.map((item, idx) => (
-                <div
-                  key={idx}
-                  className={`relative flex items-center ${
-                    isArabic
-                      ? "justify-start pr-[60px]"
-                      : "justify-start pl-[60px]"
-                  }`}
-                >
-                  {/* Curve line */}
-                  <div
-                    className={`absolute top-[50px] -translate-y-1/2 ${
-                      isArabic ? "right-16" : "left-16"
-                    }`}
-                  >
-                    <svg
-                      width="120"
-                      height="80"
-                      viewBox="0 0 270 40"
-                      className={isArabic ? "scale-x-[-1]" : ""}
-                    >
-                      <path
-                        d="M10 10 C30 60, 90 60, 110 10"
-                        stroke="#b38e19"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        fill="none"
-                      />
-                    </svg>
-                  </div>
-
-                  {/* Card */}
-                  <div
-                    className={`bg-gray-100 rounded-[12px] shadow-md p-3 relative w-[680px] transition-transform hover:scale-[1.01] ${
-                      isArabic
-                        ? "mr-8 text-left border-r-[19px] border-[#19355a]"
-                        : "ml-8 text-left border-l-[19px] border-[#19355a]"
-                    }`}
-                  >
-                    {/* Action icons */}
-                    <div
-                      className={`absolute top-4 ${
-                        isArabic ? "left-4" : "right-4"
-                      } flex gap-3`}
-                    >
-                      <Pencil
-                        className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
-                        onClick={() =>
-                          navigate("/edit-conference", {
-                            state: { existingData: item },
-                          })
-                        }
-                      />
-
-                      <Trash2
-                        className="text-[#E53935] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
-                        onClick={() => handleDeleteClick(item)}
-                      />
-                    </div>
-
-                    {/* Text */}
-                    <div
-                      className={`${
-                        isArabic ? "text-right" : "text-left"
-                      } flex flex-col space-y-2`}
-                    >
-                      <h3 className="text-xl font-semibold text-[#1A1A1A]">
-                        {item.title}
-                      </h3>
-                      <p className="text-base font-medium text-[#1A1A1A]">
-                        {item.organizer}
-                      </p>
-                      <p className="text-base font-medium text-gray-700">
-                        {item.period}
-                      </p>
-                      <p className="text-base text-[#1A1A1A]">
-                        {item.description}
-                      </p>
-
-                      <div
-                        className={`flex justify-between items-center text-[17px] text-gray-500 ${
-                          isArabic ? "flex-row-reverse" : "flex-row-reverse"
-                        }`}
-                      >
-                        <span className={`${isArabic ? "ml-3" : "mr-3"}`}>
-                          {item.location}
-                        </span>
-
-                        <span>{item.type}</span>
-                        <span>{item.role}</span>
-                      </div>
-
-                      {/* File */}
-                      {item.fileName && (
-                        <a
-                          href={item.link || "#"}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-base text-[#1A1A1A] font-medium underline hover:text-[#b38e19]"
-                        >
-                          {item.fileName}
-                        </a>
-                      )}
-
-                      {/* Website Link — fixed position */}
-                      {item.link && (
-                        <a
-                          href={
-                            item.link.startsWith("http")
-                              ? item.link
-                              : `https://${item.link}`
-                          }
-                          target="_blank"
-                          rel="noreferrer"
-                          className={`absolute bottom-2 text-[17px] font-bold underline text-[#1A1A1A]-500 hover:text-[#b38e19] ${
-                            isArabic ? "left-5" : "right-5"
-                          }`}
-                        >
-                          {item.link.replace("https://", "")}
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
+              {/* Card Content */}
+              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">
+                {item.title}
+              </h3>
+              <p className="text-base font-medium text-gray-700">
+                {item.organizer}
+              </p>
             </div>
-          </div>
+          ))}
         </div>
 
-        {/* Buttons */}
+        {/* Pagination */}
+        <div
+          dir={isArabic ? "rtl" : "ltr"}
+          className="flex justify-center items-center gap-3 mt-8"
+        >
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            className={`px-4 py-2 rounded-md border border-gray-400 ${
+              currentPage === 1
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-gray-200"
+            }`}
+          >
+            {isArabic ? "السابق" : "Previous"}
+          </button>
+
+          <span className="text-sm text-gray-600">
+            {isArabic
+              ? `الصفحة ${currentPage} من ${totalPages}`
+              : `Page ${currentPage} of ${totalPages}`}
+          </span>
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            className={`px-4 py-2 rounded-md border border-gray-400 ${
+              currentPage === totalPages
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-gray-200"
+            }`}
+          >
+            {isArabic ? "التالي" : "Next"}
+          </button>
+        </div>
+
+        {/* Bottom Buttons */}
         <div
           className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
             isArabic ? "left-[53px]" : "right-[53px]"
@@ -258,7 +199,7 @@ export default function SeminarsAndConferences() {
         </div>
       </div>
 
-      {/* Delete confirmation modal */}
+      {/* Delete Confirmation Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-[360px] text-center">
@@ -279,6 +220,105 @@ export default function SeminarsAndConferences() {
               >
                 {t("cancel") || "Cancel"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Details Modal */}
+      {showDetails && selectedItem && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
+          <div
+            dir={isArabic ? "rtl" : "ltr"}
+            className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[520px] max-w-[90%] p-8 relative animate-fadeIn"
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowDetails(false)}
+              className={`absolute top-4 ${
+                isArabic ? "left-4" : "right-4"
+              } text-gray-500 hover:text-[#19355a] transition`}
+            >
+              <X size={22} />
+            </button>
+
+            {/* Header */}
+            <div className="border-b-2 border-[#b38e19]/40 pb-3 mb-4">
+              <h2 className="text-2xl font-bold text-[#19355a]">
+                {selectedItem.title}
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                {selectedItem.organizer}
+              </p>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-3 text-gray-700">
+              <div className="flex justify-between">
+                <span className="font-medium text-[#19355a]">
+                  {isArabic ? "الفترة" : "Period"}
+                </span>
+                <span>{selectedItem.period}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="font-medium text-[#19355a]">
+                  {isArabic ? "الدور" : "Role"}
+                </span>
+                <span>{selectedItem.role}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="font-medium text-[#19355a]">
+                  {isArabic ? "النوع" : "Type"}
+                </span>
+                <span>{selectedItem.type}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="font-medium text-[#19355a]">
+                  {isArabic ? "الموقع" : "Location"}
+                </span>
+                <span>{selectedItem.location}</span>
+              </div>
+
+              {selectedItem.fileName && (
+                <div className="flex justify-between">
+                  <span className="font-medium text-[#19355a]">
+                    {isArabic ? "الملف" : "File"}
+                  </span>
+                  <a
+                    href={selectedItem.link || "#"}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#b38e19] underline"
+                  >
+                    {selectedItem.fileName}
+                  </a>
+                </div>
+              )}
+
+              {selectedItem.link && (
+                <div className="flex justify-between">
+                  <span className="font-medium text-[#19355a]">
+                    {isArabic ? "الرابط" : "Link"}
+                  </span>
+                  <a
+                    href={selectedItem.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#b38e19] underline"
+                  >
+                    {selectedItem.link.replace("https://", "")}
+                  </a>
+                </div>
+              )}
+
+              <div className="mt-5 bg-gray-100 p-4 rounded-lg border border-gray-200">
+                <p className="text-gray-800 leading-relaxed">
+                  {selectedItem.description}
+                </p>
+              </div>
             </div>
           </div>
         </div>

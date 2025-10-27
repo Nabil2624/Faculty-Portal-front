@@ -1,5 +1,9 @@
 {
   "jobRanks": "الدرجات الوظيفية",
+  "department": "القسم",
+  "rankLevel": "الدرجة",
+  "supervisor": "المشرف",
+  "salary": "الراتب",
   "edit": "إضافة",
   "back": "رجوع",
   "delete": "حذف",
