@@ -77,14 +77,14 @@ function AppRouterInner() {
       <Route path="/administrative-positions" element={<AdministrativePositions/>} />
       <Route path="/scientific-missions" element={<ScientificMissions/>} />
       <Route path="/seminars-and-conferences" element={<SeminarsAndConferences/>} />
-      <Route path="/training-programs" element={<TrainingPrograms/>} />
+      
 
     
 
 
       {/* ✅ Protected Routes */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/personal" element={<PersonalDataPage />} />
+      
         <Route path="/under-development" element={<UnderDevelopment />} />
         <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/header" element={<Header />} />
@@ -96,7 +96,8 @@ function AppRouterInner() {
         <Route path="/edit-contact-info" element={<EditContactInfo />} />
         <Route path="/edit-Social" element={<EditSocialNetworking />} />
         <Route path="/edit-identification-card" element={<EditIdentificationCard />} />
-
+        <Route path="/training-programs" element={<TrainingPrograms/>} />
+        <Route path="/personal" element={<PersonalDataPage />} />
         <Route path="/job-grade-form" element={<JobGradeForm />} />
         <Route path="/edit-job-grade" element={<EditJobGrade />} />
         <Route path="/edit-admin-pos" element={<EditAdminPosition />} />
