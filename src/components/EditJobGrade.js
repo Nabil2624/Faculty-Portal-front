@@ -1,40 +1,38 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Calendar, ChevronDown, Pen } from "lucide-react";
-import { useEffect } from "react"; 
+
 export default function EditJobGrade({ data, onCancel }) {
   const { t, i18n } = useTranslation("form");
   const dir = i18n.dir();
   const isArabic = i18n.language === "ar";
+
   const [formData, setFormData] = useState({
     jobGrade: "",
-    startDate: "",
-    endDate: "",
+    gradeDate: "",
     notes: "",
   });
 
-  const startDateRef = useRef(null);
-  const endDateRef = useRef(null);
-
-  const [startFocused, setStartFocused] = useState(false);
-  const [endFocused, setEndFocused] = useState(false);
+  const gradeDateRef = useRef(null);
+  const [gradeFocused, setGradeFocused] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-useEffect(() => {
-  if (data) {
-    setFormData({
-      jobGrade: data.title || "",
-      startDate: data.period || "",
-    });
-  }
-}, [data]);
-  // Open native date picker safely
+
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        jobGrade: data.title || "",
+        gradeDate: data.period || "",
+        notes: data.description || "",
+      });
+    }
+  }, [data]);
+
   const openDatePicker = (ref) => {
     if (!ref?.current) return;
     try {
-      // showPicker only works on user-initiated click
       ref.current.showPicker();
     } catch (err) {
       ref.current.focus();
@@ -46,16 +44,14 @@ useEffect(() => {
     console.log(formData);
   };
 
-  // Reusable input classes
   const inputClass =
-    "w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 transition duration-150 bg-[#E2E2E2] text-sm";
-
+    "w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 transition duration-150 bg-[#E2E2E2]";
   const focusClasses =
     "focus:outline-none focus:ring-2 focus:ring-[#B38E19] transition duration-150 shadow";
 
   return (
     <form
-      key={i18n.language} // re-render when language changes
+      key={i18n.language}
       dir={dir}
       onSubmit={handleSubmit}
       className="max-w-md mx-auto mt-6 bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
@@ -70,7 +66,7 @@ useEffect(() => {
 
       {/* Job Grade */}
       <div className="mb-4">
-        <label className="block text-lg font-medium  text-gray-700 mb-2">
+        <label className="block text-lg font-medium text-gray-700 mb-2">
           {t("job_grade")}
         </label>
         <div className="relative">
@@ -93,37 +89,35 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* Start Date */}
+      {/* Job Grade Date */}
       <div className="mb-4">
         <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("start_date")}
+          {t("grade_date")}
         </label>
         <div className="relative">
           <input
             type="text"
-            name="startDate"
-            value={formData.startDate}
+            name="gradeDate"
+            value={formData.gradeDate}
             readOnly
-            onClick={() => openDatePicker(startDateRef)}
+            onClick={() => openDatePicker(gradeDateRef)}
             className={`${inputClass} ${focusClasses} ${
-              startFocused ? "ring-2 ring-[#B38E19]" : ""
+              gradeFocused ? "ring-2 ring-[#B38E19]" : ""
             } cursor-pointer`}
-            placeholder={t("select_start_date")}
+            placeholder={t("select_grade_date")}
           />
 
           <input
-            ref={startDateRef}
+            ref={gradeDateRef}
             type="date"
-            value={formData.startDate}
+            value={formData.gradeDate}
             onChange={(e) =>
-              setFormData((p) => ({ ...p, startDate: e.target.value }))
+              setFormData((p) => ({ ...p, gradeDate: e.target.value }))
             }
-            onFocus={() => setStartFocused(true)}
-            onBlur={() => setStartFocused(false)}
+            onFocus={() => setGradeFocused(true)}
+            onBlur={() => setGradeFocused(false)}
             className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10"
-            style={{
-              colorScheme: "light",
-            }}
+            style={{ colorScheme: "light" }}
             aria-hidden="true"
             tabIndex={-1}
           />
@@ -132,51 +126,7 @@ useEffect(() => {
             size={18}
             className="absolute top-2.5 text-[#B38E19] cursor-pointer z-20"
             style={dir === "rtl" ? { left: "10px" } : { right: "10px" }}
-            onClick={() => openDatePicker(startDateRef)}
-          />
-        </div>
-      </div>
-
-      {/* End Date */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("end_date")}
-        </label>
-        <div className="relative">
-          <input
-            type="text"
-            name="endDate"
-            value={formData.endDate}
-            readOnly
-            onClick={() => openDatePicker(endDateRef)}
-            className={`${inputClass} ${focusClasses} ${
-              endFocused ? "ring-2 ring-[#B38E19]" : ""
-            } cursor-pointer`}
-            placeholder={t("select_end_date")}
-          />
-
-          <input
-            ref={endDateRef}
-            type="date"
-            value={formData.endDate}
-            onChange={(e) =>
-              setFormData((p) => ({ ...p, endDate: e.target.value }))
-            }
-            onFocus={() => setEndFocused(true)}
-            onBlur={() => setEndFocused(false)}
-            className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10"
-            style={{
-              colorScheme: "light",
-            }}
-            aria-hidden="true"
-            tabIndex={-1}
-          />
-
-          <Calendar
-            size={18}
-            className="absolute top-2.5 text-[#B38E19] cursor-pointer z-20"
-            style={dir === "rtl" ? { left: "10px" } : { right: "10px" }}
-            onClick={() => openDatePicker(endDateRef)}
+            onClick={() => openDatePicker(gradeDateRef)}
           />
         </div>
       </div>
@@ -196,6 +146,7 @@ useEffect(() => {
         ></textarea>
       </div>
 
+      {/* Buttons */}
       <div className="flex justify-center gap-3">
         <button
           type="submit"
@@ -203,12 +154,11 @@ useEffect(() => {
             isArabic ? "cairo" : "roboto"
           } text-sm`}
         >
-          {t("add") || "Add"}
+          {t("edit") || "Edit"}
         </button>
-
         <button
           type="button"
-          onClick={() => onCancel && onCancel()}
+          onClick={onCancel}
           className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
             isArabic ? "cairo" : "roboto"
           } text-sm`}

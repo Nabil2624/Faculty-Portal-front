@@ -1,7 +1,8 @@
+// src/pages/EditTrainingProgram.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
-import { FiCalendar, FiChevronDown } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function EditTrainingProgram() {
@@ -19,8 +20,7 @@ export default function EditTrainingProgram() {
     participationType: "",
     programName: "",
     organizingBody: "",
-    country: "",
-    city: "",
+    location: "",
     description: "",
     startDate: "",
     endDate: "",
@@ -34,8 +34,7 @@ export default function EditTrainingProgram() {
         participationType: existingData.participationType || "",
         programName: existingData.programName || "",
         organizingBody: existingData.organizingBody || "",
-        country: existingData.country || "",
-        city: existingData.city || "",
+        location: existingData.location || "",
         description: existingData.description || "",
         startDate: existingData.startDate || "",
         endDate: existingData.endDate || "",
@@ -54,14 +53,12 @@ export default function EditTrainingProgram() {
     setFormData({ ...formData, [name]: value });
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Updated Training Program:", formData);
     // Here you’d call your API to update the program
     navigate("/training-programs");
   };
-
 
   const handleCancel = () => {
     navigate("/training-programs");
@@ -74,7 +71,10 @@ export default function EditTrainingProgram() {
 
   return (
     <Layout>
-      <div dir={isArabic ? "rtl" : "ltr"} className="p-4 sm:p-6 bg-white min-h-screen">
+      <div
+        dir={isArabic ? "rtl" : "ltr"}
+        className="p-4 sm:p-6 bg-white min-h-screen"
+      >
         <h2 className="text-2xl sm:text-3xl font-bold mb-12 inline-block w-full max-w-6xl">
           {t("editTrainingProgram")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
@@ -149,7 +149,7 @@ export default function EditTrainingProgram() {
               {/* Program Name */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("programName")}
+                  {t("programName")} <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -164,7 +164,7 @@ export default function EditTrainingProgram() {
               {/* Organizing Body */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("organizingBody")}
+                  {t("organizingBody")} <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -175,116 +175,94 @@ export default function EditTrainingProgram() {
                   onChange={handleChange}
                 />
               </div>
-
-              {/* Dates */}
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("startDate")}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formData.startDate}
-                      placeholder={t("startDate")}
-                      readOnly
-                      className={`${inputBase} ${focusStyle}`}
-                      onFocus={() => openDatePicker(startDateRef)}
-                    />
-                    <FiCalendar
-                      role="button"
-                      onClick={() => openDatePicker(startDateRef)}
-                      size={18}
-                      className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
-                        isArabic ? "left-4" : "right-4"
-                      }`}
-                    />
-                    <input
-                      type="date"
-                      ref={startDateRef}
-                      className="absolute opacity-0 pointer-events-none"
-                      onChange={(e) =>
-                        setFormData({ ...formData, startDate: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("endDate")}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formData.endDate}
-                      placeholder={t("endDate")}
-                      readOnly
-                      className={`${inputBase} ${focusStyle}`}
-                      onFocus={() => openDatePicker(endDateRef)}
-                    />
-                    <FiCalendar
-                      role="button"
-                      onClick={() => openDatePicker(endDateRef)}
-                      size={18}
-                      className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
-                        isArabic ? "left-4" : "right-4"
-                      }`}
-                    />
-                    <input
-                      type="date"
-                      ref={endDateRef}
-                      className="absolute opacity-0 pointer-events-none"
-                      onChange={(e) =>
-                        setFormData({ ...formData, endDate: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
+              {/* Location */}
+              <div>
+                <label className="block mb-2 text-lg font-medium">
+                  {isArabic ? "مكان الانعقاد" : "Location"} <span className="text-[#b38e19]">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="location"
+                  placeholder={
+                    isArabic ? "اكتب مكان الانعقاد" : "Enter location"
+                  }
+                  className={`${inputBase} ${focusStyle}`}
+                  value={formData.location}
+                  onChange={handleChange}
+                />
               </div>
             </div>
 
             {/* RIGHT Column */}
             <div className="flex flex-col justify-between space-y-6">
               <div className="space-y-6">
-                {/* Country + City */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Dates */}
+                <div className="grid grid-cols-2 gap-4 mt-4">
                   <div>
                     <label className="block mb-2 text-lg font-medium">
-                      {t("country")}
+                      {t("startDate")} <span className="text-[#b38e19]">*</span>
                     </label>
-                    <div className="relative flex items-center">
-                      <select
-                        name="country"
-                        className={`${inputBase} ${focusStyle} appearance-none flex-1`}
-                        value={formData.country}
-                        onChange={handleChange}
-                      >
-                        <option value="">{t("selectCountry")}</option>
-                        <option value="egypt">Egypt</option>
-                        <option value="usa">USA</option>
-                      </select>
-                      <FiChevronDown
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={formData.startDate}
+                        placeholder={t("startDate")}
+                        readOnly
+                        className={`${inputBase} ${focusStyle}`}
+                        onFocus={() => openDatePicker(startDateRef)}
+                      />
+                      <FiCalendar
+                        role="button"
+                        onClick={() => openDatePicker(startDateRef)}
                         size={18}
-                        className={`absolute text-[#B38E19] pointer-events-none ${
+                        className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
                           isArabic ? "left-4" : "right-4"
                         }`}
+                      />
+                      <input
+                        type="date"
+                        ref={startDateRef}
+                        className="absolute opacity-0 pointer-events-none"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            startDate: e.target.value,
+                          })
+                        }
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block mb-2 text-lg font-medium">
-                      {t("city")}
+                      {t("endDate")}
                     </label>
-                    <input
-                      type="text"
-                      name="city"
-                      placeholder={t("cityPlaceholder")}
-                      className={`${inputBase} ${focusStyle}`}
-                      value={formData.city}
-                      onChange={handleChange}
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={formData.endDate}
+                        placeholder={t("endDate")}
+                        readOnly
+                        className={`${inputBase} ${focusStyle}`}
+                        onFocus={() => openDatePicker(endDateRef)}
+                      />
+                      <FiCalendar
+                        role="button"
+                        onClick={() => openDatePicker(endDateRef)}
+                        size={18}
+                        className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
+                          isArabic ? "left-4" : "right-4"
+                        }`}
+                      />
+                      <input
+                        type="date"
+                        ref={endDateRef}
+                        className="absolute opacity-0 pointer-events-none"
+                        onChange={(e) =>
+                          setFormData({ ...formData, endDate: e.target.value })
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -303,34 +281,33 @@ export default function EditTrainingProgram() {
                 </div>
               </div>
             </div>
-
           </form>
-          
-            {/* Buttons */}
-            <div
-              className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
-                isArabic ? "left-[53px]" : "right-[53px]"
-              } bottom-[28px]`}
+
+          {/* Buttons */}
+          <div
+            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
+              isArabic ? "left-[53px]" : "right-[53px]"
+            } bottom-[28px]`}
+          >
+            <button
+              type="submit"
+              onClick={handleSubmit}
+              className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
+                isArabic ? "cairo" : "roboto"
+              } text-sm`}
             >
-              <button
-                type="submit"
-                onClick={handleSubmit}
-                className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("save")}
-              </button>
-              <button
-                type="button"
-                onClick={handleCancel}
-                className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("cancel")}
-              </button>
-            </div>
+              {t("save")}
+            </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
+                isArabic ? "cairo" : "roboto"
+              } text-sm`}
+            >
+              {t("cancel")}
+            </button>
+          </div>
         </div>
       </div>
     </Layout>

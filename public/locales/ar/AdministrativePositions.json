@@ -1,7 +1,10 @@
-{"administrativePositions": "المناصب الإدارية",
+{
+  "administrativePositions": "المناصب الإدارية",
   "add": "إضافة",
   "back": "رجوع",
   "areYouSureDelete": "هل أنت متأكد أنك تريد حذف",
   "delete": "حذف",
-  "cancel": "إلغاء"
+  "cancel": "إلغاء",
+  "startDate": "تاريخ البداية",
+  "endDate": "تاريخ النهاية"
 }

@@ -8,5 +8,6 @@
   "back": "رجوع",
   "delete": "حذف",
   "cancel": "إلغاء",
-  "areYouSureDelete": "هل أنت متأكد أنك تريد حذف"
+  "areYouSureDelete": "هل أنت متأكد أنك تريد حذف",
+  "period" : "تاريخ الدرجة الوظيفية"
 }

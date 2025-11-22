@@ -20,8 +20,7 @@ export default function AddAcademicQualification() {
     delegation: "",
     grade: "",
     graduationDate: "",
-    country: "",
-    city: "",
+    countryCity: "",
     university: "",
     college: "",
     attachments: null,
@@ -74,10 +73,11 @@ export default function AddAcademicQualification() {
           >
             {/* LEFT Column */}
             <div className="space-y-6">
+
               {/* Degree */}
               <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("degree")}
+                <label className="block mb-2 text-lg font-medium flex items-center gap-1">
+                  {t("degree")} <span className="text-[#B38E19]">*</span>
                 </label>
                 <div className="relative flex items-center">
                   <select
@@ -102,8 +102,8 @@ export default function AddAcademicQualification() {
 
               {/* Delegation */}
               <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("delegation")}
+                <label className="block mb-2 text-lg font-medium flex items-center gap-1">
+                  {t("delegation")} <span className="text-[#B38E19]">*</span>
                 </label>
                 <div className="relative flex items-center">
                   <select
@@ -111,12 +111,10 @@ export default function AddAcademicQualification() {
                     className={`${inputBase} ${focusStyle} appearance-none flex-1`}
                     value={formData.delegation}
                     onChange={handleChange}
-                    placeholder={t("delegation-placeholder")}
                   >
                     <option value="">{t("delegation-placeholder")}</option>
                     <option value="internal">Egypt</option>
                     <option value="external">USA</option>
-                    <option value="selfStudy"></option>
                   </select>
                   <FiChevronDown
                     size={18}
@@ -127,53 +125,25 @@ export default function AddAcademicQualification() {
                 </div>
               </div>
 
-              {/* Country + City */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Country */}
-                <div>
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("country")}
-                  </label>
-                  <div className="relative flex items-center">
-                    <select
-                      name="country"
-                      className={`${inputBase} ${focusStyle} appearance-none flex-1`}
-                      value={formData.country}
-                      onChange={handleChange}
-                    >
-                      <option value="">{t("selectCountry")}</option>
-                      <option value="egypt">Egypt</option>
-                      <option value="usa">USA</option>
-                    </select>
-                    <FiChevronDown
-                      size={18}
-                      className={`absolute text-[#B38E19] pointer-events-none ${
-                        isArabic ? "left-4" : "right-4"
-                      }`}
-                    />
-                  </div>
-                </div>
-
-                {/* City */}
-                <div>
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("city")}
-                  </label>
-                  <input
-                    type="text"
-                    name="city"
-                    placeholder={t("cityPlaceholder")}
-                    className={`${inputBase} ${focusStyle}`}
-                    value={formData.city}
-                    onChange={handleChange}
-                  />
-                </div>
+              {/* Country / City */}
+              <div>
+                <label className="block mb-2 text-lg font-medium flex items-center gap-1">
+                  {t("countryCity")} <span className="text-[#B38E19]">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="countryCity"
+                  placeholder={t("countryCityPlaceholder")}
+                  className={`${inputBase} ${focusStyle}`}
+                  value={formData.countryCity}
+                  onChange={handleChange}
+                />
               </div>
 
               {/* University */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("university")}
+                  {t("university/college")}
                 </label>
                 <input
                   type="text"
@@ -185,51 +155,16 @@ export default function AddAcademicQualification() {
                 />
               </div>
 
-              {/* Attachments */}
-              <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("attachments")}
-                </label>
-                <div className="flex items-start gap-2 mb-2">
-                  <Info size={17} className="text-gray-600 mt-1" />
-                  <p className="text-yellow-600 text-sm">{t("subtitle")}</p>
-                </div>
 
-                <input
-                  type="file"
-                  name="attachments"
-                  accept=".pdf,.jpg,.png"
-                  ref={fileInputRef}
-                  onChange={handleChange}
-                  className="hidden"
-                />
-
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      fileInputRef.current && fileInputRef.current.click()
-                    }
-                    className="bg-[#19355A] text-white px-9 py-1 rounded-md hover:bg-[#162d4a] transition-colors"
-                  >
-                    {t("chooseFile")}
-                  </button>
-
-                  {formData.attachments && (
-                    <span className="text-sm text-gray-700 truncate max-w-[200px]">
-                      {formData.attachments.name}
-                    </span>
-                  )}
-                </div>
-              </div>
             </div>
 
             {/* RIGHT Column */}
             <div className="space-y-6">
+
               {/* Specialization */}
               <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("specialization")}
+                <label className="block mb-2 text-lg font-medium flex items-center gap-1">
+                  {t("specialization")} <span className="text-[#B38E19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -269,8 +204,8 @@ export default function AddAcademicQualification() {
 
               {/* Graduation Date */}
               <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("graduationDate")}
+                <label className="block mb-2 text-lg font-medium flex items-center gap-1">
+                  {t("graduationDate")} <span className="text-[#B38E19]">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -302,45 +237,67 @@ export default function AddAcademicQualification() {
                   />
                 </div>
               </div>
-
-              {/* College */}
+                            {/* Attachments */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("college")}
+                  {t("attachments")}
                 </label>
+                <div className="flex items-start gap-2 mb-2">
+                  <Info size={17} className="text-gray-600 mt-1" />
+                  <p className="text-yellow-600 text-sm">{t("subtitle")}</p>
+                </div>
+
                 <input
-                  type="text"
-                  name="college"
-                  placeholder={t("collegePlaceholder")}
-                  className={`${inputBase} ${focusStyle}`}
-                  value={formData.college}
+                  type="file"
+                  name="attachments"
+                  accept=".pdf,.jpg,.png"
+                  ref={fileInputRef}
                   onChange={handleChange}
+                  className="hidden"
                 />
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      fileInputRef.current && fileInputRef.current.click()
+                    }
+                    className="bg-[#19355A] text-white px-9 py-1 rounded-md hover:bg-[#162d4a] transition-colors"
+                  >
+                    {t("chooseFile")}
+                  </button>
+
+                  {formData.attachments && (
+                    <span className="text-sm text-gray-700 truncate max-w-[200px]">
+                      {formData.attachments.name}
+                    </span>
+                  )}
+                </div>
               </div>
+
+              
             </div>
 
             {/* Buttons */}
             <div
-              className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+              className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end  max-w-6xl absolute ${
                 isArabic ? "left-[53px]" : "right-[53px]"
               } bottom-[28px]`}
             >
-              {/* Save Button */}
               <button
                 type="submit"
                 onClick={() => navigate("/academic-qualifications")}
-                className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
+                className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
               >
                 {t("save")}
               </button>
 
-              {/* Cancel Button */}
               <button
                 type="button"
                 onClick={() => navigate("/academic-qualifications")}
-                className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
+                className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
               >

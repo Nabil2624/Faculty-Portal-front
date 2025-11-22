@@ -2,8 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
-import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function EditScientificTask() {
   const location = useLocation();
@@ -32,6 +31,7 @@ export default function EditScientificTask() {
       setCity(taskData.location?.split("-")[0]?.trim() || "");
       setDescription(taskData.description || "");
       setUniversity(taskData.institution || "");
+      setCollege(taskData.college || "");
       setStartDate(
         taskData.period?.split("-")[0]?.replace("من", "").trim() || ""
       );
@@ -49,7 +49,6 @@ export default function EditScientificTask() {
 
   const inputBase =
     "w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 bg-[#E2E2E2] outline-none transition-all duration-150 ease-linear text-[12px]";
-
   const focusStyle =
     "focus:border-gray-300 focus:shadow-[0_0_0_4px_rgba(179,142,25,0.5)]";
 
@@ -77,7 +76,7 @@ export default function EditScientificTask() {
       >
         {/* Page Title */}
         <h2 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-20 inline-block relative text-start">
-          {t("editTask.title") /* Change translation key if needed */}
+          {t("editTask.title")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
 
@@ -89,7 +88,7 @@ export default function EditScientificTask() {
               {/* Task Name */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("fields.task")}
+                  {t("fields.task")} <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -100,49 +99,116 @@ export default function EditScientificTask() {
                 />
               </div>
 
-              {/* Country + City */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Country */}
+              {/* Country/City */}
+              <div>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("fields.country_city")}{" "}
+                  <span className="text-[#b38e19]">*</span>
+                </label>
+                <input
+                  type="text"
+                  className={`${inputBase} ${focusStyle}`}
+                  placeholder={t("placeholders.country_city")}
+                  value={city && country ? `${city} - ${country}` : ""}
+                  onChange={(e) => {
+                    const [cCity, cCountry] = e.target.value.split(" - ");
+                    setCity(cCity?.trim() || "");
+                    setCountry(cCountry?.trim() || "");
+                  }}
+                />
+              </div>
+              {/* University/College */}
+              <div>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("fields.university_college")}
+                </label>
+                <input
+                  type="text"
+                  className={`${inputBase} ${focusStyle}`}
+                  placeholder={t("placeholders.university_college")}
+                  value={
+                    university && college ? `${university} - ${college}` : ""
+                  }
+                  onChange={(e) => {
+                    const [uni, col] = e.target.value.split(" - ");
+                    setUniversity(uni?.trim() || "");
+                    setCollege(col?.trim() || "");
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* RIGHT Column */}
+            <div className="space-y-6">
+              {/* Start Date + End Date */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Start Date */}
                 <div className="relative">
                   <label className="block mb-2 text-lg font-medium">
-                    {t("fields.country")}
+                    {t("fields.startDate")}{" "}
+                    <span className="text-[#b38e19]">*</span>
                   </label>
                   <div className="relative">
-                    <select
-                      className={`${inputBase} ${focusStyle} appearance-none`}
-                      value={country}
-                      onChange={(e) => setCountry(e.target.value)}
-                    >
-                      <option value="">
-                        {t("placeholders.selectCountry")}
-                      </option>
-                      <option>Egypt</option>
-                      <option>USA</option>
-                    </select>
-                    <FiChevronDown
+                    <input
+                      type="text"
+                      value={startDate}
+                      placeholder={t("placeholders.startDate")}
+                      readOnly
+                      className={`${inputBase} ${focusStyle}`}
+                      onFocus={() => openDatePicker(startDateNativeRef)}
+                    />
+                    <FiCalendar
+                      role="button"
+                      aria-label="Open date picker"
+                      onClick={() => openDatePicker(startDateNativeRef)}
                       size={18}
-                      className={`absolute text-[#B38E19] pointer-events-none top-1/2 transform -translate-y-1/2 ${
+                      className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
                         isArabic ? "left-3" : "right-3"
                       }`}
+                    />
+                    <input
+                      type="date"
+                      ref={startDateNativeRef}
+                      className="absolute opacity-0 pointer-events-none"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
                     />
                   </div>
                 </div>
 
-                {/* City */}
-                <div>
+                {/* End Date */}
+                <div className="relative">
                   <label className="block mb-2 text-lg font-medium">
-                    {t("fields.city")}
+                    {t("fields.endDate")}
                   </label>
-                  <input
-                    type="text"
-                    className={`${inputBase} ${focusStyle}`}
-                    placeholder={t("placeholders.city")}
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={endDate}
+                      placeholder={t("placeholders.endDate")}
+                      readOnly
+                      className={`${inputBase} ${focusStyle}`}
+                      onFocus={() => openDatePicker(endDateNativeRef)}
+                    />
+                    <FiCalendar
+                      role="button"
+                      aria-label="Open date picker"
+                      onClick={() => openDatePicker(endDateNativeRef)}
+                      size={18}
+                      className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
+                        isArabic ? "left-3" : "right-3"
+                      }`}
+                    />
+                    <input
+                      type="date"
+                      ref={endDateNativeRef}
+                      className="absolute opacity-0 pointer-events-none"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
-
               {/* Description */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
@@ -157,130 +223,28 @@ export default function EditScientificTask() {
                 />
               </div>
             </div>
-
-            {/* RIGHT Column */}
-            <div className="space-y-6">
-              {/* Start Date */}
-              <div className="relative">
-                <label className="block mb-2 text-lg font-medium">
-                  {t("fields.startDate")}
-                </label>
-                <div className="relative">
-                  {/* Visible text input */}
-                  <input
-                    type="text"
-                    value={startDate}
-                    placeholder={t("placeholders.startDate")}
-                    readOnly
-                    className={`${inputBase} ${focusStyle}`}
-                    onFocus={() => openDatePicker(startDateNativeRef)}
-                  />
-                  {/* Calendar icon */}
-                  <FiCalendar
-                    role="button"
-                    aria-label="Open date picker"
-                    onClick={() => openDatePicker(startDateNativeRef)}
-                    size={18}
-                    className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
-                      isArabic ? "left-3" : "right-3"
-                    }`}
-                  />
-                  {/* Hidden native date input */}
-                  <input
-                    type="date"
-                    ref={startDateNativeRef}
-                    className="absolute opacity-0 pointer-events-none"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* End Date */}
-              <div className="relative">
-                <label className="block mb-2 text-lg font-medium">
-                  {t("fields.endDate")}
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={endDate}
-                    placeholder={t("placeholders.endDate")}
-                    readOnly
-                    className={`${inputBase} ${focusStyle}`}
-                    onFocus={() => openDatePicker(endDateNativeRef)}
-                  />
-                  <FiCalendar
-                    role="button"
-                    aria-label="Open date picker"
-                    onClick={() => openDatePicker(endDateNativeRef)}
-                    size={18}
-                    className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
-                      isArabic ? "left-3" : "right-3"
-                    }`}
-                  />
-                  <input
-                    type="date"
-                    ref={endDateNativeRef}
-                    className="absolute opacity-0 pointer-events-none"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* University */}
-              <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("fields.university")}
-                </label>
-                <input
-                  type="text"
-                  className={`${inputBase} ${focusStyle}`}
-                  placeholder={t("placeholders.university")}
-                  value={university}
-                  onChange={(e) => setUniversity(e.target.value)}
-                />
-              </div>
-
-              {/* College */}
-              <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("fields.college")}
-                </label>
-                <input
-                  type="text"
-                  className={`${inputBase} ${focusStyle}`}
-                  placeholder={t("placeholders.college")}
-                  value={college}
-                  onChange={(e) => setCollege(e.target.value)}
-                />
-              </div>
-            </div>
           </form>
 
           {/* Buttons */}
           <div
-            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end  max-w-6xl absolute ${
               isArabic ? "left-[53px]" : "right-[53px]"
             } bottom-[28px]`}
           >
-            {/* Save Button */}
             <button
               type="submit"
               onClick={handleSubmit}
-              className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
+              className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
                 isArabic ? "cairo" : "roboto"
               } text-sm`}
             >
               {t("buttons.save")}
             </button>
 
-            {/* Cancel Button */}
             <button
               type="button"
               onClick={() => navigate("/scientific-missions")}
-              className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
+              className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
                 isArabic ? "cairo" : "roboto"
               } text-sm`}
             >

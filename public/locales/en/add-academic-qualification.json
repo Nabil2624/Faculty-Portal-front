@@ -16,13 +16,9 @@
   "graduationDate": "Graduation Date",
   "college": "College",
   "collegePlaceholder": "e.g., College of Computers",
-  "country": "Country",
-  "selectCountry": "Select Country",
   "egypt": "Egypt",
   "usa": "USA",
-  "city": "City",
-  "cityPlaceholder": "e.g., Cairo",
-  "university": "University",
+  "university/college": "University/College",
   "universityPlaceholder": "e.g., Helwan University",
   "attachments": "Attachments",
   "cancel": "Cancel",
@@ -30,5 +26,9 @@
   "delegation": "Delegation",
   "delegation-placeholder": "Example: internal mission, external mission, self-study",
   "subtitle":"Attach your qualification certificate or accreditation document (PDF or image)",
-  "chooseFile" : "Upload attachments"
+  "chooseFile" : "Upload attachments",
+  "countryCity": "Country/City",
+  "countryCityPlaceholder": "Enter country and city"
+
+
 }

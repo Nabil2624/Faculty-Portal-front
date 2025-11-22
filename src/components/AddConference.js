@@ -5,6 +5,7 @@ import Layout from "../components/Layout";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
 import { Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 export default function AddConference() {
   const { t, i18n } = useTranslation("add-conference");
   const isArabic = i18n.language === "ar";
@@ -38,13 +39,14 @@ export default function AddConference() {
     const { name, value, files } = e.target;
     setFormData({
       ...formData,
-      [name]: files ? files[0] : value,
+      [name]: files && files.length > 0 ? files[0] : value,
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
+    // here you can call your API
   };
 
   const inputBase =
@@ -54,7 +56,10 @@ export default function AddConference() {
 
   return (
     <Layout>
-      <div dir={isArabic ? "rtl" : "ltr"} className="p-4 sm:p-6 bg-white min-h-screen">
+      <div
+        dir={isArabic ? "rtl" : "ltr"}
+        className="p-4 sm:p-6 bg-white min-h-screen"
+      >
         <h2 className="text-2xl sm:text-3xl font-bold mb-12 inline-block w-full max-w-6xl">
           {t("addConference")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
@@ -63,14 +68,16 @@ export default function AddConference() {
         <div className="flex justify-center">
           <form
             onSubmit={handleSubmit}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 lg:gap-x-36 gap-y-6 w-full max-w-6xl"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 lg:gap-x-36 gap-y-6 w-full max-w-6xl relative"
           >
-            {/* RIGHT Column (moved from left) */}
+            {/* RIGHT Column */}
             <div className="space-y-6">
-              {/* Type + Local/International in same row */}
+              {/* Type + Local/International */}
               <div className="flex gap-8">
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("type")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("type")}
+                  </label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2">
                       <input
@@ -96,7 +103,9 @@ export default function AddConference() {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("localOrInternational")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("localOrInternational")}
+                  </label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2">
                       <input
@@ -113,7 +122,9 @@ export default function AddConference() {
                         type="radio"
                         name="localOrInternational"
                         value="international"
-                        checked={formData.localOrInternational === "international"}
+                        checked={
+                          formData.localOrInternational === "international"
+                        }
                         onChange={handleChange}
                       />
                       {t("international")}
@@ -124,7 +135,10 @@ export default function AddConference() {
 
               {/* Conference Name */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("conferenceName")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("conferenceName")}{" "}
+                  <span className="text-[#b38e19]">*</span>
+                </label>
                 <input
                   type="text"
                   name="conferenceName"
@@ -137,7 +151,10 @@ export default function AddConference() {
 
               {/* Participation Role */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("participationRole")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("participationRole")}{" "}
+                  <span className="text-[#b38e19]">*</span>
+                </label>
                 <div className="relative flex items-center">
                   <select
                     name="participationRole"
@@ -160,7 +177,10 @@ export default function AddConference() {
 
               {/* Organizing Body */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("organizingBody")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("organizingBody")}{" "}
+                  <span className="text-[#b38e19]">*</span>
+                </label>
                 <input
                   type="text"
                   name="organizingBody"
@@ -173,7 +193,9 @@ export default function AddConference() {
 
               {/* Website */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("website")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("website")}
+                </label>
                 <input
                   type="text"
                   name="website"
@@ -185,12 +207,14 @@ export default function AddConference() {
               </div>
             </div>
 
-            {/* LEFT Column (moved from right) */}
+            {/* LEFT Column */}
             <div className="space-y-6">
               {/* Dates */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("startDate")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("startDate")}
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
@@ -211,7 +235,7 @@ export default function AddConference() {
                     <input
                       type="date"
                       ref={startDateRef}
-                      className="absolute opacity-0 pointer-events-none"
+                      className="absolute w-0 h-0 opacity-0"
                       onChange={(e) =>
                         setFormData({ ...formData, startDate: e.target.value })
                       }
@@ -220,7 +244,9 @@ export default function AddConference() {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("endDate")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("endDate")}
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
@@ -241,7 +267,7 @@ export default function AddConference() {
                     <input
                       type="date"
                       ref={endDateRef}
-                      className="absolute opacity-0 pointer-events-none"
+                      className="absolute w-0 h-0 opacity-0"
                       onChange={(e) =>
                         setFormData({ ...formData, endDate: e.target.value })
                       }
@@ -253,7 +279,9 @@ export default function AddConference() {
               {/* Country + City */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("country")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("country")}
+                  </label>
                   <div className="relative flex items-center">
                     <select
                       name="country"
@@ -275,7 +303,9 @@ export default function AddConference() {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-lg font-medium">{t("city")}</label>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("city")}
+                  </label>
                   <input
                     type="text"
                     name="city"
@@ -289,7 +319,9 @@ export default function AddConference() {
 
               {/* Description */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("description")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("description")}
+                </label>
                 <textarea
                   name="description"
                   placeholder={t("descriptionPlaceholder")}
@@ -301,10 +333,14 @@ export default function AddConference() {
 
               {/* Attachments */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("attachments")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("attachments")}
+                </label>
                 <div className="flex items-start gap-2 mb-2">
                   <Info size={17} className="text-gray-600 mt-1" />
-                  <p className="text-yellow-600 text-sm">{t("attachmentsHint")}</p>
+                  <p className="text-yellow-600 text-sm">
+                    {t("attachmentsHint")}
+                  </p>
                 </div>
 
                 <input
@@ -313,13 +349,15 @@ export default function AddConference() {
                   accept=".pdf,.jpg,.png"
                   ref={fileInputRef}
                   onChange={handleChange}
-                  className="hidden"
+                  className="absolute w-0 h-0 opacity-0"
                 />
 
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                    onClick={() =>
+                      fileInputRef.current && fileInputRef.current.click()
+                    }
                     className="bg-[#19355A] text-white px-9 py-1 rounded-md hover:bg-[#162d4a] transition-colors"
                   >
                     {t("chooseFile")}
@@ -333,33 +371,31 @@ export default function AddConference() {
                 </div>
               </div>
             </div>
-
-            {/* Buttons */}
-            <div
-              className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
-                isArabic ? "left-[53px]" : "right-[53px]"
-              } bottom-[28px]`}
-            >
-              <button
-                type="submit"
-                onClick={() => navigate("/seminars-and-conferences")}
-                className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("save")}
-              </button>
-              <button
-                type="button"
-                 onClick={() => navigate("/seminars-and-conferences")}
-                className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("cancel")}
-              </button>
-            </div>
           </form>
+          {/* Buttons */}
+          <div
+            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
+              isArabic ? "left-[53px]" : "right-[53px]"
+            } bottom-[28px]`}
+          >
+            <button
+              type="submit"
+              className={`bg-[#b38e19] text-white  sm:w-24 h-10 rounded-md cursor-pointer font-${
+                isArabic ? "cairo" : "roboto"
+              } text-sm`}
+            >
+              {t("save")}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/seminars-and-conferences")}
+              className={`bg-gray-300 text-black  sm:w-24 h-10 rounded-md cursor-pointer font-${
+                isArabic ? "cairo" : "roboto"
+              } text-sm`}
+            >
+              {t("cancel")}
+            </button>
+          </div>
         </div>
       </div>
     </Layout>

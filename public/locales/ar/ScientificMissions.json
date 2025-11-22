@@ -1,8 +1,12 @@
 {
   "scientificMissions": "المهمات العلمية",
-   "edit": "إضافة",
+  "edit": "إضافة",
   "back": "رجوع",
   "delete": "حذف",
+  "location": "الدولة/المدينة",
+  "startDate": "تاريخ البداية",
+  "endDate": "تاريخ النهاية",
+  "institution": "الجامعة/الكلية",
   "cancel": "إلغاء",
   "areYouSureDelete": "هل أنت متأكد أنك تريد حذف"
 }

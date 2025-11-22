@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 import { useEffect } from "react";
 import { axiosEvent } from "../utils/axiosInstance"; // 👈 import our event
 import ProtectedRoute from "./ProtectedRoute";
@@ -43,7 +48,6 @@ import ScientificMissions from "../components/ScientificMissions";
 import SeminarsAndConferences from "../components/SeminarsAndConferences";
 import TrainingPrograms from "../components/TrainingPrograms";
 
-
 function AppRouterInner() {
   const navigate = useNavigate();
 
@@ -66,25 +70,36 @@ function AppRouterInner() {
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/add-scientific-task" element={<AddScientificTask />} />
       <Route path="/edit-scientific-task" element={<EditScientificTask />} />
-      <Route path="/add-academic-qualification" element={<AddAcademicQualification />} />
-      <Route path="/edit-academic-qualification" element={<EditAcademicQualification />} />
+      <Route
+        path="/add-academic-qualification"
+        element={<AddAcademicQualification />}
+      />
+      <Route
+        path="/edit-academic-qualification"
+        element={<EditAcademicQualification />}
+      />
       <Route path="/add-conference" element={<AddConference />} />
       <Route path="/edit-conference" element={<EditConference />} />
       <Route path="/add-Training-program" element={<AddTrainingProgram />} />
       <Route path="/edit-Training-program" element={<EditTrainingProgram />} />
-      <Route path="/academic-qualifications" element={<AcademicQualifications />} />
-      <Route path="/job-rankings" element={<JobRanks/>} />
-      <Route path="/administrative-positions" element={<AdministrativePositions/>} />
-      <Route path="/scientific-missions" element={<ScientificMissions/>} />
-      <Route path="/seminars-and-conferences" element={<SeminarsAndConferences/>} />
-      
-
-    
-
+      <Route
+        path="/academic-qualifications"
+        element={<AcademicQualifications />}
+      />
+      <Route path="/job-rankings" element={<JobRanks />} />
+      <Route
+        path="/administrative-positions"
+        element={<AdministrativePositions />}
+      />
+      <Route path="/scientific-missions" element={<ScientificMissions />} />
+      <Route
+        path="/seminars-and-conferences"
+        element={<SeminarsAndConferences />}
+      />
+      <Route path="/personal" element={<PersonalDataPage />} />
 
       {/* ✅ Protected Routes */}
       <Route element={<ProtectedRoute />}>
-      
         <Route path="/under-development" element={<UnderDevelopment />} />
         <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/header" element={<Header />} />
@@ -95,16 +110,16 @@ function AppRouterInner() {
         <Route path="/social-networking" element={<SocialNetworkingPages />} />
         <Route path="/edit-contact-info" element={<EditContactInfo />} />
         <Route path="/edit-Social" element={<EditSocialNetworking />} />
-        <Route path="/edit-identification-card" element={<EditIdentificationCard />} />
-        <Route path="/training-programs" element={<TrainingPrograms/>} />
-        <Route path="/personal" element={<PersonalDataPage />} />
+        <Route
+          path="/edit-identification-card"
+          element={<EditIdentificationCard />}
+        />
+        <Route path="/training-programs" element={<TrainingPrograms />} />
+
         <Route path="/job-grade-form" element={<JobGradeForm />} />
         <Route path="/edit-job-grade" element={<EditJobGrade />} />
         <Route path="/edit-admin-pos" element={<EditAdminPosition />} />
         <Route path="/add-admin-pos" element={<AddAdministrativePosition />} />
-
-        
-
       </Route>
 
       {/* Catch-all */}

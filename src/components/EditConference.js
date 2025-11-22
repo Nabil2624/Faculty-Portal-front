@@ -158,7 +158,7 @@ export default function EditConference() {
               {/* Conference Name */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("conferenceName")}
+                  {t("conferenceName")} <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -173,7 +173,7 @@ export default function EditConference() {
               {/* Participation Role */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("participationRole")}
+                  {t("participationRole")} <span className="text-[#b38e19]">*</span>
                 </label>
                 <div className="relative flex items-center">
                   <select
@@ -198,7 +198,7 @@ export default function EditConference() {
               {/* Organizing Body */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("organizingBody")}
+                  {t("organizingBody")} <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -393,7 +393,7 @@ export default function EditConference() {
 
             {/* ✅ Buttons */}
             <div
-              className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+              className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
                 isArabic ? "left-[53px]" : "right-[53px]"
               } bottom-[28px]`}
             >
@@ -401,7 +401,7 @@ export default function EditConference() {
               <button
                 type="submit"
                 onClick={() => navigate("/seminars-and-conferences")}
-                className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
+                className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
               >
@@ -412,7 +412,7 @@ export default function EditConference() {
               <button
                 type="button"
                 onClick={() => navigate("/seminars-and-conferences")}
-                className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
+                className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
                   isArabic ? "cairo" : "roboto"
                 } text-sm`}
               >

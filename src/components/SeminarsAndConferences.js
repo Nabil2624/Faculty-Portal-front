@@ -63,6 +63,138 @@ export default function SeminarsAndConferences() {
       fileName: "",
       link: "",
     },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
+    {
+      title: "مؤتمر أمن المعلومات والخصوصية",
+      organizer: "ACM",
+      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
+      description:
+        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
+      role: "مشارك بورقة بحثية",
+      type: "مؤتمر-دولي",
+      location: "باريس - فرنسا",
+      fileName: "",
+      link: "",
+    },
   ];
 
   // Pagination logic
@@ -104,7 +236,7 @@ export default function SeminarsAndConferences() {
                 setSelectedItem(item);
                 setShowDetails(true);
               }}
-              className={`relative bg-gray-100 rounded-[12px] shadow-md p-5 border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
+              className={`relative bg-gray-100 rounded-[12px] shadow-md p-3 border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
                 isArabic ? "border-r-[19px]" : "border-l-[19px]"
               }`}
             >
@@ -118,7 +250,9 @@ export default function SeminarsAndConferences() {
                 <Pencil
                   className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
                   onClick={() =>
-                    navigate("/edit-conference", { state: { existingData: item } })
+                    navigate("/edit-conference", {
+                      state: { existingData: item },
+                    })
                   }
                 />
                 <Trash2
@@ -131,9 +265,9 @@ export default function SeminarsAndConferences() {
               <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">
                 {item.title}
               </h3>
-              <p className="text-base font-medium text-gray-700">
-                {item.organizer}
-              </p>
+              <p className="text-lg  text-gray-700">{item.period}</p>
+              <p className="text-sm  text-gray-700">{item.organizer}</p>
+              <p className="text-xs  text-gray-400">{item.location}</p>
             </div>
           ))}
         </div>
@@ -176,7 +310,7 @@ export default function SeminarsAndConferences() {
 
         {/* Bottom Buttons */}
         <div
-          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
             isArabic ? "left-[53px]" : "right-[53px]"
           } bottom-[28px]`}
         >
@@ -237,54 +371,79 @@ export default function SeminarsAndConferences() {
               onClick={() => setShowDetails(false)}
               className={`absolute top-4 ${
                 isArabic ? "left-4" : "right-4"
-              } text-gray-500 hover:text-[#19355a] transition`}
+              } text-gray-500  transition`}
             >
               <X size={22} />
             </button>
 
             {/* Header */}
             <div className="border-b-2 border-[#b38e19]/40 pb-3 mb-4">
-              <h2 className="text-2xl font-bold text-[#19355a]">
-                {selectedItem.title}
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">
-                {selectedItem.organizer}
-              </p>
+              <h2 className="text-2xl font-bold ">{selectedItem.title}</h2>
             </div>
 
             {/* Content */}
+
             <div className="space-y-3 text-gray-700">
               <div className="flex justify-between">
-                <span className="font-medium text-[#19355a]">
-                  {isArabic ? "الفترة" : "Period"}
-                </span>
-                <span>{selectedItem.period}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="font-medium text-[#19355a]">
-                  {isArabic ? "الدور" : "Role"}
-                </span>
-                <span>{selectedItem.role}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="font-medium text-[#19355a]">
+                <span className="font-medium ">
                   {isArabic ? "النوع" : "Type"}
                 </span>
                 <span>{selectedItem.type}</span>
               </div>
-
               <div className="flex justify-between">
-                <span className="font-medium text-[#19355a]">
-                  {isArabic ? "الموقع" : "Location"}
+                <span className="font-medium ">
+                  {isArabic ? "دولي/محلي" : "International/Local"}
+                </span>
+                <span>{selectedItem.type}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium ">
+                  {isArabic ? "دور المشاركة" : "Participation Role"}
+                </span>
+                <span>{selectedItem.role}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium ">
+                  {isArabic ? "الجهة المنظمة" : "Organizer"}
+                </span>
+                <span>{selectedItem.organizer}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium ">
+                  {isArabic ? "مكان الانعقاد" : "Location"}
                 </span>
                 <span>{selectedItem.location}</span>
               </div>
-
+              {selectedItem.link && (
+                <div className="flex justify-between">
+                  <span className="font-medium ">
+                    {isArabic ? "الموقع الالكتروني" : "Website"}
+                  </span>
+                  <a
+                    href={selectedItem.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#b38e19] underline"
+                  >
+                    {selectedItem.link.replace("https://", "")}
+                  </a>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="font-medium ">
+                  {isArabic ? "تاريخ البداية" : "Start Date"}
+                </span>
+                <span>{selectedItem.period}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium ">
+                  {isArabic ? "تاريخ النهاية" : "End Date"}
+                </span>
+                <span>{selectedItem.period}</span>
+              </div>
               {selectedItem.fileName && (
                 <div className="flex justify-between">
-                  <span className="font-medium text-[#19355a]">
+                  <span className="font-medium ">
                     {isArabic ? "الملف" : "File"}
                   </span>
                   <a
@@ -294,22 +453,6 @@ export default function SeminarsAndConferences() {
                     className="text-[#b38e19] underline"
                   >
                     {selectedItem.fileName}
-                  </a>
-                </div>
-              )}
-
-              {selectedItem.link && (
-                <div className="flex justify-between">
-                  <span className="font-medium text-[#19355a]">
-                    {isArabic ? "الرابط" : "Link"}
-                  </span>
-                  <a
-                    href={selectedItem.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[#b38e19] underline"
-                  >
-                    {selectedItem.link.replace("https://", "")}
                   </a>
                 </div>
               )}

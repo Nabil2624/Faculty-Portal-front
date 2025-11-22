@@ -18,8 +18,7 @@ export default function AddTrainingProgram() {
     participationType: "",
     programName: "",
     organizingBody: "",
-    country: "",
-    city: "",
+    location: "",
     description: "",
     startDate: "",
     endDate: "",
@@ -126,7 +125,7 @@ export default function AddTrainingProgram() {
               {/* Program Name */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("programName")}
+                  {t("programName")}  <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -141,7 +140,7 @@ export default function AddTrainingProgram() {
               {/* Organizing Body */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("organizingBody")}
+                  {t("organizingBody")}  <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -152,116 +151,96 @@ export default function AddTrainingProgram() {
                   onChange={handleChange}
                 />
               </div>
-
-              {/* Dates */}
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("startDate")}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formData.startDate}
-                      placeholder={t("startDate-placeholder")}
-                      readOnly
-                      className={`${inputBase} ${focusStyle}`}
-                      onFocus={() => openDatePicker(startDateRef)}
-                    />
-                    <FiCalendar
-                      role="button"
-                      onClick={() => openDatePicker(startDateRef)}
-                      size={18}
-                      className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
-                        isArabic ? "left-4" : "right-4"
-                      }`}
-                    />
-                    <input
-                      type="date"
-                      ref={startDateRef}
-                      className="absolute opacity-0 pointer-events-none"
-                      onChange={(e) =>
-                        setFormData({ ...formData, startDate: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("endDate")}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formData.endDate}
-                      placeholder={t("endDate-placeholder")}
-                      readOnly
-                      className={`${inputBase}  ${focusStyle}`}
-                      onFocus={() => openDatePicker(endDateRef)}
-                    />
-                    <FiCalendar
-                      role="button"
-                      onClick={() => openDatePicker(endDateRef)}
-                      size={18}
-                      className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
-                        isArabic ? "left-4" : "right-4"
-                      }`}
-                    />
-                    <input
-                      type="date"
-                      ref={endDateRef}
-                      className="absolute opacity-0 pointer-events-none"
-                      onChange={(e) =>
-                        setFormData({ ...formData, endDate: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
+              {/* Location */}
+              <div>
+                <label className="block mb-2 text-lg font-medium">
+                  {isArabic ? "مكان الانعقاد" : "Location"} <span className="text-[#b38e19]">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="location"
+                  placeholder={
+                    isArabic ? "اكتب مكان الانعقاد" : "Enter location"
+                  }
+                  className={`${inputBase} ${focusStyle}`}
+                  value={formData.location}
+                  onChange={(e) =>
+                    setFormData({ ...formData, location: e.target.value })
+                  }
+                />
               </div>
             </div>
 
             {/* RIGHT Column */}
             <div className="flex flex-col justify-between space-y-6">
               <div className="space-y-6">
-                {/* Country + City */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Dates */}
+                <div className="grid grid-cols-2 gap-4 mt-4">
                   <div>
                     <label className="block mb-2 text-lg font-medium">
-                      {t("country")}
+                      {t("startDate")} <span className="text-[#b38e19]">*</span>
                     </label>
-                    <div className="relative flex items-center">
-                      <select
-                        name="country"
-                        className={`${inputBase} ${focusStyle} appearance-none flex-1`}
-                        value={formData.country}
-                        onChange={handleChange}
-                      >
-                        <option value="">{t("selectCountry")}</option>
-                        <option value="egypt">Egypt</option>
-                        <option value="usa">USA</option>
-                      </select>
-                      <FiChevronDown
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={formData.startDate}
+                        placeholder={t("startDate-placeholder")}
+                        readOnly
+                        className={`${inputBase} ${focusStyle}`}
+                        onFocus={() => openDatePicker(startDateRef)}
+                      />
+                      <FiCalendar
+                        role="button"
+                        onClick={() => openDatePicker(startDateRef)}
                         size={18}
-                        className={`absolute text-[#B38E19] pointer-events-none ${
+                        className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
                           isArabic ? "left-4" : "right-4"
                         }`}
+                      />
+                      <input
+                        type="date"
+                        ref={startDateRef}
+                        className="absolute opacity-0 pointer-events-none"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            startDate: e.target.value,
+                          })
+                        }
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block mb-2 text-lg font-medium">
-                      {t("city")}
+                      {t("endDate")}
                     </label>
-                    <input
-                      type="text"
-                      name="city"
-                      placeholder={t("cityPlaceholder")}
-                      className={`${inputBase} ${focusStyle}`}
-                      value={formData.city}
-                      onChange={handleChange}
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={formData.endDate}
+                        placeholder={t("endDate-placeholder")}
+                        readOnly
+                        className={`${inputBase}  ${focusStyle}`}
+                        onFocus={() => openDatePicker(endDateRef)}
+                      />
+                      <FiCalendar
+                        role="button"
+                        onClick={() => openDatePicker(endDateRef)}
+                        size={18}
+                        className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
+                          isArabic ? "left-4" : "right-4"
+                        }`}
+                      />
+                      <input
+                        type="date"
+                        ref={endDateRef}
+                        className="absolute opacity-0 pointer-events-none"
+                        onChange={(e) =>
+                          setFormData({ ...formData, endDate: e.target.value })
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -282,36 +261,32 @@ export default function AddTrainingProgram() {
             </div>
           </form>
 
-         
-            {/* Buttons */}
-            <div
-              className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
-                isArabic ? "left-[53px]" : "right-[53px]"
-              } bottom-[28px]`}
+          {/* Buttons */}
+          <div
+            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
+              isArabic ? "left-[53px]" : "right-[53px]"
+            } bottom-[28px]`}
+          >
+            <button
+              type="button"
+              onClick={() => navigate("/training-programs")}
+              className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
+                isArabic ? "cairo" : "roboto"
+              } text-sm`}
             >
-              {/* Save button */}
-              <button
-                type="button"
-                onClick={() => navigate("/training-programs")}
-                className={`bg-[#b38e19] text-white w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("save")}
-              </button>
+              {t("save")}
+            </button>
 
-              {/* Cancel button */}
-              <button
-                type="button"
-                onClick={() => navigate("/training-programs")}
-                className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("cancel")}
-              </button>
-            </div>
-         
+            <button
+              type="button"
+              onClick={() => navigate("/training-programs")}
+              className={`bg-gray-300 text-black w-full sm:w-24 h-10 rounded-md cursor-pointer font-${
+                isArabic ? "cairo" : "roboto"
+              } text-sm`}
+            >
+              {t("cancel")}
+            </button>
+          </div>
         </div>
       </div>
     </Layout>

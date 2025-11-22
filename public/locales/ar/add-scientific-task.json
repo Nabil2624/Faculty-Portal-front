@@ -7,9 +7,8 @@
   },
   "fields": {
     "task": "المهمة",
-    "country": "الدولة",
-    "city": "المدينة",
-    "university": "الجامعة",
+    "country_city": "الدولة/المدينة",
+    "university_college": "الجامعة/الكلية",
     "college": "الكلية",
     "startDate": "تاريخ البداية",
     "endDate": "تاريخ النهاية",
@@ -17,10 +16,8 @@
   },
   "placeholders": {
     "task": "مثل: مهمة بحثية في مجال الذكاء الاصطناعي",
-    "selectCountry": "اختر الدولة",
-    "city": "مثل: القاهرة",
-    "university": "مثل: جامعة حلوان",
-    "college": "مثل: كلية الحاسبات",
+    "country_city": "مثل: مصر",
+    "university_college": "مثل: جامعة حلوان",
     "description": "اكتب وصفًا مختصرًا للمهمة...",
     "startDate": "اختر تاريخ البداية",
     "endDate": "اختر تاريخ النهاية (اتركه فارغًا إذا مستمر)"

@@ -33,19 +33,18 @@ export default function EditPersonalInfo() {
 
         setPersonalInfo({
           title: data.title || "",
-          name: data.name || "",
-          ssn: data.ssn?.trim() || "",
-          gender: data.gender || "",
-          birthPlace: data.birthPlace || "",
           university: data.universityName || "",
+          birthDate: data.birthDate || "",
+          name: data.name || "",
           department: data.departmentName || "",
           faculty: data.facultyName || "",
+          ssn: data.ssn?.trim() || "",
           generalSpecialization: data.generalSpecialization || "",
           field: data.fieldOfStudy || "",
-          exactSpecialization: data.accurateSpecialization || "",
-          compositionTopic: data.compositionTopic || "لا يوجد",
+          gender: data.gender || "",
           nameInComposition: data.nameInComposition || "",
-          birthDate: data.birthDate || "",
+          exactSpecialization: data.accurateSpecialization || "",
+          birthPlace: data.birthPlace || "",
           maritalStatus: data.socialStatus || "",
         });
       } catch (err) {
@@ -90,7 +89,6 @@ export default function EditPersonalInfo() {
         compositionTopic: personalInfo.compositionTopic,
       };
 
-      console.log("📤 Sending updated data:", payload);
       await axiosInstance.put("/PersonalData", payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -150,92 +148,110 @@ export default function EditPersonalInfo() {
                 onChange={handlePhotoUpload}
               />
             </label>
-
-            
           </div>
-          <div className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
-                isArabic ? "left-[53px]" : "right-[53px]"
-              } bottom-[28px]`}>
-              <button
-                onClick={handleSave}
-                className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("save")}
-              </button>
-              <button
-                onClick={() => navigate("/personal")}
-                className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("cancel")}
-              </button>
-            </div>
+          <div
+            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
+              isArabic ? "left-[53px]" : "right-[53px]"
+            } bottom-[28px]`}
+          >
+            <button
+              onClick={handleSave}
+              className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
+                isArabic ? "cairo" : "roboto"
+              } text-sm`}
+            >
+              {t("save")}
+            </button>
+            <button
+              onClick={() => navigate("/personal")}
+              className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
+                isArabic ? "cairo" : "roboto"
+              } text-sm`}
+            >
+              {t("cancel")}
+            </button>
+          </div>
 
           {/* Info Section */}
-          <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-4 ml-10">
+          <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-4 ">
             <div className="grid grid-cols-3 gap-5">
-              {Object.keys(personalInfo).map((key, index) => {
-                const nonEditableFields = [
-                  "ssn",
-                  "gender",
-                  "university",
-                  "department",
-                  "faculty",
-                  "generalSpecialization",
-                  "field",
-                  "exactSpecialization",
-                ];
+              {Object.keys(personalInfo)
+                .filter((key) => key !== "compositionTopic") // exclude it
+                .map((key, index) => {
+                  const nonEditableFields = [
+                    "ssn",
+                    "gender",
+                    "university",
+                    "department",
+                    "faculty",
+                    "generalSpecialization",
+                    "field",
+                    "exactSpecialization",
+                  ];
 
-                const isNonEditable = nonEditableFields.includes(key);
+                  const isNonEditable = nonEditableFields.includes(key);
 
-                return (
-                  <div
-                    key={index}
-                    className="flex h-[40px] rounded-md overflow-hidden text-sm border border-gray-300 
+                  return (
+                    <div
+                      key={index}
+                      className="flex h-[40px] rounded-md overflow-hidden text-sm border border-gray-300 
                       focus-within:border-[#B38E19] focus-within:ring-2 focus-within:ring-[#B38E19] transition"
-                  >
-                    <label className="bg-[#19355a] text-white w-32 flex items-center justify-center px-2 text-center">
-                      {t(key)}
-                    </label>
+                    >
+                      <label className="bg-[#19355a] text-white w-32 flex items-center justify-center px-2 text-center">
+                        {t(key)}
+                      </label>
 
-                    {key === "birthDate" ? (
-                      <div className="relative flex-1 flex items-center bg-gray-200">
-                        <FiCalendar
-                          role="button"
-                          aria-label="Open date picker"
-                          onClick={openDatePicker}
-                          size={18}
-                          className={`cursor-pointer text-[#B38E19] absolute ${
-                            isArabic ? "left-3" : "right-3"
-                          }`}
-                        />
+                      {key === "birthDate" ? (
+                        <div className="relative flex-1 flex items-center bg-gray-200">
+                          <FiCalendar
+                            role="button"
+                            aria-label="Open date picker"
+                            onClick={openDatePicker}
+                            size={18}
+                            className={`cursor-pointer text-[#B38E19] absolute ${
+                              isArabic ? "left-3" : "right-3"
+                            }`}
+                          />
+                          <input
+                            ref={dateInputRef}
+                            type="date"
+                            value={personalInfo[key] || ""}
+                            onChange={(e) => handleChange(key, e.target.value)}
+                            className="w-full h-full bg-gray-200 text-black outline-none [color-scheme:light] text-center px-2"
+                          />
+                        </div>
+                      ) : isNonEditable ? (
+                        <div className="flex-1 bg-gray-100 text-gray-500 flex items-center justify-center text-center cursor-not-allowed">
+                          {personalInfo[key] || "-"}
+                        </div>
+                      ) : (
                         <input
-                          ref={dateInputRef}
-                          type="date"
+                          type="text"
                           value={personalInfo[key] || ""}
                           onChange={(e) => handleChange(key, e.target.value)}
-                          className="w-full h-full bg-gray-200 text-black outline-none [color-scheme:light] text-center px-2"
+                          className="flex-1 bg-gray-200 px-2 text-black outline-none text-center"
                         />
-                      </div>
-                    ) : isNonEditable ? (
-                      // ✅ Updated disabled styling
-                      <div className="flex-1 bg-gray-100 text-gray-500 flex items-center justify-center text-center cursor-not-allowed">
-                        {personalInfo[key] || "-"}
-                      </div>
-                    ) : (
-                      <input
-                        type="text"
-                        value={personalInfo[key] || ""}
-                        onChange={(e) => handleChange(key, e.target.value)}
-                        className="flex-1 bg-gray-200 px-2 text-black outline-none text-center"
-                      />
-                    )}
-                  </div>
-                );
-              })}
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+            {/* Composition Topic Section */}
+            <div className={`w-full mt-6 `}>
+              <div className="max-w-[690px] flex flex-col gap-2">
+                <h3 className="text-xl font-bold">
+                  {t("compositionTopicTitle")}
+                </h3>
+                <textarea
+                  value={personalInfo.compositionTopic || ""}
+                  onChange={(e) =>
+                    handleChange("compositionTopic", e.target.value)
+                  }
+                  placeholder={t("none")}
+                  className="w-full h-[120px] rounded-md p-4 bg-gray-200 text-black resize-none
+                 overflow-y-auto break-words whitespace-pre-wrap outline-none"
+                />
+              </div>
             </div>
           </div>
         </div>

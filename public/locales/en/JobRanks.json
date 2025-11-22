@@ -8,5 +8,6 @@
   "back": "Back",
   "delete": "Delete",
   "cancel": "Cancel",
-  "areYouSureDelete": "Are you sure you want to delete"
+  "areYouSureDelete": "Are you sure you want to delete",
+  "period" : "Job Grade Date"
 }

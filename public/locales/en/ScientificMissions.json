@@ -2,7 +2,11 @@
   "scientificMissions": "Scientific Missions",
   "edit": "Add",
   "back": "Back",
+  "location" : "Country/City",
+  "startDate" : "Start Date",
+  "endDate" : "End Date",
   "areYouSureDelete": "Are you sure you want to delete",
+  "institution" : "University/College",
   "delete": "Delete",
   "cancel": "Cancel"
 }

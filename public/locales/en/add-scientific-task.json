@@ -7,20 +7,16 @@
   },
   "fields": {
     "task": "Mission",
-    "country": "Country",
-    "city": "City",
-    "university": "University",
-    "college": "College",
+    "country_city": "Country/City",
+    "university_college": "University/College",
     "startDate": "Start Date",
     "endDate": "End Date",
     "description": "Description"
   },
   "placeholders": {
     "task": "e.g. Research on AI in healthcare",
-    "selectCountry": "Select country",
-    "city": "e.g. Cairo",
-    "university": "e.g. Helwan University",
-    "college": "e.g. Faculty of Computers",
+    "country_city": "ex:",
+    "university_college": "University/College",
     "description": "Write a short description of the task...",
     "startDate": "Select start date",
     "endDate": "Select an end date (leave blank if ongoing)"

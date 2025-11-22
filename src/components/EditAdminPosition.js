@@ -200,7 +200,7 @@ export default function EditAdminPosition({ data, onCancel }) {
             isArabic ? "cairo" : "roboto"
           } text-sm`}
         >
-          {t("add") || "Add"}
+          {t("edit") || "Edit"}
         </button>
 
         <button

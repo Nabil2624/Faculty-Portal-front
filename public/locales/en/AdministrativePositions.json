@@ -3,5 +3,7 @@
   "back": "Back",
   "areYouSureDelete": "Are you sure you want to delete",
   "delete": "Delete",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "startDate": "Start Date",
+  "endDate": "End Date"
 }

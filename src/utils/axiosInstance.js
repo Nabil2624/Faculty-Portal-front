@@ -1,13 +1,11 @@
 // utils/axiosInstance.js
 import axios from "axios";
 
-// Create a small event target to emit errors
 export const axiosEvent = new EventTarget();
 
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_BASE_URL || "https://localhost:7098/api",
   headers: { "Content-Type": "application/json" },
-  withCredentials: true,
 });
 
 // ✅ Add Authorization header if token exists
@@ -20,13 +18,12 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ Global error handling via custom event
+// ✅ Response interceptor for refresh + session handling
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     const originalRequest = error.config;
 
-    // 🧠 Case 1: No response — likely backend/network issue
     if (!error.response) {
       if (!originalRequest?.skipGlobalErrorHandler) {
         axiosEvent.dispatchEvent(
@@ -38,16 +35,47 @@ axiosInstance.interceptors.response.use(
 
     const { status } = error.response;
 
-    // 🧠 Case 2: Expected user errors (no global error page)
-    if (
-      status === 400 || // validation error, wrong OTP, etc.
-      status === 401 || // invalid credentials
-      status === 409    // conflict (e.g. duplicate email)
-    ) {
-      return Promise.reject(error); // let component handle
+    // 🔹 401 Unauthorized: try refresh token
+    if (status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      if (refreshToken) {
+        try {
+          const refreshResponse = await axios.post(
+            `${process.env.REACT_APP_API_BASE_URL || "https://localhost:7098/api"}/auth/refresh-token`,
+            { token: refreshToken }
+          );
+
+          const newToken = refreshResponse.data.token;
+          localStorage.setItem("authToken", newToken);
+
+          // Retry original request
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return axiosInstance(originalRequest);
+        } catch (refreshError) {
+          // Refresh failed -> logout
+          alert("⚠️ Your session has expired. Please login again.");
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("refreshToken");
+          window.location.href = "/login";
+          return Promise.reject(refreshError);
+        }
+      } else {
+        // No refresh token -> force login
+        alert("⚠️ Your session has expired. Please login again.");
+        window.location.href = "/login";
+        return Promise.reject(error);
+      }
     }
 
-    // 🧠 Case 3: Real backend / DB / server-side / forbidden errors
+    // 🔹 Expected user errors — let component handle
+    if (status === 400 || status === 409) {
+      return Promise.reject(error);
+    }
+
+    // 🔹 Global error pages
     let targetRoute;
     switch (status) {
       case 403:
@@ -58,7 +86,6 @@ axiosInstance.interceptors.response.use(
         break;
       case 500:
       default:
-        // any 5xx error or unexpected error
         targetRoute = `/error/${status >= 500 ? 500 : status}`;
         break;
     }

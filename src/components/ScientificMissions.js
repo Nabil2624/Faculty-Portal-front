@@ -51,6 +51,54 @@ export default function ScientificMissions() {
         "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
       location: "طوكيو - اليابان",
     },
+    {
+      title: "زيارة بحثية في تقنيات البرمجيات الحديثة",
+      institution: "جامعة طوكيو للعلوم والتكنولوجيا",
+      period: "من 10 يناير 2020 - حتى 10 أبريل 2020",
+      description:
+        "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
+      location: "طوكيو - اليابان",
+    },
+    {
+      title: "زيارة بحثية في تقنيات البرمجيات الحديثة",
+      institution: "جامعة طوكيو للعلوم والتكنولوجيا",
+      period: "من 10 يناير 2020 - حتى 10 أبريل 2020",
+      description:
+        "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
+      location: "طوكيو - اليابان",
+    },
+    {
+      title: "زيارة بحثية في تقنيات البرمجيات الحديثة",
+      institution: "جامعة طوكيو للعلوم والتكنولوجيا",
+      period: "من 10 يناير 2020 - حتى 10 أبريل 2020",
+      description:
+        "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
+      location: "طوكيو - اليابان",
+    },
+    {
+      title: "زيارة بحثية في تقنيات البرمجيات الحديثة",
+      institution: "جامعة طوكيو للعلوم والتكنولوجيا",
+      period: "من 10 يناير 2020 - حتى 10 أبريل 2020",
+      description:
+        "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
+      location: "طوكيو - اليابان",
+    },
+    {
+      title: "زيارة بحثية في تقنيات البرمجيات الحديثة",
+      institution: "جامعة طوكيو للعلوم والتكنولوجيا",
+      period: "من 10 يناير 2020 - حتى 10 أبريل 2020",
+      description:
+        "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
+      location: "طوكيو - اليابان",
+    },
+    {
+      title: "زيارة بحثية في تقنيات البرمجيات الحديثة",
+      institution: "جامعة طوكيو للعلوم والتكنولوجيا",
+      period: "من 10 يناير 2020 - حتى 10 أبريل 2020",
+      description:
+        "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
+      location: "طوكيو - اليابان",
+    },
   ];
 
   // Pagination logic
@@ -92,7 +140,7 @@ export default function ScientificMissions() {
                 setSelectedItem(item);
                 setShowDetails(true);
               }}
-              className={`relative bg-gray-100 rounded-[12px] shadow-md p-5 border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
+              className={`relative bg-gray-100 rounded-[12px] shadow-md p-3 border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
                 isArabic ? "border-r-[19px]" : "border-l-[19px]"
               }`}
             >
@@ -118,12 +166,12 @@ export default function ScientificMissions() {
               </div>
 
               {/* Card Content */}
-              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">
+              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-1 ">
                 {item.title}
               </h3>
-              <p className="text-base font-medium text-gray-700">
-                {item.institution}
-              </p>
+              <p className="text-lg text-gray-700">{item.period}</p>
+              <p className="text-xs text-gray-700">{item.institution}</p>
+              <p className="text-xs text-gray-400 mt-1">{item.location}</p>
             </div>
           ))}
         </div>
@@ -166,7 +214,7 @@ export default function ScientificMissions() {
 
         {/* Bottom Buttons */}
         <div
-          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
             isArabic ? "left-[53px]" : "right-[53px]"
           } bottom-[28px]`}
         >
@@ -220,39 +268,51 @@ export default function ScientificMissions() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
           <div
             dir={isArabic ? "rtl" : "ltr"}
-            className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[520px] max-w-[90%] p-8 relative animate-fadeIn"
+            className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[520px] max-w-[90%] p-8 relative animate-fadeIn border-2 border-[#b38e19]"
           >
             <button
               onClick={() => setShowDetails(false)}
               className={`absolute top-4 ${
                 isArabic ? "left-4" : "right-4"
-              } text-gray-500 hover:text-[#19355a] transition`}
+              } text-gray-500 transition`}
             >
               <X size={22} />
             </button>
 
             <div className="border-b-2 border-[#b38e19]/40 pb-3 mb-4">
-              <h2 className="text-2xl font-bold text-[#19355a]">
+              <h2 className="text-2xl font-bold ">
                 {selectedItem.title}
               </h2>
-              <p className="text-sm text-gray-500 mt-1">
-                {selectedItem.institution}
-              </p>
             </div>
 
             <div className="space-y-3 text-gray-700">
               <div className="flex justify-between">
-                <span className="font-medium text-[#19355a]">
-                  {t("period") || (isArabic ? "الفترة" : "Period")}
+                <span className="font-medium ">
+                  {t("location") ||
+                    (isArabic ? "الدولة / المدينة" : "Country / City")}
                 </span>
-                <span>{selectedItem.period}</span>
+                <span>{selectedItem.location}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium ">
+                  {t("institution") ||
+                    (isArabic ? "الجامعة / الكلية" : "University / College")}
+                </span>
+                <span>{selectedItem.institution}</span>
               </div>
 
               <div className="flex justify-between">
-                <span className="font-medium text-[#19355a]">
-                  {t("location") || (isArabic ? "الموقع" : "Location")}
+                <span className="font-medium ">
+                  {t("startDate") ||
+                    (isArabic ? "تاريخ البداية" : "Start Date")}
                 </span>
-                <span>{selectedItem.location}</span>
+                <span>{selectedItem.period}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium ">
+                  {t("endDate") || (isArabic ? "تاريخ النهاية" : "End Date")}
+                </span>
+                <span>{selectedItem.period}</span>
               </div>
 
               <div className="mt-5 bg-gray-100 p-4 rounded-lg border border-gray-200">

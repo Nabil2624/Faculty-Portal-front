@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AddAdministrativePosition from "../components/AddAdministrativePosition";
 import EditJobGrade from "../components/EditJobGrade";
+import EditAdminPosition from "./EditAdminPosition";
 
 export default function AdministrativePositions() {
   const { t, i18n } = useTranslation("AdministrativePositions");
@@ -35,42 +36,55 @@ export default function AdministrativePositions() {
     {
       title: "مدير الشؤون الإدارية",
       period: "من 1 يناير 2022 - حتى الآن",
-      department: "الإدارة العامة",
+
       description:
         "إدارة العمليات الإدارية العامة والإشراف على شؤون الموظفين وتنظيم سير العمل.",
-      level: "الدرجة الإدارية الأولى",
-      supervisor: "م. خالد يوسف",
-      salary: "30,000 جنيه",
     },
     {
       title: "نائب المدير العام",
       period: "من 1 مارس 2019 - حتى 31 ديسمبر 2021",
-      department: "الإدارة العامة",
+
       description:
         "تنسيق أعمال الإدارات المختلفة وضمان تحقيق الأهداف الاستراتيجية للمؤسسة.",
-      level: "الدرجة الإدارية الثانية",
-      supervisor: "د. سامي عبد الرحمن",
-      salary: "25,000 جنيه",
     },
     {
       title: "رئيس قسم الموارد البشرية",
       period: "من 1 يناير 2016 - حتى 28 فبراير 2019",
-      department: "الموارد البشرية",
+
       description:
         "تطوير سياسات التوظيف والإشراف على إدارة الأداء والتدريب للموظفين.",
-      level: "الدرجة الإدارية الثالثة",
-      supervisor: "م. هالة منصور",
-      salary: "20,000 جنيه",
     },
     {
       title: "مشرف إداري",
       period: "من 1 يناير 2013 - حتى 31 ديسمبر 2015",
-      department: "الشؤون الإدارية",
       description:
         "تنظيم الجداول والتقارير الإدارية والتنسيق بين الأقسام التنفيذية.",
-      level: "الدرجة الإدارية الرابعة",
-      supervisor: "م. أحمد عبد الله",
-      salary: "15,000 جنيه",
+    },
+        {
+      title: "مشرف إداري",
+      period: "من 1 يناير 2013 - حتى 31 ديسمبر 2015",
+      description:
+        "تنظيم الجداول والتقارير الإدارية والتنسيق بين الأقسام التنفيذية.",
+    },    {
+      title: "مشرف إداري",
+      period: "من 1 يناير 2013 - حتى 31 ديسمبر 2015",
+      description:
+        "تنظيم الجداول والتقارير الإدارية والتنسيق بين الأقسام التنفيذية.",
+    },    {
+      title: "مشرف إداري",
+      period: "من 1 يناير 2013 - حتى 31 ديسمبر 2015",
+      description:
+        "تنظيم الجداول والتقارير الإدارية والتنسيق بين الأقسام التنفيذية.",
+    },    {
+      title: "مشرف إداري",
+      period: "من 1 يناير 2013 - حتى 31 ديسمبر 2015",
+      description:
+        "تنظيم الجداول والتقارير الإدارية والتنسيق بين الأقسام التنفيذية.",
+    },    {
+      title: "مشرف إداري",
+      period: "من 1 يناير 2013 - حتى 31 ديسمبر 2015",
+      description:
+        "تنظيم الجداول والتقارير الإدارية والتنسيق بين الأقسام التنفيذية.",
     },
   ];
 
@@ -113,7 +127,7 @@ export default function AdministrativePositions() {
                 setSelectedItem(item);
                 setShowDetails(true);
               }}
-              className={`relative bg-gray-100 rounded-[12px] shadow-md p-5 border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
+              className={`relative bg-gray-100 rounded-[12px] shadow-md p-3 border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
                 isArabic ? "border-r-[19px]" : "border-l-[19px]"
               }`}
             >
@@ -138,11 +152,14 @@ export default function AdministrativePositions() {
               </div>
 
               {/* Card Content */}
-              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">
+              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-1">
                 {item.title}
               </h3>
-              <p className="text-base font-medium text-gray-700">
+              <p className="text-lg text-gray-700">
                 {item.period}
+              </p>
+              <p className="text-sm  text-gray-700">
+                {item.description}
               </p>
             </div>
           ))}
@@ -186,7 +203,7 @@ export default function AdministrativePositions() {
 
         {/* Bottom Buttons */}
         <div
-          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end w-full max-w-6xl absolute ${
+          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
             isArabic ? "left-[53px]" : "right-[53px]"
           } bottom-[28px]`}
         >
@@ -240,55 +257,34 @@ export default function AdministrativePositions() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
           <div
             dir={isArabic ? "rtl" : "ltr"}
-            className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[520px] max-w-[90%] p-8 relative animate-fadeIn"
+            className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[520px] max-w-[90%] p-8 relative animate-fadeIn border-2 border-[#b38e19]"
           >
             <button
               onClick={() => setShowDetails(false)}
               className={`absolute top-4 ${
                 isArabic ? "left-4" : "right-4"
-              } text-gray-500 hover:text-[#19355a] transition`}
+              } text-gray-500  transition`}
             >
               <X size={22} />
             </button>
 
             <div className="border-b-2 border-[#b38e19]/40 pb-3 mb-4">
-              <h2 className="text-2xl font-bold text-[#19355a]">
-                {selectedItem.title}
-              </h2>
-              <p className="text-sm text-gray-500 mt-1">
-                {selectedItem.period}
-              </p>
+              <h2 className="text-2xl font-bold">{selectedItem.title}</h2>
             </div>
 
             <div className="space-y-3 text-gray-700">
               <div className="flex justify-between">
-                <span className="font-medium text-[#19355a]">
-                  {t("department") || (isArabic ? "القسم" : "Department")}
+                <span className="font-medium ">
+                  {t("startDate") ||
+                    (isArabic ? "تاريخ البداية" : "Start Date")}
                 </span>
-                <span>{selectedItem.department}</span>
+                <span>{selectedItem.period}</span>
               </div>
-
               <div className="flex justify-between">
-                <span className="font-medium text-[#19355a]">
-                  {t("rankLevel") || (isArabic ? "الدرجة" : "Rank Level")}
+                <span className="font-medium ">
+                  {t("endDate") || (isArabic ? "تاريخ النهاية" : "End Date")}
                 </span>
-                <span>{selectedItem.level}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="font-medium text-[#19355a]">
-                  {t("supervisor") || (isArabic ? "المشرف" : "Supervisor")}
-                </span>
-                <span>{selectedItem.supervisor}</span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="font-medium text-[#19355a]">
-                  {t("salary") || (isArabic ? "الراتب" : "Salary")}
-                </span>
-                <span className="font-semibold text-[#b38e19]">
-                  {selectedItem.salary}
-                </span>
+                <span>{selectedItem.period}</span>
               </div>
 
               <div className="mt-5 bg-gray-100 p-4 rounded-lg border border-gray-200">
@@ -314,7 +310,7 @@ export default function AdministrativePositions() {
       {showEditForm && selectedItem && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="rounded-lg shadow-none p-0 w-[480px] relative">
-            <EditJobGrade
+            <EditAdminPosition
               data={selectedItem}
               onCancel={() => setShowEditForm(false)}
             />
