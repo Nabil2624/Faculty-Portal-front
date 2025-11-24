@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Info, ChevronDown } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
 import helwanImage from "../images/helwan-university.jpeg";
@@ -17,8 +17,11 @@ export default function OtpPage() {
   const inputRefs = useRef([]);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  
+  // 🔹 Get email from state
+  const email = location.state?.email || "";
+
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
     setOpenDropdown(false);
@@ -65,6 +68,11 @@ export default function OtpPage() {
   const handleSubmit = async () => {
     setError("");
 
+    if (!email) {
+      setError(t("errors.emailMissing"));
+      return;
+    }
+
     if (otp.some((digit) => digit === "")) {
       setError(t("errors.fillAllDigits"));
       return;
@@ -75,32 +83,20 @@ export default function OtpPage() {
 
     try {
       await axiosInstance.post(
-        "/Auth/Verify-Sent-Email",
-        { otp: otpValue },
-        { skipGlobalErrorHandler: true } // ✅ prevent redirect for normal validation errors
+        "/Authentication/VerifyOTP",
+        { otp: otpValue, email }, // ✅ send email along with OTP
+        { skipGlobalErrorHandler: true }
       );
 
-      // ✅ Success → go to reset password
-      navigate("/reset-password");
+      // ✅ Navigate to Reset Password page with email
+      navigate("/reset-password", { state: { email } });
     } catch (err) {
       const status = err.response?.status;
-      const backendMsg = err.response?.data?.message;
-
-      // ✅ Expected user-level errors
-      if (status === 400) {
-        setError(t("errors.invalidOtp"));
-      } else if (status === 429) {
-        setError(t("errors.tooManyRequests"));
-      } else if (status === 404) {
-        setError(t("errors.notFound"));
-      } else if (status === 500) {
-        // Server failure → show global error page
-        navigate("/error/500", { replace: true });
-        return;
-      } else {
-        // Other unexpected
-        setError(t("errors.unexpected"));
-      }
+      if (status === 400) setError(t("errors.invalidOtp"));
+      else if (status === 429) setError(t("errors.tooManyRequests"));
+      else if (status === 404) setError(t("errors.notFound"));
+      else if (status === 500) navigate("/error/500", { replace: true });
+      else setError(t("errors.unexpected"));
     } finally {
       setLoading(false);
     }

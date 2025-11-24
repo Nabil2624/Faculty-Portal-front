@@ -76,7 +76,9 @@ export default function RegisterPage() {
       const registerRes = await axiosInstance.post(
         "/Authentication/Register",
         { NationalNumber: trimmedID },
-        { skipGlobalErrorHandler: true }
+        { skipGlobalErrorHandler: true, 
+          withCredentials: false,
+        }
       );
 
       // ✅ Registration succeeded

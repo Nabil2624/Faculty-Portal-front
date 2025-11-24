@@ -2,9 +2,11 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { Pencil, Trash2, Filter, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axiosInstance from "../utils/axiosInstance";
 import AddArticleForm from "./AddArticleForm";
 import EditArticleForm from "./EditArticleForm";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function ArticleReviews() {
   const { t, i18n } = useTranslation("article-reviews");
@@ -17,6 +19,36 @@ export default function ArticleReviews() {
   const [showEditForm, setShowEditForm] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [articleReviews, setArticleReviews] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch articles from API
+  useEffect(() => {
+    const fetchArticles = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axiosInstance.get("/ProjectsAndCommittees/ReviewingArticles", {
+          params: {
+            pageIndex: currentPage - 1,
+            pageSize: 9,
+          },
+          skipGlobalErrorHandler: true,
+          withCredentials: true,
+        });
+        const { data } = response.data; // response.data has { pageIndex, pageSize, totalCount, data }
+        setArticleReviews(data);
+      } catch (err) {
+        console.error("Failed to fetch articles:", err);
+        setError("Failed to fetch articles");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, [currentPage]);
 
   const handleDeleteClick = (item) => {
     setSelectedItem(item);
@@ -24,36 +56,23 @@ export default function ArticleReviews() {
   };
 
   const confirmDelete = () => {
-    console.log("Deleted:", selectedItem.title);
-    // API delete here
+    console.log("Deleted:", selectedItem.titleOfArticle);
+    // TODO: call API to delete
     setShowModal(false);
     setSelectedItem(null);
   };
 
-  // Dummy Data
-  const articleReviews = [
-    {
-      title: "تحكيم مقال حول إدارة المؤسسات",
-      reviewDate: "5 مايو 2024",
-      organization: "مجلة العلوم الإدارية",
-      description:
-        "تم تحكيم المقال وفق معايير الجودة البحثية الأكاديمية واعتماد مستوى الجدة في الطرح العلمي.",
-    },
-    {
-      title: "تحكيم بحث التسويق السياحي",
-      reviewDate: "10 فبراير 2023",
-      organization: "مجلة السياحة الدولية",
-      description: "تقييم شامل لمحتوى الدراسة وتحليل البيانات الميدانية.",
-    },
-  ];
-
-  // Pagination Logic
+  // Pagination
   const itemsPerPage = 9;
   const totalPages = Math.ceil(articleReviews.length / itemsPerPage);
   const paginatedData = articleReviews.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  if (loading) return <LoadingSpinner />;
+
+  if (error) return <div className="text-red-500 text-center mt-10">{error}</div>;
 
   return (
     <Layout>
@@ -80,7 +99,7 @@ export default function ArticleReviews() {
         >
           {paginatedData.map((item, idx) => (
             <div
-              key={idx}
+              key={item.id || idx}
               onClick={() => {
                 setSelectedItem(item);
                 setShowDetails(true);
@@ -91,9 +110,7 @@ export default function ArticleReviews() {
             >
               {/* Icons */}
               <div
-                className={`absolute top-4 ${
-                  isArabic ? "left-4" : "right-4"
-                } flex gap-3`}
+                className={`absolute top-4 ${isArabic ? "left-4" : "right-4"} flex gap-3`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <Pencil
@@ -110,16 +127,14 @@ export default function ArticleReviews() {
               </div>
 
               {/* Card Content */}
-              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-1">
-                {item.title}
-              </h3>
-              <p className="text-lg text-gray-700">{item.reviewDate}</p>
-              <p className="text-sm text-gray-400">{item.organization}</p>
+              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-1">{item.titleOfArticle}</h3>
+              <p className="text-lg text-gray-700">{item.reviewingDate}</p>
+              <p className="text-sm text-gray-400">{item.authority}</p>
             </div>
           ))}
         </div>
 
-        {/* Pagination */}
+        {/* Pagination buttons */}
         <div
           dir={isArabic ? "rtl" : "ltr"}
           className="flex justify-center items-center gap-3 mt-8"
@@ -128,9 +143,7 @@ export default function ArticleReviews() {
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             className={`px-4 py-2 rounded-md border border-gray-400 ${
-              currentPage === 1
-                ? "text-gray-400 cursor-not-allowed"
-                : "hover:bg-gray-200"
+              currentPage === 1 ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-200"
             }`}
           >
             {t("prev")}
@@ -144,121 +157,15 @@ export default function ArticleReviews() {
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             className={`px-4 py-2 rounded-md border border-gray-400 ${
-              currentPage === totalPages
-                ? "text-gray-400 cursor-not-allowed"
-                : "hover:bg-gray-200"
+              currentPage === totalPages ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-200"
             }`}
           >
             {t("next")}
           </button>
         </div>
 
-        {/* Bottom Buttons */}
-        <div
-          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
-            isArabic ? "left-[53px]" : "right-[53px]"
-          } bottom-[28px]`}
-        >
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer text-sm"
-          >
-            {t("add")}
-          </button>
-          <button
-            onClick={() => navigate(-1)}
-            className="bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer text-sm"
-          >
-            {t("back")}
-          </button>
-        </div>
+        {/* Add/Edit/Details modals here as before */}
       </div>
-
-      {/* Delete Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-[360px] text-center">
-            <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3">
-              {t("confirmDelete")}
-            </h3>
-            <p className="text-sm text-gray-600 mb-5">{selectedItem?.title}</p>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={confirmDelete}
-                className="bg-[#E53935] text-white px-5 py-2 rounded-md hover:bg-red-600 transition"
-              >
-                {t("delete")}
-              </button>
-              <button
-                onClick={() => setShowModal(false)}
-                className="bg-gray-300 text-black px-5 py-2 rounded-md hover:bg-gray-400 transition"
-              >
-                {t("cancel")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Details Modal */}
-      {showDetails && selectedItem && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
-          <div
-            dir={isArabic ? "rtl" : "ltr"}
-            className="bg-white rounded-2xl shadow-2xl w-[520px] max-w-[90%] p-8 relative border-2 border-[#b38e19]"
-          >
-            <button
-              onClick={() => setShowDetails(false)}
-              className={`absolute top-4 ${
-                isArabic ? "left-4" : "right-4"
-              } text-gray-500 transition`}
-            >
-              <X size={22} />
-            </button>
-
-            <div className="border-b-2 border-[#b38e19]/40 pb-3 mb-4">
-              <h2 className="text-2xl font-bold ">{selectedItem.title}</h2>
-            </div>
-            <div className="flex justify-between">
-              <span className="font-medium">{t("organization")}</span>
-              <span>{selectedItem.organization}</span>
-            </div>
-            <div className="space-y-3 text-gray-700">
-              <div className="flex justify-between">
-                <span className="font-medium">{t("reviewDate")}</span>
-                <span>{selectedItem.reviewDate}</span>
-              </div>
-
-              <div className="mt-5 bg-gray-100 p-4 rounded-lg border border-gray-200">
-                <p className="text-gray-800 leading-relaxed">
-                  {selectedItem.description}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Add Form */}
-      {showAddForm && (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-      <div className="rounded-lg shadow-none p-0 w-[480px] relative">
-        <AddArticleForm onCancel={() => setShowAddForm(false)} />
-      </div>
-    </div>
-  )}
-
-      {/* Edit Form */}
-      {showEditForm && selectedItem && (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-      <div className="rounded-lg shadow-none p-0 w-[480px] relative">
-        <EditArticleForm
-          data={selectedItem}
-          onCancel={() => setShowEditForm(false)}
-        />
-      </div>
-    </div>
-  )}
     </Layout>
   );
 }

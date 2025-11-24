@@ -2,7 +2,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ChevronDown } from "lucide-react";
-import { jwtDecode } from "jwt-decode";
 import axiosInstance from "../utils/axiosInstance";
 import helwanImage from "../images/helwan-university.jpeg";
 import egyptFlag from "../images/egyptFlag.png";
@@ -45,8 +44,10 @@ export default function LoginPage() {
     const handleKey = (e) => {
       if (e.key === "Escape") setOpenDropdown(false);
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleKey);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKey);
@@ -55,29 +56,29 @@ export default function LoginPage() {
 
   const isArabic = i18n.language === "ar";
 
-  // ✅ Handle login with error translation
+  // ---------------------------------------------------------
+  // 🚀 UPDATED LOGIN FLOW (role comes from login response)
+  // ---------------------------------------------------------
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      const { data } = await axiosInstance.post(
+      // 1️⃣ Login — backend sets HttpOnly cookie & returns role
+      const loginResponse = await axiosInstance.post(
         "/Authentication/Login",
         { username, password },
         {
           skipGlobalErrorHandler: true,
           withCredentials: true,
-        } // prevent showing global error page
+        }
       );
 
-      const token = data?.data;
-      if (!token) throw new Error("Token not found in response");
+      // Extract role directly from login response
+      const userType = loginResponse?.data?.role;
 
-      localStorage.setItem("token", token);
-      const decoded = jwtDecode(token);
-      const userType = decoded.Role;
-
+      // 2️⃣ Redirect based on role
       if (userType === "Faculty Member") {
         navigate("/article-reviews");
       } else {
@@ -85,16 +86,15 @@ export default function LoginPage() {
       }
     } catch (err) {
       if (err.response) {
-        const { status, data } = err.response;
+        const { status } = err.response;
 
-        // Backend validation or auth errors
         if (status === 400 || status === 401) {
-          setError(t("invalidCredentials")); // e.g. "Invalid username or password"
+          setError(t("invalidCredentials"));
         } else {
-          setError(t("unexpectedError")); // fallback translation
+          setError(t("unexpectedError"));
         }
       } else {
-        setError(t("networkError")); // e.g. "Unable to connect to the server"
+        setError(t("networkError"));
       }
     } finally {
       setLoading(false);
@@ -146,6 +146,7 @@ export default function LoginPage() {
                   <img src={egyptFlag} alt="Arabic" className="w-5 h-5" />
                   <span>العربية</span>
                 </button>
+
                 <button
                   onClick={() => handleLanguageChange("en")}
                   className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-100 text-sm"
@@ -168,6 +169,7 @@ export default function LoginPage() {
           <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">
             {t("loginTitle")}
           </h1>
+
           <p className="text-gray-600 mb-12">{t("loginSubtitle")}</p>
 
           {error && (
@@ -200,6 +202,7 @@ export default function LoginPage() {
                 isArabic ? "pl-10" : "pr-10"
               } focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60`}
             />
+
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
@@ -222,9 +225,7 @@ export default function LoginPage() {
             {t("loginButton")}
           </button>
 
-          <div
-            className={`mt-3 text-sm ${isArabic ? "text-right" : "text-left"}`}
-          >
+          <div className={`mt-3 text-sm ${isArabic ? "text-right" : "text-left"}`}>
             <button
               onClick={() => navigate("/forgot-password")}
               type="button"
@@ -273,7 +274,10 @@ export default function LoginPage() {
           >
             {t("welcome")}
           </h3>
-          <p className="text-lg mt-3 text-gray-200 max-w-[80%]">{t("sub")}</p>
+
+          <p className="text-lg mt-3 text-gray-200 max-w-[80%]">
+            {t("sub")}
+          </p>
         </div>
       </div>
     </div>

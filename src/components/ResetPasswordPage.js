@@ -13,6 +13,8 @@ export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const email = location.state?.email || ""; // ✅ get email from OTP page
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -24,8 +26,6 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const token = new URLSearchParams(location.search).get("token");
-
   const handleLanguageChange = (lang) => {
     i18n.changeLanguage(lang);
     setOpenDropdown(false);
@@ -34,26 +34,8 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     const isArabic = i18n.language === "ar";
     document.documentElement.dir = isArabic ? "rtl" : "ltr";
-    if (isArabic) document.documentElement.classList.add("arabic-font");
-    else document.documentElement.classList.remove("arabic-font");
+    document.documentElement.classList.toggle("arabic-font", isArabic);
   }, [i18n.language]);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setOpenDropdown(false);
-      }
-    };
-    const handleKey = (e) => {
-      if (e.key === "Escape") setOpenDropdown(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKey);
-    };
-  }, []);
 
   const isArabic = i18n.language === "ar";
 
@@ -62,7 +44,11 @@ export default function ResetPasswordPage() {
     setError(null);
     setSuccess(null);
 
-    // Password regex: one upper, one lower, one number, one special, min 8 chars
+    if (!email) {
+      setError(t("errors.missingEmail"));
+      return;
+    }
+
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()[\]{}\-_=+\\|;:'",.<>/?`~]).{8,}$/;
 
@@ -78,9 +64,11 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
     try {
-      await axiosInstance.post("/Auth/Reset-Password", {
-        newPassword: newPassword,
-        newPasswordConifrmed: confirmPassword,
+      // ✅ send email along with new password
+      await axiosInstance.post("/Authentication/ResetPassword", {
+        Email:email,
+        NewPassword: newPassword,
+        NewPasswordConifrmed: confirmPassword,
       });
 
       setSuccess(t("resetSuccess"));
@@ -110,7 +98,9 @@ export default function ResetPasswordPage() {
         <div className="flex mb-6">
           <div
             ref={dropdownRef}
-            className={`relative inline-block ${isArabic ? "mr-auto" : "ml-auto"}`}
+            className={`relative inline-block ${
+              isArabic ? "mr-auto" : "ml-auto"
+            }`}
           >
             <button
               onClick={() => setOpenDropdown((s) => !s)}
@@ -154,7 +144,9 @@ export default function ResetPasswordPage() {
         {/* Form */}
         <form
           onSubmit={handleReset}
-          className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}
+          className={`max-w-md w-full mx-auto ${
+            isArabic ? "text-right" : "text-left"
+          }`}
         >
           <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">
             {t("resetTitle")}
@@ -258,7 +250,9 @@ export default function ResetPasswordPage() {
         <div className="relative z-10 flex flex-col items-center w-full text-center px-6">
           <h3
             className={`font-bold ${
-              isArabic ? "text-[2.6rem] text-right mr-5" : "text-[3rem] text-left ml-5"
+              isArabic
+                ? "text-[2.6rem] text-right mr-5"
+                : "text-[3rem] text-left ml-5"
             }`}
           >
             {t("welcome")}

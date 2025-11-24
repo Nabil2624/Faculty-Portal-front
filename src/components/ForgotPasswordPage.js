@@ -65,22 +65,22 @@ export default function ForgotPasswordPage() {
 
     try {
       await axiosInstance.post(
-        "/Auth/Send-Verification-Email",
-        { email: identifier },
-        { skipGlobalErrorHandler: true } // ✅ skip global redirect
+        "/Authentication/ConfirmEmail",
+        { userEmail: identifier },
+        { skipGlobalErrorHandler: true }
       );
-      navigate("/OTP");
+
+      // ✅ Navigate to OTP page with email in state
+      navigate("/OTP", { state: { email: identifier } });
     } catch (err) {
       const status = err.response?.status;
       const backendMessage = err.response?.data?.message;
 
-      // ✅ Choose best possible message
       let errorMsg = "";
       if (status === 400) errorMsg = t("errors.emailNotFound");
       else if (status === 404) errorMsg = t("errors.notFound");
       else if (status === 429) errorMsg = t("errors.tooManyRequests");
       else if (status === 500) {
-        // Backend failure → redirect
         window.location.href = "/error/500";
         return;
       } else {
@@ -163,7 +163,7 @@ export default function ForgotPasswordPage() {
             <p className="text-gray-600 text-base">{t("subtitle")}</p>
           </div>
 
-          {/* 🔹 Error Message (Box ABOVE Input) */}
+          {/* 🔹 Error Message */}
           {error && (
             <div className="w-full bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-md mb-4 text-sm font-medium">
               {error}
