@@ -57,7 +57,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError("");
 
-    const trimmedID = nationalID.trim(); // trim spaces
+    const trimmedID = nationalID.trim();
 
     // 🔹 Validation rules
     if (!/^[0-9]+$/.test(trimmedID)) {
@@ -74,42 +74,26 @@ export default function RegisterPage() {
       setLoading(true);
 
       const registerRes = await axiosInstance.post(
-        "/Auth/Register",
-        { ssn: trimmedID }, // use trimmed value
+        "/Authentication/Register",
+        { NationalNumber: trimmedID },
         { skipGlobalErrorHandler: true }
       );
 
-      if (registerRes.data?.status) {
-        await axiosInstance.post(
-          "/Auth/Send-Credintials-Email",
-          {},
-          { skipGlobalErrorHandler: true }
-        );
-
+      // ✅ Registration succeeded
+      if (registerRes.data?.status !== false) {
         navigate("/login");
       } else {
-        setError(
-          registerRes.data?.message ||
-            t("serverError") ||
-            "Something went wrong."
-        );
+        setError(registerRes.data?.message || t("serverError") || "Something went wrong.");
       }
     } catch (err) {
       if (err.response?.status === 400) {
-        setError(
-          err.response?.data?.message ||
-            t("invalidNationalID") ||
-            "Invalid national ID."
-        );
+        setError(err.response?.data?.message || t("invalidNationalID") || "Invalid national ID.");
       } else if (err.response?.status === 409) {
         setError(t("alreadyRegistered") || "User already registered.");
       } else if (err.response?.status >= 500) {
         window.location.href = "/error/500";
       } else {
-        setError(
-          t("unexpectedError") ||
-            "An unexpected error occurred. Please try again."
-        );
+        setError(t("unexpectedError") || "An unexpected error occurred. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -127,29 +111,20 @@ export default function RegisterPage() {
       <div className="flex flex-col flex-1 px-8 py-6 relative">
         {/* 🌍 Language Selector */}
         <div className="flex mb-6">
-          <div
-            ref={dropdownRef}
-            className={`relative inline-block ${isArabic ? "mr-auto" : "ml-auto"}`}
-          >
+          <div ref={dropdownRef} className={`relative inline-block ${isArabic ? "mr-auto" : "ml-auto"}`}>
             <button
               onClick={() => setOpenDropdown((s) => !s)}
               aria-haspopup="true"
               aria-expanded={openDropdown}
               className="flex items-center gap-2 px-3 py-1 border rounded-sm bg-white shadow-sm cursor-pointer"
             >
-              <img
-                src={isArabic ? egyptFlag : ukFlag}
-                alt="flag"
-                className="w-5 h-5 object-cover"
-              />
+              <img src={isArabic ? egyptFlag : ukFlag} alt="flag" className="w-5 h-5 object-cover" />
               <ChevronDown size={16} />
             </button>
 
             {openDropdown && (
               <div
-                className={`absolute top-full mt-1 w-36 bg-white shadow-md rounded-sm border z-50 ${
-                  isArabic ? "left-0" : "right-0"
-                }`}
+                className={`absolute top-full mt-1 w-36 bg-white shadow-md rounded-sm border z-50 ${isArabic ? "left-0" : "right-0"}`}
               >
                 <button
                   onClick={() => handleLanguageChange("ar")}
@@ -171,13 +146,8 @@ export default function RegisterPage() {
         </div>
 
         {/* 🧾 Form */}
-        <form
-          onSubmit={handleRegister}
-          className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}
-        >
-          <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">
-            {t("signUp")}
-          </h1>
+        <form onSubmit={handleRegister} className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}>
+          <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">{t("signUp")}</h1>
           <p className="text-gray-600 mb-10">{t("subtitle")}</p>
 
           {error && (
@@ -190,7 +160,7 @@ export default function RegisterPage() {
             type="text"
             placeholder={t("nationalID")}
             value={nationalID}
-            onChange={(e) => setNationalID(e.target.value)} // keep typing as is
+            onChange={(e) => setNationalID(e.target.value)}
             disabled={loading}
             dir={isArabic ? "rtl" : "ltr"}
             className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3 text-base focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60"
@@ -199,9 +169,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition ${
-              loading ? "opacity-70 cursor-not-allowed" : ""
-            }`}
+            className={`w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
           >
             {t("signUp")}
           </button>
@@ -235,13 +203,7 @@ export default function RegisterPage() {
         <div className="absolute inset-0 bg-black/45 rounded-[35px] z-0"></div>
 
         <div className="relative z-10 flex flex-col items-center w-full text-center px-6">
-          <h3
-            className={`font-bold ${
-              isArabic
-                ? "text-[2.5rem] text-right mr-5"
-                : "text-[3rem] text-left ml-5"
-            }`}
-          >
+          <h3 className={`font-bold ${isArabic ? "text-[2.5rem] text-right mr-5" : "text-[3rem] text-left ml-5"}`}>
             {t("welcome")}
           </h3>
           <p className="text-lg mt-3 text-gray-200 max-w-[80%]">{t("sub")}</p>

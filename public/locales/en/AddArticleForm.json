@@ -1,0 +1,16 @@
+{
+  "add_article": "Add Article",
+  "article_name": "Article Name",
+  "enter_article_name": "Enter article name",
+  "entity": "Entity",
+  "enter_entity": "Enter entity",
+  "review_date": "Review Date",
+  "select_review_date": "Select review date",
+  "description": "Description",
+  "enter_description": "Enter description",
+  "add": "Add",
+  "cancel": "Cancel",
+  "edit_article": "Edit Article",
+  "save": "Save"
+  
+}

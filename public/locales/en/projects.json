@@ -1,0 +1,21 @@
+{
+  "pageTitle": "Projects",
+  "projectName": "Project Name",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "projectType": "Project Type",
+  "localInternational": "Local/International",
+  "fundingAuthority": "Funding Authority",
+  "participationRole": "Participation Role",
+  "add": "Add",
+  "back": "Back",
+  "delete": "Delete",
+  "edit": "Edit",
+  "cancel": "Cancel",
+  "confirmDelete": "Are you sure you want to delete this record?",
+  "prev": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of",
+  "noData": "No projects recorded"
+}

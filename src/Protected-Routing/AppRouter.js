@@ -47,6 +47,15 @@ import AdministrativePositions from "../components/AdministrativePositions";
 import ScientificMissions from "../components/ScientificMissions";
 import SeminarsAndConferences from "../components/SeminarsAndConferences";
 import TrainingPrograms from "../components/TrainingPrograms";
+import CommitteesAndAssociationsPage from "../components/CommitteesAndAssociationsPage";
+import AddCommitteeAssociation from "../components/AddCommitteeAssociation";
+import EditCommitteeAssociation from "../components/EditCommitteeAssociation";
+import ArticleReviews from "../components/ArticleReviews";
+import ParticipationInJournals from "../components/ParticipationJournals";
+import Projects from "../components/Projects";
+import AddProject from "../components/AddProject";
+import EditProject from "../components/EditProject";
+
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -97,6 +106,17 @@ function AppRouterInner() {
         element={<SeminarsAndConferences />}
       />
       <Route path="/personal" element={<PersonalDataPage />} />
+      <Route path="/committee-associations" element={<CommitteesAndAssociationsPage />} />
+      <Route path="/add-committee-associations" element={<AddCommitteeAssociation />} />
+      <Route path="/edit-committee-associations" element={<EditCommitteeAssociation />} />
+      <Route path="/article-reviews" element={<ArticleReviews />} />
+      <Route path="/journals" element={<ParticipationInJournals />} />
+      <Route path="/projects" element={<Projects />} />
+      <Route path="/add-project" element={<AddProject />} />
+      <Route path="/edit-project" element={<EditProject />} />
+      
+
+
 
       {/* ✅ Protected Routes */}
       <Route element={<ProtectedRoute />}>

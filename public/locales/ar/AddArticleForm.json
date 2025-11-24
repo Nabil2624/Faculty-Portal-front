@@ -1,0 +1,15 @@
+{
+  "add_article": "إضافة مقال",
+  "article_name": "اسم المقال",
+  "enter_article_name": "اكتب اسم المقال",
+  "entity": "الجهة",
+  "enter_entity": "اكتب الجهة",
+  "review_date": "تاريخ تحكيم المقال",
+  "select_review_date": "اختر تاريخ التحكيم",
+  "description": "الوصف",
+  "enter_description": "اكتب وصف المقال",
+  "add": "إضافة",
+  "cancel": "إلغاء",
+  "edit_article": "تعديل مقال",
+  "save": "حفظ"
+}

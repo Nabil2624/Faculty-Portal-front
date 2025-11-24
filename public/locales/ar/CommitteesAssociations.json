@@ -1,0 +1,18 @@
+{
+  "title": "اللجان و الجمعيات",
+  "committeeName": "اسم اللجنة",
+  "type": "نوع اللجنة/الجمعية",
+  "participationLevel": "درجة الاشتراك",
+  "startDate": "تاريخ البداية",
+  "endDate": "تاريخ النهاية",
+  "description": "الوصف",
+  "add": "إضافة",
+  "back": "عودة",
+  "delete": "حذف",
+  "cancel": "إلغاء",
+  "areYouSureDelete": "هل أنت متأكد من الحذف؟",
+  "previous": "السابق",
+  "next": "التالي",
+  "page": "الصفحة",
+  "of": "من"
+}

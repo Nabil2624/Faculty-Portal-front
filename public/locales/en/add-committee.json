@@ -1,0 +1,45 @@
+{
+  "addCommittee": {
+    "title": "Add Committee or Association"
+  },
+
+  "fields": {
+    "committee": "Committee/Association",
+    "type": "Committee/Association Type",
+    "degree": "Membership Degree",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "description": "Description"
+  },
+
+  "placeholders": {
+    "committee": "Enter the committee/association name",
+    "type": "Select type",
+    "degree": "Select membership degree",
+    "startDate": "Select start date",
+    "endDate": "Select end date",
+    "description": "Enter a description if available"
+  },
+
+  "types": {
+    "local": "Local",
+    "international": "International"
+  },
+
+  "degrees": {
+    "member": "Member",
+    "active": "Active Member",
+    "honor": "Honor Member"
+  },
+
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "editCommittee": {
+    "title": "Edit Committee or Association"
+  },
+  "buttonsText": {
+    "update": "Update"
+  }
+}

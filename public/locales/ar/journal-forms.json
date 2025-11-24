@@ -1,0 +1,19 @@
+{
+  "add_journal": "إضافة مشاركة في مجلة",
+  "journal_name": "اسم المجلة",
+  "enter_journal_name": "اكتب اسم المجلة",
+  "journal_website": "موقع المجلة الإلكتروني",
+  "enter_journal_website": "اكتب موقع المجلة الإلكتروني",
+  "participation_type": "نوع المشاركة",
+  "select_participation_type": "اختر نوع المشاركة",
+  "research_participation": "مشاركة بحثية",
+  "review_participation": "مراجعة علمية",
+  "other_participation": "مشاركة أخرى",
+  "edit_journal": "تعديل مجلة",
+  "author": "مؤلف",
+  "reviewer": "محكم",
+  "editor": "محرر",
+  "cancel": "الغاء",
+  "save": "حفظ",
+  "add": "اضافة"
+}

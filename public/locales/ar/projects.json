@@ -1,0 +1,21 @@
+{
+  "pageTitle": "المشاريع",
+  "projectName": "اسم المشروع",
+  "startDate": "تاريخ البداية",
+  "endDate": "تاريخ النهاية",
+  "projectType": "نوع المشروع",
+  "localInternational": "محلي/دولي",
+  "fundingAuthority": "جهة التمويل",
+  "participationRole": "دور المشاركة",
+  "add": "إضافة",
+  "back": "عودة",
+  "delete": "حذف",
+  "edit": "تعديل",
+  "cancel": "إلغاء",
+  "confirmDelete": "هل تريد حذف هذا السجل؟",
+  "prev": "السابق",
+  "next": "التالي",
+  "page": "صفحة",
+  "of": "من",
+  "noData": "لا توجد مشاريع مسجلة"
+}

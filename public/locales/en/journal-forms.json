@@ -1,0 +1,15 @@
+{
+  "add_journal": "Add Participation in Journal",
+  "journal_name": "Journal Name",
+  "enter_journal_name": "Enter journal name",
+  "journal_website": "Journal Website",
+  "enter_journal_website": "Enter journal website",
+  "participation_type": "Participation Type",
+  "select_participation_type": "Select participation type",
+  "research_participation": "Research Participation",
+  "review_participation": "Scientific Review",
+  "other_participation": "Other Participation",
+  "cancel" : "Cancel",
+  "save"   : "Save",
+  "add"    : "Add"
+}

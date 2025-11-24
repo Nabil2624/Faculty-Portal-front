@@ -1,0 +1,37 @@
+{
+  "title": "Add Project",
+  "editTitle": "Edit Project",
+  "fields": {
+    "projectName": "Project Name",
+    "nationality": "Nationality",
+    "projectType": "Project Type",
+    "role": "Role",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "funding": "Funding Authority",
+    "description": "Description"
+  },
+  "placeholders": {
+    "projectName": "Enter project name",
+    "projectType": "Select project type",
+    "role": "Select your role",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "funding": "Enter funding source",
+    "description": "Enter project description"
+  },
+  "options": {
+    "international": "International",
+    "local": "Local",
+    "research": "Research",
+    "development": "Development",
+    "educational": "Educational",
+    "teamLeader": "Team Leader",
+    "teamMember": "Team Member",
+    "consultant": "Consultant"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}

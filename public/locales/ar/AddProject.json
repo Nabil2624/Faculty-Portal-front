@@ -1,0 +1,37 @@
+{
+  "title": "إضافة مشروع",
+  "editTitle": "تعديل مشروع",
+  "fields": {
+    "projectName": "اسم المشروع",
+    "nationality": "دولي/محلي",
+    "projectType": "نوع المشروع",
+    "role": "دور المشاركة",
+    "startDate": "تاريخ البداية",
+    "endDate": "تاريخ النهاية",
+    "funding": "جهة التمويل",
+    "description": "الوصف"
+  },
+  "placeholders": {
+    "projectName": "ادخل اسم المشروع",
+    "projectType": "اختر نوع المشروع",
+    "role": "اختر دورك في المشروع",
+    "startDate": "تاريخ البداية",
+    "endDate": "تاريخ النهاية",
+    "funding": "ادخل جهة التمويل",
+    "description": "ادخل وصف المشروع"
+  },
+  "options": {
+    "international": "دولي",
+    "local": "محلي",
+    "research": "بحثي",
+    "development": "تطوير",
+    "educational": "تعليمي",
+    "teamLeader": "رئيس الفريق",
+    "teamMember": "عضو الفريق",
+    "consultant": "مستشار"
+  },
+  "buttons": {
+    "save": "حفظ",
+    "cancel": "إلغاء"
+  }
+}

@@ -1,0 +1,46 @@
+{
+"editCommittee": {
+  "title": "تعديل لجنة او جمعية"
+},
+"buttonsText": {
+  "update": "تحديث البيانات"
+},
+  "addCommittee": {
+    "title": "إضافة لجنة او جمعية"
+  },
+
+  "fields": {
+    "committee": "اللجنة/الجمعية",
+    "type": "نوع اللجنة/الجمعية",
+    "degree": "درجة الاشتراك",
+    "startDate": "تاريخ البداية",
+    "endDate": "تاريخ النهاية",
+    "description": "الوصف"
+  },
+
+  "placeholders": {
+    "committee": "أدخل اسم اللجنة/الجمعية",
+    "type": "اختر نوع اللجنة/الجمعية",
+    "degree": "اختر درجة الاشتراك",
+    "startDate": "اختر تاريخ البداية",
+    "endDate": "اختر تاريخ النهاية",
+    "description": "أدخل وصفًا إن وجد"
+  },
+
+  "types": {
+    "local": "محلية",
+    "international": "دولية"
+  },
+
+  "degrees": {
+    "member": "عضو",
+    "active": "عضو نشط",
+    "honor": "عضو شرف"
+  },
+
+  "buttons": {
+    "save": "حفظ",
+    "cancel": "إلغاء"
+  }
+  
+}

@@ -63,9 +63,12 @@ export default function LoginPage() {
 
     try {
       const { data } = await axiosInstance.post(
-        "/Auth/Login",
+        "/Authentication/Login",
         { username, password },
-        { skipGlobalErrorHandler: true } // prevent showing global error page
+        {
+          skipGlobalErrorHandler: true,
+          withCredentials: true,
+        } // prevent showing global error page
       );
 
       const token = data?.data;
@@ -76,7 +79,7 @@ export default function LoginPage() {
       const userType = decoded.Role;
 
       if (userType === "Faculty Member") {
-        navigate("/personal");
+        navigate("/article-reviews");
       } else {
         navigate(redirectTo);
       }
@@ -112,7 +115,9 @@ export default function LoginPage() {
         <div className="flex mb-6">
           <div
             ref={dropdownRef}
-            className={`relative inline-block ${isArabic ? "mr-auto" : "ml-auto"}`}
+            className={`relative inline-block ${
+              isArabic ? "mr-auto" : "ml-auto"
+            }`}
           >
             <button
               onClick={() => setOpenDropdown((s) => !s)}
@@ -156,7 +161,9 @@ export default function LoginPage() {
         {/* Form */}
         <form
           onSubmit={handleLogin}
-          className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}
+          className={`max-w-md w-full mx-auto ${
+            isArabic ? "text-right" : "text-left"
+          }`}
         >
           <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">
             {t("loginTitle")}
@@ -215,7 +222,9 @@ export default function LoginPage() {
             {t("loginButton")}
           </button>
 
-          <div className={`mt-3 text-sm ${isArabic ? "text-right" : "text-left"}`}>
+          <div
+            className={`mt-3 text-sm ${isArabic ? "text-right" : "text-left"}`}
+          >
             <button
               onClick={() => navigate("/forgot-password")}
               type="button"
@@ -257,7 +266,9 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col items-center w-full text-center px-6">
           <h3
             className={`font-bold ${
-              isArabic ? "text-[2.5rem] text-right mr-5" : "text-[3rem] text-left ml-5"
+              isArabic
+                ? "text-[2.5rem] text-right mr-5"
+                : "text-[3rem] text-left ml-5"
             }`}
           >
             {t("welcome")}

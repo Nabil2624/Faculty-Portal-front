@@ -1,0 +1,15 @@
+{
+  "title": "Participation in Journals",
+  "journalName": "Journal Name",
+  "journalWebsite": "Website",
+  "participationType": "Participation Type",
+  "add": "Add",
+  "type": "Participation Type",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "back": "Back",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of"
+}
