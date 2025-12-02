@@ -2,7 +2,7 @@
   "addTask": {
     "title": "Add Scientific Mission"
   },
-    "editTask": {
+  "editTask": {
     "title": "Edit Scientific Mission"
   },
   "fields": {
@@ -15,7 +15,7 @@
   },
   "placeholders": {
     "task": "e.g. Research on AI in healthcare",
-    "country_city": "ex:",
+    "country_city": "ex: Egypt",
     "university_college": "University/College",
     "description": "Write a short description of the task...",
     "startDate": "Select start date",
@@ -24,5 +24,13 @@
   "buttons": {
     "save": "Save",
     "cancel": "Cancel"
-  }
+  },
+
+    "required_task_name": "Please enter the mission name",
+    "required_country_city": "Please enter the country or city",
+    "required_start_date": "Please select the start date",
+    "submit_error": "An error occurred while saving the mission, please try again",
+ 
+  "loading": "Saving..."
+  
 }

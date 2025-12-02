@@ -1,19 +1,31 @@
-// Updated AddScientificTask component
+// src/pages/AddScientificTask.jsx
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
-import { FiCalendar, FiChevronDown } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
 
 export default function AddScientificTask() {
   const { t, i18n } = useTranslation("add-scientific-task");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
-  const startDateNativeRef = useRef(null);
-  const endDateNativeRef = useRef(null);
 
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const startDateRef = useRef(null);
+  const endDateRef = useRef(null);
+
+  // Form data using exact backend field names
+  const [formData, setFormData] = useState({
+    name: "",
+    CountryOrCity: "",
+    UniversityOrFaculty: "",
+    startDate: "",
+    endDate: "",
+    Description: "",
+  });
+
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const openDatePicker = (ref) => {
     if (ref.current && typeof ref.current.showPicker === "function") {
@@ -21,9 +33,52 @@ export default function AddScientificTask() {
     }
   };
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Validation
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = t("required_task_name");
+    if (!formData.CountryOrCity.trim())
+      newErrors.CountryOrCity = t("required_country_city");
+    if (!formData.startDate.trim())
+      newErrors.startDate = t("required_start_date");
+    return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const newErrors = validate();
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
+    setLoading(true);
+
+    try {
+      const response = await axiosInstance.post(
+        "/Missions/CreateScientificMission",
+        formData,
+        { skipGlobalErrorHandler: true }
+      );
+
+      if (response.status === 200 && response.data?.id) {
+        navigate("/scientific-missions");
+      } else {
+        setErrors({ submit: t("submit_error") });
+      }
+    } catch (err) {
+      console.error(err);
+      setErrors({ submit: t("submit_error") });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const inputBase =
     "w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 bg-[#E2E2E2] outline-none transition-all duration-150 ease-linear text-[12px]";
-
   const focusStyle =
     "focus:border-gray-300 focus:shadow-[0_0_0_4px_rgba(179,142,25,0.5)]";
 
@@ -38,162 +93,199 @@ export default function AddScientificTask() {
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
 
-        {/* Form */}
-        <div className="flex flex-col items-center">
-          <form className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 lg:gap-x-36 gap-y-6 w-full max-w-6xl">
-            {/* LEFT Column */}
-            <div className="space-y-6">
-              {/* Task Name */}
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 lg:gap-x-36 gap-y-6 w-full max-w-6xl"
+        >
+          {/* LEFT Column */}
+          <div className="space-y-6">
+            {/* Task Name */}
+            <div>
+              <label className="block mb-2 text-lg font-medium">
+                {t("fields.task")} <span className="text-[#b38e19]">*</span>
+              </label>
+
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className={`${inputBase} ${focusStyle}`}
+                placeholder={t("placeholders.task")}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+              )}
+            </div>
+
+            {/* Country/City */}
+            <div>
+              <label className="block mb-2 text-lg font-medium">
+                {t("fields.country_city")}{" "}
+                <span className="text-[#b38e19]">*</span>
+              </label>
+
+              <input
+                type="text"
+                name="CountryOrCity"
+                value={formData.CountryOrCity}
+                onChange={handleChange}
+                className={`${inputBase} ${focusStyle}`}
+                placeholder={t("placeholders.country_city")}
+              />
+              {errors.CountryOrCity && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.CountryOrCity}
+                </p>
+              )}
+            </div>
+
+            {/* University/College */}
+            <div>
+              <label className="block mb-2 text-lg font-medium">
+                {t("fields.university_college")}
+              </label>
+              <input
+                type="text"
+                name="UniversityOrFaculty"
+                value={formData.UniversityOrFaculty}
+                onChange={handleChange}
+                className={`${inputBase} ${focusStyle}`}
+                placeholder={t("placeholders.university_college")}
+              />
+            </div>
+          </div>
+
+          {/* RIGHT Column */}
+          <div className="space-y-6">
+            {/* Dates */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Start Date */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("fields.task")} <span className="text-[#b38e19]">*</span>
-                </label>
-
-                <input
-                  type="text"
-                  className={`${inputBase} ${focusStyle}`}
-                  placeholder={t("placeholders.task")}
-                />
-              </div>
-
-              {/* Country/City */}
-              <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("fields.country_city")}{" "}
+                  {t("fields.startDate")}{" "}
                   <span className="text-[#b38e19]">*</span>
                 </label>
 
-                <input
-                  type="text"
-                  className={`${inputBase} ${focusStyle}`}
-                  placeholder={t("placeholders.country_city")}
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.startDate}
+                    name="startDate"
+                    readOnly
+                    placeholder={t("placeholders.startDate")}
+                    onClick={() => openDatePicker(startDateRef)}
+                    className={`${inputBase} ${focusStyle}`}
+                  />
+
+                  <FiCalendar
+                    size={18}
+                    className={`absolute top-1/2 -translate-y-1/2 cursor-pointer text-[#B38E19] ${
+                      isArabic ? "left-3" : "right-3"
+                    }`}
+                    onClick={() => openDatePicker(startDateRef)}
+                  />
+
+                  <input
+                    type="date"
+                    ref={startDateRef}
+                    className="absolute opacity-0"
+                    onChange={(e) =>
+                      setFormData({ ...formData, startDate: e.target.value })
+                    }
+                  />
+                </div>
+                {errors.startDate && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.startDate}
+                  </p>
+                )}
               </div>
-              {/* University/College in one input */}
+
+              {/* End Date */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("fields.university_college")}
+                  {t("fields.endDate")}
                 </label>
-                <input
-                  type="text"
-                  className={`${inputBase} ${focusStyle}`}
-                  placeholder={t("placeholders.university_college")}
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.endDate}
+                    name="endDate"
+                    readOnly
+                    placeholder={t("placeholders.endDate")}
+                    onClick={() => openDatePicker(endDateRef)}
+                    className={`${inputBase} ${focusStyle}`}
+                  />
+
+                  <FiCalendar
+                    size={18}
+                    className={`absolute top-1/2 -translate-y-1/2 cursor-pointer text-[#B38E19] ${
+                      isArabic ? "left-3" : "right-3"
+                    }`}
+                    onClick={() => openDatePicker(endDateRef)}
+                  />
+
+                  <input
+                    type="date"
+                    ref={endDateRef}
+                    className="absolute opacity-0"
+                    onChange={(e) =>
+                      setFormData({ ...formData, endDate: e.target.value })
+                    }
+                  />
+                </div>
               </div>
             </div>
 
-            {/* RIGHT Column */}
-            <div className="space-y-6">
-              {/* Start + End Date in same row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Start Date */}
-                <div className="relative">
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("fields.startDate")}{" "}
-                    <span className="text-[#b38e19]">*</span>
-                  </label>
-
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={startDate}
-                      placeholder={t("placeholders.startDate")}
-                      readOnly
-                      className={`${inputBase} ${focusStyle}`}
-                      onFocus={() => openDatePicker(startDateNativeRef)}
-                    />
-                    <FiCalendar
-                      role="button"
-                      aria-label="Open date picker"
-                      onClick={() => openDatePicker(startDateNativeRef)}
-                      size={18}
-                      className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
-                        isArabic ? "left-3" : "right-3"
-                      }`}
-                    />
-                    <input
-                      type="date"
-                      ref={startDateNativeRef}
-                      className="absolute opacity-0 pointer-events-none"
-                      onChange={(e) => setStartDate(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                {/* End Date */}
-                <div className="relative">
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("fields.endDate")}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={endDate}
-                      placeholder={t("placeholders.endDate")}
-                      readOnly
-                      className={`${inputBase} ${focusStyle}`}
-                      onFocus={() => openDatePicker(endDateNativeRef)}
-                    />
-                    <FiCalendar
-                      role="button"
-                      aria-label="Open date picker"
-                      onClick={() => openDatePicker(endDateNativeRef)}
-                      size={18}
-                      className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
-                        isArabic ? "left-3" : "right-3"
-                      }`}
-                    />
-                    <input
-                      type="date"
-                      ref={endDateNativeRef}
-                      className="absolute opacity-0 pointer-events-none"
-                      onChange={(e) => setEndDate(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-              {/* Description */}
-              <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("fields.description")}
-                </label>
-                <textarea
-                  rows="6"
-                  className={`${inputBase} ${focusStyle} resize-none`}
-                  placeholder={t("placeholders.description")}
-                />
-              </div>
+            {/* Description */}
+            <div>
+              <label className="block mb-2 text-lg font-medium">
+                {t("fields.description")}
+              </label>
+              <textarea
+                rows="6"
+                name="Description"
+                value={formData.Description}
+                onChange={handleChange}
+                className={`${inputBase} ${focusStyle} resize-none`}
+                placeholder={t("placeholders.description")}
+              />
             </div>
-          </form>
-
-          {/* Buttons */}
-          <div
-            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end  max-w-6xl absolute ${
-              isArabic ? "left-[53px]" : "right-[53px]"
-            } bottom-[28px]`}
-          >
-            {/* Save Button */}
-            <button
-              type="button"
-              onClick={() => navigate("/scientific-missions")}
-              className={`bg-[#b38e19] text-white  sm:w-24 h-10 rounded-md cursor-pointer font-${
-                isArabic ? "cairo" : "roboto"
-              } text-sm`}
-            >
-              {t("buttons.save")}
-            </button>
-
-            {/* Cancel Button */}
-            <button
-              type="button"
-              onClick={() => navigate("/scientific-missions")}
-              className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
-                isArabic ? "cairo" : "roboto"
-              } text-sm`}
-            >
-              {t("buttons.cancel")}
-            </button>
           </div>
+        </form>
+
+        {/* Submit Error */}
+        {errors.submit && (
+          <p className="text-red-500 text-center mt-4">{errors.submit}</p>
+        )}
+
+        {/* Buttons */}
+        <div
+          className={`flex flex-col sm:flex-row gap-3 mt-10 justify-end max-w-6xl absolute ${
+            isArabic ? "left-[53px]" : "right-[53px]"
+          } bottom-[28px]`}
+        >
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={loading}
+            className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
+              isArabic ? "cairo" : "roboto"
+            } text-sm`}
+          >
+            {loading ? t("loading") : t("buttons.save")}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate("/scientific-missions")}
+            className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
+              isArabic ? "cairo" : "roboto"
+            } text-sm`}
+          >
+            {t("buttons.cancel")}
+          </button>
         </div>
       </div>
     </Layout>
