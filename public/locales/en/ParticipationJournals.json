@@ -11,5 +11,8 @@
   "previous": "Previous",
   "next": "Next",
   "page": "Page",
-  "of": "of"
+  "of": "of",
+  "empty": "No journal participations found.",
+  "fetchError": "Failed to fetch journal participations.",
+  "deleteError": "Failed to delete the journal participation."
 }

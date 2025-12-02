@@ -1,9 +1,9 @@
 // src/pages/ScientificMissions.jsx
 import { useTranslation } from "react-i18next";
-import Layout from "./Layout";
 import { Pencil, Trash2, Filter, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 
 export default function ScientificMissions() {
   const { t, i18n } = useTranslation("ScientificMissions");
@@ -99,9 +99,41 @@ export default function ScientificMissions() {
         "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
       location: "طوكيو - اليابان",
     },
+    {
+      title: "زيارة بحثية في تقنيات البرمجيات الحديثة",
+      institution: "جامعة طوكيو للعلوم والتكنولوجيا",
+      period: "من 10 يناير 2020 - حتى 10 أبريل 2020",
+      description:
+        "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
+      location: "طوكيو - اليابان",
+    },
+    {
+      title: "زيارة بحثية في تقنيات البرمجيات الحديثة",
+      institution: "جامعة طوكيو للعلوم والتكنولوجيا",
+      period: "من 10 يناير 2020 - حتى 10 أبريل 2020",
+      description:
+        "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
+      location: "طوكيو - اليابان",
+    },
+    {
+      title: "زيارة بحثية في تقنيات البرمجيات الحديثة",
+      institution: "جامعة طوكيو للعلوم والتكنولوجيا",
+      period: "من 10 يناير 2020 - حتى 10 أبريل 2020",
+      description:
+        "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
+      location: "طوكيو - اليابان",
+    },
+    {
+      title: "زيارة بحثية في تقنيات البرمجيات الحديثة",
+      institution: "جامعة طوكيو للعلوم والتكنولوجيا",
+      period: "من 10 يناير 2020 - حتى 10 أبريل 2020",
+      description:
+        "إجراء أبحاث حول تقنيات تطوير البرمجيات باستخدام الذكاء الاصطناعي والتحليل الكمي.",
+      location: "طوكيو - اليابان",
+    },
+    // ... أضف باقي المهام هنا
   ];
 
-  // Pagination logic
   const itemsPerPage = 9;
   const totalPages = Math.ceil(missions.length / itemsPerPage);
   const paginatedData = missions.slice(
@@ -110,26 +142,32 @@ export default function ScientificMissions() {
   );
 
   return (
-    <Layout>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
+    <ResponsiveLayoutProvider>
+      <div className={`${isArabic ? "rtl" : "ltr"} p-4 sm:p-6`}>
         {/* Header */}
-        <div className="flex justify-between items-center mb-8 relative">
-          <h2 className="text-3xl font-bold relative text-start">
+        <div className="flex sm:flex-row justify-between items-start sm:items-start mb-6 sm:mb-8 gap-2">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-start truncate">
             {t("scientificMissions") || "Scientific Missions"}
             <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
           </h2>
 
-          {/* Filter icon */}
-          <div className="absolute top-18 left-1/2 transform -translate-x-1/5">
-            <div className="w-10 h-10 border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer hover:text-[#b38e19] transition">
-              <Filter className="w-5 h-6 text-gray-700 hover:text-[#b38e19]" />
+          {/* Right actions: Filter + Add */}
+          <div className="flex items-end gap-2 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer hover:text-[#b38e19] transition">
+              <Filter className="w-4 h-5 sm:w-5 sm:h-6 text-gray-700 hover:text-[#b38e19]" />
             </div>
+            <button
+              onClick={() => navigate("/add-scientific-task")}
+              className="bg-[#b38e19] text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm md:text-base font-semibold"
+            >
+              {t("add") || "Add"}
+            </button>
           </div>
         </div>
 
         {/* Grid of cards */}
         <div
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${
+          className={`grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 ${
             isArabic ? "text-right" : "text-left"
           }`}
         >
@@ -140,19 +178,21 @@ export default function ScientificMissions() {
                 setSelectedItem(item);
                 setShowDetails(true);
               }}
-              className={`relative bg-gray-100 rounded-[12px] shadow-md p-3 border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
-                isArabic ? "border-r-[19px]" : "border-l-[19px]"
+              className={`relative bg-gray-100 rounded-lg shadow-md p-2 sm:p-3 border-[3px] sm:border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
+                isArabic
+                  ? "border-r-[16px] sm:border-r-[19px]"
+                  : "border-l-[16px] sm:border-l-[19px]"
               }`}
             >
               {/* Icons */}
               <div
-                className={`absolute top-4 ${
-                  isArabic ? "left-4" : "right-4"
-                } flex gap-3`}
+                className={`absolute top-2 sm:top-4 ${
+                  isArabic ? "left-2 sm:left-4" : "right-2 sm:right-4"
+                } flex gap-2 sm:gap-3`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <Pencil
-                  className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
+                  className="text-[#b38e19] cursor-pointer w-4 h-4 sm:w-5 sm:h-5 hover:text-[#d1a82c] hover:scale-110 transition"
                   onClick={() =>
                     navigate("/edit-scientific-task", {
                       state: { taskData: item },
@@ -160,18 +200,24 @@ export default function ScientificMissions() {
                   }
                 />
                 <Trash2
-                  className="text-[#E53935] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
+                  className="text-[#E53935] cursor-pointer w-4 h-4 sm:w-5 sm:h-5 hover:text-[#d1a82c] hover:scale-110 transition"
                   onClick={() => handleDeleteClick(item)}
                 />
               </div>
 
               {/* Card Content */}
-              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-1 ">
+              <h3 className="text-xs sm:text-lg  font-semibold text-[#1A1A1A] mb-1 truncate">
                 {item.title}
               </h3>
-              <p className="text-lg text-gray-700">{item.period}</p>
-              <p className="text-xs text-gray-700">{item.institution}</p>
-              <p className="text-xs text-gray-400 mt-1">{item.location}</p>
+              <p className="text-[10px] sm:text-base  text-gray-700 truncate">
+                {item.period}
+              </p>
+              <p className="text-[10px] sm:text-sm text-gray-700 truncate">
+                {item.institution}
+              </p>
+              <p className="text-[9px] sm:text-xs text-gray-400 mt-1 truncate">
+                {item.location}
+              </p>
             </div>
           ))}
         </div>
@@ -211,30 +257,6 @@ export default function ScientificMissions() {
             {isArabic ? "التالي" : "Next"}
           </button>
         </div>
-
-        {/* Bottom Buttons */}
-        <div
-          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
-            isArabic ? "left-[53px]" : "right-[53px]"
-          } bottom-[28px]`}
-        >
-          <button
-            onClick={() => navigate("/add-scientific-task")}
-            className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
-          >
-            {t("edit") || "Edit"}
-          </button>
-          <button
-            onClick={() => navigate(-1)}
-            className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
-          >
-            {t("back") || "Back"}
-          </button>
-        </div>
       </div>
 
       {/* Delete Confirmation Modal */}
@@ -268,7 +290,7 @@ export default function ScientificMissions() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
           <div
             dir={isArabic ? "rtl" : "ltr"}
-            className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[520px] max-w-[90%] p-8 relative animate-fadeIn border-2 border-[#b38e19]"
+            className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[520px] max-w-[90%] p-6 sm:p-8 relative animate-fadeIn border-2 border-[#b38e19]"
           >
             <button
               onClick={() => setShowDetails(false)}
@@ -280,41 +302,37 @@ export default function ScientificMissions() {
             </button>
 
             <div className="border-b-2 border-[#b38e19]/40 pb-3 mb-4">
-              <h2 className="text-2xl font-bold ">
-                {selectedItem.title}
-              </h2>
+              <h2 className="text-2xl font-bold">{selectedItem.title}</h2>
             </div>
 
             <div className="space-y-3 text-gray-700">
               <div className="flex justify-between">
-                <span className="font-medium ">
+                <span className="font-medium">
                   {t("location") ||
                     (isArabic ? "الدولة / المدينة" : "Country / City")}
                 </span>
                 <span>{selectedItem.location}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-medium ">
+                <span className="font-medium">
                   {t("institution") ||
                     (isArabic ? "الجامعة / الكلية" : "University / College")}
                 </span>
                 <span>{selectedItem.institution}</span>
               </div>
-
               <div className="flex justify-between">
-                <span className="font-medium ">
+                <span className="font-medium">
                   {t("startDate") ||
                     (isArabic ? "تاريخ البداية" : "Start Date")}
                 </span>
                 <span>{selectedItem.period}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-medium ">
+                <span className="font-medium">
                   {t("endDate") || (isArabic ? "تاريخ النهاية" : "End Date")}
                 </span>
                 <span>{selectedItem.period}</span>
               </div>
-
               <div className="mt-5 bg-gray-100 p-4 rounded-lg border border-gray-200">
                 <p className="text-gray-800 leading-relaxed">
                   {selectedItem.description}
@@ -324,6 +342,6 @@ export default function ScientificMissions() {
           </div>
         </div>
       )}
-    </Layout>
+    </ResponsiveLayoutProvider>
   );
 }

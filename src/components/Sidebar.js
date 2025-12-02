@@ -26,7 +26,12 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const isArabic = lang === "ar";
 
   const navItems = [
-    { key: "home", icon: <Home size={22} />, link: "/under-development", sub: [] },
+    {
+      key: "home",
+      icon: <Home size={22} />,
+      link: "/under-development",
+      sub: [],
+    },
     {
       key: "academicData",
       icon: <GraduationCap size={22} />,
@@ -41,25 +46,43 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
             { key: "identificationCard", link: "/identification-card" },
           ],
         },
-                {
+        {
           key: "scientificProgression",
           link: "/academic-data/scientific-progression",
           sub: [
             { key: "academicQualifications", link: "/academic-qualifications" },
             { key: "jobGrades", link: "/job-rankings" },
-            { key: "administrativePositions", link: "/administrative-positions" },
+            {
+              key: "administrativePositions",
+              link: "/administrative-positions",
+            },
           ],
         },
-                {
+        {
           key: "missions",
           link: "/academic-data/missions",
           sub: [
             { key: "scientificMissions", link: "/scientific-missions" },
-            { key: "seminarsAndConferences", link: "/seminars-and-conferences" },
+            {
+              key: "seminarsAndConferences",
+              link: "/seminars-and-conferences",
+            },
             { key: "trainingPrograms", link: "/training-programs" },
           ],
         },
-   
+                {
+          key: "projectsAndCommittee",
+          link: "/academic-data/projectsAndCommittee",
+          sub: [
+            { key: "committeeAndAssociation", link: "/committee-associations" },
+            {
+              key: "articleReviews",
+              link: "/article-reviews",
+            },
+            { key: "participationJournals", link: "/journals" },
+            { key: "Projects", link: "/projects" },
+          ],
+        },
       ],
     },
     {
@@ -95,7 +118,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
       ],
     },
   ];
-  
+
   const renderSubMenu = (sub, level = 1) => (
     <ul className={`mt-1 ml-2 ${isArabic ? "mr-5" : "ml-5"}`}>
       {sub.map((item) => (
@@ -110,7 +133,11 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
               <button
                 onClick={() => toggleSubMenu(item.key)}
                 className={`block py-1 text-sm text-gray-200 hover:text-white hover:bg-[#B38e19] rounded-md w-full
-                  ${isArabic ? `text-right pr-${level * 4}` : `text-left pl-${level * 4}`}`}
+                  ${
+                    isArabic
+                      ? `text-right pr-${level * 4}`
+                      : `text-left pl-${level * 4}`
+                  }`}
               >
                 {t(item.key)}
               </button>
@@ -120,7 +147,11 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
             <Link
               to={item.link}
               className={`block py-1 text-sm text-gray-200 hover:text-white hover:bg-[#B38e19] rounded-md
-                ${isArabic ? `text-right pr-${level * 4}` : `text-left pl-${level * 4}`}`}
+                ${
+                  isArabic
+                    ? `text-right pr-${level * 4}`
+                    : `text-left pl-${level * 4}`
+                }`}
             >
               {t(item.key)}
             </Link>

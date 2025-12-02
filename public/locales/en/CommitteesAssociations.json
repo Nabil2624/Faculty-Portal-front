@@ -14,5 +14,8 @@
   "previous": "Previous",
   "next": "Next",
   "page": "Page",
-  "of": "of"
+  "of": "of",
+  "empty": "No committees or associations available",
+  "fetchError": "Failed to load data",
+  "deleteError": "Failed to delete item"
 }

@@ -23,5 +23,11 @@
     "missions" : "Missions",
     "scientificMissions" : "Scientific Missions",
     "seminarsAndConferences" : "Seminars And Conferences",
-    "trainingPrograms" : "Training Programs"
+    "trainingPrograms" : "Training Programs",
+    "projectsAndCommittee": "Projects And Committee",
+    "committeeAndAssociation": "Committee And Association",
+    "articleReviews" : "Article Reviews",
+    "participationJournals" : "Participation Journals",
+    "Projects" : "Projects"
+    
 }

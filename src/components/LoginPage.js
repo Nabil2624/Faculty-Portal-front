@@ -56,16 +56,15 @@ export default function LoginPage() {
 
   const isArabic = i18n.language === "ar";
 
-  // ---------------------------------------------------------
-  // 🚀 UPDATED LOGIN FLOW (role comes from login response)
-  // ---------------------------------------------------------
+
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      // 1️⃣ Login — backend sets HttpOnly cookie & returns role
+      //  Login — backend sets HttpOnly cookie & returns role
       const loginResponse = await axiosInstance.post(
         "/Authentication/Login",
         { username, password },
@@ -78,7 +77,7 @@ export default function LoginPage() {
       // Extract role directly from login response
       const userType = loginResponse?.data?.role;
 
-      // 2️⃣ Redirect based on role
+      //  Redirect based on role
       if (userType === "Faculty Member") {
         navigate("/article-reviews");
       } else {

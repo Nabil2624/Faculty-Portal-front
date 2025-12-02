@@ -1,25 +1,29 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Calendar, Pen } from "lucide-react";
+import axiosInstance from "../utils/axiosInstance";
 
-export default function EditArticleForm({ data, onCancel }) {
+export default function EditArticleForm({ data, onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("AddArticleForm");
   const dir = i18n.dir();
   const isArabic = i18n.language === "ar";
 
   const [formData, setFormData] = useState({
-    articleName: "",
-    entity: "",
-    reviewDate: "",
+    titleOfArticle: "",
+    authority: "",
+    reviewingDate: "",
     description: "",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (data) {
       setFormData({
-        articleName: data.articleName || "",
-        entity: data.entity || "",
-        reviewDate: data.reviewDate || "",
+        titleOfArticle: data.titleOfArticle || "",
+        authority: data.authority || "",
+        reviewingDate: data.reviewingDate || "",
         description: data.description || "",
       });
     }
@@ -41,9 +45,41 @@ export default function EditArticleForm({ data, onCancel }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated Article:", formData);
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await axiosInstance.put(
+        `/ProjectsAndCommittees/UpdateReviewingArticle/${data.id}`,
+        {
+          titleOfArticle: formData.titleOfArticle,
+          authority: formData.authority,
+          reviewingDate: formData.reviewingDate,
+          description: formData.description,
+        },
+        { skipGlobalErrorHandler: true }
+      );
+
+      // Call onSuccess callback if provided
+      if (onSuccess) onSuccess(response.data);
+    } catch (err) {
+      console.error("Failed to update article:", err);
+
+      // Local error handling
+      if (err.response?.data?.errors) {
+        // Example: array of validation errors
+        const messages = err.response.data.errors
+          .map((e) => e.errors.join(" | "))
+          .join(", ");
+        setError(messages);
+      } else {
+        setError(t("updateError") || "Failed to update article");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputClass =
@@ -66,6 +102,11 @@ export default function EditArticleForm({ data, onCancel }) {
         </h2>
       </div>
 
+      {/* Error Message */}
+      {error && (
+        <div className="text-red-500 text-center mb-4">{error}</div>
+      )}
+
       {/* Article Name */}
       <div className="mb-4">
         <label className="block text-lg font-medium text-gray-700 mb-2">
@@ -73,8 +114,8 @@ export default function EditArticleForm({ data, onCancel }) {
         </label>
         <input
           type="text"
-          name="articleName"
-          value={formData.articleName}
+          name="titleOfArticle"
+          value={formData.titleOfArticle}
           onChange={handleChange}
           className={`${inputClass} ${focusClasses}`}
           placeholder={t("enter_article_name")}
@@ -88,8 +129,8 @@ export default function EditArticleForm({ data, onCancel }) {
         </label>
         <input
           type="text"
-          name="entity"
-          value={formData.entity}
+          name="authority"
+          value={formData.authority}
           onChange={handleChange}
           className={`${inputClass} ${focusClasses}`}
           placeholder={t("enter_entity")}
@@ -104,8 +145,8 @@ export default function EditArticleForm({ data, onCancel }) {
         <div className="relative">
           <input
             type="text"
-            name="reviewDate"
-            value={formData.reviewDate}
+            name="reviewingDate"
+            value={formData.reviewingDate}
             readOnly
             onClick={() => openDatePicker(reviewDateRef)}
             className={`${inputClass} ${focusClasses} ${
@@ -117,9 +158,9 @@ export default function EditArticleForm({ data, onCancel }) {
           <input
             ref={reviewDateRef}
             type="date"
-            value={formData.reviewDate}
+            value={formData.reviewingDate}
             onChange={(e) =>
-              setFormData((p) => ({ ...p, reviewDate: e.target.value }))
+              setFormData((p) => ({ ...p, reviewingDate: e.target.value }))
             }
             onFocus={() => setReviewFocused(true)}
             onBlur={() => setReviewFocused(false)}
@@ -157,11 +198,12 @@ export default function EditArticleForm({ data, onCancel }) {
       <div className="flex justify-center gap-3">
         <button
           type="submit"
+          disabled={loading}
           className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
             isArabic ? "cairo" : "roboto"
-          } text-sm`}
+          } text-sm ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
         >
-          {t("save")}
+          {loading ? t("saving") : t("save")}
         </button>
 
         <button
@@ -174,6 +216,6 @@ export default function EditArticleForm({ data, onCancel }) {
           {t("cancel")}
         </button>
       </div>
-    </form>
-  );
+    </form>
+  );
 }

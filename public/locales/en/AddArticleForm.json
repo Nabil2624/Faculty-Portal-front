@@ -11,6 +11,12 @@
   "add": "Add",
   "cancel": "Cancel",
   "edit_article": "Edit Article",
-  "save": "Save"
-  
+  "save": "Save",
+  "loading": "Submitting...",
+  "required_article_name": "Article Name is required",
+  "required_entity": "Entity is required",
+  "required_review_date": "Review Date is required",
+  "submit_error": "Failed to submit article. Please try again",
+  "saving": "Saving...",
+  "updateError": "Failed to update article"
 }

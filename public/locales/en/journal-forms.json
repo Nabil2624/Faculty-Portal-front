@@ -1,5 +1,6 @@
 {
   "add_journal": "Add Participation in Journal",
+  "edit_journal": "Edit Participation in Journal",
   "journal_name": "Journal Name",
   "enter_journal_name": "Enter journal name",
   "journal_website": "Journal Website",
@@ -9,7 +10,14 @@
   "research_participation": "Research Participation",
   "review_participation": "Scientific Review",
   "other_participation": "Other Participation",
-  "cancel" : "Cancel",
-  "save"   : "Save",
-  "add"    : "Add"
+  "cancel": "Cancel",
+  "save": "Save",
+  "add": "Add",
+  "loading": "Loading...",
+  "required_journal_name": "Journal name is required",
+  "required_participation_type": "Participation type is required",
+  "submit_error": "Failed to submit. Please try again.",
+  "saving": "Saving...",
+  "required": "This field is required",
+  "update_failed": "Failed to update the journal. Please try again."
 }

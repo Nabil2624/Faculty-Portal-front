@@ -11,5 +11,12 @@
   "add": "إضافة",
   "cancel": "إلغاء",
   "edit_article": "تعديل مقال",
-  "save": "حفظ"
+  "save": "حفظ",
+  "loading": "جاري الإرسال...",
+  "required_article_name": "اسم المقال مطلوب",
+  "required_entity": "الجهة مطلوبة",
+  "required_review_date": "تاريخ المراجعة مطلوب",
+  "submit_error": "فشل في إرسال المقال. حاول مرة أخرى",
+  "saving": " جاري الحفظ...",
+  "updateError": "فشل تحديث المقال"
 }

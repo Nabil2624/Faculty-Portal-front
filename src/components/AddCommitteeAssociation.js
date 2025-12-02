@@ -1,9 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar } from "react-icons/fi";
 import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
+import CustomDropdown from "./CustomDropdown";
 
 export default function AddCommitteeAssociation() {
   const { t, i18n } = useTranslation("add-committee");
@@ -16,43 +19,132 @@ export default function AddCommitteeAssociation() {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
   const [typeValue, setTypeValue] = useState("");
   const [degreeValue, setDegreeValue] = useState("");
+  const [committeeName, setCommitteeName] = useState("");
+  const [description, setDescription] = useState("");
 
+  const [types, setTypes] = useState([]);
+  const [degrees, setDegrees] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  // INPUT STYLES
   const inputBase =
-    "w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 bg-[#E2E2E2] outline-none transition-all duration-150 ease-linear text-[12px]";
+    "w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 bg-[#E2E2E2] outline-none text-[12px] transition-all duration-150 ease-linear";
   const focusStyle =
     "focus:border-gray-300 focus:shadow-[0_0_0_4px_rgba(179,142,25,0.5)]";
-
-  const selectClass =
-    "w-full bg-[#E2E2E2] border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 appearance-none outline-none transition-all";
 
   const openPicker = (ref) => {
     if (!ref.current) return;
     try {
       ref.current.showPicker();
-    } catch (_) {
+    } catch {
       ref.current.focus();
     }
   };
 
+  // ----------------------------------------------------------------
+  // FETCH LOOKUPS
+  // ----------------------------------------------------------------
+  useEffect(() => {
+    const fetchLookups = async () => {
+      try {
+        setLoading(true);
+
+        const [degreesRes, typesRes] = await Promise.all([
+          axiosInstance.get("/LookUpItems/CommitteeParticipationDegrees", {
+            skipGlobalErrorHandler: true,
+          }),
+          axiosInstance.get("/LookUpItems/TypesofCommittee", {
+            skipGlobalErrorHandler: true,
+          }),
+        ]);
+
+        setDegrees(degreesRes.data || []);
+        setTypes(typesRes.data || []);
+      } catch (error) {
+        console.error("Error fetching lookups:", error);
+        alert(t("errors.loadLookups"));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLookups();
+  }, []);
+
+  // ----------------------------------------------------------------
+  // VALIDATION
+  // ----------------------------------------------------------------
+  const validateForm = () => {
+    const newErrors = {};
+    if (!committeeName) newErrors.committeeName = t("errors.committeeRequired");
+    if (!typeValue) newErrors.typeValue = t("errors.typeRequired");
+    if (!degreeValue) newErrors.degreeValue = t("errors.degreeRequired");
+    if (!startDate) newErrors.startDate = t("errors.startDateRequired");
+    // Start date must be before end date
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      if (start > end) {
+        newErrors.endDate = t("errors.startBeforeEnd");
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  // Start date must be before end date
+
+  // ----------------------------------------------------------------
+  // SUBMIT FORM
+  // ----------------------------------------------------------------
+  const handleAddCommittee = async () => {
+    if (!validateForm()) return;
+
+    setLoading(true);
+    try {
+      await axiosInstance.post(
+        "/ProjectsAndCommittees/CreateCommitteeOrAssociation",
+        {
+          nameOfCommitteeOrAssociation: committeeName,
+          typeOfCommitteeOrAssociationId: typeValue,
+          degreeOfSubscriptionId: degreeValue,
+          startDate,
+          endDate,
+          notes: description,
+        },
+        { skipGlobalErrorHandler: true }
+      );
+
+      navigate("/committee-associations");
+    } catch (error) {
+      console.error("Error adding committee:", error);
+      alert(t("errors.failedAdd"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <LoadingSpinner />;
+
   return (
     <Layout>
-      <div
-        dir={dir}
-        className="p-4 sm:p-6 flex flex-col bg-white min-h-screen"
-      >
-        <h2 className="text-2xl sm:text-3xl font-bold mb-12 inline-block relative text-start">
+      <div dir={dir} className="flex flex-col min-h-screen bg-white p-4 sm:p-6">
+        {/* Title */}
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6">
           {t("addCommittee.title")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1" />
         </h2>
 
-        <div className="flex flex-col items-center">
-          <form className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 lg:gap-x-36 gap-y-6 w-full max-w-6xl">
-            {/* LEFT COLUMN */}
+        {/* Form Container */}
+        <div className="flex-1 flex flex-col max-h-[calc(87vh-97px)] items-center overflow-x-hidden ">
+          <form className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-x-8 lg:gap-x-36 gap-y-6">
+            {/* LEFT */}
             <div className="space-y-6">
-              {/* Committee/Association */}
+              {/* Committee Name */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
                   {t("fields.committee")}{" "}
@@ -60,71 +152,72 @@ export default function AddCommitteeAssociation() {
                 </label>
                 <input
                   type="text"
+                  value={committeeName}
+                  onChange={(e) => setCommitteeName(e.target.value)}
                   placeholder={t("placeholders.committee")}
                   className={`${inputBase} ${focusStyle}`}
                 />
+                {errors.committeeName && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.committeeName}
+                  </p>
+                )}
               </div>
 
-              {/* Type of Committee/Association (DROPDOWN) */}
+              {/* Type */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("fields.type")}{" "}
-                  <span className="text-[#b38e19]">*</span>
+                  {t("fields.type")} <span className="text-[#b38e19]">*</span>
                 </label>
 
-                <div className="relative">
-                  <select
-                    className={`${selectClass} ${focusStyle}`}
-                    value={typeValue}
-                    onChange={(e) => setTypeValue(e.target.value)}
-                  >
-                    <option value="">{t("placeholders.type")}</option>
-                    <option value="local">{t("types.local")}</option>
-                    <option value="international">{t("types.international")}</option>
-                  </select>
+                <CustomDropdown
+                  value={typeValue}
+                  onChange={setTypeValue}
+                  placeholder={t("placeholders.type")}
+                  isArabic={isArabic}
+                  options={types.map((item) => ({
+                    id: item.id,
+                    label: isArabic ? item.valueAr : item.valueEn,
+                  }))}
+                />
 
-                  <ChevronDown
-                    size={18}
-                    className="absolute top-3 text-[#B38E19] pointer-events-none"
-                    style={isArabic ? { left: "12px" } : { right: "12px" }}
-                  />
-                </div>
+                {errors.typeValue && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.typeValue}
+                  </p>
+                )}
               </div>
 
-              {/* Membership Degree (DROPDOWN) */}
+              {/* Degree */}
               <div>
-                  {t("fields.degree")}{" "}
-                  <span className="text-[#B38E19]">*</span>
                 <label className="block mb-2 text-lg font-medium">
+                  {t("fields.degree")} <span className="text-[#b38e19]">*</span>
                 </label>
 
-                <div className="relative">
-                  <select
-                    className={`${selectClass} ${focusStyle}`}
-                    value={degreeValue}
-                    onChange={(e) => setDegreeValue(e.target.value)}
-                  >
-                    <option value="">{t("placeholders.degree")}</option>
-                    <option value="member">{t("degrees.member")}</option>
-                    <option value="active">{t("degrees.active")}</option>
-                    <option value="honor">{t("degrees.honor")}</option>
-                  </select>
-
-                  <ChevronDown
-                    size={18}
-                    className="absolute top-3 text-[#B38E19] pointer-events-none"
-                    style={isArabic ? { left: "12px" } : { right: "12px" }}
-                  />
-                </div>
+                <CustomDropdown
+                  value={degreeValue}
+                  onChange={setDegreeValue}
+                  placeholder={t("placeholders.degree")}
+                  isArabic={isArabic}
+                  options={degrees.map((item) => ({
+                    id: item.id,
+                    label: isArabic ? item.valueAr : item.valueEn,
+                  }))}
+                />
+                {errors.startDate && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.degreeValue}
+                  </p>
+                )}
               </div>
             </div>
 
-            {/* RIGHT COLUMN */}
+            {/* RIGHT */}
             <div className="space-y-6">
-              {/* DATE ROW */}
+              {/* Dates */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Start Date */}
-                <div className="relative">
+                <div>
                   <label className="block mb-2 text-lg font-medium">
                     {t("fields.startDate")}{" "}
                     <span className="text-[#b38e19]">*</span>
@@ -135,11 +228,10 @@ export default function AddCommitteeAssociation() {
                       type="text"
                       readOnly
                       value={startDate}
-                      className={`${inputBase} ${focusStyle}`}
                       placeholder={t("placeholders.startDate")}
+                      className={`${inputBase} ${focusStyle}`}
                       onClick={() => openPicker(startDateRef)}
                     />
-
                     <FiCalendar
                       size={18}
                       className="absolute top-1/2 -translate-y-1/2 text-[#B38E19] cursor-pointer"
@@ -154,10 +246,16 @@ export default function AddCommitteeAssociation() {
                       onChange={(e) => setStartDate(e.target.value)}
                     />
                   </div>
+
+                  {errors.startDate && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.startDate}
+                    </p>
+                  )}
                 </div>
 
                 {/* End Date */}
-                <div className="relative">
+                <div>
                   <label className="block mb-2 text-lg font-medium">
                     {t("fields.endDate")}
                   </label>
@@ -167,8 +265,8 @@ export default function AddCommitteeAssociation() {
                       type="text"
                       readOnly
                       value={endDate}
-                      className={`${inputBase} ${focusStyle}`}
                       placeholder={t("placeholders.endDate")}
+                      className={`${inputBase} ${focusStyle}`}
                       onClick={() => openPicker(endDateRef)}
                     />
 
@@ -186,45 +284,49 @@ export default function AddCommitteeAssociation() {
                       onChange={(e) => setEndDate(e.target.value)}
                     />
                   </div>
+                  {errors.endDate && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.endDate}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              {/* DESCRIPTION */}
+              {/* Description */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
                   {t("fields.description")}
                 </label>
                 <textarea
                   rows="6"
-                  className={`${inputBase} ${focusStyle} resize-none`}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   placeholder={t("placeholders.description")}
+                  className={`${inputBase} ${focusStyle} resize-none`}
                 />
               </div>
             </div>
           </form>
 
-          {/* BUTTONS */}
+          {/* Bottom Buttons */}
           <div
-            className={`flex flex-col sm:flex-row gap-3 mt-10 justify-end max-w-6xl absolute ${
-              isArabic ? "left-[53px]" : "right-[53px]"
-            } bottom-[28px]`}
+            className={`sticky bottom-0 flex flex-col sm:flex-row gap-3 mt-40 justify-${
+              isArabic ? "end" : "start"
+            } w-full max-w-6xl mx-auto bg-white pt-4`}
           >
             <button
               type="button"
-              onClick={() => navigate("/committees-associations")}
-              className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
-                isArabic ? "cairo" : "roboto"
-              } text-sm`}
+              onClick={handleAddCommittee}
+              disabled={loading}
+              className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md text-sm`}
             >
               {t("buttons.save")}
             </button>
 
             <button
               type="button"
-              onClick={() => navigate("/committees-associations")}
-              className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
-                isArabic ? "cairo" : "roboto"
-              } text-sm`}
+              onClick={() => navigate("/committee-associations")}
+              className="bg-gray-300 text-black sm:w-24 h-10 rounded-md text-sm"
             >
               {t("buttons.cancel")}
             </button>

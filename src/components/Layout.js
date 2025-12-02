@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import MobileHeader from "./MobileHeader";
 
 export default function Layout({ children }) {
   const { i18n } = useTranslation();
@@ -34,12 +35,12 @@ export default function Layout({ children }) {
         `}
       >
         {/* Header */}
-        <div className="bg-white-600 text-white p-3 transition-all duration-300 ease-in-out">
+        <div className="bg-white-600 text-white px-3 pt-2 transition-all duration-300 ease-in-out">
           <Header onLanguageChange={handleLanguageChange} />
         </div>
 
         {/* Page content */}
-        <div className="flex-1 p-4 bg-white rounded-lg transition-all duration-300 ease-in-out">
+        <div className="flex-1 bg-white rounded-lg transition-all duration-300 ease-in-out">
           {children}
         </div>
       </div>

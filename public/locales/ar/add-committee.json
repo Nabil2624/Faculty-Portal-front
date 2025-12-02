@@ -1,10 +1,10 @@
 {
-"editCommittee": {
-  "title": "تعديل لجنة او جمعية"
-},
-"buttonsText": {
-  "update": "تحديث البيانات"
-},
+  "editCommittee": {
+    "title": "تعديل لجنة او جمعية"
+  },
+  "buttonsText": {
+    "update": "تحديث البيانات"
+  },
   "addCommittee": {
     "title": "إضافة لجنة او جمعية"
   },
@@ -41,6 +41,16 @@
   "buttons": {
     "save": "حفظ",
     "cancel": "إلغاء"
+  },
+
+  "errors": {
+    "loadLookups": "فشل في تحميل بيانات البحث",
+    "committeeRequired": "اسم اللجنة مطلوب",
+    "typeRequired": "النوع مطلوب",
+    "degreeRequired": "الدرجة مطلوبة",
+    "startDateRequired": "تاريخ البداية مطلوب",
+    "failedAdd": "فشل في إضافة اللجنة",
+    "startBeforeEnd": "يجب أن يكون تاريخ البداية قبل تاريخ النهاية"
   }
   
 }

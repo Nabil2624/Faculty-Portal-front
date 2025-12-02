@@ -201,29 +201,7 @@ export default function AdministrativePositions() {
           </button>
         </div>
 
-        {/* Bottom Buttons */}
-        <div
-          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
-            isArabic ? "left-[53px]" : "right-[53px]"
-          } bottom-[28px]`}
-        >
-          <button
-            onClick={() => setShowAddForm(true)}
-            className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
-          >
-            {t("add") || "Add"}
-          </button>
-          <button
-            onClick={() => navigate(-1)}
-            className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
-          >
-            {t("back") || "Back"}
-          </button>
-        </div>
+
       </div>
 
       {/* Delete Confirmation Modal */}

@@ -10,6 +10,14 @@
   --font-en: 'Roboto', sans-serif;
   --font-ar: 'Cairo', sans-serif;
 }
+html, body, #root {
+  height: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff; /* خلفية بيضاء موحدة */
+  overflow-x: hidden; /* منع أي تجاوز أفقي */
+}
 
 /* Automatically apply font + direction based on <html lang=""> */
 html[lang="en"] {
@@ -82,3 +90,9 @@ html, body {
   display: none; /* Chrome, Safari */
 }
 
+@media only screen and (max-width: 768px){
+  html, body{
+    width: 100%;
+    overflow-x: hidden;
+  }
+}

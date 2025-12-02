@@ -1,20 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Bell, Mail, Search, ChevronDown } from "lucide-react";
+import { Bell, Mail, Search, Menu, ChevronDown, LogOut, DoorOpen  } from "lucide-react"; // استخدم LogOut كأيقونة باب
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-
+import FloatingSearch from "./FloatingSearch";
 import egyptFlag from "../images/egyptFlag.png";
 import ukFlag from "../images/americaFlag.png";
 
-import FloatingSearch from "./FloatingSearch";
 
-export default function Header({ isExpanded }) {
+export default function MobileHeader({ onBurgerClick }) {
   const { t, i18n } = useTranslation("headerandsidebar");
-  const navigate = useNavigate();
-
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
   const [searchOpen, setSearchOpen] = useState(false);
 
   const isArabic = i18n.language === "ar";
@@ -38,7 +33,7 @@ export default function Header({ isExpanded }) {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login", { replace: true });
+    window.location.href = "/login";
   };
 
   // Close language dropdown on outside click
@@ -53,17 +48,19 @@ export default function Header({ isExpanded }) {
   }, []);
 
   return (
-    <header
-      className={`flex items-center justify-between w-[calc(100%-0.5rem)]
-      bg-[#19355a] px-4 py-2 text-white rounded-lg
-      ${isArabic ? "mr-1" : "ml-1"} mb-4 relative z-50`}
-    >
-      {/* Right side icons */}
-      <div className="flex items-center gap-3">
-        <Bell className="cursor-pointer" size={18} />
-        <Mail className="cursor-pointer" size={18} />
+    <header className="flex items-center justify-between w-full bg-[#19355a] text-white fixed top-0 z-10 p-2">
 
-        {/* Search icon */}
+      {/* Left side (Burger + icons) */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={onBurgerClick}
+          className="p-2 hover:bg-white/20 rounded-full"
+        >
+          <Menu size={20} />
+        </button>
+
+        <Bell size={18} className="cursor-pointer" />
+        <Mail size={18} className="cursor-pointer" />
         <button
           onClick={() => setSearchOpen(true)}
           className="p-1 hover:bg-white/20 rounded-full transition"
@@ -72,30 +69,20 @@ export default function Header({ isExpanded }) {
         </button>
       </div>
 
-      {/* Left controls */}
-      <div className="flex items-center gap-3">
-        {/* Language dropdown */}
+      {/* Right side (Language + Logout) */}
+      <div className="flex items-center gap-2">
+        {/* Language Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className={`flex items-center gap-2 px-3 py-1 rounded-md border  text-sm ${
-              dropdownOpen
-                ? "bg-[#19355a] text-white" // عند فتح الـ dropdown
-                : "bg-[#19355a] text-white" // مقفول أزرق
-            }`}
+            className="flex items-center gap-1 px-1 py-1 hover:bg-white/20 rounded-md"
           >
-            {isArabic ? (
-              <>
-                <img src={egyptFlag} alt="Arabic" className="w-5 h-4" />
-                <span>ع</span>
-              </>
-            ) : (
-              <>
-                <img src={ukFlag} alt="English" className="w-5 h-4" />
-                <span>En</span>
-              </>
-            )}
-            <ChevronDown size={14} className="text-white-600" />
+            <img
+              src={isArabic ? egyptFlag : ukFlag}
+              alt={isArabic ? "Arabic" : "English"}
+              className="w-5 h-4"
+            />
+            <ChevronDown size={14} />
           </button>
 
           {dropdownOpen && (
@@ -106,15 +93,15 @@ export default function Header({ isExpanded }) {
             >
               <button
                 onClick={() => handleLanguageChange("ar")}
-                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#19355a] text-white"
+                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#19355a]"
               >
-                <img src={egyptFlag} className="w-5 h-4" /> العربية
+                <img src={egyptFlag} className="w-5 h-4" /> 
               </button>
               <button
                 onClick={() => handleLanguageChange("en")}
-                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#19355a] text-white"
+                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#19355a]"
               >
-                <img src={ukFlag} className="w-5 h-4" /> English
+                <img src={ukFlag} className="w-5 h-4" /> 
               </button>
             </div>
           )}
@@ -123,9 +110,10 @@ export default function Header({ isExpanded }) {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="font-semibold text-sm hover:underline"
+          className="flex items-center justify-center w-8 h-8 rounded-full  text-white"
+          title={t("logout") || "Logout"}
         >
-          {t("logout")}
+          <LogOut size={20} />
         </button>
       </div>
 

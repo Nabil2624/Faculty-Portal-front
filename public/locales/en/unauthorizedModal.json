@@ -1,0 +1,5 @@
+{
+  "unauthorized_title": "Session Expired",
+  "unauthorized_message": "Your session has expired. Please login again.",
+  "login_button": "Login"
+}

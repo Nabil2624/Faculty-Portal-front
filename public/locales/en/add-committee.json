@@ -41,5 +41,14 @@
   },
   "buttonsText": {
     "update": "Update"
+  },
+  "errors": {
+    "loadLookups": "Failed to load lookup data",
+    "committeeRequired": "Committee name is required",
+    "typeRequired": "Type is required",
+    "degreeRequired": "Degree is required",
+    "startDateRequired": "Start date is required",
+    "failedAdd": "Failed to add committee",
+    "startBeforeEnd": "Start date must be before end date"
   }
 }

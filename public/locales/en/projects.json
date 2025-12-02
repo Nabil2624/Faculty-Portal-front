@@ -17,5 +17,8 @@
   "next": "Next",
   "page": "Page",
   "of": "of",
-  "noData": "No projects recorded"
+  "noData": "No projects recorded",
+  "fetchError": "Failed to fetch projects",
+  "deleteError": "Failed to delete project",
+  "empty": "No projects found"
 }
