@@ -9,5 +9,15 @@
   "delete": "Delete",
   "cancel": "Cancel",
   "areYouSureDelete": "Are you sure you want to delete",
-  "period" : "Job Grade Date"
+  "period": "Job Grade Date",
+  "pageTitle": "Job Grades",
+  "fetchError": "Failed to fetch job grades",
+  "deleteError": "Failed to delete job grade",
+  "empty": "No job grades found",
+  "add": "Add",
+  "prev": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of",
+  "confirmDelete": "Are you sure you want to delete this?"
 }

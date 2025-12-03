@@ -1,6 +1,6 @@
 {
   "addAcademicQualification": "إضافة مؤهل علمي",
-  "edit-academic-qualification" : "تعديل مؤهل علمي",
+  "edit-academic-qualification": "تعديل مؤهل علمي",
   "degree": "المؤهل",
   "selectDegree": "اختر درجة المؤهل",
   "bachelor": "بكالوريوس",
@@ -25,6 +25,10 @@
   "save": "حفظ",
   "delegation": "الإيفاد",
   "delegation-placeholder": "مثل: بعثة داخلية، بعثة خارجية، دراسة ذاتية",
-  "subtitle":"أرفق شهادة المؤهل أو مستند الاعتماد (PDF أو صورة)",
-  "chooseFile" : "رفع المرفقات"
+  "subtitle": "أرفق شهادة المؤهل أو مستند الاعتماد (PDF أو صورة)",
+  "chooseFile": "رفع المرفقات",
+  "requiredField": "هذا الحقل مطلوب",
+  "saving": "جارٍ الحفظ...",
+  "updateFailed": "فشل في تحديث المؤهل الأكاديمي",
+  "required": "هذا الحقل مطلوب"
 }

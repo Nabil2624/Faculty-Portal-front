@@ -7,5 +7,21 @@
   "noQualifications": "لا توجد مؤهلات علمية حالياً.",
   "unknownDegree": "درجة غير معروفة",
   "edit": "إضافة",
-   "areYouSureDelete": "هل أنت متأكد أنك تريد حذف "
+  "areYouSureDelete": "هل أنت متأكد أنك تريد حذف ",
+  "fetchError": "فشل في جلب المؤهلات الأكاديمية.",
+  "deleteError": "فشل في حذف هذا المؤهل.",
+  "empty": "لا توجد مؤهلات أكاديمية.",
+  "prev": "السابق",
+  "next": "التالي",
+  "page": "الصفحة",
+  "of": "من",
+  "delete": "حذف",
+  "cancel": "إلغاء",
+  "degree": "الدرجة العلمية",
+  "major": "التخصص",
+  "grade": "التقدير",
+  "scholarship": "المنحة",
+  "faculty": "الكلية",
+  "location": "الموقع",
+  "attachment": "المرفق"
 }

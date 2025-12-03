@@ -5,6 +5,8 @@ import Layout from "../components/Layout";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
 import { Info, ExternalLink } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function EditAcademicQualification() {
   const { t, i18n } = useTranslation("add-academic-qualification");
@@ -27,17 +29,57 @@ export default function EditAcademicQualification() {
     attachments: null,
   });
 
+  const [loading, setLoading] = useState(false);
+  const [dropdowns, setDropdowns] = useState({
+    degrees: [],
+    dispatchTypes: [],
+    grades: [],
+  });
+  const [errors, setErrors] = useState({});
+
+  // Fetch dropdowns
+  useEffect(() => {
+    const fetchDropdowns = async () => {
+      try {
+        setLoading(true);
+        const [dispatchRes, gradesRes, qualificationsRes] = await Promise.all([
+          axiosInstance.get("/LookUpItems/DispatchTypes"),
+          axiosInstance.get("/LookUpItems/AcademicGrades"),
+          axiosInstance.get("/LookUpItems/AcademicQualifications"),
+        ]);
+
+        setDropdowns({
+          dispatchTypes: dispatchRes.data,
+          grades: gradesRes.data,
+          degrees: qualificationsRes.data,
+        });
+      } catch (error) {
+        console.error("Dropdown fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDropdowns();
+  }, []);
+
+  // Map existingData to formData
   useEffect(() => {
     if (existingData) {
       setFormData({
-        degree: existingData.degree || "",
+        degree: existingData.qualification?.valueEn || "",
         specialization: existingData.specialization || "",
-        delegation: existingData.scholarship || "",
-        grade: existingData.grade || "",
-        graduationDate: existingData.date || "",
-        countryCity: existingData.location || "",
-        universityCollege: existingData.faculty || "",
-        attachments: existingData.fileName || null,
+        delegation: existingData.dispatchType?.valueEn || "",
+        grade: existingData.grade?.valueEn || "",
+        graduationDate: existingData.dateOfObtainingTheQualification || "",
+        countryCity: existingData.countryOrCity || "",
+        universityCollege: existingData.universityOrFaculty || "",
+        attachments: existingData.attachmentUrl
+          ? {
+              name: existingData.attachmentName,
+              url: existingData.attachmentUrl,
+            }
+          : null,
       });
     }
   }, [existingData]);
@@ -59,9 +101,45 @@ export default function EditAcademicQualification() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.degree) newErrors.degree = t("required");
+    if (!formData.specialization) newErrors.specialization = t("required");
+    if (!formData.delegation) newErrors.delegation = t("required");
+    if (!formData.graduationDate) newErrors.graduationDate = t("required");
+    if (!formData.countryCity) newErrors.countryCity = t("required");
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    if (!validateForm()) return;
+
+    try {
+      setLoading(true);
+      const payload = {
+        qualificationId: dropdowns.degrees.find(d => d.valueEn === formData.degree)?.id,
+        specialization: formData.specialization,
+        gradeId: dropdowns.grades.find(g => g.valueEn === formData.grade)?.id,
+        dispatchId: dropdowns.dispatchTypes.find(d => d.valueEn === formData.delegation)?.id,
+        universityOrFaculty: formData.universityCollege,
+        countryOrCity: formData.countryCity,
+        dateOfObtainingTheQualification: formData.graduationDate,
+      };
+
+      await axiosInstance.put(
+        `/ScientificProgression/UpdateAcademicQualification/${existingData.id}`,
+        payload
+      );
+
+      navigate("/academic-qualifications");
+    } catch (error) {
+      console.error("Update error:", error);
+      setErrors({ submit: t("updateFailed") });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputBase =
@@ -69,16 +147,22 @@ export default function EditAcademicQualification() {
   const focusStyle =
     "focus:border-gray-300 focus:shadow-[0_0_0_4px_rgba(179,142,25,0.5)]";
 
+  if (loading) return <LoadingSpinner />;
+
   return (
     <Layout>
       <div
         dir={isArabic ? "rtl" : "ltr"}
-        className="p-4 sm:p-6 bg-white min-h-screen"
+        className="p-4 sm:p-6 bg-white relative"
       >
         <h2 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-19 inline-block w-full max-w-6xl">
           {t("edit-academic-qualification")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
+
+        {errors.submit && (
+          <p className="text-red-600 mb-4">{errors.submit}</p>
+        )}
 
         <div className="flex justify-center">
           <form
@@ -89,7 +173,7 @@ export default function EditAcademicQualification() {
             <div className="space-y-6">
               {/* Degree */}
               <div>
-                <label className="block mb-2 text-lg font-medium flex items-center gap-1">
+                <label className="mb-2 text-lg font-medium flex items-center gap-1">
                   {t("degree")} <span className="text-[#B38E19]">*</span>
                 </label>
                 <div className="relative flex items-center">
@@ -100,9 +184,11 @@ export default function EditAcademicQualification() {
                     onChange={handleChange}
                   >
                     <option value="">{t("selectDegree")}</option>
-                    <option value="bachelor">{t("bachelor")}</option>
-                    <option value="master">{t("master")}</option>
-                    <option value="phd">{t("phd")}</option>
+                    {dropdowns.degrees.map((deg) => (
+                      <option key={deg.id} value={deg.valueEn}>
+                        {isArabic ? deg.valueAr : deg.valueEn}
+                      </option>
+                    ))}
                   </select>
                   <FiChevronDown
                     size={18}
@@ -111,11 +197,12 @@ export default function EditAcademicQualification() {
                     }`}
                   />
                 </div>
+                {errors.degree && <p className="text-red-600 text-sm">{errors.degree}</p>}
               </div>
 
               {/* Delegation */}
               <div>
-                <label className="block mb-2 text-lg font-medium flex items-center gap-1">
+                <label className="mb-2 text-lg font-medium flex items-center gap-1">
                   {t("delegation")} <span className="text-[#B38E19]">*</span>
                 </label>
                 <div className="relative flex items-center">
@@ -126,8 +213,11 @@ export default function EditAcademicQualification() {
                     onChange={handleChange}
                   >
                     <option value="">{t("delegation-placeholder")}</option>
-                    <option value="internal">Egypt</option>
-                    <option value="external">USA</option>
+                    {dropdowns.dispatchTypes.map((d) => (
+                      <option key={d.id} value={d.valueEn}>
+                        {isArabic ? d.valueAr : d.valueEn}
+                      </option>
+                    ))}
                   </select>
                   <FiChevronDown
                     size={18}
@@ -136,11 +226,14 @@ export default function EditAcademicQualification() {
                     }`}
                   />
                 </div>
+                {errors.delegation && (
+                  <p className="text-red-600 text-sm">{errors.delegation}</p>
+                )}
               </div>
 
               {/* Country / City */}
               <div>
-                <label className="block mb-2 text-lg font-medium flex items-center gap-1">
+                <label className="mb-2 text-lg font-medium flex items-center gap-1">
                   {t("countryCity")} <span className="text-[#B38E19]">*</span>
                 </label>
                 <input
@@ -151,6 +244,9 @@ export default function EditAcademicQualification() {
                   value={formData.countryCity}
                   onChange={handleChange}
                 />
+                {errors.countryCity && (
+                  <p className="text-red-600 text-sm">{errors.countryCity}</p>
+                )}
               </div>
 
               {/* University / College */}
@@ -167,15 +263,13 @@ export default function EditAcademicQualification() {
                   onChange={handleChange}
                 />
               </div>
-
-
             </div>
 
             {/* RIGHT Column */}
             <div className="space-y-6">
               {/* Specialization */}
               <div>
-                <label className="block mb-2 text-lg font-medium flex items-center gap-1">
+                <label className="mb-2 text-lg font-medium flex items-center gap-1">
                   {t("specialization")} <span className="text-[#B38E19]">*</span>
                 </label>
                 <input
@@ -186,13 +280,14 @@ export default function EditAcademicQualification() {
                   value={formData.specialization}
                   onChange={handleChange}
                 />
+                {errors.specialization && (
+                  <p className="text-red-600 text-sm">{errors.specialization}</p>
+                )}
               </div>
 
               {/* Grade */}
               <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("grade")}
-                </label>
+                <label className="block mb-2 text-lg font-medium">{t("grade")}</label>
                 <div className="relative flex items-center">
                   <select
                     name="grade"
@@ -201,9 +296,11 @@ export default function EditAcademicQualification() {
                     onChange={handleChange}
                   >
                     <option value="">{t("selectGrade")}</option>
-                    <option value="excellent">{t("excellent")}</option>
-                    <option value="veryGood">{t("veryGood")}</option>
-                    <option value="good">{t("good")}</option>
+                    {dropdowns.grades.map((g) => (
+                      <option key={g.id} value={g.valueEn}>
+                        {isArabic ? g.valueAr : g.valueEn}
+                      </option>
+                    ))}
                   </select>
                   <FiChevronDown
                     size={18}
@@ -241,19 +338,18 @@ export default function EditAcademicQualification() {
                     ref={graduationDateRef}
                     className="absolute opacity-0 pointer-events-none"
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        graduationDate: e.target.value,
-                      })
+                      setFormData({ ...formData, graduationDate: e.target.value })
                     }
                   />
                 </div>
+                {errors.graduationDate && (
+                  <p className="text-red-600 text-sm">{errors.graduationDate}</p>
+                )}
               </div>
-                            {/* Attachments */}
+
+              {/* Attachments */}
               <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("attachments")}
-                </label>
+                <label className="block mb-2 text-lg font-medium">{t("attachments")}</label>
                 <div className="flex items-start gap-2 mb-2">
                   <Info size={17} className="text-gray-600 mt-1" />
                   <p className="text-yellow-600 text-sm">{t("subtitle")}</p>
@@ -279,68 +375,64 @@ export default function EditAcademicQualification() {
                     {t("chooseFile")}
                   </button>
 
-                  {existingData?.attachmentUrl && (
+                  {formData.attachments && formData.attachments.url && (
                     <a
-                      href={existingData.attachmentUrl}
+                      href={formData.attachments.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center text-sm text-black hover:underline"
                     >
-                      {existingData.attachmentName || t("currentFile")}
+                      {formData.attachments.name}
                       <ExternalLink size={16} className={`ml-1`} />
                     </a>
                   )}
 
-                  {formData.attachments && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        window.open(URL.createObjectURL(formData.attachments))
-                      }
-                      className="flex items-center text-sm text-black hover:underline"
-                    >
-                      {formData.attachments.name}
-                      <ExternalLink size={16} className={`ml-1`} />
-                    </button>
-                  )}
+                  {formData.attachments &&
+                    formData.attachments.name &&
+                    !formData.attachments.url && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          window.open(URL.createObjectURL(formData.attachments))
+                        }
+                        className="flex items-center text-sm text-black hover:underline"
+                      >
+                        {formData.attachments.name}
+                        <ExternalLink size={16} className={`ml-1`} />
+                      </button>
+                    )}
                 </div>
               </div>
             </div>
-            
-
-           
           </form>
-           {/* Buttons */}
-            <div
-              className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end  max-w-6xl absolute ${
-                isArabic ? "left-[53px]" : "right-[53px]"
-              } bottom-[28px]`}
-            >
-              <button
-                type="submit"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleSubmit(e);
-                  navigate("/academic-qualifications");
-                }}
-                className={`bg-[#b38e19] text-white  sm:w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("save")}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => navigate("/academic-qualifications")}
-                className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("cancel")}
-              </button>
-            </div>
         </div>
+      </div>
+
+      {/* Buttons */}
+      <div
+        className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
+          isArabic ? "left-[53px]" : "right-[53px]"
+        } bottom-[28px]`}
+      >
+        <button
+          type="submit"
+          onClick={handleSubmit}
+          className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
+            isArabic ? "cairo" : "roboto"
+          } text-sm`}
+        >
+          {t("save")}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/academic-qualifications")}
+          className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
+            isArabic ? "cairo" : "roboto"
+          } text-sm`}
+        >
+          {t("cancel")}
+        </button>
       </div>
     </Layout>
   );

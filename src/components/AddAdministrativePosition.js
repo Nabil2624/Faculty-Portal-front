@@ -1,13 +1,16 @@
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Calendar, ChevronDown, Plus } from "lucide-react";
+import { Calendar, Plus } from "lucide-react";
+import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 
-export default function AddAdministrativePosition({ onCancel }) {
+export default function AddAdministrativePosition({ onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("form");
   const dir = i18n.dir();
   const isArabic = i18n.language === "ar";
+
   const [formData, setFormData] = useState({
-    jobGrade: "",
+    position: "",
     startDate: "",
     endDate: "",
     notes: "",
@@ -18,37 +21,52 @@ export default function AddAdministrativePosition({ onCancel }) {
 
   const [startFocused, setStartFocused] = useState(false);
   const [endFocused, setEndFocused] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Open native date picker safely
   const openDatePicker = (ref) => {
     if (!ref?.current) return;
     try {
-      // showPicker only works on user-initiated click
       ref.current.showPicker();
     } catch (err) {
       ref.current.focus();
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    setLoading(true);
+    setError(null);
+
+    try {
+      await axiosInstance.post(
+        "/ScientificProgression/CreateAdministrativePosition",
+        formData,
+        { skipGlobalErrorHandler: true }
+      );
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      console.error("Failed to create administrative position:", err);
+      setError(t("submitError") || "Failed to create administrative position");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Reusable input classes
   const inputClass =
-    "w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 transition duration-150 bg-[#E2E2E2] text-sm";
-
+    "w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 transition duration-150 bg-[#E2E2E2]";
   const focusClasses =
     "focus:outline-none focus:ring-2 focus:ring-[#B38E19] transition duration-150 shadow";
 
+
+
   return (
     <form
-      key={i18n.language} // re-render when language changes
+      key={i18n.language}
       dir={dir}
       onSubmit={handleSubmit}
       className="max-w-md mx-auto mt-6 bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
@@ -56,34 +74,26 @@ export default function AddAdministrativePosition({ onCancel }) {
       {/* Header */}
       <div className="flex items-center justify-center mb-6">
         <Plus className="text-[#B38E19] mx-1" size={23} />
-        <h2 className=" text-xl font-semibold text-gray-800">
+        <h2 className="text-xl font-semibold text-gray-800">
           {t("add_admin_pos")}
         </h2>
       </div>
 
-      {/* Job Grade */}
+      {error && <div className="text-red-500 text-center mb-4">{error}</div>}
+
+      {/* Position */}
       <div className="mb-4">
-        <label className="block text-lg font-medium  text-gray-700 mb-2">
+        <label className="block text-lg font-medium text-gray-700 mb-2">
           {t("admin_pos")}
         </label>
-        <div className="relative">
-          <select
-            name="jobGrade"
-            value={formData.jobGrade}
-            onChange={handleChange}
-            className={`${inputClass} ${focusClasses} appearance-none`}
-          >
-            <option value="">{t("select_job_grade")}</option>
-            <option value="grade1">Grade 1</option>
-            <option value="grade2">Grade 2</option>
-            <option value="grade3">Grade 3</option>
-          </select>
-          <ChevronDown
-            size={18}
-            className="absolute top-2.5 text-[#B38E19] pointer-events-none"
-            style={dir === "rtl" ? { left: "10px" } : { right: "10px" }}
-          />
-        </div>
+        <input
+          type="text"
+          name="position"
+          value={formData.position}
+          onChange={handleChange}
+          placeholder={t("position_placeholder")}
+          className={`${inputClass} ${focusClasses}`}
+        />
       </div>
 
       {/* Start Date */}
@@ -103,7 +113,6 @@ export default function AddAdministrativePosition({ onCancel }) {
             } cursor-pointer`}
             placeholder={t("select_start_date")}
           />
-
           <input
             ref={startDateRef}
             type="date"
@@ -114,13 +123,7 @@ export default function AddAdministrativePosition({ onCancel }) {
             onFocus={() => setStartFocused(true)}
             onBlur={() => setStartFocused(false)}
             className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10"
-            style={{
-              colorScheme: "light",
-            }}
-            aria-hidden="true"
-            tabIndex={-1}
           />
-
           <Calendar
             size={18}
             className="absolute top-2.5 text-[#B38E19] cursor-pointer z-20"
@@ -147,7 +150,6 @@ export default function AddAdministrativePosition({ onCancel }) {
             } cursor-pointer`}
             placeholder={t("select_end_date")}
           />
-
           <input
             ref={endDateRef}
             type="date"
@@ -158,13 +160,7 @@ export default function AddAdministrativePosition({ onCancel }) {
             onFocus={() => setEndFocused(true)}
             onBlur={() => setEndFocused(false)}
             className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10"
-            style={{
-              colorScheme: "light",
-            }}
-            aria-hidden="true"
-            tabIndex={-1}
           />
-
           <Calendar
             size={18}
             className="absolute top-2.5 text-[#B38E19] cursor-pointer z-20"
@@ -192,9 +188,9 @@ export default function AddAdministrativePosition({ onCancel }) {
       <div className="flex justify-center gap-3">
         <button
           type="submit"
-         className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
+          className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
+            isArabic ? "cairo" : "roboto"
+          } text-sm`}
         >
           {t("add") || "Add"}
         </button>
@@ -202,9 +198,9 @@ export default function AddAdministrativePosition({ onCancel }) {
         <button
           type="button"
           onClick={() => onCancel && onCancel()}
-         className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
+          className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
+            isArabic ? "cairo" : "roboto"
+          } text-sm`}
         >
           {t("cancel") || "Cancel"}
         </button>

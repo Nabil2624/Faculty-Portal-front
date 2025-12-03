@@ -43,8 +43,29 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
             { key: "administrativePositions", link: "/administrative-positions" },
           ],
         },
+        {
+          key: "missions",
+          sub: [
+            { key: "scientificMissions", link: "/scientific-missions" },
+            { key: "seminarsAndConferences", link: "/seminars-and-conferences" },
+            { key: "trainingPrograms", link: "/training-programs" },
+          ],
+        },
+        {
+          key: "projectsAndCommittee",
+          sub: [
+            { key: "committeeAndAssociation", link: "/committee-associations" },
+            { key: "articleReviews", link: "/article-reviews" },
+            { key: "participationJournals", link: "/journals" },
+            { key: "Projects", link: "/projects" },
+          ],
+        },
       ],
     },
+    { key: "studyAndExams", icon: <Briefcase size={22} />, sub: [] },
+    { key: "financialDues", icon: <CreditCard size={22} />, sub: [] },
+    { key: "leavesDocs", icon: <FileText size={22} />, sub: [] },
+    { key: "trainingsCourses", icon: <BookOpen size={22} />, sub: [] },
   ];
 
   useEffect(() => {
@@ -57,6 +78,13 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, onClose]);
 
+  // ✅ زق الخط لكل Level
+  const lineOffsetByLevel = {
+    2: 12, // level 2 يتزق 12px
+    3: 24, // level 3 يتزق 24px
+    4: 36, // لو فيه level 4
+  };
+
   const toggleMenu = (key, level) => {
     setOpenMenus((prev) => ({
       ...prev,
@@ -65,46 +93,54 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
   };
 
   const renderMenu = (items, level = 1) => {
-    const offset = 16;
+    const containerPadding = 8;
 
     return (
-      <ul className="relative text-start">
+      <div
+        className="relative"
+        style={{
+          paddingLeft: isArabic ? 0 : level > 1 ? level * containerPadding : 0,
+          paddingRight: isArabic ? (level > 1 ? level * containerPadding : 0) : 0,
+        }}
+      >
+        {/* الخط العمودي */}
+        {level > 1 && (
+          <div
+            className="absolute top-0 bottom-0 w-px bg-gray-400"
+            style={
+              isArabic
+                ? { right: (lineOffsetByLevel[level] || 0) + "px" }
+                : { left: (lineOffsetByLevel[level] || 0) + "px" }
+            }
+          />
+        )}
+
         {items.map((item) => {
           const hasSub = item.sub && item.sub.length > 0;
           const isOpen = openMenus[level] === item.key;
 
+          const buttonPaddingStyle = isArabic
+            ? { paddingRight: containerPadding * (level - 1) + "px" }
+            : { paddingLeft: containerPadding * (level - 1) + "px" };
+
           return (
-            <li key={item.key} className="relative my-1">
-              {/* كونتينر للـ level مع الخط العمودي */}
-              <div className="relative">
-                {level > 1 && (
-                  <div
-                    className="absolute top-0 bottom-0 w-px bg-gray-400"
-                    style={isArabic ? { right: `${(level - 1) * offset}px` } : { left: `${(level - 1) * offset}px` }}
-                  />
-                )}
+            <div key={item.key} className="relative z-10 my-1 mb-5">
+              <button
+                onClick={() => hasSub && toggleMenu(item.key, level)}
+                className="w-full py-1 text-gray-200 hover:text-white hover:bg-[#B38e19] rounded-md flex items-center gap-2 relative z-10"
+                style={buttonPaddingStyle}
+              >
+                {item.icon}
+                <span>{t(item.key)}</span>
+              </button>
 
-                {/* الزر */}
-                <button
-                  onClick={() => hasSub && toggleMenu(item.key, level)}
-                  className="w-full py-1 text-gray-200 hover:text-white hover:bg-[#B38e19] rounded-md text-start flex items-center gap-2 relative z-10"
-                  style={isArabic ? { paddingRight: `${level * offset}px` } : { paddingLeft: `${level * offset}px` }}
-                >
-                  {item.icon}
-                  <span>{t(item.key)}</span>
-                </button>
-
-                {/* Submenu */}
-                {hasSub && isOpen && (
-                  <div style={{ marginTop: "2px", marginLeft: isArabic ? 0 : offset, marginRight: isArabic ? offset : 0 }}>
-                    {renderMenu(item.sub, level + 1)}
-                  </div>
-                )}
-              </div>
-            </li>
+              {hasSub && isOpen && (
+                <div className="mt-1">{renderMenu(item.sub, level + 1)}</div>
+              )}
+            </div>
           );
         })}
-      </ul>
+      </div>
     );
   };
 
@@ -113,13 +149,14 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
   return (
     <div className="fixed inset-0 z-50 flex">
       <div className="absolute inset-0 bg-black/50" />
+
       <aside
         ref={sidebarRef}
         className="relative w-64 bg-[#19355a] text-white p-4 flex flex-col max-w-[80vw]"
         dir={isArabic ? "rtl" : "ltr"}
       >
         {/* Header */}
-        <div className="flex items-center justify-between mb-4 text-start">
+        <div className="flex items-center justify-between mb-10 text-start">
           <img src={logo} alt="Logo" className="w-10 h-10" />
           <h2 className="font-bold text-lg text-start">{t("helwanUniversity")}</h2>
           <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-full">
@@ -132,7 +169,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
           {renderMenu(navItems)}
         </nav>
 
-        {/* Footer nav */}
+        {/* Footer */}
         <div className="flex flex-col gap-3 mt-4">
           <Link
             to="/settings"
@@ -141,6 +178,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
             <Settings size={22} />
             <span>{t("settings")}</span>
           </Link>
+
           <Link
             to="/support"
             className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#B38e19] transition"

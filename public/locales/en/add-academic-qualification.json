@@ -1,6 +1,6 @@
 {
   "addAcademicQualification": "Add Academic Qualification",
-"edit-academic-qualification" : "Edit Academic Qualification",
+  "edit-academic-qualification": "Edit Academic Qualification",
   "degree": "Degree",
   "selectDegree": "Select Degree",
   "bachelor": "Bachelor",
@@ -25,10 +25,12 @@
   "save": "Save",
   "delegation": "Delegation",
   "delegation-placeholder": "Example: internal mission, external mission, self-study",
-  "subtitle":"Attach your qualification certificate or accreditation document (PDF or image)",
-  "chooseFile" : "Upload attachments",
+  "subtitle": "Attach your qualification certificate or accreditation document (PDF or image)",
+  "chooseFile": "Upload attachments",
   "countryCity": "Country/City",
-  "countryCityPlaceholder": "Enter country and city"
-
-
+  "countryCityPlaceholder": "Enter country and city",
+  "requiredField": "This field is required",
+  "saving": "Saving...",
+  "updateFailed": "Failed to update the academic qualification",
+  "required": "This field is required"
 }

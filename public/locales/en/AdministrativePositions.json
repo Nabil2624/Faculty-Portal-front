@@ -1,9 +1,18 @@
-  {"administrativePositions": "Administrative Positions",
+{
+  "administrativePositions": "Administrative Positions",
   "add": "Add",
   "back": "Back",
   "areYouSureDelete": "Are you sure you want to delete",
   "delete": "Delete",
   "cancel": "Cancel",
   "startDate": "Start Date",
-  "endDate": "End Date"
+  "endDate": "End Date",
+  "next": "Next",
+  "prev": "Previous",
+  "page": "Page",
+  "of": "of",
+  "emptyPositions": "No administrative positions found",
+  "fetchError": "Failed to fetch administrative positions",
+  "deleteError": "Failed to delete administrative position",
+  "confirmDelete": "Are you sure you want to delete this position?"
 }

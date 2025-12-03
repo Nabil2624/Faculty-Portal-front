@@ -54,9 +54,13 @@ export default function Header({ isExpanded }) {
 
   return (
     <header
-      className={`flex items-center justify-between w-[calc(100%-0.5rem)]
+      className={`flex items-center justify-between 
+      w-[calc(100%-0.5rem)]
       bg-[#19355a] px-4 py-2 text-white rounded-lg
-      ${isArabic ? "mr-1" : "ml-1"} mb-4 relative z-50`}
+      ${isArabic ? "mr-1" : "ml-1"}
+      relative z-50
+      sticky top-0
+    `}
     >
       {/* Right side icons */}
       <div className="flex items-center gap-3">
@@ -78,11 +82,8 @@ export default function Header({ isExpanded }) {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className={`flex items-center gap-2 px-3 py-1 rounded-md border  text-sm ${
-              dropdownOpen
-                ? "bg-[#19355a] text-white" // عند فتح الـ dropdown
-                : "bg-[#19355a] text-white" // مقفول أزرق
-            }`}
+            className={`flex items-center gap-2 px-3 py-1 rounded-md border text-sm 
+              bg-[#19355a] text-white`}
           >
             {isArabic ? (
               <>
@@ -95,24 +96,24 @@ export default function Header({ isExpanded }) {
                 <span>En</span>
               </>
             )}
-            <ChevronDown size={14} className="text-white-600" />
+            <ChevronDown size={14} />
           </button>
 
           {dropdownOpen && (
             <div
-              className={`absolute mt-1 bg-[#19355a] text-white border rounded-md shadow-md z-[2000] text-sm ${
-                isArabic ? "left-0" : "right-0"
-              }`}
+              className={`absolute mt-1 bg-[#19355a] text-white border rounded-md shadow-md z-[2000] text-sm 
+              ${isArabic ? "left-0" : "right-0"}`}
             >
               <button
                 onClick={() => handleLanguageChange("ar")}
-                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#19355a] text-white"
+                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#17314f]"
               >
                 <img src={egyptFlag} className="w-5 h-4" /> العربية
               </button>
+
               <button
                 onClick={() => handleLanguageChange("en")}
-                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#19355a] text-white"
+                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#17314f]"
               >
                 <img src={ukFlag} className="w-5 h-4" /> English
               </button>

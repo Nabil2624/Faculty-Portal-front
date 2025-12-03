@@ -31,7 +31,7 @@ export default function AddScientificTask() {
     <Layout>
       <div
         dir={isArabic ? "rtl" : "ltr"}
-        className="p-4 sm:p-6 flex flex-col bg-white min-h-screen"
+        className="p-4 sm:p-6 flex flex-col bg-white min-h-[calc(100vh-72px)]"
       >
         <h2 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-19 inline-block relative text-start">
           {t("addTask.title")}

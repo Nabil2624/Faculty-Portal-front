@@ -16,5 +16,12 @@
   "cancel": "Cancel",
   "grade_date": "Job Grade Date",
   "select_grade_date": "Select Job Grade Date",
-  "edit" : "Save"
+  "edit": "Save",
+  "adding": "Adding...",
+  "required": "This field is required",
+  "submitError": "Failed to submit job grade",
+  "loading": "Loading...",
+  "fetchDegreesError": "Failed to load job grades",
+  "updating": "Updating...",
+  "position_placeholder": "Enter the position name"
 }

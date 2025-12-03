@@ -1,8 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Calendar, ChevronDown, Pen } from "lucide-react";
+import { Calendar, Pen } from "lucide-react";
+import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 
-export default function EditAdminPosition({ data, onCancel }) {
+export default function EditAdminPosition({ data, onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("form");
   const dir = i18n.dir();
   const isArabic = i18n.language === "ar";
@@ -13,14 +15,16 @@ export default function EditAdminPosition({ data, onCancel }) {
     endDate: "",
     notes: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (data) {
       setFormData({
-        jobGrade: data.title || "",
+        jobGrade: data.position || "",
         startDate: data.startDate || "",
         endDate: data.endDate || "",
-        notes: data.description || "",
+        notes: data.notes || "",
       });
     }
   }, [data]);
@@ -43,15 +47,43 @@ export default function EditAdminPosition({ data, onCancel }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    setError("");
+    if (!data?.id) {
+      setError(t("updateError") || "Failed to update position");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axiosInstance.put(
+        `/ScientificProgression/UpdateAdministrativePosition/${data.id}`,
+        {
+          id: data.id,
+          position: formData.jobGrade,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          notes: formData.notes,
+        },
+        { skipGlobalErrorHandler: true }
+      );
+
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      console.error(err);
+      setError(t("updateError") || "Failed to update position");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputClass =
     "w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 transition duration-150 bg-[#E2E2E2]";
   const focusClasses =
     "focus:outline-none focus:ring-2 focus:ring-[#B38E19] transition duration-150 shadow";
+
+
 
   return (
     <form
@@ -68,29 +100,24 @@ export default function EditAdminPosition({ data, onCancel }) {
         </h2>
       </div>
 
-      {/* Job Grade */}
+      {/* Error */}
+      {error && (
+        <div className="text-red-500 text-center mb-4">{error}</div>
+      )}
+
+      {/* Job Position as input */}
       <div className="mb-4">
         <label className="block text-lg font-medium text-gray-700 mb-2">
           {t("admin_pos")}
         </label>
-        <div className="relative">
-          <select
-            name="jobGrade"
-            value={formData.jobGrade}
-            onChange={handleChange}
-            className={`${inputClass} ${focusClasses} appearance-none`}
-          >
-            <option value="">{t("select_job_grade")}</option>
-            <option value="grade1">Grade 1</option>
-            <option value="grade2">Grade 2</option>
-            <option value="grade3">Grade 3</option>
-          </select>
-          <ChevronDown
-            size={18}
-            className="absolute top-2.5 text-[#B38E19] pointer-events-none"
-            style={dir === "rtl" ? { left: "10px" } : { right: "10px" }}
-          />
-        </div>
+        <input
+          type="text"
+          name="jobGrade"
+          value={formData.jobGrade}
+          onChange={handleChange}
+          placeholder={t("position_placeholder") || "Enter the position name"}
+          className={`${inputClass} ${focusClasses}`}
+        />
       </div>
 
       {/* Start Date */}
@@ -110,7 +137,6 @@ export default function EditAdminPosition({ data, onCancel }) {
             } cursor-pointer`}
             placeholder={t("select_start_date")}
           />
-
           <input
             ref={startDateRef}
             type="date"
@@ -125,7 +151,6 @@ export default function EditAdminPosition({ data, onCancel }) {
             aria-hidden="true"
             tabIndex={-1}
           />
-
           <Calendar
             size={18}
             className="absolute top-2.5 text-[#B38E19] cursor-pointer z-20"
@@ -152,7 +177,6 @@ export default function EditAdminPosition({ data, onCancel }) {
             } cursor-pointer`}
             placeholder={t("select_end_date")}
           />
-
           <input
             ref={endDateRef}
             type="date"
@@ -167,7 +191,6 @@ export default function EditAdminPosition({ data, onCancel }) {
             aria-hidden="true"
             tabIndex={-1}
           />
-
           <Calendar
             size={18}
             className="absolute top-2.5 text-[#B38E19] cursor-pointer z-20"
@@ -192,7 +215,7 @@ export default function EditAdminPosition({ data, onCancel }) {
         ></textarea>
       </div>
 
-      {/* Buttons (same as EditJobGrade) */}
+      {/* Buttons */}
       <div className="flex justify-center gap-3">
         <button
           type="submit"

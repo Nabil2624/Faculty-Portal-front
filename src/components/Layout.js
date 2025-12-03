@@ -2,47 +2,43 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import MobileHeader from "./MobileHeader";
 
 export default function Layout({ children }) {
   const { i18n } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleLanguageChange = (lang) => {
-    i18n.changeLanguage(lang);
-    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-  };
-
   const isArabic = i18n.language === "ar";
 
   return (
     <div className={`flex h-screen w-full ${isArabic ? "rtl" : "ltr"}`}>
-      {/* Sidebar with smooth width transition */}
-      <div
-        className={`transition-all duration-300 ease-in-out`}
-      >
-        <Sidebar
-          lang={i18n.language}
-          isExpanded={isExpanded}
-          setIsExpanded={setIsExpanded}
-        />
-      </div>
+      {/* Sidebar */}
+      <Sidebar
+        lang={i18n.language}
+        isExpanded={isExpanded}
+        setIsExpanded={setIsExpanded}
+      />
 
-      {/* Main content with smooth margin transition */}
+      {/* MAIN */}
       <div
-        className={`flex flex-col flex-1 bg-white transition-all duration-300 ease-in-out
-          ${isExpanded ? (isArabic ? "mr-56" : "ml-56") : (isArabic ? "mr-14" : "ml-14")}
+        className={`flex flex-col flex-1 bg-white transition-all duration-300
+          ${
+            isExpanded
+              ? isArabic
+                ? "mr-56"
+                : "ml-56"
+              : isArabic
+              ? "mr-14"
+              : "ml-14"
+          }
         `}
       >
-        {/* Header */}
-        <div className="bg-white-600 text-white px-3 pt-2 transition-all duration-300 ease-in-out">
-          <Header onLanguageChange={handleLanguageChange} />
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-50 px-3 pt-2 shadow-sm">
+          <Header />
         </div>
 
-        {/* Page content */}
-        <div className="flex-1 bg-white rounded-lg transition-all duration-300 ease-in-out">
-          {children}
-        </div>
+        {/* Page content (scroll here only) */}
+        <div className="flex-1 p-3 bg-white rounded-lg ">{children}</div>
       </div>
     </div>
   );
