@@ -6,5 +6,6 @@
   "back": "Back",
   "delete": "Delete",
   "cancel": "Cancel",
-  "areYouSureDelete": "Are you sure you want to delete"
+  "areYouSureDelete": "Are you sure you want to delete",
+  "fetchError": "No training programs to display"
 }

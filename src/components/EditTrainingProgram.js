@@ -4,23 +4,27 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+
 
 export default function EditTrainingProgram() {
   const location = useLocation();
   const navigate = useNavigate();
-  const existingData = location.state?.program || null;
+  const existingData = location.state?.programData || {};
   const { t, i18n } = useTranslation("add-training-program");
   const isArabic = i18n.language === "ar";
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const startDateRef = useRef(null);
   const endDateRef = useRef(null);
 
   const [formData, setFormData] = useState({
-    programType: "",
+    type: "",
     participationType: "",
-    programName: "",
-    organizingBody: "",
-    location: "",
+    trainingProgramName: "",
+    organizingAuthority: "",
+    venue: "",
     description: "",
     startDate: "",
     endDate: "",
@@ -30,11 +34,11 @@ export default function EditTrainingProgram() {
   useEffect(() => {
     if (existingData) {
       setFormData({
-        programType: existingData.programType || "",
+        type: existingData.type || "",
         participationType: existingData.participationType || "",
-        programName: existingData.programName || "",
-        organizingBody: existingData.organizingBody || "",
-        location: existingData.location || "",
+        trainingProgramName: existingData.trainingProgramName || "",
+        organizingAuthority: existingData.organizingAuthority || "",
+        venue: existingData.venue || "",
         description: existingData.description || "",
         startDate: existingData.startDate || "",
         endDate: existingData.endDate || "",
@@ -53,12 +57,35 @@ export default function EditTrainingProgram() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Updated Training Program:", formData);
-    // Here you’d call your API to update the program
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
+
+  try {
+    await axiosInstance.put(
+      `/Missions/UpdateTrainingProgram/${formData.id}`,
+      {
+        type: formData.type,
+        participationType: formData.participationType,
+        trainingProgramName: formData.trainingProgramName,
+        organizingAuthority: formData.organizingAuthority,
+        venue: formData.venue,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        description: formData.description,
+      },
+      { skipGlobalErrorHandler: true }
+    );
+
     navigate("/training-programs");
-  };
+  } catch (err) {
+    console.error("Failed to update training program:", err);
+    setError("Failed to update training program");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCancel = () => {
     navigate("/training-programs");
@@ -164,30 +191,30 @@ export default function EditTrainingProgram() {
               {/* Organizing Body */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("organizingBody")} <span className="text-[#b38e19]">*</span>
+                  {t("organizingBody")}{" "}
+                  <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
-                  name="organizingBody"
-                  placeholder={t("organizingBodyPlaceholder")}
-                  className={`${inputBase} ${focusStyle}`}
-                  value={formData.organizingBody}
+                  name="organizingAuthority"
+                  value={formData.organizingAuthority}
                   onChange={handleChange}
                 />
               </div>
               {/* Location */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {isArabic ? "مكان الانعقاد" : "Location"} <span className="text-[#b38e19]">*</span>
+                  {isArabic ? "مكان الانعقاد" : "Location"}{" "}
+                  <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
-                  name="location"
+                  name="venue"
                   placeholder={
                     isArabic ? "اكتب مكان الانعقاد" : "Enter location"
                   }
                   className={`${inputBase} ${focusStyle}`}
-                  value={formData.location}
+                  value={formData.venue}
                   onChange={handleChange}
                 />
               </div>

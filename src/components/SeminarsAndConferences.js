@@ -47,12 +47,22 @@ export default function SeminarsAndConferences() {
         setEvents(
           (data || []).map((item) => ({
             id: item.id,
-            missionName: item.missionName || "",
+           type: item.type?.toLowerCase() || "",
+            localOrInternational: item.localOrInternational?.toLowerCase() || "",
+            conferenceName: item.name || item.conferenceName || "",
+            participationRole: item.roleOfParticipationId || "",
+            organizingBody: item.organizingAuthority || "",
+            website: item.website || "",
+            venue: item.venue || "",
+            description: item.notes || item.description || "",
+            attachments: item.attachments || null,
+
+            // Keep the ones you used in the UI
+            missionName: item.name || item.missionName || "",
             startDate: item.startDate || "",
             endDate: item.endDate || "",
             universityOrFaculty: item.universityOrFaculty || "",
             countryOrCity: item.countryOrCity || "",
-            notes: item.notes || "",
           }))
         );
       }
@@ -76,39 +86,37 @@ export default function SeminarsAndConferences() {
     setShowModal(true);
   };
 
+  const confirmDelete = async () => {
+    if (!selectedItem?.id) return;
 
-const confirmDelete = async () => {
-  if (!selectedItem?.id) return;
+    try {
+      setLoading(true);
+      setError(null);
 
-  try {
-    setLoading(true);
-    setError(null);
+      // Call the new delete endpoint
+      await axiosInstance.delete(
+        `/Missions/DeleteScientificMission/${selectedItem.id}`,
+        { skipGlobalErrorHandler: true }
+      );
 
-    // Call the new delete endpoint
-    await axiosInstance.delete(
-      `/Missions/DeleteScientificMission/${selectedItem.id}`,
-      { skipGlobalErrorHandler: true }
-    );
+      // Update UI after deletion
+      setEvents((prev) => prev.filter((m) => m.id !== selectedItem.id));
+      setShowModal(false);
+      setSelectedItem(null);
 
-    // Update UI after deletion
-    setEvents((prev) => prev.filter((m) => m.id !== selectedItem.id));
-    setShowModal(false);
-    setSelectedItem(null);
-
-    // Handle page adjustment if last item on page was deleted
-    if (events.length === 1 && currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
-    } else {
-      fetchEvents(currentPage);
+      // Handle page adjustment if last item on page was deleted
+      if (events.length === 1 && currentPage > 1) {
+        setCurrentPage((prev) => prev - 1);
+      } else {
+        fetchEvents(currentPage);
+      }
+    } catch (err) {
+      console.error("Failed to delete event:", err);
+      setError(t("deleteError") || "Failed to delete event");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error("Failed to delete event:", err);
-    setError(t("deleteError") || "Failed to delete event");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   if (loading) return <LoadingSpinner />;
 
@@ -168,7 +176,9 @@ const confirmDelete = async () => {
                   <Pencil
                     className="text-[#b38e19] cursor-pointer w-5 h-5 hover:scale-110 transition"
                     onClick={() =>
-                      navigate("/edit-conference", { state: { existingData: item } })
+                      navigate("/edit-conference", {
+                        state: { existingData: item },
+                      })
                     }
                   />
                   <Trash2
@@ -180,8 +190,12 @@ const confirmDelete = async () => {
                 <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">
                   {item.missionName}
                 </h3>
-                <p className="text-lg text-gray-700">{item.startDate} - {item.endDate}</p>
-                <p className="text-sm text-gray-700">{item.universityOrFaculty}</p>
+                <p className="text-lg text-gray-700">
+                  {item.startDate} - {item.endDate}
+                </p>
+                <p className="text-sm text-gray-700">
+                  {item.universityOrFaculty}
+                </p>
                 <p className="text-xs text-gray-400">{item.countryOrCity}</p>
               </div>
             ))}
@@ -197,7 +211,9 @@ const confirmDelete = async () => {
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => p - 1)}
             className={`px-4 py-2 rounded-md border border-gray-400 ${
-              currentPage === 1 ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-200"
+              currentPage === 1
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-gray-200"
             }`}
           >
             {isArabic ? "السابق" : "Previous"}
@@ -213,7 +229,9 @@ const confirmDelete = async () => {
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage((p) => p + 1)}
             className={`px-4 py-2 rounded-md border border-gray-400 ${
-              currentPage === totalPages ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-200"
+              currentPage === totalPages
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-gray-200"
             }`}
           >
             {isArabic ? "التالي" : "Next"}
@@ -252,7 +270,9 @@ const confirmDelete = async () => {
             <h3 className="text-lg font-semibold mb-3">
               {t("areYouSureDelete")}
             </h3>
-            <p className="text-sm text-gray-600 mb-5">{selectedItem?.missionName}</p>
+            <p className="text-sm text-gray-600 mb-5">
+              {selectedItem?.missionName}
+            </p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={confirmDelete}
@@ -280,7 +300,9 @@ const confirmDelete = async () => {
           >
             <button
               onClick={() => setShowDetails(false)}
-              className={`absolute top-4 ${isArabic ? "left-4" : "right-4"} text-gray-500 transition`}
+              className={`absolute top-4 ${
+                isArabic ? "left-4" : "right-4"
+              } text-gray-500 transition`}
             >
               <X size={22} />
             </button>
@@ -311,7 +333,9 @@ const confirmDelete = async () => {
               </div>
 
               <div className="mt-5 bg-gray-100 p-4 rounded-lg border border-gray-200">
-                <p className="text-gray-800 leading-relaxed">{selectedItem.notes}</p>
+                <p className="text-gray-800 leading-relaxed">
+                  {selectedItem.notes}
+                </p>
               </div>
             </div>
           </div>

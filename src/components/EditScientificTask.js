@@ -1,5 +1,4 @@
-
-import React, { useRef, useState, useEffect } from "react"; 
+import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar } from "react-icons/fi";
@@ -54,8 +53,7 @@ export default function EditScientificTask() {
   const validateForm = () => {
     const newErrors = {};
     if (!taskName) newErrors.taskName = t("errors.taskRequired");
-    if (!countryOrCity)
-      newErrors.countryCity = t("errors.countryCityRequired");
+    if (!countryOrCity) newErrors.countryCity = t("errors.countryCityRequired");
     if (!startDate) newErrors.startDate = t("errors.startDateRequired");
     if (startDate && endDate && new Date(startDate) > new Date(endDate))
       newErrors.endDate = t("errors.startBeforeEnd");
@@ -105,7 +103,8 @@ export default function EditScientificTask() {
     <Layout>
       <div dir={dir} className="p-4 sm:p-6 flex flex-col bg-white min-h-screen">
         <h2 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-20 inline-block relative text-start">
-          {t("editTask.title") || (isArabic ? "تعديل مهمة علمية" : "Edit Scientific Task")}
+          {t("editTask.title") ||
+            (isArabic ? "تعديل مهمة علمية" : "Edit Scientific Task")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
 
@@ -254,13 +253,31 @@ export default function EditScientificTask() {
           </div>
         </form>
 
-        <div className="mt-10">
+       {/* Buttons */}
+        <div
+          className={`flex flex-col sm:flex-row gap-3 mt-10 justify-end max-w-6xl absolute ${
+            isArabic ? "left-[53px]" : "right-[53px]"
+          } bottom-[28px]`}
+        >
           <button
             type="button"
             onClick={handleSave}
-            className="bg-[#b38e19] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#a67c17]"
+            disabled={loading}
+            className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
+              isArabic ? "cairo" : "roboto"
+            } text-sm`}
           >
-            {t("buttons.save") || (isArabic ? "حفظ" : "Save")}
+            {loading ? t("loading") : t("buttons.save")}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate("/scientific-missions")}
+            className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
+              isArabic ? "cairo" : "roboto"
+            } text-sm`}
+          >
+            {t("buttons.cancel")}
           </button>
         </div>
       </div>

@@ -22,5 +22,19 @@
   "description": "Description",
   "descriptionPlaceholder": "Write a summary of the program and your role in it.",
   "save": "Save",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  
+  "startDatePlaceholder": "Select start date",
+  "endDatePlaceholder": "Select end date",
+
+  "errors": {
+    "programTypeRequired": "Program type is required",
+    "participationTypeRequired": "Participation type is required",
+    "programNameRequired": "Program name is required",
+    "organizingBodyRequired": "Organizing body is required",
+    "locationRequired": "Location is required",
+    "startDateRequired": "Start date is required",
+    "startBeforeEnd": "Start date must be before end date",
+    "failedAdd": "An error occurred while adding the training program"
+  }
 }
