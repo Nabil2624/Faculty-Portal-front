@@ -5,6 +5,8 @@ import Layout from "../components/Layout";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
 import { Info } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function EditConference() {
   const { t, i18n } = useTranslation("add-conference");
@@ -16,6 +18,11 @@ export default function EditConference() {
   const endDateRef = useRef(null);
   const fileInputRef = useRef(null);
 
+  // api states
+  const [participationRoles, setParticipationRoles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const [formData, setFormData] = useState({
     type: "",
     localOrInternational: "",
@@ -23,13 +30,33 @@ export default function EditConference() {
     participationRole: "",
     organizingBody: "",
     website: "",
-    country: "",
-    city: "",
+    venue: "",
     description: "",
     attachments: null,
     startDate: "",
     endDate: "",
   });
+
+  useEffect(() => {
+    const fetchLookups = async () => {
+      setLoading(true);
+      try {
+        const rolesResp = await axiosInstance.get(
+          "/LookUpItems/SeminarParticipationTypes",
+          { skipGlobalErrorHandler: true }
+        );
+
+        setParticipationRoles(rolesResp.data ?? []);
+      } catch (err) {
+        console.error("Failed to fetch participation roles:", err);
+        setError("Failed to load lookup data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLookups();
+  }, []);
 
   // Pre-fill form with existing data
   useEffect(() => {
@@ -39,10 +66,10 @@ export default function EditConference() {
         localOrInternational: existingData.localOrInternational || "",
         conferenceName: existingData.conferenceName || "",
         participationRole: existingData.participationRole || "",
-        organizingBody: existingData.organizer || "",
+        organizingBody: existingData.organizingBody || "",
         website: existingData.website || "",
-        country: existingData.country || "",
-        city: existingData.city || "",
+       venue: existingData.venue || "",
+
         description: existingData.description || "",
         attachments: existingData.attachments || null,
         startDate: existingData.startDate || "",
@@ -65,12 +92,44 @@ export default function EditConference() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Edited data:", formData);
-    // Call your API to update the conference here
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!existingData?.id) return;
 
+  setLoading(true);
+  setError("");
+
+  try {
+    const payload = {
+      type: formData.type === "conference" ? "Conference" : "Seminar",
+      localOrInternational:
+        formData.localOrInternational === "local"
+          ? "Local"
+          : "International",
+      name: formData.conferenceName,
+      roleOfParticipationId: formData.participationRole,
+      organizingAuthority: formData.organizingBody,
+      website: formData.website,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      venue: formData.venue,
+      notes: formData.description,
+    };
+
+    await axiosInstance.put(
+      `/Missions/UpdateConferncesOrSeminars/${existingData.id}`,
+      payload,
+      { skipGlobalErrorHandler: true }
+    );
+
+    navigate("/seminars-and-conferences");
+  } catch (err) {
+    console.error("Update failed:", err);
+    setError("Failed to update conference");
+  } finally {
+    setLoading(false);
+  }
+};
   const inputBase =
     "w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 bg-[#E2E2E2] outline-none transition-all duration-150 ease-linear text-[12px]";
   const focusStyle =
@@ -158,7 +217,8 @@ export default function EditConference() {
               {/* Conference Name */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("conferenceName")} <span className="text-[#b38e19]">*</span>
+                  {t("conferenceName")}{" "}
+                  <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -173,7 +233,8 @@ export default function EditConference() {
               {/* Participation Role */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("participationRole")} <span className="text-[#b38e19]">*</span>
+                  {t("participationRole")}{" "}
+                  <span className="text-[#b38e19]">*</span>
                 </label>
                 <div className="relative flex items-center">
                   <select
@@ -183,8 +244,11 @@ export default function EditConference() {
                     onChange={handleChange}
                   >
                     <option value="">{t("selectRole")}</option>
-                    <option value="speaker">{t("speaker")}</option>
-                    <option value="attendee">{t("attendee")}</option>
+                    {participationRoles.map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {isArabic ? role.valueAr : role.valueEn}
+                      </option>
+                    ))}
                   </select>
                   <FiChevronDown
                     size={18}
@@ -198,7 +262,8 @@ export default function EditConference() {
               {/* Organizing Body */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("organizingBody")} <span className="text-[#b38e19]">*</span>
+                  {t("organizingBody")}{" "}
+                  <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -296,45 +361,21 @@ export default function EditConference() {
               </div>
 
               {/* Country + City */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("country")}
-                  </label>
-                  <div className="relative flex items-center">
-                    <select
-                      name="country"
-                      className={`${inputBase} ${focusStyle} appearance-none flex-1`}
-                      value={formData.country}
-                      onChange={handleChange}
-                    >
-                      <option value="">{t("selectCountry")}</option>
-                      <option value="egypt">Egypt</option>
-                      <option value="usa">USA</option>
-                    </select>
-                    <FiChevronDown
-                      size={18}
-                      className={`absolute text-[#B38E19] pointer-events-none ${
-                        isArabic ? "left-4" : "right-4"
-                      }`}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("city")}
-                  </label>
-                  <input
-                    type="text"
-                    name="city"
-                    placeholder={t("cityPlaceholder")}
-                    className={`${inputBase} ${focusStyle}`}
-                    value={formData.city}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div>
+    <label className="block mb-2 text-lg font-medium">
+      {t("venue")}
+    </label>
+    <input
+      type="text"
+      name="venue"
+      placeholder={t("venuePlaceholder")}
+      className={`${inputBase} ${focusStyle}`}
+      value={formData.venue}
+      onChange={handleChange}
+    />
+  </div>
+</div>
 
               {/* Description */}
               <div>
@@ -391,7 +432,7 @@ export default function EditConference() {
               </div>
             </div>
 
-            {/* ✅ Buttons */}
+            {/* Buttons */}
             <div
               className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
                 isArabic ? "left-[53px]" : "right-[53px]"

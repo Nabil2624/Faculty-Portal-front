@@ -25,5 +25,12 @@
   "buttons": {
     "save": "حفظ",
     "cancel": "إلغاء"
-  }
+  },
+
+    "required_task_name": "الرجاء إدخال اسم المهمة",
+    "required_country_city": "الرجاء إدخال الدولة أو المدينة",
+    "required_start_date": "الرجاء اختيار تاريخ البداية",
+    "submit_error": "حدث خطأ أثناء حفظ المهمة، حاول مرة أخرى",
+     "loading": "جاري الحفظ..."
 }
+
