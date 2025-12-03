@@ -2,208 +2,115 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { Pencil, Trash2, Filter, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function SeminarsAndConferences() {
   const { t, i18n } = useTranslation("SeminarsAndConferences");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
 
-  const [showModal, setShowModal] = useState(false);
+  const [events, setEvents] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const requestedPageSize = 9;
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
+  // ======================================
+  // Fetch Seminars & Conferences
+  // ======================================
+  const fetchEvents = async (page = currentPage) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axiosInstance.get(
+        "/Missions/ConferncesAndSeminars",
+        {
+          params: { pageIndex: page, pageSize: requestedPageSize },
+          skipGlobalErrorHandler: true,
+        }
+      );
+
+      const { data, totalCount } = response.data;
+      const pages = Math.max(1, Math.ceil(totalCount / requestedPageSize));
+      setTotalPages(pages);
+
+      if (page > pages && pages > 0) {
+        setCurrentPage(pages);
+      } else {
+        setEvents(
+          (data || []).map((item) => ({
+            id: item.id,
+            missionName: item.missionName || "",
+            startDate: item.startDate || "",
+            endDate: item.endDate || "",
+            universityOrFaculty: item.universityOrFaculty || "",
+            countryOrCity: item.countryOrCity || "",
+            notes: item.notes || "",
+          }))
+        );
+      }
+    } catch (err) {
+      console.error("Failed to fetch events:", err);
+      setError(t("fetchError") || "Failed to fetch events");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents(currentPage);
+  }, [currentPage, t]);
+
+  // ======================================
+  // Delete Event
+  // ======================================
   const handleDeleteClick = (item) => {
     setSelectedItem(item);
     setShowModal(true);
   };
 
-  const confirmDelete = () => {
-    console.log("Deleted:", selectedItem.title);
+
+const confirmDelete = async () => {
+  if (!selectedItem?.id) return;
+
+  try {
+    setLoading(true);
+    setError(null);
+
+    // Call the new delete endpoint
+    await axiosInstance.delete(
+      `/Missions/DeleteScientificMission/${selectedItem.id}`,
+      { skipGlobalErrorHandler: true }
+    );
+
+    // Update UI after deletion
+    setEvents((prev) => prev.filter((m) => m.id !== selectedItem.id));
     setShowModal(false);
     setSelectedItem(null);
-  };
 
-  // Data
-  const events = [
-    {
-      title: "المؤتمر الدولي للذكاء الاصطناعي التطبيقي",
-      organizer: "IEEE",
-      period: "من 12 نوفمبر 2024 - حتى 16 نوفمبر 2024",
-      description:
-        "عرض ورقة بحثية عن استخدام الذكاء الاصطناعي في التشخيص الطبي وتحليل الصور الشعاعية.",
-      role: "متحدث رئيسي",
-      type: "مؤتمر-دولي",
-      location: "دبي - الإمارات",
-      fileName: "ملف العرض التقديمي.pdf",
-      link: "https://www.ieee-aiconf.org",
-    },
-    {
-      title: "ندوة التحول الرقمي في التعليم العالي",
-      organizer: "وزارة التعليم العالي",
-      period: "10 مارس 2023",
-      description:
-        "تنظيم ندوة توعوية حول تطبيق الأنظمة الذكية في إدارة الجامعات المصرية.",
-      role: "منظم",
-      type: "ندوة-محلي",
-      location: "القاهرة - مصر",
-      fileName: "دعوة المشاركة.pdf",
-      link: "https://www.mohe.gov.eg/seminars",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-    {
-      title: "مؤتمر أمن المعلومات والخصوصية",
-      organizer: "ACM",
-      period: "من 7 فبراير 2021 - حتى 14 فبراير 2021",
-      description:
-        "قدمت بحثًا عن أساليب حماية البيانات باستخدام التعلم العميق.",
-      role: "مشارك بورقة بحثية",
-      type: "مؤتمر-دولي",
-      location: "باريس - فرنسا",
-      fileName: "",
-      link: "",
-    },
-  ];
+    // Handle page adjustment if last item on page was deleted
+    if (events.length === 1 && currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    } else {
+      fetchEvents(currentPage);
+    }
+  } catch (err) {
+    console.error("Failed to delete event:", err);
+    setError(t("deleteError") || "Failed to delete event");
+  } finally {
+    setLoading(false);
+  }
+};
 
-  // Pagination logic
-  const itemsPerPage = 9;
-  const totalPages = Math.ceil(events.length / itemsPerPage);
-  const paginatedData = events.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+
+  if (loading) return <LoadingSpinner />;
 
   return (
     <Layout>
@@ -223,54 +130,63 @@ export default function SeminarsAndConferences() {
           </div>
         </div>
 
-        {/* Cards grid */}
-        <div
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${
-            isArabic ? "text-right" : "text-left"
-          }`}
-        >
-          {paginatedData.map((item, idx) => (
-            <div
-              key={idx}
-              onClick={() => {
-                setSelectedItem(item);
-                setShowDetails(true);
-              }}
-              className={`relative bg-gray-100 rounded-[12px] shadow-md p-3 border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
-                isArabic ? "border-r-[19px]" : "border-l-[19px]"
-              }`}
-            >
-              {/* Icons */}
-              <div
-                className={`absolute top-4 ${
-                  isArabic ? "left-4" : "right-4"
-                } flex gap-3`}
-                onClick={(e) => e.stopPropagation()} // prevent card click
-              >
-                <Pencil
-                  className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
-                  onClick={() =>
-                    navigate("/edit-conference", {
-                      state: { existingData: item },
-                    })
-                  }
-                />
-                <Trash2
-                  className="text-[#E53935] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
-                  onClick={() => handleDeleteClick(item)}
-                />
-              </div>
+        {/* Error */}
+        {error && <div className="text-red-500 text-center mb-6">{error}</div>}
 
-              {/* Card Content */}
-              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">
-                {item.title}
-              </h3>
-              <p className="text-lg  text-gray-700">{item.period}</p>
-              <p className="text-sm  text-gray-700">{item.organizer}</p>
-              <p className="text-xs  text-gray-400">{item.location}</p>
-            </div>
-          ))}
-        </div>
+        {/* Empty state */}
+        {!loading && events.length === 0 && !error && (
+          <div className="p-10 text-center text-gray-500 text-xl">
+            {t("empty") || "No events found"}
+          </div>
+        )}
+
+        {/* Events Grid */}
+        {events.length > 0 && (
+          <div
+            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${
+              isArabic ? "text-right" : "text-left"
+            }`}
+          >
+            {events.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => {
+                  setSelectedItem(item);
+                  setShowDetails(true);
+                }}
+                className={`relative bg-gray-100 rounded-[12px] shadow-md p-3 border-[4px] border-[#19355a] cursor-pointer hover:scale-[1.02] transition-transform ${
+                  isArabic ? "border-r-[19px]" : "border-l-[19px]"
+                }`}
+              >
+                {/* Edit + Delete Icons */}
+                <div
+                  className={`absolute top-4 ${
+                    isArabic ? "left-4" : "right-4"
+                  } flex gap-3`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Pencil
+                    className="text-[#b38e19] cursor-pointer w-5 h-5 hover:scale-110 transition"
+                    onClick={() =>
+                      navigate("/edit-conference", { state: { existingData: item } })
+                    }
+                  />
+                  <Trash2
+                    className="text-[#E53935] cursor-pointer w-5 h-5 hover:scale-110 transition"
+                    onClick={() => handleDeleteClick(item)}
+                  />
+                </div>
+
+                <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">
+                  {item.missionName}
+                </h3>
+                <p className="text-lg text-gray-700">{item.startDate} - {item.endDate}</p>
+                <p className="text-sm text-gray-700">{item.universityOrFaculty}</p>
+                <p className="text-xs text-gray-400">{item.countryOrCity}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Pagination */}
         <div
@@ -279,11 +195,9 @@ export default function SeminarsAndConferences() {
         >
           <button
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            onClick={() => setCurrentPage((p) => p - 1)}
             className={`px-4 py-2 rounded-md border border-gray-400 ${
-              currentPage === 1
-                ? "text-gray-400 cursor-not-allowed"
-                : "hover:bg-gray-200"
+              currentPage === 1 ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-200"
             }`}
           >
             {isArabic ? "السابق" : "Previous"}
@@ -297,11 +211,9 @@ export default function SeminarsAndConferences() {
 
           <button
             disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            onClick={() => setCurrentPage((p) => p + 1)}
             className={`px-4 py-2 rounded-md border border-gray-400 ${
-              currentPage === totalPages
-                ? "text-gray-400 cursor-not-allowed"
-                : "hover:bg-gray-200"
+              currentPage === totalPages ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-200"
             }`}
           >
             {isArabic ? "التالي" : "Next"}
@@ -333,26 +245,26 @@ export default function SeminarsAndConferences() {
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-[360px] text-center">
-            <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3">
-              {t("areYouSureDelete") || "Are you sure you want to delete this?"}
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-6 w-[360px] text-center">
+            <h3 className="text-lg font-semibold mb-3">
+              {t("areYouSureDelete")}
             </h3>
-            <p className="text-sm text-gray-600 mb-5">{selectedItem?.title}</p>
+            <p className="text-sm text-gray-600 mb-5">{selectedItem?.missionName}</p>
             <div className="flex justify-center gap-4">
               <button
                 onClick={confirmDelete}
-                className="bg-[#E53935] text-white px-5 py-2 rounded-md hover:bg-red-600 transition"
+                className="bg-[#E53935] text-white px-5 py-2 rounded-md"
               >
-                {t("delete") || "Delete"}
+                {t("delete")}
               </button>
               <button
                 onClick={() => setShowModal(false)}
-                className="bg-gray-300 text-black px-5 py-2 rounded-md hover:bg-gray-400 transition"
+                className="bg-gray-300 text-black px-5 py-2 rounded-md"
               >
-                {t("cancel") || "Cancel"}
+                {t("cancel")}
               </button>
             </div>
           </div>
@@ -366,101 +278,40 @@ export default function SeminarsAndConferences() {
             dir={isArabic ? "rtl" : "ltr"}
             className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[520px] max-w-[90%] p-8 relative animate-fadeIn"
           >
-            {/* Close Button */}
             <button
               onClick={() => setShowDetails(false)}
-              className={`absolute top-4 ${
-                isArabic ? "left-4" : "right-4"
-              } text-gray-500  transition`}
+              className={`absolute top-4 ${isArabic ? "left-4" : "right-4"} text-gray-500 transition`}
             >
               <X size={22} />
             </button>
 
-            {/* Header */}
             <div className="border-b-2 border-[#b38e19]/40 pb-3 mb-4">
-              <h2 className="text-2xl font-bold ">{selectedItem.title}</h2>
+              <h2 className="text-2xl font-bold">{selectedItem.missionName}</h2>
             </div>
-
-            {/* Content */}
 
             <div className="space-y-3 text-gray-700">
               <div className="flex justify-between">
-                <span className="font-medium ">
-                  {isArabic ? "النوع" : "Type"}
-                </span>
-                <span>{selectedItem.type}</span>
+                <span className="font-medium">{t("location")}</span>
+                <span>{selectedItem.countryOrCity}</span>
               </div>
+
               <div className="flex justify-between">
-                <span className="font-medium ">
-                  {isArabic ? "دولي/محلي" : "International/Local"}
-                </span>
-                <span>{selectedItem.type}</span>
+                <span className="font-medium">{t("institution")}</span>
+                <span>{selectedItem.universityOrFaculty}</span>
               </div>
+
               <div className="flex justify-between">
-                <span className="font-medium ">
-                  {isArabic ? "دور المشاركة" : "Participation Role"}
-                </span>
-                <span>{selectedItem.role}</span>
+                <span className="font-medium">{t("startDate")}</span>
+                <span>{selectedItem.startDate}</span>
               </div>
+
               <div className="flex justify-between">
-                <span className="font-medium ">
-                  {isArabic ? "الجهة المنظمة" : "Organizer"}
-                </span>
-                <span>{selectedItem.organizer}</span>
+                <span className="font-medium">{t("endDate")}</span>
+                <span>{selectedItem.endDate}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="font-medium ">
-                  {isArabic ? "مكان الانعقاد" : "Location"}
-                </span>
-                <span>{selectedItem.location}</span>
-              </div>
-              {selectedItem.link && (
-                <div className="flex justify-between">
-                  <span className="font-medium ">
-                    {isArabic ? "الموقع الالكتروني" : "Website"}
-                  </span>
-                  <a
-                    href={selectedItem.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[#b38e19] underline"
-                  >
-                    {selectedItem.link.replace("https://", "")}
-                  </a>
-                </div>
-              )}
-              <div className="flex justify-between">
-                <span className="font-medium ">
-                  {isArabic ? "تاريخ البداية" : "Start Date"}
-                </span>
-                <span>{selectedItem.period}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium ">
-                  {isArabic ? "تاريخ النهاية" : "End Date"}
-                </span>
-                <span>{selectedItem.period}</span>
-              </div>
-              {selectedItem.fileName && (
-                <div className="flex justify-between">
-                  <span className="font-medium ">
-                    {isArabic ? "الملف" : "File"}
-                  </span>
-                  <a
-                    href={selectedItem.link || "#"}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[#b38e19] underline"
-                  >
-                    {selectedItem.fileName}
-                  </a>
-                </div>
-              )}
 
               <div className="mt-5 bg-gray-100 p-4 rounded-lg border border-gray-200">
-                <p className="text-gray-800 leading-relaxed">
-                  {selectedItem.description}
-                </p>
+                <p className="text-gray-800 leading-relaxed">{selectedItem.notes}</p>
               </div>
             </div>
           </div>
