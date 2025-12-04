@@ -1,11 +1,21 @@
+
 {
   "trainingPrograms": "البرامج التدريبية",
   "showMore": "عرض المزيد",
   "showLess": "عرض أقل",
- "edit": "إضافة",
+  "add": "إضافة",
   "back": "عودة",
   "delete": "حذف",
   "cancel": "إلغاء",
-  "areYouSureDelete": "هل أنت متأكد أنك تريد حذف ",
-  "fetchError": "لا يوجد برامج تدريبية لعرضها"
+  "areYouSureDelete": "هل أنت متأكد أنك تريد حذف",
+  "fetchError": "لا يوجد برامج تدريبية لعرضها",
+  "deleteError": "فشل حذف البرنامج",
+  "empty": "لا يوجد برامج تدريبية حالياً",
+
+  "type": "نوع البرنامج",
+  "participationType": "نوع المشاركة",
+  "organizer": "الجهة المنظمة",
+  "venue": "المكان",
+  "startDate": "تاريخ البدء",
+  "endDate": "تاريخ الانتهاء"
 }

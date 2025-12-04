@@ -25,6 +25,8 @@
   "locationPlaceholder": "أدخل مكان الانعقاد",
   "save": "حفظ",
   "cancel": "إلغاء",
+  "external": "خارجية",
+  "internal": "داخلية",
   "errors": {
     "programTypeRequired": "نوع البرنامج مطلوب",
     "participationTypeRequired": "نوع المشاركة مطلوب",
@@ -34,5 +36,6 @@
     "startDateRequired": "تاريخ البداية مطلوب",
     "startBeforeEnd": "تاريخ البداية يجب أن يكون قبل تاريخ النهاية",
     "failedAdd": "حدث خطأ أثناء إضافة البرنامج التدريبي"
+    
   }
 }

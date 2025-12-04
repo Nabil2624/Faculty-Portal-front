@@ -6,7 +6,6 @@ import { FiCalendar } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 
-
 export default function EditTrainingProgram() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -20,8 +19,8 @@ export default function EditTrainingProgram() {
   const endDateRef = useRef(null);
 
   const [formData, setFormData] = useState({
-    type: "",
-    participationType: "",
+    programType: "",
+    programName: "",
     trainingProgramName: "",
     organizingAuthority: "",
     venue: "",
@@ -34,9 +33,15 @@ export default function EditTrainingProgram() {
   useEffect(() => {
     if (existingData) {
       setFormData({
-        type: existingData.type || "",
-        participationType: existingData.participationType || "",
-        trainingProgramName: existingData.trainingProgramName || "",
+        id: existingData.id,
+
+        // Convert returned values to integers (backend requires 1 or 2)
+        programType: existingData.type?.toLowerCase() === "specialist" ? 1 : 2,
+
+        participationType:
+          existingData.participationType?.toLowerCase() === "internal" ? 1 : 2,
+
+        programName: existingData.trainingProgramName || "",
         organizingAuthority: existingData.organizingAuthority || "",
         venue: existingData.venue || "",
         description: existingData.description || "",
@@ -54,38 +59,45 @@ export default function EditTrainingProgram() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError("");
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-  try {
-    await axiosInstance.put(
-      `/Missions/UpdateTrainingProgram/${formData.id}`,
-      {
-        type: formData.type,
-        participationType: formData.participationType,
-        trainingProgramName: formData.trainingProgramName,
-        organizingAuthority: formData.organizingAuthority,
-        venue: formData.venue,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        description: formData.description,
-      },
-      { skipGlobalErrorHandler: true }
-    );
+    try {
+      // Ensure that you are sending the correct data (integer values for type and participation)
+      const programTypeInt = formData.programType === "specialist" ? 1 : 2;
+      const participationTypeInt =
+        formData.participationType === "internal" ? 1 : 2;
 
-    navigate("/training-programs");
-  } catch (err) {
-    console.error("Failed to update training program:", err);
-    setError("Failed to update training program");
-  } finally {
-    setLoading(false);
-  }
-};
+      await axiosInstance.put(
+        `/Missions/UpdateTrainingProgram/${formData.id}`,
+        {
+          type: Number(formData.programType),
+          participationType: Number(formData.participationType),
+          trainingProgramName: formData.programName, // FIXED
+          organizingAuthority: formData.organizingAuthority,
+          venue: formData.venue,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          description: formData.description,
+        }
+      );
+
+      navigate("/training-programs");
+    } catch (err) {
+      console.error("Failed to update training program:", err);
+      setError("Failed to update training program");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCancel = () => {
     navigate("/training-programs");
@@ -114,63 +126,59 @@ export default function EditTrainingProgram() {
           >
             {/* LEFT Column */}
             <div className="space-y-6">
-              {/* Program Type + Participation Type */}
-              <div className="flex gap-8">
-                <div>
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("programType")}
-                  </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="programType"
-                        value="specialist"
-                        checked={formData.programType === "specialist"}
-                        onChange={handleChange}
-                      />
-                      {t("specialist")}
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="programType"
-                        value="general"
-                        checked={formData.programType === "general"}
-                        onChange={handleChange}
-                      />
-                      {t("general")}
-                    </label>
-                  </div>
-                </div>
+             <label className="block mb-2 text-lg font-medium">
+                {t("participationType")}{" "}
+                <span className="text-[#b38e19]">*</span>
+              </label>
+              <div className="flex gap-4">
+                
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="programType"
+                    value="1"
+                    checked={formData.programType == 1}
+                    onChange={handleChange}
+                  />
+                  {t("specialist")}
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="programType"
+                    value="2"
+                    checked={formData.programType == 2}
+                    onChange={handleChange}
+                  />
+                  {t("general")}
+                </label>
+              </div>
 
-                <div>
-                  <label className="block mb-2 text-lg font-medium">
-                    {t("participationType")}
-                  </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="participationType"
-                        value="internal"
-                        checked={formData.participationType === "internal"}
-                        onChange={handleChange}
-                      />
-                      {t("internal")}
-                    </label>
-                    <label className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="participationType"
-                        value="external"
-                        checked={formData.participationType === "external"}
-                        onChange={handleChange}
-                      />
-                      {t("external")}
-                    </label>
-                  </div>
-                </div>
+ <label className="block mb-2 text-lg font-medium">
+                {t("programName")} <span className="text-[#b38e19]">*</span>
+              </label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="participationType"
+                    value="1"
+                    checked={formData.participationType == 1}
+                    onChange={handleChange}
+                  />
+                  {t("internal")}
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="participationType"
+                    value="2"
+                    checked={formData.participationType == 2}
+                    onChange={handleChange}
+                  />
+                  {t("external")}
+                </label>
               </div>
 
               {/* Program Name */}
@@ -188,8 +196,22 @@ export default function EditTrainingProgram() {
                 />
               </div>
 
+               <div>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("organizingBody")} <span className="text-[#b38e19]">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="orgainizingAuthority"
+                  placeholder={t("programNamePlaceholder")}
+                  className={`${inputBase} ${focusStyle}`}
+                  value={formData.organizingAuthority}
+                  onChange={handleChange}
+                />
+              </div>
+
               {/* Organizing Body */}
-              <div>
+              {/* <div>
                 <label className="block mb-2 text-lg font-medium">
                   {t("organizingBody")}{" "}
                   <span className="text-[#b38e19]">*</span>
@@ -200,7 +222,7 @@ export default function EditTrainingProgram() {
                   value={formData.organizingAuthority}
                   onChange={handleChange}
                 />
-              </div>
+              </div> */}
               {/* Location */}
               <div>
                 <label className="block mb-2 text-lg font-medium">

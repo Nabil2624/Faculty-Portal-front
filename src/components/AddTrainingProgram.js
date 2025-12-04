@@ -17,8 +17,8 @@ export default function AddTrainingProgram() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    programType: "",
-    participationType: "",
+    programType: null,
+    participationType: null,
     programName: "",
     organizingBody: "",
     location: "",
@@ -34,7 +34,14 @@ export default function AddTrainingProgram() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    setFormData({
+      ...formData,
+      [name]:
+        name === "programType" || name === "participationType"
+          ? Number(value) // convert to number
+          : value,
+    });
   };
 
   const openDatePicker = (ref) => {
@@ -55,8 +62,7 @@ export default function AddTrainingProgram() {
       newErrors.programName = t("errors.programNameRequired");
     if (!formData.organizingBody)
       newErrors.organizingBody = t("errors.organizingBodyRequired");
-    if (!formData.location)
-      newErrors.location = t("errors.locationRequired");
+    if (!formData.location) newErrors.location = t("errors.locationRequired");
     if (!formData.startDate)
       newErrors.startDate = t("errors.startDateRequired");
     if (formData.startDate && formData.endDate) {
@@ -107,11 +113,12 @@ export default function AddTrainingProgram() {
 
   return (
     <Layout>
+      <div >
       <div
         dir={isArabic ? "rtl" : "ltr"}
-        className="p-4 sm:p-6 bg-white min-h-screen"
+       className="min-h-screen flex flex-col items-center bg-white p-4 sm:p-6"
       >
-        <h2 className="text-2xl sm:text-3xl font-bold mb-12">
+        <h2 className={`text-2xl sm:text-3xl font-bold mb-12 w-full ${isArabic ? "text-right" : "text-left"}`}>
           {t("addTrainingProgram")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
@@ -123,72 +130,61 @@ export default function AddTrainingProgram() {
           {/* LEFT Column */}
           <div className="space-y-6">
             {/* Program Type */}
-            <div>
-              <label className="block mb-2 text-lg font-medium">
-                {t("programType")} <span className="text-[#b38e19]">*</span>
+            <label className="block mb-2 text-lg font-medium">
+                {t("participationType")}{" "}
+                <span className="text-[#b38e19]">*</span>
               </label>
               <div className="flex gap-4">
+                
                 <label className="flex items-center gap-2">
                   <input
                     type="radio"
                     name="programType"
-                    value="InTheSpecialty"
+                    value="1"
+                    checked={formData.programType == 1}
                     onChange={handleChange}
-                    checked={formData.programType === "InTheSpecialty"}
                   />
                   {t("specialist")}
                 </label>
-
                 <label className="flex items-center gap-2">
                   <input
                     type="radio"
                     name="programType"
-                    value="General"
+                    value="2"
+                    checked={formData.programType == 2}
                     onChange={handleChange}
-                    checked={formData.programType === "General"}
                   />
                   {t("general")}
                 </label>
               </div>
-              {errors.programType && (
-                <p className="text-red-500 text-sm mt-1">{errors.programType}</p>
-              )}
-            </div>
 
-            {/* Participation Type */}
-            <div>
-              <label className="block mb-2 text-lg font-medium">
-                {t("participationType")} <span className="text-[#b38e19]">*</span>
+ <label className="block mb-2 text-lg font-medium">
+                {t("programName")} <span className="text-[#b38e19]">*</span>
               </label>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2">
                   <input
                     type="radio"
                     name="participationType"
-                    value="listener"
+                    value="1"
+                    checked={formData.participationType == 1}
                     onChange={handleChange}
-                    checked={formData.participationType === "listener"}
                   />
-                  {t("listener")}
+                  {t("internal")}
                 </label>
 
                 <label className="flex items-center gap-2">
                   <input
                     type="radio"
                     name="participationType"
-                    value="active"
+                    value="2"
+                    checked={formData.participationType == 2}
                     onChange={handleChange}
-                    checked={formData.participationType === "active"}
                   />
-                  {t("active")}
+                  {t("external")}
                 </label>
               </div>
-              {errors.participationType && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.participationType}
-                </p>
-              )}
-            </div>
+
 
             {/* Program Name */}
             <div>
@@ -204,7 +200,9 @@ export default function AddTrainingProgram() {
                 onChange={handleChange}
               />
               {errors.programName && (
-                <p className="text-red-500 text-sm mt-1">{errors.programName}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.programName}
+                </p>
               )}
             </div>
 
@@ -222,7 +220,9 @@ export default function AddTrainingProgram() {
                 onChange={handleChange}
               />
               {errors.organizingBody && (
-                <p className="text-red-500 text-sm mt-1">{errors.organizingBody}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.organizingBody}
+                </p>
               )}
             </div>
 
@@ -280,7 +280,9 @@ export default function AddTrainingProgram() {
                   />
                 </div>
                 {errors.startDate && (
-                  <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.startDate}
+                  </p>
                 )}
               </div>
 
@@ -336,7 +338,9 @@ export default function AddTrainingProgram() {
 
           {/* Submit Error */}
           {errors.submit && (
-            <p className="text-red-500 text-sm col-span-2 mt-2">{errors.submit}</p>
+            <p className="text-red-500 text-sm col-span-2 mt-2">
+              {errors.submit}
+            </p>
           )}
         </form>
 
@@ -362,6 +366,7 @@ export default function AddTrainingProgram() {
             {t("cancel")}
           </button>
         </div>
+      </div>
       </div>
     </Layout>
   );

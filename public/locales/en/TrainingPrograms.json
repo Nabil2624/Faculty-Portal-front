@@ -2,10 +2,19 @@
   "trainingPrograms": "Training Programs",
   "showMore": "Show more",
   "showLess": "Show less",
-  "edit": "Add",
+  "add": "Add",
   "back": "Back",
   "delete": "Delete",
   "cancel": "Cancel",
   "areYouSureDelete": "Are you sure you want to delete",
-  "fetchError": "No training programs to display"
+  "fetchError": "No training programs to display",
+  "deleteError": "Failed to delete program",
+  "empty": "No training programs available",
+
+  "type": "Program Type",
+  "participationType": "Participation Type",
+  "organizer": "Organizing Authority",
+  "venue": "Venue",
+  "startDate": "Start Date",
+  "endDate": "End Date"
 }
