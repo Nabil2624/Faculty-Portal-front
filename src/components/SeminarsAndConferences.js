@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
+import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 
 export default function SeminarsAndConferences() {
   const { t, i18n } = useTranslation("SeminarsAndConferences");
@@ -47,22 +48,21 @@ export default function SeminarsAndConferences() {
         setEvents(
           (data || []).map((item) => ({
             id: item.id,
-           type: item.type?.toLowerCase() || "",
-            localOrInternational: item.localOrInternational?.toLowerCase() || "",
+            type: item.type || "",
+            localOrInternational:
+              item.localOrInternational || "",
             conferenceName: item.name || item.conferenceName || "",
             participationRole: item.roleOfParticipationId || "",
-            organizingBody: item.organizingAuthority || "",
+            organizingAuthority: item.organizingAuthority || "",
             website: item.website || "",
             venue: item.venue || "",
-            description: item.notes || item.description || "",
+            notes: item.notes || "",
             attachments: item.attachments || null,
 
             // Keep the ones you used in the UI
             missionName: item.name || item.missionName || "",
             startDate: item.startDate || "",
             endDate: item.endDate || "",
-            universityOrFaculty: item.universityOrFaculty || "",
-            countryOrCity: item.countryOrCity || "",
           }))
         );
       }
@@ -121,7 +121,7 @@ export default function SeminarsAndConferences() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <Layout>
+    <ResponsiveLayoutProvider>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
         {/* Header */}
         <div className="flex justify-between items-center mb-8 relative">
@@ -130,11 +130,17 @@ export default function SeminarsAndConferences() {
             <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
           </h2>
 
-          {/* Filter icon */}
-          <div className="absolute top-18 left-1/2 transform -translate-x-1/5">
-            <div className="w-10 h-10 border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer hover:text-[#b38e19] transition">
-              <Filter className="w-5 h-6 text-gray-700 hover:text-[#b38e19]" />
+          <div className="flex items-end gap-3">
+            <div className="w-10 h-10 border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer hover:text-[#b38e19]">
+              <Filter className="w-5 h-5 text-gray-700" />
             </div>
+
+            <button
+              onClick={() => navigate("/add-conference")}
+              className="bg-[#b38e19] text-white px-4 py-2 rounded-md font-semibold"
+            >
+              {t("add")}
+            </button>
           </div>
         </div>
 
@@ -237,30 +243,6 @@ export default function SeminarsAndConferences() {
             {isArabic ? "التالي" : "Next"}
           </button>
         </div>
-
-        {/* Bottom Buttons */}
-        <div
-          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
-            isArabic ? "left-[53px]" : "right-[53px]"
-          } bottom-[28px]`}
-        >
-          <button
-            onClick={() => navigate("/add-conference")}
-            className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
-          >
-            {t("edit") || "Edit"}
-          </button>
-          <button
-            onClick={() => navigate(-1)}
-            className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
-          >
-            {t("back") || "Back"}
-          </button>
-        </div>
       </div>
 
       {/* Delete Modal */}
@@ -314,12 +296,12 @@ export default function SeminarsAndConferences() {
             <div className="space-y-3 text-gray-700">
               <div className="flex justify-between">
                 <span className="font-medium">{t("location")}</span>
-                <span>{selectedItem.countryOrCity}</span>
+                <span>{selectedItem.venue}</span>
               </div>
 
               <div className="flex justify-between">
-                <span className="font-medium">{t("institution")}</span>
-                <span>{selectedItem.universityOrFaculty}</span>
+                <span className="font-medium">{t("organizingAuthority")}</span>
+                <span>{selectedItem.organizingAuthority}</span>
               </div>
 
               <div className="flex justify-between">
@@ -341,6 +323,6 @@ export default function SeminarsAndConferences() {
           </div>
         </div>
       )}
-    </Layout>
+    </ResponsiveLayoutProvider>
   );
 }

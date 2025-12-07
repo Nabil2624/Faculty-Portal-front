@@ -7,6 +7,7 @@ import axiosInstance from "../utils/axiosInstance";
 import AddAdministrativePosition from "../components/AddAdministrativePosition";
 import EditAdminPosition from "./EditAdminPosition";
 import LoadingSpinner from "../components/LoadingSpinner";
+import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 
 export default function AdministrativePositions() {
   const { t, i18n } = useTranslation("AdministrativePositions"); // Reusing JobRanks translation for new keys
@@ -32,10 +33,13 @@ export default function AdministrativePositions() {
     setLoading(true);
     setError(null);
     try {
-      const res = await axiosInstance.get("/ScientificProgression/AdministrativePosition", {
-        params: { pageIndex: page, pageSize },
-        skipGlobalErrorHandler: true,
-      });
+      const res = await axiosInstance.get(
+        "/ScientificProgression/AdministrativePosition",
+        {
+          params: { pageIndex: page, pageSize },
+          skipGlobalErrorHandler: true,
+        }
+      );
 
       const { data, totalCount } = res.data;
       setAdministrativePositions(data || []);
@@ -95,7 +99,7 @@ export default function AdministrativePositions() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <Layout>
+    <ResponsiveLayoutProvider>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
         {/* Header */}
         <div className="flex justify-between items-center mb-8 relative">
@@ -103,10 +107,17 @@ export default function AdministrativePositions() {
             {t("administrativePositions")}
             <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
           </h2>
-          <div className="absolute top-18 left-1/2 transform -translate-x-1/5">
-            <div className="w-10 h-10 border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer hover:text-[#b38e19] transition">
-              <Filter className="w-5 h-6 text-gray-700 hover:text-[#b38e19]" />
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer">
+              <Filter className="w-5 h-5 text-gray-700" />
             </div>
+
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="bg-[#b38e19] text-white px-4 py-2 rounded-md"
+            >
+              {t("add")}
+            </button>
           </div>
         </div>
 
@@ -160,7 +171,9 @@ export default function AdministrativePositions() {
                   <h3 className="text-xl font-semibold text-[#1A1A1A] mb-1">
                     {item.position}
                   </h3>
-                  <p className="text-lg text-gray-700">{item.startDate} - {item.endDate}</p>
+                  <p className="text-lg text-gray-700">
+                    {item.startDate} - {item.endDate}
+                  </p>
                   <p className="text-sm text-gray-400">{item.notes}</p>
                 </div>
               ))}
@@ -202,30 +215,6 @@ export default function AdministrativePositions() {
           </>
         )}
 
-        {/* Footer Buttons */}
-        <div
-          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
-            isArabic ? "left-[53px]" : "right-[53px]"
-          } bottom-[28px]`}
-        >
-          <button
-            onClick={() => setShowAddForm(true)}
-            className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
-          >
-            {t("add")}
-          </button>
-          <button
-            onClick={() => navigate(-1)}
-            className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
-          >
-            {t("back")}
-          </button>
-        </div>
-
         {/* Modals */}
         {showAddForm && (
           <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
@@ -263,7 +252,9 @@ export default function AdministrativePositions() {
               <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3">
                 {t("confirmDelete")}
               </h3>
-              <p className="text-sm text-gray-600 mb-5">{selectedItem.position}</p>
+              <p className="text-sm text-gray-600 mb-5">
+                {selectedItem.position}
+              </p>
               <div className="flex justify-center gap-4">
                 <button
                   onClick={confirmDelete}
@@ -299,7 +290,9 @@ export default function AdministrativePositions() {
 
               <div className="space-y-3 text-gray-700">
                 <div className="border-b-2 border-[#b38e19]/40 pb-3 mb-4">
-                  <h2 className="text-2xl font-bold">{selectedItem.position}</h2>
+                  <h2 className="text-2xl font-bold">
+                    {selectedItem.position}
+                  </h2>
                 </div>
 
                 <div className="flex justify-between">
@@ -312,13 +305,15 @@ export default function AdministrativePositions() {
                 </div>
 
                 <div className="mt-5 bg-gray-100 p-4 rounded-lg border border-gray-200">
-                  <p className="text-gray-800 leading-relaxed">{selectedItem.notes}</p>
+                  <p className="text-gray-800 leading-relaxed">
+                    {selectedItem.notes}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         )}
       </div>
-    </Layout>
+    </ResponsiveLayoutProvider>
   );
 }

@@ -1,9 +1,10 @@
 {
   "seminarsAndConferences": "Seminars & Conferences",
-  "edit": "Add",
+  "add": "Add",
   "back": "Back",
   "areYouSureDelete": "Are you sure you want to delete",
   "delete": "Delete",
   "cancel": "Cancel",
-   "deleteError" : "An error occurred while trying to delete"
+  "deleteError": "An error occurred while trying to delete",
+  "organizingAuthority": "Organizing Authority"
 }

@@ -33,5 +33,14 @@
   "buttons": {
     "save": "Save",
     "cancel": "Cancel"
+  },
+    "errors": {
+    "loadFailed": "Failed to load data",
+    "projectNameRequired": "Project name is required",
+    "projectTypeRequired": "Project type is required",
+    "roleRequired": "Role is required",
+    "startDateRequired": "Start date is required",
+    "fundingRequired": "Funding source is required",
+    "submitFailed": "Failed to submit data"
   }
 }

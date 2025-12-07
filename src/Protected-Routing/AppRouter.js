@@ -114,13 +114,7 @@ function AppRouterInner() {
       <Route path="/projects" element={<Projects />} />
       <Route path="/add-project" element={<AddProject />} />
       <Route path="/edit-project" element={<EditProject />} />
-      
-
-
-
-      {/* ✅ Protected Routes */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/under-development" element={<UnderDevelopment />} />
+              <Route path="/under-development" element={<UnderDevelopment />} />
         <Route path="/sidebar" element={<Sidebar />} />
         <Route path="/header" element={<Header />} />
         <Route path="/layout" element={<Layout />} />
@@ -140,6 +134,12 @@ function AppRouterInner() {
         <Route path="/edit-job-grade" element={<EditJobGrade />} />
         <Route path="/edit-admin-pos" element={<EditAdminPosition />} />
         <Route path="/add-admin-pos" element={<AddAdministrativePosition />} />
+
+
+
+      {/* ✅ Protected Routes */}
+      <Route element={<ProtectedRoute />}>
+
       </Route>
 
       {/* Catch-all */}

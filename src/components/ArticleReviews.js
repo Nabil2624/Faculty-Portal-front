@@ -7,6 +7,7 @@ import axiosInstance from "../utils/axiosInstance";
 import AddArticleForm from "./AddArticleForm";
 import EditArticleForm from "./EditArticleForm";
 import LoadingSpinner from "../components/LoadingSpinner";
+import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 
 export default function ArticleReviews() {
   const { t, i18n } = useTranslation("article-reviews");
@@ -105,7 +106,7 @@ export default function ArticleReviews() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <Layout>
+    <ResponsiveLayoutProvider>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
         {/* Header */}
         <div className="flex justify-between items-center mb-8 relative">
@@ -113,10 +114,17 @@ export default function ArticleReviews() {
             {t("pageTitle")}
             <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
           </h2>
-          <div className="absolute top-18 left-1/2 transform -translate-x-1/5">
-            <div className="w-10 h-10 border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer hover:text-[#b38e19] transition">
-              <Filter className="w-5 h-6 text-gray-700 hover:text-[#b38e19]" />
+          <div className="flex items-center gap-4">
+            <div className="w-8 h-8 border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer lg:w-10 lg:h-10">
+              <Filter className="w-5 h-5 text-gray-700" />
             </div>
+
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="bg-[#b38e19] text-white px-2 py-1 rounded-md lg:px-4 lg:py-2"
+            >
+              {t("add")}
+            </button>
           </div>
         </div>
 
@@ -212,29 +220,6 @@ export default function ArticleReviews() {
           </>
         )}
 
-        {/* Footer Buttons */}
-        <div
-          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
-            isArabic ? "left-[53px]" : "right-[53px]"
-          } bottom-[28px]`}
-        >
-          <button
-            onClick={() => setShowAddForm(true)}
-            className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
-          >
-            {t("add")}
-          </button>
-          <button
-            onClick={() => navigate(-1)}
-            className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-              isArabic ? "cairo" : "roboto"
-            } text-sm`}
-          >
-            {t("back")}
-          </button>
-        </div>
 
         {/* Add Article Modal */}
         {showAddForm && (
@@ -334,6 +319,6 @@ export default function ArticleReviews() {
           </div>
         )}
       </div>
-    </Layout>
+    </ResponsiveLayoutProvider>
   );
 }

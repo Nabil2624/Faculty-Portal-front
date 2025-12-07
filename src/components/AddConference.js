@@ -133,7 +133,7 @@ export default function AddConference() {
 
   return (
     <Layout>
-      <div dir={dir} className="flex flex-col min-h-screen bg-white p-4 sm:p-6">
+      <div dir={dir} className="flex flex-col bg-white p-4 sm:p-6">
         {/* Title */}
         <h2 className="text-2xl sm:text-3xl font-bold mb-6">
           {t("addConference")}
@@ -141,83 +141,86 @@ export default function AddConference() {
         </h2>
 
         {/* Form Container */}
-        <div className="flex-1 flex flex-col max-h-[calc(87vh-97px)] items-center overflow-x-hidden ">
+        <div className="flex-1 flex flex-col items-center w-full max-h-[calc(87vh-97px)] overflow-auto lg:overflow-visible">
           <form className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-x-8 lg:gap-x-36 gap-y-6">
             {/* LEFT Column */}
             <div className="space-y-6">
-              
-              {/* Type */}
-              <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("fields.type")} <span className="text-[#b38e19]">*</span>
-                </label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="type"
-                      value="Conference"
-                      checked={typeValue === "Conference"}
-                      onChange={(e) => setTypeValue(e.target.value)}
-                      className="accent-[#b38e19]"
-                    />
-                    {t("conference")}
+              {/* INLINE Type + Local/International */}
+              <div className="flex gap-6 col-span-2">
+                {/* Type */}
+                <div className="flex-1">
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("fields.type")} <span className="text-[#b38e19]">*</span>
                   </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="type"
-                      value="Seminar"
-                      checked={typeValue === "Seminar"}
-                      onChange={(e) => setTypeValue(e.target.value)}
-                      className="accent-[#b38e19]"
-                    />
-                    {t("seminar")}
-                  </label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="type"
+                        value="Conference"
+                        checked={typeValue === "Conference"}
+                        onChange={(e) => setTypeValue(e.target.value)}
+                        className="accent-[#b38e19]"
+                      />
+                      {t("conference")}
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="type"
+                        value="Seminar"
+                        checked={typeValue === "Seminar"}
+                        onChange={(e) => setTypeValue(e.target.value)}
+                        className="accent-[#b38e19]"
+                      />
+                      {t("seminar")}
+                    </label>
+                  </div>
+                  {errors.typeValue && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.typeValue}
+                    </p>
+                  )}
                 </div>
-                {errors.typeValue && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.typeValue}
-                  </p>
-                )}
+
+                {/* Local/International */}
+                <div className="flex-1">
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("fields.localOrInternational")}{" "}
+                    <span className="text-[#b38e19]">*</span>
+                  </label>
+                  <div className="flex gap-4 ">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="locality"
+                        value="Local"
+                        checked={localityValue === "Local"}
+                        onChange={(e) => setLocalityValue(e.target.value)}
+                        className="accent-[#b38e19]"
+                      />
+                      {t("local")}
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="locality"
+                        value="International"
+                        checked={localityValue === "International"}
+                        onChange={(e) => setLocalityValue(e.target.value)}
+                        className="accent-[#b38e19]"
+                      />
+                      {t("international")}
+                    </label>
+                  </div>
+                  {errors.localityValue && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.localityValue}
+                    </p>
+                  )}
+                </div>
               </div>
 
-              {/* Local/International */}
-              <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("fields.localOrInternational")}{" "}
-                  <span className="text-[#b38e19]">*</span>
-                </label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="locality"
-                      value="Local"
-                      checked={localityValue === "Local"}
-                      onChange={(e) => setLocalityValue(e.target.value)}
-                      className="accent-[#b38e19]"
-                    />
-                    {t("local")}
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="locality"
-                      value="International"
-                      checked={localityValue === "International"}
-                      onChange={(e) => setLocalityValue(e.target.value)}
-                      className="accent-[#b38e19]"
-                    />
-                    {t("international")}
-                  </label>
-                </div>
-                {errors.localityValue && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.localityValue}
-                  </p>
-                )}
-              </div>
               {/* Conference Name */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
@@ -237,7 +240,6 @@ export default function AddConference() {
                   </p>
                 )}
               </div>
-
 
               {/* Participation Role */}
               <div>

@@ -1,11 +1,12 @@
 // AcademicQualificationsPage with API integration, pagination, loading and error handling
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
-import { Pencil, Trash2, X } from "lucide-react";
+import { Pencil, Trash2, X,Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
+import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 
 export default function AcademicQualificationsPage() {
   const { t, i18n } = useTranslation("AcademicQualifications");
@@ -75,9 +76,7 @@ export default function AcademicQualificationsPage() {
         { skipGlobalErrorHandler: true }
       );
 
-      setQualifications((prev) =>
-        prev.filter((q) => q.id !== selectedItem.id)
-      );
+      setQualifications((prev) => prev.filter((q) => q.id !== selectedItem.id));
       setShowModal(false);
       setSelectedItem(null);
 
@@ -97,7 +96,7 @@ export default function AcademicQualificationsPage() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <Layout>
+    <ResponsiveLayoutProvider>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
         {/* Header */}
         <div className="flex justify-between items-center mb-8 relative">
@@ -105,6 +104,18 @@ export default function AcademicQualificationsPage() {
             {t("academicQualifications")}
             <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
           </h2>
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer">
+              <Filter className="w-5 h-5 text-gray-700" />
+            </div>
+
+            <button
+              onClick={() => navigate("/add-academic-qualification")}
+              className="bg-[#b38e19] text-white px-4 py-2 rounded-md"
+            >
+              {t("add")}
+            </button>
+          </div>
         </div>
 
         {/* Error */}
@@ -169,7 +180,9 @@ export default function AcademicQualificationsPage() {
                     {isArabic ? item.grade.valueAr : item.grade.valueEn}
                   </p>
                   <p className="text-xs text-gray-400">
-                    {isArabic ? item.dispatchType.valueAr : item.dispatchType.valueEn}
+                    {isArabic
+                      ? item.dispatchType.valueAr
+                      : item.dispatchType.valueEn}
                   </p>
                 </div>
               ))}
@@ -210,25 +223,6 @@ export default function AcademicQualificationsPage() {
             </div>
           </>
         )}
-
-        {/* Footer Buttons */}
-        <div
-          className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl`}
-        >
-          <button
-            onClick={() => navigate("/add-academic-qualification")}
-            className="bg-[#b38e19] text-white w-24 h-10 rounded-md text-sm"
-          >
-            {t("add")}
-          </button>
-
-          <button
-            onClick={() => navigate(-1)}
-            className="bg-gray-300 text-black w-24 h-10 rounded-md text-sm"
-          >
-            {t("back")}
-          </button>
-        </div>
 
         {/* Delete Modal */}
         {showModal && (
@@ -301,7 +295,9 @@ export default function AcademicQualificationsPage() {
                 <div className="flex justify-between">
                   <span className="font-medium">{t("grade")}</span>
                   <span>
-                    {isArabic ? selectedItem.grade.valueAr : selectedItem.grade.valueEn}
+                    {isArabic
+                      ? selectedItem.grade.valueAr
+                      : selectedItem.grade.valueEn}
                   </span>
                 </div>
 
@@ -333,6 +329,6 @@ export default function AcademicQualificationsPage() {
           </div>
         )}
       </div>
-    </Layout>
+    </ResponsiveLayoutProvider>
   );
 }

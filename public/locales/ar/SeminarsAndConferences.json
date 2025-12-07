@@ -1,9 +1,10 @@
 {
   "seminarsAndConferences": "الندوات و المؤتمرات",
-   "edit": "إضافة",
+   "add": "إضافة",
   "back": "عودة",
   "delete": "حذف",
   "cancel": "إلغاء",
   "areYouSureDelete": "هل أنت متأكد أنك تريد حذف",
-   "deleteError" : "حدث خطأ في محاولة حذف "
+   "deleteError" : "حدث خطأ في محاولة حذف ",
+   "organizingAuthority": "الجهة المنظمة"
 }

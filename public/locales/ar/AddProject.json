@@ -33,5 +33,17 @@
   "buttons": {
     "save": "حفظ",
     "cancel": "إلغاء"
+  },
+  "errors": {
+    "loadFailed": "فشل في تحميل البيانات",
+    "projectNameRequired": "اسم المشروع مطلوب",
+    "projectTypeRequired": "نوع المشروع مطلوب",
+    "roleRequired": "الدور مطلوب",
+    "startDateRequired": "تاريخ البدء مطلوب",
+    "fundingRequired": "جهة التمويل مطلوبة",
+    "submitFailed": "فشل إرسال البيانات"
   }
+
 }
+
+

@@ -2,48 +2,142 @@ import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { FiCalendar } from "react-icons/fi";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
+import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function EditProject() {
   const { t, i18n } = useTranslation("AddProject");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
+  const location = useLocation();
   const { projectId } = useParams();
 
   const startDateRef = useRef(null);
   const endDateRef = useRef(null);
 
+  // UI State
+  const [loading, setLoading] = useState(false);
+  const [localError, setLocalError] = useState("");
+
+  // Form Data
   const [projectName, setProjectName] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [projectType, setProjectType] = useState("");
   const [role, setRole] = useState("");
   const [nationality, setNationality] = useState("دولي");
   const [fundingSource, setFundingSource] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [description, setDescription] = useState("");
 
-  // Fetch project data when component mounts
+  // Lookup Data
+  const [projectTypes, setProjectTypes] = useState([]);
+  const [projectRoles, setProjectRoles] = useState([]);
+
+  // Load lookups
   useEffect(() => {
-    // Replace with API call
-    // Example:
-    // fetch(/api/projects/${projectId})
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     setProjectName(data.name);
-    //     setStartDate(data.startDate);
-    //     setEndDate(data.endDate);
-    //     setProjectType(data.type);
-    //     setRole(data.role);
-    //     setNationality(data.nationality);
-    //     setFundingSource(data.funding);
-    //     setDescription(data.description);
-    //   });
-  }, [projectId]);
+    const fetchLookups = async () => {
+      setLoading(true);
+      try {
+        const typesRes = await axiosInstance.get("/LookUpItems/ProjectTypes", {
+          skipGlobalErrorHandler: true,
+        });
+        const rolesRes = await axiosInstance.get("/LookUpItems/ProjectRoles", {
+          skipGlobalErrorHandler: true,
+        });
+        setProjectTypes((typesRes.data || []).filter((x) => x != null));
+        setProjectRoles((rolesRes.data || []).filter((x) => x != null));
+      } catch (err) {
+        setLocalError(t("errors.loadFailed"));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLookups();
+  }, [t]);
+
+  // Load project data (from location.state or API)
+  const locationState = location.state?.item;
+  useEffect(() => {
+    const loadProject = async () => {
+      setLoading(true);
+      try {
+        let data = locationState;
+
+        if (data) {
+          setProjectName(data.nameOfProject || "");
+          setStartDate(data.startDate || "");
+          setEndDate(data.endDate || "");
+          setProjectType(data.typeOfProject?.id || ""); // هنا استخدمنا id جوا object
+          setRole(data.participationRole?.id || ""); // هنا كمان
+          setNationality(
+            data.localOrInternational === "Local" ? "محلي" : "دولي"
+          );
+          setFundingSource(data.financingAuthority || "");
+          setDescription(data.description || "");
+        } else {
+          setLocalError(t("errors.loadFailed"));
+        }
+      } catch (err) {
+        setLocalError(t("errors.loadFailed"));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProject();
+  }, [projectId, locationState, t]);
+
+  // Validation
+  const validate = () => {
+    if (!projectName) return t("errors.projectNameRequired");
+    if (!projectType) return t("errors.projectTypeRequired");
+    if (!role) return t("errors.roleRequired");
+    if (!startDate) return t("errors.startDateRequired");
+    if (!fundingSource) return t("errors.fundingRequired");
+    return "";
+  };
 
   const openDatePicker = (ref) => {
     if (ref.current && typeof ref.current.showPicker === "function") {
       ref.current.showPicker();
+    }
+  };
+
+  // Submit update
+  const handleSubmit = async () => {
+    const error = validate();
+    if (error) {
+      setLocalError(error);
+      return;
+    }
+
+    const payload = {
+      localOrInternational: nationality === "دولي" ? "International" : "Local",
+      nameOfProject: projectName,
+      typeOfProjectId: projectType,
+      participationRoleId: role,
+      financingAuthority: fundingSource,
+      startDate: startDate,
+      endDate: endDate || startDate,
+      description: description,
+    };
+
+    setLoading(true);
+    setLocalError("");
+
+    try {
+      await axiosInstance.put(
+        `/ProjectsAndCommittees/UpdateProject/${locationState.id}`,
+        payload,
+        { skipGlobalErrorHandler: true }
+      );
+      navigate("/projects");
+    } catch (err) {
+      setLocalError(t("errors.submitFailed"));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -52,25 +146,34 @@ export default function EditProject() {
   const focusStyle =
     "focus:border-gray-300 focus:shadow-[0_0_0_4px_rgba(179,142,25,0.5)]";
 
+  if (loading) return <LoadingSpinner />;
+
   return (
     <Layout>
       <div
         dir={isArabic ? "rtl" : "ltr"}
-        className="p-4 sm:p-6 flex flex-col bg-white min-h-screen"
+        className="p-4 sm:p-6 flex flex-col bg-white"
       >
         <h2 className="text-2xl sm:text-3xl font-bold mb-12 sm:mb-19 inline-block relative text-start">
           {t("editTitle")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
 
+        {localError && (
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">
+            {localError}
+          </div>
+        )}
+
         <div className="flex flex-col items-center">
+          {/* Form */}
           <form className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 lg:gap-x-36 gap-y-6 w-full max-w-6xl">
-            {/* LEFT Column */}
+            {/* LEFT */}
             <div className="space-y-6">
-              {/* Project Nationality */}
+              {/* Nationality */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("fields.nationality")} 
+                  {t("fields.nationality")}
                 </label>
                 <div className="flex gap-4">
                   <label>
@@ -101,7 +204,8 @@ export default function EditProject() {
               {/* Project Name */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("fields.projectName")} <span className="text-[#b38e19]">*</span>
+                  {t("fields.projectName")}{" "}
+                  <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -114,21 +218,30 @@ export default function EditProject() {
 
               {/* Project Type */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("fields.projectType")} <span className="text-[#B38E19]">*</span></label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("fields.projectType")}{" "}
+                  <span className="text-[#b38e19]">*</span>
+                </label>
                 <div className="relative flex items-center">
                   <select
                     className={`${inputBase} ${focusStyle} appearance-none flex-1`}
                     value={projectType}
                     onChange={(e) => setProjectType(e.target.value)}
                   >
-                    <option value="" disabled>{t("placeholders.projectType")}</option>
-                    <option value="بحثي">{t("options.research")}</option>
-                    <option value="تطوير">{t("options.development")}</option>
-                    <option value="تعليمي">{t("options.educational")}</option>
+                    <option value="" disabled>
+                      {t("placeholders.projectType")}
+                    </option>
+                    {projectTypes.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {isArabic
+                          ? p.valueAr || p.valueEn
+                          : p.valueEn || p.valueAr}
+                      </option>
+                    ))}
                   </select>
                   <ChevronDown
                     size={18}
-                    className="absolute text-[#B38E19] pointer-events-none"
+                    className="absolute text-[#B38E19]"
                     style={isArabic ? { left: "10px" } : { right: "10px" }}
                   />
                 </div>
@@ -145,42 +258,51 @@ export default function EditProject() {
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                   >
-                    <option value="" disabled>{t("placeholders.role")}</option>
-                    <option value="رئيس الفريق">{t("options.teamLeader")}</option>
-                    <option value="عضو الفريق">{t("options.teamMember")}</option>
-                    <option value="مستشار">{t("options.consultant")}</option>
+                    <option value="" disabled>
+                      {t("placeholders.role")}
+                    </option>
+                    {projectRoles.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {isArabic
+                          ? r.valueAr || r.valueEn
+                          : r.valueEn || r.valueAr}
+                      </option>
+                    ))}
                   </select>
                   <ChevronDown
                     size={18}
-                    className="absolute text-[#B38E19] pointer-events-none"
+                    className="absolute text-[#B38E19]"
                     style={isArabic ? { left: "10px" } : { right: "10px" }}
                   />
                 </div>
               </div>
             </div>
 
-            {/* RIGHT Column */}
+            {/* RIGHT */}
             <div className="space-y-6">
-              {/* Start + End Date */}
+              {/* Dates */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="relative">
-                  <label className="block mb-2 text-lg font-medium">{t("fields.startDate")} <span className="text-[#B38E19]">*</span></label>
+                {/* Start */}
+                <div>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("fields.startDate")}{" "}
+                    <span className="text-[#b38e19]">*</span>
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
                       value={startDate}
-                      placeholder={t("placeholders.startDate")}
                       readOnly
+                      placeholder={t("placeholders.startDate")}
                       className={`${inputBase} ${focusStyle}`}
                       onFocus={() => openDatePicker(startDateRef)}
                     />
                     <FiCalendar
-                      role="button"
-                      onClick={() => openDatePicker(startDateRef)}
                       size={18}
-                      className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
+                      className={`absolute top-1/2 -translate-y-1/2 cursor-pointer text-[#B38E19] ${
                         isArabic ? "left-3" : "right-3"
                       }`}
+                      onClick={() => openDatePicker(startDateRef)}
                     />
                     <input
                       type="date"
@@ -191,24 +313,26 @@ export default function EditProject() {
                   </div>
                 </div>
 
-                <div className="relative">
-                  <label className="block mb-2 text-lg font-medium">{t("fields.endDate")}</label>
+                {/* End */}
+                <div>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("fields.endDate")}
+                  </label>
                   <div className="relative">
                     <input
                       type="text"
                       value={endDate}
-                      placeholder={t("placeholders.endDate")}
                       readOnly
+                      placeholder={t("placeholders.endDate")}
                       className={`${inputBase} ${focusStyle}`}
                       onFocus={() => openDatePicker(endDateRef)}
                     />
                     <FiCalendar
-                      role="button"
-                      onClick={() => openDatePicker(endDateRef)}
                       size={18}
-                      className={`absolute top-1/2 transform -translate-y-1/2 cursor-pointer text-[#B38E19] ${
+                      className={`absolute top-1/2 -translate-y-1/2 cursor-pointer text-[#B38E19] ${
                         isArabic ? "left-3" : "right-3"
                       }`}
+                      onClick={() => openDatePicker(endDateRef)}
                     />
                     <input
                       type="date"
@@ -220,9 +344,12 @@ export default function EditProject() {
                 </div>
               </div>
 
-              {/* Funding Source */}
+              {/* Funding */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("fields.funding")} <span className="text-[#B38E19]">*</span></label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("fields.funding")}{" "}
+                  <span className="text-[#b38e19]">*</span>
+                </label>
                 <input
                   type="text"
                   value={fundingSource}
@@ -234,7 +361,9 @@ export default function EditProject() {
 
               {/* Description */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("fields.description")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("fields.description")}
+                </label>
                 <textarea
                   rows="6"
                   value={description}
@@ -254,19 +383,15 @@ export default function EditProject() {
           >
             <button
               type="button"
-              onClick={() => navigate("/projects")}
-              className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
-                isArabic ? "cairo" : "roboto"
-              } text-sm`}
+              onClick={handleSubmit}
+              className="bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer text-sm"
             >
               {t("buttons.save")}
             </button>
             <button
               type="button"
               onClick={() => navigate("/projects")}
-              className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
-                isArabic ? "cairo" : "roboto"
-              } text-sm`}
+              className="bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer text-sm"
             >
               {t("buttons.cancel")}
             </button>
@@ -274,5 +399,5 @@ export default function EditProject() {
         </div>
       </div>
     </Layout>
-  );
+  );
 }

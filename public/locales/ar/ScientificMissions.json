@@ -8,5 +8,6 @@
   "endDate": "تاريخ النهاية",
   "institution": "الجامعة/الكلية",
   "cancel": "إلغاء",
-  "areYouSureDelete": "هل أنت متأكد أنك تريد حذف"
+  "areYouSureDelete": "هل أنت متأكد أنك تريد حذف",
+  "deleteError" : "فشل الحذف"
 }

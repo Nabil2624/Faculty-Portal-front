@@ -8,5 +8,6 @@
   "areYouSureDelete": "Are you sure you want to delete",
   "institution" : "University/College",
   "delete": "Delete",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "deleteError" : "Delete Failed"
 }

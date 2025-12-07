@@ -62,10 +62,10 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
         },
       ],
     },
-    { key: "studyAndExams", icon: <Briefcase size={22} />, sub: [] },
-    { key: "financialDues", icon: <CreditCard size={22} />, sub: [] },
-    { key: "leavesDocs", icon: <FileText size={22} />, sub: [] },
-    { key: "trainingsCourses", icon: <BookOpen size={22} />, sub: [] },
+    { key: "studyAndExams", icon: <Briefcase size={20} />, sub: [] },
+    { key: "financialDues", icon: <CreditCard size={20} />, sub: [] },
+    { key: "leavesDocs", icon: <FileText size={20} />, sub: [] },
+    { key: "trainingsCourses", icon: <BookOpen size={20} />, sub: [] },
   ];
 
   useEffect(() => {
@@ -78,11 +78,11 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, onClose]);
 
-  // ✅ زق الخط لكل Level
+  // زق الخط لكل Level
   const lineOffsetByLevel = {
-    2: 12, // level 2 يتزق 12px
-    3: 24, // level 3 يتزق 24px
-    4: 36, // لو فيه level 4
+    2: 15,
+    3: 23,
+    4: 36,
   };
 
   const toggleMenu = (key, level) => {
@@ -103,7 +103,6 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
           paddingRight: isArabic ? (level > 1 ? level * containerPadding : 0) : 0,
         }}
       >
-        {/* الخط العمودي */}
         {level > 1 && (
           <div
             className="absolute top-0 bottom-0 w-px bg-gray-400"
@@ -124,10 +123,17 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
             : { paddingLeft: containerPadding * (level - 1) + "px" };
 
           return (
-            <div key={item.key} className="relative z-10 my-1 mb-5">
+            <div
+              key={item.key}
+              className="relative z-10"
+              style={{
+                marginTop: "4px",
+                marginBottom: level === 1 ? "20px" : level === 2 ? "2px" : "2px",
+              }}
+            >
               <button
                 onClick={() => hasSub && toggleMenu(item.key, level)}
-                className="w-full py-1 text-gray-200 hover:text-white hover:bg-[#B38e19] rounded-md flex items-center gap-2 relative z-10"
+                className="w-full py-1 text-gray-200 hover:text-white hover:bg-[#B38e19] rounded-md flex items-center gap-2 text-sm relative z-10"
                 style={buttonPaddingStyle}
               >
                 {item.icon}
@@ -173,7 +179,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
         <div className="flex flex-col gap-3 mt-4">
           <Link
             to="/settings"
-            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#B38e19] transition"
+            className="flex items-center gap-3 px-1 py-2 rounded-md hover:bg-[#B38e19] transition"
           >
             <Settings size={22} />
             <span>{t("settings")}</span>
@@ -181,7 +187,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
 
           <Link
             to="/support"
-            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#B38e19] transition"
+            className="flex items-center gap-3 px-1 py-2 rounded-md hover:bg-[#B38e19] transition"
           >
             <Headphones size={22} />
             <span>{t("support")}</span>

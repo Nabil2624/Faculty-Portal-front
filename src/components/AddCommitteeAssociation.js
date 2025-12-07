@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CustomDropdown from "./CustomDropdown";
+import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 
 export default function AddCommitteeAssociation() {
   const { t, i18n } = useTranslation("add-committee");
@@ -131,8 +132,8 @@ export default function AddCommitteeAssociation() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <Layout>
-      <div dir={dir} className="flex flex-col min-h-screen bg-white p-4 sm:p-6">
+    <ResponsiveLayoutProvider>
+      <div dir={dir} className="flex flex-col bg-white p-4 sm:p-6">
         {/* Title */}
         <h2 className="text-2xl sm:text-3xl font-bold mb-6">
           {t("addCommittee.title")}
@@ -166,7 +167,7 @@ export default function AddCommitteeAssociation() {
 
               {/* Type */}
               <div>
-                <label className="block mb-2 text-lg font-medium">
+                <label className="mb-2 text-lg font-medium">
                   {t("fields.type")} <span className="text-[#b38e19]">*</span>
                 </label>
 
@@ -190,7 +191,7 @@ export default function AddCommitteeAssociation() {
 
               {/* Degree */}
               <div>
-                <label className="block mb-2 text-lg font-medium">
+                <label className=" mb-2 text-lg font-medium">
                   {t("fields.degree")} <span className="text-[#b38e19]">*</span>
                 </label>
 
@@ -333,6 +334,6 @@ export default function AddCommitteeAssociation() {
           </div>
         </div>
       </div>
-    </Layout>
+    </ResponsiveLayoutProvider>
   );
 }
