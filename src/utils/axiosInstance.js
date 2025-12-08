@@ -52,11 +52,13 @@ axiosInstance.interceptors.response.use(
       default: targetRoute = `/error/${status >= 500 ? 500 : status}`; break;
     }
 
-    if (!originalRequest?.skipGlobalErrorHandler) {
-      axiosEvent.dispatchEvent(
-        new CustomEvent("axios-error", { detail: targetRoute })
-      );
-    }
+   if (
+  status === 400 || 
+  status === 409 || 
+  (status === 404 && originalRequest?.skipGlobalErrorHandler)
+) {
+  return Promise.reject(error); 
+}
 
     return Promise.reject(error);
   }

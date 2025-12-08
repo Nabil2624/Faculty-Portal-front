@@ -113,7 +113,7 @@ export default function AddConference() {
         endDate,
         venue: city,
         notes: description,
-        facultyMemberId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // replace with actual member id
+       // facultyMemberId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // replace with actual member id
       };
 
       await axiosInstance.post("/Missions/CreateConfernceOrSeminar", payload, {
@@ -162,7 +162,7 @@ export default function AddConference() {
                         onChange={(e) => setTypeValue(e.target.value)}
                         className="accent-[#b38e19]"
                       />
-                      {t("conference")}
+                      {t("fields.conference")}
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -173,7 +173,7 @@ export default function AddConference() {
                         onChange={(e) => setTypeValue(e.target.value)}
                         className="accent-[#b38e19]"
                       />
-                      {t("seminar")}
+                      {t("fields.seminar")}
                     </label>
                   </div>
                   {errors.typeValue && (
@@ -199,7 +199,7 @@ export default function AddConference() {
                         onChange={(e) => setLocalityValue(e.target.value)}
                         className="accent-[#b38e19]"
                       />
-                      {t("local")}
+                      {t("fields.local")}
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -210,7 +210,7 @@ export default function AddConference() {
                         onChange={(e) => setLocalityValue(e.target.value)}
                         className="accent-[#b38e19]"
                       />
-                      {t("international")}
+                      {t("fields.international")}
                     </label>
                   </div>
                   {errors.localityValue && (

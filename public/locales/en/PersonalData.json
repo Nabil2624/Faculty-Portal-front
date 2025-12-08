@@ -19,5 +19,9 @@
   "back": "Back",
   "save": "Save",
   "cancel": "Cancel",
-  "uploadPhoto" : "Upload photo"
+  "uploadPhoto" : "Upload photo",
+  "none": "None",
+  "nationalNumber": "National Number",
+  "authority" : "Authority",
+  "accurateSpecialization": "Exact Specialization"
 }

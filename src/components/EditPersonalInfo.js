@@ -3,60 +3,75 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import subPicture from "../images/profileImage.png";
 import { FiUpload, FiCalendar } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 
 export default function EditPersonalInfo() {
-  const { t, i18n } = useTranslation("personaldata");
+  const { t, i18n } = useTranslation("PersonalData");
   const isArabic = i18n.language === "ar";
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const routerData = location.state;
 
   const [personalInfo, setPersonalInfo] = useState({});
   const [profileImage, setProfileImage] = useState(subPicture);
   const [loading, setLoading] = useState(true);
+
   const dateInputRef = useRef(null);
 
-  // ✅ Fetch data from backend
+  // ----------------------------------------------------------
+  // SIMPLE NONE CHECK
+  // ----------------------------------------------------------
+  const showValue = (value) => {
+    if (!value || value === "") return t("none");
+    return value;
+  };
+
+  // ----------------------------------------------------------
+  // OBJECT FIELD TRANSLATION
+  // ----------------------------------------------------------
+  const getTranslated = (obj) => {
+    if (!obj) return t("none");
+
+    return isArabic ? obj.valueAr || t("none") : obj.valueEn || t("none");
+  };
+
+  // ----------------------------------------------------------
+  // LOAD DATA
+  // ----------------------------------------------------------
   useEffect(() => {
-    const fetchPersonalData = async () => {
+    if (routerData) {
+      setPersonalInfo({
+        ...routerData,
+      });
+      setLoading(false);
+      return;
+    }
+
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
-        console.log("🔑 Current token:", token || "No token found");
 
-        const res = await axiosInstance.get("/PersonalData", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await axiosInstance.get("/FacultyMemberData/PersonalData", {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        const data = res.data;
-
-        setPersonalInfo({
-          title: data.title || "",
-          university: data.universityName || "",
-          birthDate: data.birthDate || "",
-          name: data.name || "",
-          department: data.departmentName || "",
-          faculty: data.facultyName || "",
-          ssn: data.ssn?.trim() || "",
-          generalSpecialization: data.generalSpecialization || "",
-          field: data.fieldOfStudy || "",
-          gender: data.gender || "",
-          nameInComposition: data.nameInComposition || "",
-          exactSpecialization: data.accurateSpecialization || "",
-          birthPlace: data.birthPlace || "",
-          maritalStatus: data.socialStatus || "",
-        });
+        setPersonalInfo(res.data);
       } catch (err) {
-        console.error("❌ Failed to fetch personal data:", err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPersonalData();
-  }, []);
+    fetchData();
+  }, [routerData, isArabic]);
 
+  // ----------------------------------------------------------
+  // HANDLERS
+  // ----------------------------------------------------------
   const handleChange = (key, value) => {
     setPersonalInfo((prev) => ({ ...prev, [key]: value }));
   };
@@ -69,35 +84,32 @@ export default function EditPersonalInfo() {
 
   const openDatePicker = () => {
     if (!dateInputRef.current) return;
-    if (typeof dateInputRef.current.showPicker === "function") {
+
+    if (dateInputRef.current.showPicker) {
       dateInputRef.current.showPicker();
     } else {
       dateInputRef.current.focus();
     }
   };
 
-  // ✅ Save (PUT request)
+  // ----------------------------------------------------------
+  // SAVE
+  // ----------------------------------------------------------
   const handleSave = async () => {
     try {
-      const payload = {
-        title: personalInfo.title,
-        name: personalInfo.name,
-        birthPlace: personalInfo.birthPlace,
-        nameInComposition: personalInfo.nameInComposition,
-        socialStatus: personalInfo.maritalStatus,
-        birthDate: personalInfo.birthDate,
-        compositionTopic: personalInfo.compositionTopic,
-      };
-
-      await axiosInstance.put("/PersonalData", payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await axiosInstance.put(
+        "/FacultyMemberData/UpdatePersonalData",
+        personalInfo,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       navigate("/personal");
     } catch (err) {
-      console.error("❌ Failed to update personal data:", err);
+      console.error(err);
     }
   };
 
@@ -111,145 +123,144 @@ export default function EditPersonalInfo() {
     );
   }
 
+  // ----------------------------------------------------------
+  // OBJECT FIELD NAMES
+  // ----------------------------------------------------------
+  const objectFields = [
+    "title",
+    "gender",
+    "maritalStatus",
+    "university",
+    "department",
+    "authority",
+    "field",
+  ];
+
+  // ----------------------------------------------------------
+  // UI
+  // ----------------------------------------------------------
   return (
     <Layout>
       <style>{`
-        input[type="date"]::-webkit-calendar-picker-indicator { display: none; -webkit-appearance: none; }
-        input[type="date"]::-webkit-clear-button,
-        input[type="date"]::-webkit-inner-spin-button { display: none; -webkit-appearance: none; }
-        input[type="date"] { -moz-appearance: textfield; appearance: none; }
-        input[type="date"]::-ms-clear { display: none; }
+        input[type="date"]::-webkit-calendar-picker-indicator { display:none; }
       `}</style>
 
       <div className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col`}>
-        <h2 className="text-3xl font-bold mb-[80px] inline-block relative text-start">
+        <h2 className="text-3xl font-bold mb-20">
           {t("personalData")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
 
         <div className="flex flex-wrap justify-center flex-row-reverse gap-x-20">
-          {/* Profile Section */}
+          {/* IMAGE ------------------------------------------------ */}
           <div className="flex flex-col items-center gap-4">
             <div className="w-[200px] h-[280px] rounded-lg overflow-hidden">
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+              <img src={profileImage} className="w-full h-full object-cover" />
             </div>
 
             <label className="flex items-center gap-2 cursor-pointer bg-[#19355a] text-white px-4 py-2 rounded-md">
-              <FiUpload size={18} />
+              <FiUpload />
               {t("uploadPhoto")}
               <input
                 type="file"
-                accept="image/*"
                 className="hidden"
                 onChange={handlePhotoUpload}
               />
             </label>
           </div>
+
+          {/* BUTTONS ------------------------------------------------ */}
           <div
-            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
+            className={`flex gap-3 mt-6 absolute ${
               isArabic ? "left-[53px]" : "right-[53px]"
             } bottom-[28px]`}
           >
             <button
+              className="bg-[#b38e19] text-white w-24 h-10 rounded-md"
               onClick={handleSave}
-              className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-                isArabic ? "cairo" : "roboto"
-              } text-sm`}
             >
               {t("save")}
             </button>
+
             <button
+              className="bg-gray-300 w-24 h-10 rounded-md"
               onClick={() => navigate("/personal")}
-              className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-                isArabic ? "cairo" : "roboto"
-              } text-sm`}
             >
               {t("cancel")}
             </button>
           </div>
 
-          {/* Info Section */}
-          <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-4 ">
+          {/* FIELDS ------------------------------------------------ */}
+          <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-4">
             <div className="grid grid-cols-3 gap-5">
-              {Object.keys(personalInfo)
-                .filter((key) => key !== "compositionTopic") // exclude it
-                .map((key, index) => {
-                  const nonEditableFields = [
-                    "ssn",
-                    "gender",
-                    "university",
-                    "department",
-                    "faculty",
-                    "generalSpecialization",
-                    "field",
-                    "exactSpecialization",
-                  ];
+              {[
+                "name",
+                "birthPlace",
+                "birthDate",
+                "nameInComposition",
+                "generalSpecialization",
+                "accurateSpecialization",
+                "title",
+                "gender",
+                "maritalStatus",
+                "university",
+                "department",
+                "authority",
+                "field",
+              ].map((key) => (
+                <div
+                  key={key}
+                  className="flex h-[40px] rounded-md overflow-hidden border border-gray-300"
+                >
+                  <label className="bg-[#19355a] text-white w-32 flex items-center justify-center">
+                    {t(key)}
+                  </label>
 
-                  const isNonEditable = nonEditableFields.includes(key);
-
-                  return (
-                    <div
-                      key={index}
-                      className="flex h-[40px] rounded-md overflow-hidden text-sm border border-gray-300 
-                      focus-within:border-[#B38E19] focus-within:ring-2 focus-within:ring-[#B38E19] transition"
-                    >
-                      <label className="bg-[#19355a] text-white w-32 flex items-center justify-center px-2 text-center">
-                        {t(key)}
-                      </label>
-
-                      {key === "birthDate" ? (
-                        <div className="relative flex-1 flex items-center bg-gray-200">
-                          <FiCalendar
-                            role="button"
-                            aria-label="Open date picker"
-                            onClick={openDatePicker}
-                            size={18}
-                            className={`cursor-pointer text-[#B38E19] absolute ${
-                              isArabic ? "left-3" : "right-3"
-                            }`}
-                          />
-                          <input
-                            ref={dateInputRef}
-                            type="date"
-                            value={personalInfo[key] || ""}
-                            onChange={(e) => handleChange(key, e.target.value)}
-                            className="w-full h-full bg-gray-200 text-black outline-none [color-scheme:light] text-center px-2"
-                          />
-                        </div>
-                      ) : isNonEditable ? (
-                        <div className="flex-1 bg-gray-100 text-gray-500 flex items-center justify-center text-center cursor-not-allowed">
-                          {personalInfo[key] || "-"}
-                        </div>
-                      ) : (
-                        <input
-                          type="text"
-                          value={personalInfo[key] || ""}
-                          onChange={(e) => handleChange(key, e.target.value)}
-                          className="flex-1 bg-gray-200 px-2 text-black outline-none text-center"
-                        />
-                      )}
+                  {key === "birthDate" ? (
+                    <div className="relative flex-1 flex items-center bg-gray-200">
+                      <FiCalendar
+                        onClick={openDatePicker}
+                        className={`cursor-pointer absolute ${
+                          isArabic ? "left-3" : "right-3"
+                        }`}
+                      />
+                      <input
+                        ref={dateInputRef}
+                        type="date"
+                        value={personalInfo[key] || ""}
+                        onChange={(e) => handleChange(key, e.target.value)}
+                        className="w-full text-center bg-gray-200 outline-none"
+                      />
                     </div>
-                  );
-                })}
+                  ) : (
+                    <input
+                      type="text"
+                      value={
+                        objectFields.includes(key)
+                          ? getTranslated(personalInfo[key])
+                          : showValue(personalInfo[key])
+                      }
+                      onChange={(e) => handleChange(key, e.target.value)}
+                      className="flex-1 bg-gray-200 px-2 text-center outline-none"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
-            {/* Composition Topic Section */}
-            <div className={`w-full mt-6 `}>
-              <div className="max-w-[690px] flex flex-col gap-2">
-                <h3 className="text-xl font-bold">
+
+            {/* COMPOSITION TOPICS ----------------------------------- */}
+            <div className="w-full mt-10">
+              <div className="max-w-[690px]">
+                <h3 className="text-xl font-bold mb-2">
                   {t("compositionTopicTitle")}
                 </h3>
+
                 <textarea
-                  value={personalInfo.compositionTopic || ""}
+                  value={showValue(personalInfo.compositionTopics)}
                   onChange={(e) =>
-                    handleChange("compositionTopic", e.target.value)
+                    handleChange("compositionTopics", e.target.value)
                   }
-                  placeholder={t("none")}
-                  className="w-full h-[120px] rounded-md p-4 bg-gray-200 text-black resize-none
-                 overflow-y-auto break-words whitespace-pre-wrap outline-none"
+                  className="bg-gray-200 text-black rounded-[12px] border border-[#19355a] w-full h-[120px] p-4 overflow-y-auto break-words whitespace-pre-wrap"
                 />
               </div>
             </div>

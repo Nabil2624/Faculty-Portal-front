@@ -95,7 +95,7 @@ export default function SeminarsAndConferences() {
 
       // Call the new delete endpoint
       await axiosInstance.delete(
-        `/Missions/DeleteScientificMission/${selectedItem.id}`,
+        `/Missions/DeleteConferncesOrSeminars/${selectedItem.id}`,
         { skipGlobalErrorHandler: true }
       );
 

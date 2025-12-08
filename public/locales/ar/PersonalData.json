@@ -19,5 +19,7 @@
   "back": "عودة",
   "save": "حفظ",
   "cancel": "إلغاء",
-  "uploadPhoto": "رفع صورة"
+  "uploadPhoto": "رفع صورة",
+  "none": "لا يوجد",
+  "accurateSpecialization": "التخصص الدقيق"
 }
