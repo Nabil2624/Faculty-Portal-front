@@ -3,91 +3,86 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
+
 
 export default function ContactInfo() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation("contactinfo");
   const isArabic = i18n.language === "ar";
 
-  // fallback text
   const emptyText = isArabic ? "لا يوجد" : "none";
 
-  const [contactData, setContactData] = useState({
-    mainPhoneNumber: "",
-    workPhoneNumber: "",
-    homePhoneNumber: "",
-    officialEmail: "",
-    personalEmail: "",
-    alternativeEmail: "",
-    faxNumber: "",
-    address: "",
-  });
+  const [contactData, setContactData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // **********************************************
-  //      FETCH CONTACT DATA FROM BACKEND
-  // **********************************************
-  useEffect(() => {
-    const fetchContactData = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  // --------------------------------------------------
+  //         FETCH DATA
+  // --------------------------------------------------
+  const fetchContactData = async () => {
+    setLoading(true);
 
-        const response = await axiosInstance.get(
-          "/FacultyMemberData/ContactData",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    try {
+      const response = await axiosInstance.get(
+        "/FacultyMemberData/ContactData",
+        { skipGlobalErrorHandler: true }
+      );
 
-        setContactData({
-          mainPhoneNumber: response.data.mainPhoneNumber || "",
-          workPhoneNumber: response.data.workPhoneNumber || "",
-          homePhoneNumber: response.data.homePhoneNumber || "",
-          officialEmail: response.data.officialEmail || "",
-          personalEmail: response.data.personalEmail || "",
-          alternativeEmail: response.data.alternativeEmail || "",
-          faxNumber: response.data.faxNumber || "",
-          address: response.data.address || "",
-        });
-      } catch (error) {
-        console.error("Error fetching contact info:", error);
+      setContactData(response.data || {});
+    } catch (err) {
+      console.error("Error fetching contact info:", err);
 
-        if (error.response?.status === 401) {
-          navigate("/login");
-        }
+      if (err.response?.status === 401) {
+        navigate("/login");
       }
-    };
 
+      setContactData({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchContactData();
-  }, [navigate, isArabic]);
+  }, []);
 
-  // **********************************************
-  //         MAP GRID DATA
-  // **********************************************
+  // if (loading || !contactData)
+  //   return (
+  //     <Layout>
+  //       <div className="p-10 text-center text-lg">{t("loading")}</div>
+  //     </Layout>
+  //   );
+    if (loading) return <LoadingSpinner />;
+  // -----------------------------------------
+  //         Convert empty → لا يوجد
+  // -----------------------------------------
+  const getValue = (val) => {
+    if (!val || val === "") return emptyText;
+    return val;
+  };
+
+  // -----------------------------------------
+  //             MAP TO GRID
+  // -----------------------------------------
   const contactInfo = [
-    { label: t("officialEmail"), value: contactData.officialEmail || emptyText },
-    { label: t("mainMobile"), value: contactData.mainPhoneNumber || emptyText },
-    { label: t("fax"), value: contactData.faxNumber || emptyText },
-    { label: t("personalEmail"), value: contactData.personalEmail || emptyText },
-    { label: t("homePhone"), value: contactData.homePhoneNumber || emptyText },
-    { label: t("address"), value: contactData.address || emptyText },
-    {
-      label: t("alternativeEmail"),
-      value: contactData.alternativeEmail || emptyText,
-    },
-    { label: t("workPhone"), value: contactData.workPhoneNumber || emptyText },
+    { label: t("officialEmail"), value: getValue(contactData.officialEmail) },
+    { label: t("mainMobile"), value: getValue(contactData.mainPhoneNumber) },
+    { label: t("fax"), value: getValue(contactData.faxNumber) },
+    { label: t("personalEmail"), value: getValue(contactData.personalEmail) },
+    { label: t("homePhone"), value: getValue(contactData.homePhoneNumber) },
+    { label: t("address"), value: getValue(contactData.address) },
+    { label: t("alternativeEmail"), value: getValue(contactData.alternativeEmail) },
+    { label: t("workPhone"), value: getValue(contactData.workPhoneNumber) },
   ];
 
-  // **********************************************
-  //                  RENDER
-  // **********************************************
+  // -----------------------------------------
+  //                 RENDER (unchanged)
+  // -----------------------------------------
   return (
     <Layout>
       <div
         className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col w-full box-border`}
       >
-        {/* Page title */}
         <h2
           className={`text-3xl font-bold mb-[90px] inline-block relative text-${
             isArabic ? "right" : "left"
@@ -101,11 +96,7 @@ export default function ContactInfo() {
           ></span>
         </h2>
 
-        {/* Personal info grid */}
-        <div
-          className="flex justify-center items-center w-full"
-          style={{ flexGrow: 0 }}
-        >
+        <div className="flex justify-center items-center w-full">
           <div className="grid grid-cols-3 gap-7 max-w-[1250px] w-full">
             {contactInfo.map((item, index) => (
               <div
@@ -123,7 +114,6 @@ export default function ContactInfo() {
           </div>
         </div>
 
-        {/* Buttons */}
         <div
           className={`flex gap-3 absolute ${
             isArabic ? "left-[53px]" : "right-[53px]"

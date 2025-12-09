@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function SocialNetworkingPages() {
   const navigate = useNavigate();
@@ -11,61 +12,61 @@ export default function SocialNetworkingPages() {
 
   const noDataText = isArabic ? "لا يوجد" : "none";
 
-  const [socialData, setSocialData] = useState({
-    linkedIn: "",
-    instagram: "",
-    personalWebsite: "",
-    googleScholar: "",
-    scopus: "",
-    facebook: "",
-    x: "",
-    youTube: "",
-  });
+  const [socialData, setSocialData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // ----------------------------------------------------------
-  // Extract domain name (instagram.com,facebook.com etc.)
+  // Extract domain name
   // ----------------------------------------------------------
   const getDomain = (url) => {
     if (!url) return "";
     try {
       return new URL(url).hostname.replace("www.", "");
     } catch {
-      return url; // fallback if invalid url
+      return url;
     }
   };
 
   // ----------------------------------------------------------
-  // Fetch Data
+  // FETCH DATA (same style as ContactInfo / PersonalData)
   // ----------------------------------------------------------
-  useEffect(() => {
-    const fetchSocial = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const fetchSocial = async () => {
+    setLoading(true);
 
-        const response = await axiosInstance.get(
-          "/FacultyMemberData/SocialMediaPlatforms",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    try {
+      const response = await axiosInstance.get(
+        "/FacultyMemberData/SocialMediaPlatforms",
+        { skipGlobalErrorHandler: true }
+      );
 
-        setSocialData(response.data);
-      } catch (err) {
-        console.error(err);
+      setSocialData(response.data || {});
+    } catch (err) {
+      console.error("Error fetching social media:", err);
 
-        if (err.response?.status === 401) {
-          navigate("/login");
-        }
+      if (err.response?.status === 401) {
+        navigate("/login");
       }
-    };
 
+      // treat 404 as empty data
+      setSocialData({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchSocial();
-  }, [navigate]);
+  }, []);
 
   // ----------------------------------------------------------
-  // Prepare display data
+  // Loading spinner
+  // ----------------------------------------------------------
+  if (loading || socialData === null) {
+    return <LoadingSpinner />;
+  }
+
+  // ----------------------------------------------------------
+  // Map data
   // ----------------------------------------------------------
   const socialNetworkingPages = [
     { label: t("PersonalWebsite"), key: "personalWebsite" },
@@ -79,7 +80,7 @@ export default function SocialNetworkingPages() {
   ];
 
   // ----------------------------------------------------------
-  // Render
+  // Render (NO DESIGNS CHANGED)
   // ----------------------------------------------------------
   return (
     <Layout>
@@ -138,7 +139,7 @@ export default function SocialNetworkingPages() {
             isArabic ? "left-[53px]" : "right-[53px]"
           } bottom-[28px]`}
         >
-         <button
+          <button
             onClick={() => navigate("/edit-Social")}
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"

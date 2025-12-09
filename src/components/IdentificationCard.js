@@ -3,16 +3,16 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 // ------------------------------------------------------
 // Extract domain from URL
 // ------------------------------------------------------
 const getDomain = (value) => {
-  if (!value) return value;
+  if (!value) return "";
 
   try {
-    const url = new URL(value);
-    return url.hostname.replace("www.", "");
+    return new URL(value).hostname.replace("www.", "");
   } catch {
     return value;
   }
@@ -38,68 +38,66 @@ export default function IdentificationCard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const noDataText = isArabic ? "لا يوجد" : "none";
+
   // ------------------------------------------------------
-  // Fetch Data
+  // FETCH DATA
   // ------------------------------------------------------
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+  const fetchIdentification = async () => {
+    setLoading(true);
 
-      try {
-        const token = localStorage.getItem("token");
+    try {
+      const response = await axiosInstance.get(
+        "/FacultyMemberData/IdentificationCard",
+        { skipGlobalErrorHandler: true }
+      );
 
-        const res = await axiosInstance.get(
-          "/FacultyMemberData/IdentificationCard",
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
+      setData(response.data || {});
+    } catch (err) {
+      console.error(err);
 
-        setData(res.data);
-
-      } catch (err) {
-        console.error(err);
-        setData({});
-      } finally {
-        setLoading(false);
+      if (err.response?.status === 401) {
+        navigate("/login");
       }
-    };
 
-    fetchData();
+      setData({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchIdentification();
   }, []);
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex justify-center items-center h-screen text-xl font-semibold text-[#19355a]">
-          {t("loading")}...
-        </div>
-      </Layout>
-    );
+  // ------------------------------------------------------
+  // Loading
+  // ------------------------------------------------------
+  if (loading || data === null) {
+    return <LoadingSpinner />;
   }
 
   // ------------------------------------------------------
-  // Convert API data → List
+  // Convert data to grid
+  // EMAIL REMOVED HERE
   // ------------------------------------------------------
   const identificationCard = [
-    { label: t("officialEmail"), value: data?.orcid },
+     { label: t("ORCID-ID"), value: data?.orcid },
     { label: t("ResearchGateProfile"), value: data?.researcherGate },
     { label: t("Academia.Eduprofile"), value: data?.academiaEdu },
-    { label: t("ORCID-ID"), value: data?.orcid },
+   
     { label: t("ResearcherID"), value: data?.researcherId },
     { label: t("EBK"), value: data?.ekb }
   ];
 
   // ------------------------------------------------------
-  // Render Value With Empty & URL Handling
+  // Render value
   // ------------------------------------------------------
   const renderValue = (value) => {
-    // ✅ EMPTY CASE
     if (!value || value.trim() === "") {
-      return isArabic ? "لا يوجد" : "none";
+      return noDataText;
     }
 
-    // ✅ URL CASE
     if (isURL(value)) {
       return (
         <a
@@ -113,27 +111,20 @@ export default function IdentificationCard() {
       );
     }
 
-    // ✅ Normal text
     return value;
   };
 
   return (
     <Layout>
-      <div
-        className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col w-full box-border`}
-      >
-        {/* Page title */}
+      <div className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col w-full box-border`}>
+
+        {/* Title */}
         <h2
-          className={`text-3xl font-bold mb-[90px] inline-block relative text-${
-            isArabic ? "right" : "left"
-          }`}
+          className={`text-3xl font-bold mb-[90px] inline-block relative text-${isArabic ? "right" : "left"}`}
         >
           {t("IdentificationCard")}
-
           <span
-            className={`block w-16 h-1 bg-[#b38e19] mt-1 ${
-              isArabic ? "ml-auto" : "mr-auto"
-            }`}
+            className={`block w-16 h-1 bg-[#b38e19] mt-1 ${isArabic ? "ml-auto" : "mr-auto"}`}
           ></span>
         </h2>
 
@@ -167,18 +158,19 @@ export default function IdentificationCard() {
         >
           <button
             onClick={() => navigate("/edit-identification-card")}
-            className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer text-sm`}
+            className="bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer text-sm"
           >
             {t("edit")}
           </button>
 
           <button
             onClick={() => navigate(-1)}
-            className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer text-sm`}
+            className="bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer text-sm"
           >
             {t("back")}
           </button>
         </div>
+
       </div>
     </Layout>
   );

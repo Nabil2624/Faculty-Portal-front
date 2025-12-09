@@ -34,33 +34,32 @@ export default function EditPersonalInfo() {
   // ----------------------------------------------------------
   const getTranslated = (obj) => {
     if (!obj) return t("none");
-
     return isArabic ? obj.valueAr || t("none") : obj.valueEn || t("none");
   };
 
   // ----------------------------------------------------------
-  // LOAD DATA
+  // LOAD DATA (MATCH PERSONAL DATA PAGE)
   // ----------------------------------------------------------
   useEffect(() => {
     if (routerData) {
-      setPersonalInfo({
-        ...routerData,
-      });
+      setPersonalInfo({ ...routerData });
       setLoading(false);
       return;
     }
 
     const fetchData = async () => {
+      setLoading(true);
+
       try {
-        const token = localStorage.getItem("token");
+        const res = await axiosInstance.get(
+          "/FacultyMemberData/PersonalData",
+          { skipGlobalErrorHandler: true }
+        );
 
-        const res = await axiosInstance.get("/FacultyMemberData/PersonalData", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        setPersonalInfo(res.data);
+        setPersonalInfo(res.data || {});
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load personal data:", err);
+        setPersonalInfo({});
       } finally {
         setLoading(false);
       }
@@ -93,23 +92,19 @@ export default function EditPersonalInfo() {
   };
 
   // ----------------------------------------------------------
-  // SAVE
+  // SAVE (UPDATED TO MATCH PERSONALDATAPAGE)
   // ----------------------------------------------------------
   const handleSave = async () => {
     try {
       await axiosInstance.put(
         "/FacultyMemberData/UpdatePersonalData",
         personalInfo,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        { skipGlobalErrorHandler: true }
       );
 
       navigate("/personal");
     } catch (err) {
-      console.error(err);
+      console.error("Failed to update personal data:", err);
     }
   };
 
@@ -147,7 +142,7 @@ export default function EditPersonalInfo() {
 
       <div className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col`}>
         <h2 className="text-3xl font-bold mb-20">
-          {t("editpersonalData")}
+          {t("editPersonalData")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
 

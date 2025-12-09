@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "../components/LoadingSpinner";
+
 
 export default function EditContactInfo() {
   const navigate = useNavigate();
@@ -11,60 +13,49 @@ export default function EditContactInfo() {
 
   const EMPTY_TEXT = isArabic ? "لا يوجد" : "none";
 
-  const [contactData, setContactData] = useState({
-    mainPhoneNumber: "",
-    workPhoneNumber: "",
-    homePhoneNumber: "",
-    officialEmail: "",
-    personalEmail: "",
-    alternativeEmail: "",
-    faxNumber: "",
-    address: "",
-  });
+  const [contactData, setContactData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // ----------------------------------------------------------
-  // Fetch contact data
+  // Fetch contact data (same structure as PersonalData)
   // ----------------------------------------------------------
-  useEffect(() => {
-    const fetchContactData = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const fetchContactData = async () => {
+    setLoading(true);
 
-        const response = await axiosInstance.get(
-          "/FacultyMemberData/ContactData",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    try {
+      const response = await axiosInstance.get(
+        "/FacultyMemberData/ContactData",
+        { skipGlobalErrorHandler: true }
+      );
 
-        const data = response.data;
+      setContactData(response.data || {});
+    } catch (err) {
+      console.error("Error fetching contact info:", err);
 
-        // Convert empty values → placeholder text
-        const normalized = {};
-        for (const key in data) {
-          normalized[key] =
-            data[key] && data[key].trim() !== "" ? data[key] : EMPTY_TEXT;
-        }
-
-        setContactData(normalized);
-      } catch (error) {
-        console.error("Error fetching contact info:", error);
-        if (error.response?.status === 401) navigate("/login");
+      if (err.response?.status === 401) {
+        navigate("/login");
       }
-    };
 
+      // treat 404 as empty data
+      setContactData({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchContactData();
-  }, [navigate, EMPTY_TEXT]);
+  }, []);
+
+    if (loading) return <LoadingSpinner />;
 
   // ----------------------------------------------------------
-  // Handle change
+  // Handle input changes
   // ----------------------------------------------------------
   const handleChange = (field, value) => {
     setContactData((prev) => ({
       ...prev,
-      [field]: value === "" ? EMPTY_TEXT : value,
+      [field]: value,
     }));
   };
 
@@ -73,49 +64,32 @@ export default function EditContactInfo() {
   // ----------------------------------------------------------
   const handleSave = async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      // Convert "none / لا يوجد" → empty string before saving
-      const toSend = {
-        workPhoneNumber:
-          contactData.workPhoneNumber === EMPTY_TEXT
-            ? ""
-            : contactData.workPhoneNumber,
-        homePhoneNumber:
-          contactData.homePhoneNumber === EMPTY_TEXT
-            ? ""
-            : contactData.homePhoneNumber,
-        personalEmail:
-          contactData.personalEmail === EMPTY_TEXT
-            ? ""
-            : contactData.personalEmail,
-        alternativeEmail:
-          contactData.alternativeEmail === EMPTY_TEXT
-            ? ""
-            : contactData.alternativeEmail,
-        faxNumber:
-          contactData.faxNumber === EMPTY_TEXT ? "" : contactData.faxNumber,
-        address:
-          contactData.address === EMPTY_TEXT ? "" : contactData.address,
-      };
+      // convert placeholders → empty string
+      const clean = {};
+      Object.keys(contactData).forEach((key) => {
+        clean[key] =
+          contactData[key] === EMPTY_TEXT ? "" : contactData[key];
+      });
 
       await axiosInstance.put(
         "/FacultyMemberData/UpdateContactData",
-        toSend,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        clean,
+        { skipGlobalErrorHandler: true }
       );
 
       navigate("/contact-info");
-    } catch (error) {
-      console.error(" Error updating contact info:", error);
-      if (error.response?.status === 401) navigate("/login");
+    } catch (err) {
+      console.error("Error updating contact info:", err);
+
+      if (err.response?.status === 401) {
+        navigate("/login");
+      }
     }
   };
 
+  // ----------------------------------------------------------
+  // Info structure (UNCHANGED)
+  // ----------------------------------------------------------
   const contactInfo = [
     { label: t("officialEmail"), key: "officialEmail", editable: false },
     { label: t("mainMobile"), key: "mainPhoneNumber", editable: false },
@@ -127,12 +101,25 @@ export default function EditContactInfo() {
     { label: t("workPhone"), key: "workPhoneNumber", editable: true },
   ];
 
+  // ----------------------------------------------------------
+  // Loading
+  // ----------------------------------------------------------
+  if (loading || !contactData) {
+    return (
+      <Layout>
+        <div className="p-10 text-center text-lg">{t("loading")}</div>
+      </Layout>
+    );
+  }
+
+  // ----------------------------------------------------------
+  // RENDER (NO DESIGN CHANGES)
+  // ----------------------------------------------------------
   return (
     <Layout>
       <div
         className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col w-full box-border`}
       >
-        {/* Page title */}
         <h2
           className={`text-3xl font-bold mb-[90px] inline-block relative text-${
             isArabic ? "right" : "left"
@@ -146,7 +133,6 @@ export default function EditContactInfo() {
           ></span>
         </h2>
 
-        {/* Grid */}
         <div className="flex justify-center items-center w-full">
           <div className="grid grid-cols-3 gap-7 max-w-[1250px] w-full">
             {contactInfo.map((item, index) => {
@@ -159,14 +145,12 @@ export default function EditContactInfo() {
                 <div
                   key={index}
                   className="flex h-[40px] rounded-md overflow-hidden text-sm border border-gray-300 
-                focus-within:border-[#B38E19] focus-within:ring-2 focus-within:ring-[#B38E19] transition"
+                  focus-within:border-[#B38E19] focus-within:ring-2 focus-within:ring-[#B38E19] transition"
                 >
-                  {/* Label */}
                   <div className="bg-[#19355a] text-white w-[120px] flex items-center justify-center px-2 text-center">
                     {item.label}
                   </div>
 
-                  {/* Input */}
                   <input
                     value={displayValue}
                     onChange={(e) =>
@@ -183,7 +167,6 @@ export default function EditContactInfo() {
           </div>
         </div>
 
-        {/* Buttons */}
         <div
           className={`flex gap-3 absolute ${
             isArabic ? "left-[53px]" : "right-[53px]"
