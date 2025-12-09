@@ -147,7 +147,7 @@ export default function EditPersonalInfo() {
 
       <div className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col`}>
         <h2 className="text-3xl font-bold mb-20">
-          {t("personalData")}
+          {t("editpersonalData")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
 

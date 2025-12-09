@@ -1,5 +1,6 @@
 {
     "contactInfo" : "Contact Information" ,
+    "editContactInfo" : "Edit Contact Information",
     "officialEmail" : "Official Email",
     "personalEmail" : "Personal Email",
     "alternativeEmail" : "Alternative Email",

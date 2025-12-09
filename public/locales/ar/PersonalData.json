@@ -1,9 +1,10 @@
 {
   "personalData": "البيانات الشخصية",
+  "editPersonalData": "تعديل البيانات الشخصية",
   "title": "اللقب",
   "name": "الاسم",
   "university": "الجامعة",
-  "ssn": "الرقم القومي",
+  "nationalNumber": "الرقم القومي",
   "faculty": "الكلية",
   "gender": "النوع",
   "department": "القسم",

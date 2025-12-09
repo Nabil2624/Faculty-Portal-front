@@ -138,7 +138,8 @@ export default function SocialNetworkingPages() {
             isArabic ? "left-[53px]" : "right-[53px]"
           } bottom-[28px]`}
         >
-          <button
+         <button
+            onClick={() => navigate("/edit-Social")}
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"
             } text-sm`}

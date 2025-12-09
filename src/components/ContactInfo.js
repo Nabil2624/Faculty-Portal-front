@@ -51,7 +51,7 @@ export default function ContactInfo() {
           address: response.data.address || "",
         });
       } catch (error) {
-        console.error("❌ Error fetching contact info:", error);
+        console.error("Error fetching contact info:", error);
 
         if (error.response?.status === 401) {
           navigate("/login");

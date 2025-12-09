@@ -1,9 +1,10 @@
 {
   "personalData": "Personal Data",
+  "editPersonalData": "Edit Personal Data",
   "title": "Title",
   "name": "Name",
   "university": "University",
-  "ssn": "National ID",
+  "nationalNumber": "National ID",
   "faculty": "Faculty",
   "gender": "Gender",
   "department": "Department",
@@ -21,7 +22,6 @@
   "cancel": "Cancel",
   "uploadPhoto" : "Upload photo",
   "none": "None",
-  "nationalNumber": "National Number",
   "authority" : "Authority",
   "accurateSpecialization": "Exact Specialization"
 }

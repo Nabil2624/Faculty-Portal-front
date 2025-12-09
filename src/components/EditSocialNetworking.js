@@ -1,19 +1,116 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
+import axiosInstance from "../utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 export default function EditSocialNetworking() {
   const { t, i18n } = useTranslation("socialnetworkingpages");
   const isArabic = i18n.language === "ar";
+  const navigate = useNavigate();
 
+  const [socialData, setSocialData] = useState({
+    linkedIn: "",
+    instagram: "",
+    personalWebsite: "",
+    googleScholar: "",
+    scopus: "",
+    facebook: "",
+    x: "",
+    youTube: "",
+  });
+
+  // -------------------------------------------------------
+  // Convert URL → Display Name (Instagram → "Instagram")
+  // -------------------------------------------------------
+  const simplifyURL = (url) => {
+    if (!url || url.trim() === "") return isArabic ? "لا يوجد" : "None";
+
+    const lower = url.toLowerCase();
+
+    if (lower.includes("instagram")) return "Instagram";
+    if (lower.includes("linkedin")) return "LinkedIn";
+    if (lower.includes("facebook")) return "Facebook";
+    if (lower.includes("youtube")) return "YouTube";
+    if (lower.includes("scholar.google")) return "Google Scholar";
+    if (lower.includes("scopus")) return "Scopus";
+    if (lower.includes("x.com") || lower.includes("twitter")) return "X";
+    if (lower.includes("http") || lower.includes("www")) return "Website";
+
+    return url;
+  };
+
+  // -------------------------------------------------------
+  // Fetch social media data
+  // -------------------------------------------------------
+  useEffect(() => {
+    const fetchSocialMedia = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await axiosInstance.get(
+          "/FacultyMemberData/SocialMediaPlatforms",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setSocialData(response.data);
+      } catch (error) {
+        console.error("Error fetching social media:", error);
+        if (error.response?.status === 401) navigate("/login");
+      }
+    };
+
+    fetchSocialMedia();
+  }, [navigate]);
+
+  // -------------------------------------------------------
+  // Handle change
+  // -------------------------------------------------------
+  const handleChange = (field, value) => {
+    setSocialData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // -------------------------------------------------------
+  // Save changes (PUT)
+  // -------------------------------------------------------
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axiosInstance.put(
+        "/FacultyMemberData/UpdateSocialMediaPlatforms",
+        socialData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      navigate("/social-networking");
+    } catch (error) {
+      console.error("Error updating social media:", error);
+      if (error.response?.status === 401) navigate("/login");
+    }
+  };
+
+  // -------------------------------------------------------
+  // Labels mapped to backend keys
+  // -------------------------------------------------------
   const socialNetworkingPages = [
-    { label: t("PersonalWebsite"), value: "لا يوجد" },
-    { label: t("Facebook"), value: "/https://www.facebook.com/ahmeday..." },
-    { label: t("Twitter"), value: "لا يوجد" },
-    { label: t("GoogleScholar"), value: "https://scholar.google.com/citations?.." },  
-    { label: t("LinkedIn"), value: "/https://www.linkedin.com/in/ahmeda..." },      
-    { label: t("Scopus"), value: "https://www.scopus.com/authid/detail.." },
-    { label: t("Instagram"), value: "لا يوجد" },
+    { label: t("PersonalWebsite"), key: "personalWebsite" },
+    { label: t("Facebook"), key: "facebook" },
+    { label: t("Twitter"), key: "x" },
+    { label: t("GoogleScholar"), key: "googleScholar" },
+    { label: t("LinkedIn"), key: "linkedIn" },
+    { label: t("Scopus"), key: "scopus" },
+    { label: t("Instagram"), key: "instagram" },
+    { label: t("YouTube"), key: "youTube" },
   ];
 
   return (
@@ -27,7 +124,7 @@ export default function EditSocialNetworking() {
             isArabic ? "right" : "left"
           }`}
         >
-          {t("socialNetworkingPages")}
+          {t("editsocialNetworkingPages")}
           <span
             className={`block w-16 h-1 bg-[#b38e19] mt-1 ${
               isArabic ? "ml-auto" : "mr-auto"
@@ -42,18 +139,29 @@ export default function EditSocialNetworking() {
               <div
                 key={index}
                 className={`flex h-[40px] rounded-md overflow-hidden text-sm border border-gray-300
-                  focus-within:border-[#B38E19] text-center focus-within:ring-2 focus-within:ring-[#B38E19] transition duration-150`}
+                focus-within:border-[#B38E19] text-center focus-within:ring-2 focus-within:ring-[#B38E19] transition duration-150`}
               >
                 {/* Label */}
                 <div className="bg-[#19355a] text-center text-white w-[120px] flex items-center justify-center px-2">
                   {item.label}
                 </div>
-                {/* Input */}
+
+                {/* Input (but shows simplified value visually) */}
                 <input
-                  defaultValue={item.value}
-                  className={`bg-gray-200 text-black flex-1 px-2 outline-none border-0 
-                    ${isArabic ? "rounded-l-none" : "rounded-r-none"} text-center`}
+                  value={simplifyURL(socialData[item.key])}
+                  onChange={(e) => handleChange(item.key, e.target.value)}
+                  className={`bg-gray-200 text-black flex-1 px-2 outline-none border-0 text-center`}
                 />
+
+                {/* Hidden real link click */}
+                {socialData[item.key] && (
+                  <a
+                    href={socialData[item.key]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                  ></a>
+                )}
               </div>
             ))}
           </div>
@@ -66,6 +174,7 @@ export default function EditSocialNetworking() {
           } bottom-[28px]`}
         >
           <button
+            onClick={handleSave}
             className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"
             } text-sm`}
@@ -73,6 +182,7 @@ export default function EditSocialNetworking() {
             {t("save")}
           </button>
           <button
+            onClick={() => navigate("/social-networking")}
             className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
               isArabic ? "cairo" : "roboto"
             } text-sm`}
