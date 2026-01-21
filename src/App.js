@@ -2,8 +2,6 @@ import React, { Suspense, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import AppRouter from "./Protected-Routing/AppRouter";
 import LoadingSpinner from "./components/LoadingSpinner";
-import Spinner from "./components/Spinner";
-
 
 export default function App() {
   const { i18n } = useTranslation();
@@ -17,8 +15,6 @@ export default function App() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <AppRouter />
-
     </Suspense>
- 
   );
 }
