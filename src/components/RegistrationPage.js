@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import helwanImage from "../images/helwan-university.jpeg";
-import egyptFlag from "../images/egyptFlag.png";
-import ukFlag from "../images/americaFlag.png";
+import helwanImage from "../assets/helwan-university.jpeg";
+import egyptFlag from "../assets/egyptFlag.png";
+import ukFlag from "../assets/americaFlag.png";
 import LoadingSpinner from "../components/LoadingSpinner";
 import axiosInstance from "../utils/axiosInstance";
 

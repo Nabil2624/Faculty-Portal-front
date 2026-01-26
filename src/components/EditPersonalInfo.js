@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
-import subPicture from "../images/profileImage.png";
+import subPicture from "../assets/profileImage.png";
 import { FiUpload, FiCalendar } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";

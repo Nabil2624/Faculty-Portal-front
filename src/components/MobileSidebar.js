@@ -12,7 +12,7 @@ import {
   Headphones,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import logo from "../images/helwan-logo.png";
+import logo from "../assets/helwan-logo.png";
 
 export default function MobileSidebar({ isOpen, onClose, lang }) {
   const { t } = useTranslation("headerandsidebar");

@@ -11,7 +11,7 @@ import {
   Settings,
   Headphones,
 } from "lucide-react";
-import logo from "../images/helwan-logo.png";
+import logo from "../assets/helwan-logo.png";
 
 export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const { t } = useTranslation("headerandsidebar");

@@ -4,9 +4,9 @@ import { Info, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
-import helwanImage from "../images/helwan-university.jpeg";
-import egyptFlag from "../images/egyptFlag.png";
-import ukFlag from "../images/americaFlag.png";
+import helwanImage from "../assets/helwan-university.jpeg";
+import egyptFlag from "../assets/egyptFlag.png";
+import ukFlag from "../assets/americaFlag.png";
 
 export default function OtpPage() {
   const { t, i18n } = useTranslation("otp");

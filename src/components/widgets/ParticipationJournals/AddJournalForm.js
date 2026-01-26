@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronDown, Plus } from "lucide-react";
-import axiosInstance from "../utils/axiosInstance";
-import CustomDropdown from "./CustomDropdown";
+import axiosInstance from "../../../utils/axiosInstance";
+import CustomDropdown from "../../ui/CustomDropdown";
 
 export default function AddJournalForm({ onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("journal-forms");
@@ -168,15 +168,6 @@ export default function AddJournalForm({ onCancel, onSuccess }) {
           } text-sm`}
         >
           {loading ? t("loading") : t("add")}
-        </button>
-        <button
-          type="button"
-          onClick={() => onCancel && onCancel()}
-          className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-            isArabic ? "cairo" : "roboto"
-          } text-sm`}
-        >
-          {t("cancel")}
         </button>
       </div>
     </form>

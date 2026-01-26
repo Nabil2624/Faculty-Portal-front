@@ -6,7 +6,8 @@ import { ChevronDown } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
-import CustomDropdown from "./CustomDropdown";
+import CustomDropdown from "../components/ui/CustomDropdown";
+
 
 export default function EditCommitteeAssociation() {
   const { t, i18n } = useTranslation("add-committee");

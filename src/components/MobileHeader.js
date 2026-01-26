@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Bell, Mail, Search, Menu, ChevronDown, LogOut, DoorOpen  } from "lucide-react"; // استخدم LogOut كأيقونة باب
 import { useTranslation } from "react-i18next";
 import FloatingSearch from "./FloatingSearch";
-import egyptFlag from "../images/egyptFlag.png";
-import ukFlag from "../images/americaFlag.png";
+import egyptFlag from "../assets/egyptFlag.png";
+import ukFlag from "../assets/americaFlag.png";
 
 
 export default function MobileHeader({ onBurgerClick }) {

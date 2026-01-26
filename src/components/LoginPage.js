@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ChevronDown } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
-import helwanImage from "../images/helwan-university.jpeg";
-import egyptFlag from "../images/egyptFlag.png";
-import ukFlag from "../images/americaFlag.png";
+import helwanImage from "../assets/helwan-university.jpeg";
+import egyptFlag from "../assets/egyptFlag.png";
+import ukFlag from "../assets/americaFlag.png";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function LoginPage() {

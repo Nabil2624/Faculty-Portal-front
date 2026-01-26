@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
-import CustomDropdown from "./CustomDropdown";
+import CustomDropdown from "../components/ui/CustomDropdown";
 import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 
 export default function AddCommitteeAssociation() {

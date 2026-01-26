@@ -107,9 +107,9 @@ export default function ParticipationInJournals() {
 
         {/* Header */}
         <div className="flex justify-between items-center mb-8 relative">
-          <h2 className="text-lg font-bold relative text-start lg:text-3xl">
+          <h2 className="text-base font-bold relative text-start lg:text-3xl">
             {t("title")}
-            <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
+            <span className="block w-12 h-1 bg-[#b38e19] mt-1 lg:w-16 lg:h-1"></span>
           </h2>
 
           <div className="flex items-center gap-4">

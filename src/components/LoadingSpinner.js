@@ -1,7 +1,7 @@
 import React from "react";
 import NormalSpinner from "./NormalSpinner";
-import logo from "../images/helwan-logooo.png";       
-import nucleus from "../images/nuc.png"; 
+import logo from "../assets/helwan-logooo.png";       
+import nucleus from "../assets/nuc.png"; 
 
 export default function LoadingSpinner() {
     return (

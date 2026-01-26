@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Pen, ChevronDown } from "lucide-react";
-import axiosInstance from "../utils/axiosInstance";
-import CustomDropdown from "./CustomDropdown";
+import axiosInstance from "../../../utils/axiosInstance";
+import CustomDropdown from "../../ui/CustomDropdown";
+
 
 export default function EditJournalForm({ data, onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("journal-forms");
@@ -186,14 +187,6 @@ export default function EditJournalForm({ data, onCancel, onSuccess }) {
           className="bg-[#b38e19] text-white w-24 h-10 rounded-md text-sm"
         >
           {t("save")}
-        </button>
-
-        <button
-          type="button"
-          onClick={onCancel}
-          className="bg-gray-300 text-black w-24 h-10 rounded-md text-sm"
-        >
-          {t("cancel")}
         </button>
       </div>
     </form>

@@ -51,11 +51,11 @@ import CommitteesAndAssociationsPage from "../components/CommitteesAndAssociatio
 import AddCommitteeAssociation from "../components/AddCommitteeAssociation";
 import EditCommitteeAssociation from "../components/EditCommitteeAssociation";
 import ArticleReviews from "../components/ArticleReviews";
-import ParticipationInJournals from "../components/ParticipationJournals";
+
 import Projects from "../components/Projects";
 import AddProject from "../components/AddProject";
 import EditProject from "../components/EditProject";
-
+import ParticipationInJournals from "../pages/ParticipationInJournals";
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -134,6 +134,7 @@ function AppRouterInner() {
         <Route path="/edit-job-grade" element={<EditJobGrade />} />
         <Route path="/edit-admin-pos" element={<EditAdminPosition />} />
         <Route path="/add-admin-pos" element={<AddAdministrativePosition />} />
+        <Route path="/journals" element={<ParticipationInJournals />} />
 
 
 

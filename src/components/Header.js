@@ -3,8 +3,8 @@ import { Bell, Mail, Search, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import egyptFlag from "../images/egyptFlag.png";
-import ukFlag from "../images/americaFlag.png";
+import egyptFlag from "../assets/egyptFlag.png";
+import ukFlag from "../assets/americaFlag.png";
 
 import FloatingSearch from "./FloatingSearch";
 
