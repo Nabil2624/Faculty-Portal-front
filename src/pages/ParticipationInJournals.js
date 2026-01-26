@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import LoadingSpinner from "../components/LoadingSpinner";
-import PageHeader from "../components/widgets/ParticipationJournals/PageHeader";
+import PageHeader from "../components/ui/PageHeader";
 import JournalCard from "../components/widgets/ParticipationJournals/JournalCard";
 import Pagination from "../components/ui/Pagination";
 import JournalsModals from "../components/widgets/ParticipationJournals/JournalsModals";
@@ -21,17 +21,37 @@ export default function ParticipationInJournals() {
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
-  const { items, totalPages, loading, loadData } = useJournals(page, 9);
+  const {
+    items,
+    totalPages,
+    loading,
+    error,
+    loadData,
+  } = useJournals(page, 9);
 
   const handleDelete = async () => {
     if (!selectedItem) return;
-    await deleteParticipationJournal(selectedItem.id);
-    setShowDelete(false);
-    loadData();
+    setDeleteError(null);
+    try {
+      await deleteParticipationJournal(selectedItem.id);
+      setShowDelete(false);
+      loadData();
+    } catch (err) {
+      setDeleteError(t("errors.deleteFailed"));
+    }
   };
 
   if (loading) return <LoadingSpinner />;
+
+  if (error) {
+    return (
+      <div className="text-center text-red-500 mt-10">
+        {t("errors.loadFailed")}
+      </div>
+    );
+  }
 
   return (
     <ResponsiveLayoutProvider>
@@ -94,6 +114,7 @@ export default function ParticipationInJournals() {
           setShowEdit={setShowEdit}
           setShowDelete={setShowDelete}
           setShowDetails={setShowDetails}
+          deleteError={deleteError}
           onSuccessAdd={() => {
             setShowAdd(false);
             setPage(1);

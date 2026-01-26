@@ -12,7 +12,9 @@
   "next": "Next",
   "page": "Page",
   "of": "of",
-  "empty": "No journal participations found.",
-  "fetchError": "Failed to fetch journal participations.",
-  "deleteError": "Failed to delete the journal participation."
+  "empty": "No data available",
+  "errors": {
+    "loadFailed": "An error occurred while loading data",
+    "deleteFailed": "Failed to delete the item"
+  }
 }
