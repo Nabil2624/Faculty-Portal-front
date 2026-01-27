@@ -56,6 +56,7 @@ import Projects from "../components/Projects";
 import AddProject from "../components/AddProject";
 import EditProject from "../components/EditProject";
 import ParticipationInJournals from "../pages/ParticipationInJournals";
+import QuotesChartChart from "../components/widgets/Researchs/QuotesChart";
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -135,6 +136,7 @@ function AppRouterInner() {
         <Route path="/edit-admin-pos" element={<EditAdminPosition />} />
         <Route path="/add-admin-pos" element={<AddAdministrativePosition />} />
         <Route path="/journals" element={<ParticipationInJournals />} />
+        <Route path="/researchGraph" element={<QuotesChartChart />} />
 
 
 
