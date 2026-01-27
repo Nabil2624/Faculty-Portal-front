@@ -9,7 +9,7 @@ export default function PageHeader({
 }) {
   return (
     <div className="flex justify-between items-center mb-8">
-      <h2 className="text-base font-bold lg:text-3xl">
+      <h2 className="text-base font-semibold text-black-600 lg:text-3xl">
         {title}
         <span className="block w-12 h-1 bg-[#b38e19] mt-1 lg:w-16"></span>
       </h2>
