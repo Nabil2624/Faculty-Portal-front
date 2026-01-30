@@ -62,13 +62,14 @@ export default function AddAcademicQualification() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value,
-    });
-  };
+const handleChange = (e) => {
+  const { name, value, files } = e.target;
+
+  setFormData((prev) => ({
+    ...prev,
+    [name]: files ? files[0] : value,
+  }));
+};
 
   const validate = () => {
     const newErrors = {};
@@ -83,29 +84,42 @@ export default function AddAcademicQualification() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
+  e.preventDefault();
+  if (!validate()) return;
 
-    setLoading(true);
-    try {
-      await axiosInstance.post("/ScientificProgression/CreateAcademicQualification", {
-        qualificationId: formData.degree,
-        specialization: formData.specialization,
-        gradeId: formData.grade,
-        dispatchId: formData.delegation,
-        universityOrFaculty: formData.university,
-        countryOrCity: formData.countryCity,
-        dateOfObtainingTheQualification: formData.graduationDate,
-      });
+  setLoading(true);
 
-      navigate("/academic-qualifications");
-    } catch (error) {
-      console.error("Error creating academic qualification:", error);
-      // Optional: show a toast or message
-    } finally {
-      setLoading(false);
+  try {
+    const formPayload = new FormData();
+
+    formPayload.append("qualificationId", formData.degree);
+    formPayload.append("specialization", formData.specialization);
+    formPayload.append("gradeId", formData.grade);
+    formPayload.append("dispatchId", formData.delegation);
+    formPayload.append("universityOrFaculty", formData.university);
+    formPayload.append("countryOrCity", formData.countryCity);
+    formPayload.append(
+      "dateOfObtainingTheQualification",
+      formData.graduationDate
+    );
+
+    if (formData.attachments) {
+      formPayload.append("attachments", formData.attachments);
     }
-  };
+
+    await axiosInstance.post(
+      "/ScientificProgression/CreateAcademicQualification",
+      formPayload
+    );
+
+    navigate("/academic-qualifications");
+  } catch (error) {
+    console.error("Error creating academic qualification:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const inputBase =
     "w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 bg-[#E2E2E2] outline-none transition-all duration-150 ease-linear text-[12px]";

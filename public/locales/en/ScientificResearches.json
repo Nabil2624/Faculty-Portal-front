@@ -1,0 +1,15 @@
+{
+  "title": "Scientific Research",
+  "add": "Add Research",
+  "empty": "No research found",
+  "journal": "Journal / Magazine",
+  "year": "Publication Year",
+  "fetchError": "No scientific research found.",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of",
+  "areYouSureDelete": "Are you sure you want to delete this scientific research?",
+  "delete": "Delete",
+  "cancel": "Cancel"
+}

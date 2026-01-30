@@ -57,6 +57,10 @@ import AddProject from "../components/AddProject";
 import EditProject from "../components/EditProject";
 import ParticipationInJournals from "../pages/ParticipationInJournals";
 
+import ScientificResearches from "../pages/ScientificResearches";
+import SupervisionThesis from "../pages/SupervisionThesis";
+import Thesis from "../pages/Theses";
+import ScientificResearchDetails from "../pages/ScientificResearchDetails";
 function AppRouterInner() {
   const navigate = useNavigate();
 
@@ -79,6 +83,15 @@ function AppRouterInner() {
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/add-scientific-task" element={<AddScientificTask />} />
       <Route path="/edit-scientific-task" element={<EditScientificTask />} />
+
+      <Route path="/theses" element={<Thesis />} />
+      <Route path="/scientific-researches" element={<ScientificResearches />} />
+      <Route path="/supervision-thesis" element={<SupervisionThesis />} />
+      <Route
+        path="/scientific-research-details"
+        element={<ScientificResearchDetails />}
+      />
+
       <Route
         path="/add-academic-qualification"
         element={<AddAcademicQualification />}
@@ -106,42 +119,47 @@ function AppRouterInner() {
         element={<SeminarsAndConferences />}
       />
       <Route path="/personal" element={<PersonalDataPage />} />
-      <Route path="/committee-associations" element={<CommitteesAndAssociationsPage />} />
-      <Route path="/add-committee-associations" element={<AddCommitteeAssociation />} />
-      <Route path="/edit-committee-associations" element={<EditCommitteeAssociation />} />
+      <Route
+        path="/committee-associations"
+        element={<CommitteesAndAssociationsPage />}
+      />
+      <Route
+        path="/add-committee-associations"
+        element={<AddCommitteeAssociation />}
+      />
+      <Route
+        path="/edit-committee-associations"
+        element={<EditCommitteeAssociation />}
+      />
       <Route path="/article-reviews" element={<ArticleReviews />} />
       <Route path="/journals" element={<ParticipationInJournals />} />
       <Route path="/projects" element={<Projects />} />
       <Route path="/add-project" element={<AddProject />} />
       <Route path="/edit-project" element={<EditProject />} />
-              <Route path="/under-development" element={<UnderDevelopment />} />
-        <Route path="/sidebar" element={<Sidebar />} />
-        <Route path="/header" element={<Header />} />
-        <Route path="/layout" element={<Layout />} />
-        <Route path="/editpersonal" element={<EditPersonalInfo />} />
-        <Route path="/contact-info" element={<ContactInfo />} />
-        <Route path="/identification-card" element={<IdentificationCard />} />
-        <Route path="/social-networking" element={<SocialNetworkingPages />} />
-        <Route path="/edit-contact-info" element={<EditContactInfo />} />
-        <Route path="/edit-Social" element={<EditSocialNetworking />} />
-        <Route
-          path="/edit-identification-card"
-          element={<EditIdentificationCard />}
-        />
-        <Route path="/training-programs" element={<TrainingPrograms />} />
+      <Route path="/under-development" element={<UnderDevelopment />} />
+      <Route path="/sidebar" element={<Sidebar />} />
+      <Route path="/header" element={<Header />} />
+      <Route path="/layout" element={<Layout />} />
+      <Route path="/editpersonal" element={<EditPersonalInfo />} />
+      <Route path="/contact-info" element={<ContactInfo />} />
+      <Route path="/identification-card" element={<IdentificationCard />} />
+      <Route path="/social-networking" element={<SocialNetworkingPages />} />
+      <Route path="/edit-contact-info" element={<EditContactInfo />} />
+      <Route path="/edit-Social" element={<EditSocialNetworking />} />
+      <Route
+        path="/edit-identification-card"
+        element={<EditIdentificationCard />}
+      />
+      <Route path="/training-programs" element={<TrainingPrograms />} />
 
-        <Route path="/job-grade-form" element={<JobGradeForm />} />
-        <Route path="/edit-job-grade" element={<EditJobGrade />} />
-        <Route path="/edit-admin-pos" element={<EditAdminPosition />} />
-        <Route path="/add-admin-pos" element={<AddAdministrativePosition />} />
-        <Route path="/journals" element={<ParticipationInJournals />} />
-
-
+      <Route path="/job-grade-form" element={<JobGradeForm />} />
+      <Route path="/edit-job-grade" element={<EditJobGrade />} />
+      <Route path="/edit-admin-pos" element={<EditAdminPosition />} />
+      <Route path="/add-admin-pos" element={<AddAdministrativePosition />} />
+      <Route path="/journals" element={<ParticipationInJournals />} />
 
       {/* ✅ Protected Routes */}
-      <Route element={<ProtectedRoute />}>
-
-      </Route>
+      <Route element={<ProtectedRoute />}></Route>
 
       {/* Catch-all */}
       <Route path="*" element={<ErrorPage code="404" />} />

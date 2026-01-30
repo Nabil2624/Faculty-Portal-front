@@ -1,0 +1,11 @@
+{
+  "title": "Supervision and Evaluation of Master's and PhD Theses",
+  "add": "Add Thesis",
+  "empty": "No theses to display",
+  "fetchError": "An error occurred while fetching data",
+  "areYouSureDelete": "Are you sure you want to delete this thesis?",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "previous": "Prev",
+  "next": "Next"
+}

@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Bell, Mail, Search, Menu, ChevronDown, LogOut, DoorOpen  } from "lucide-react"; // استخدم LogOut كأيقونة باب
+import {
+  Bell,
+  Mail,
+  Search,
+  Menu,
+  ChevronDown,
+  LogOut,
+  DoorOpen,
+} from "lucide-react"; // استخدم LogOut كأيقونة باب
 import { useTranslation } from "react-i18next";
 import FloatingSearch from "./FloatingSearch";
 import egyptFlag from "../assets/egyptFlag.png";
 import ukFlag from "../assets/americaFlag.png";
-
 
 export default function MobileHeader({ onBurgerClick }) {
   const { t, i18n } = useTranslation("headerandsidebar");
@@ -49,7 +56,6 @@ export default function MobileHeader({ onBurgerClick }) {
 
   return (
     <header className="flex items-center justify-between w-full bg-[#19355a] text-white fixed top-0 z-10 p-2">
-
       {/* Left side (Burger + icons) */}
       <div className="flex items-center gap-2">
         <button
@@ -95,13 +101,13 @@ export default function MobileHeader({ onBurgerClick }) {
                 onClick={() => handleLanguageChange("ar")}
                 className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#19355a]"
               >
-                <img src={egyptFlag} className="w-5 h-4" /> 
+                <img src={egyptFlag} className="w-5 h-4" />
               </button>
               <button
                 onClick={() => handleLanguageChange("en")}
                 className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#19355a]"
               >
-                <img src={ukFlag} className="w-5 h-4" /> 
+                <img src={ukFlag} className="w-5 h-4" />
               </button>
             </div>
           )}
@@ -118,7 +124,10 @@ export default function MobileHeader({ onBurgerClick }) {
       </div>
 
       {/* Floating Search */}
-      <FloatingSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <FloatingSearch
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
     </header>
   );
 }

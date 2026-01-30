@@ -1,4 +1,3 @@
-// AcademicQualificationsPage with API integration, pagination, loading and error handling
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
 import { Pencil, Trash2, X,Filter } from "lucide-react";
@@ -324,6 +323,21 @@ export default function AcademicQualificationsPage() {
                   <span className="font-medium">{t("date")}</span>
                   <span>{selectedItem.dateOfObtainingTheQualification}</span>
                 </div>
+                {selectedItem.attachments && selectedItem.attachments.length > 0 && (
+  <div className="flex justify-between items-center mt-3">
+    <span className="font-medium">{t("attachments")}</span>
+
+    <a
+      href={selectedItem.attachments[0].fileUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-[#19355a] underline hover:text-[#b38e19]"
+    >
+      {selectedItem.attachments[0].fileName}
+    </a>
+  </div>
+)}
+
               </div>
             </div>
           </div>

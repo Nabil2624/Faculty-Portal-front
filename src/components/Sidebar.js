@@ -70,7 +70,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
             { key: "trainingPrograms", link: "/training-programs" },
           ],
         },
-                {
+        {
           key: "projectsAndCommittee",
           link: "/academic-data/projectsAndCommittee",
           sub: [
@@ -81,6 +81,17 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
             },
             { key: "participationJournals", link: "/journals" },
             { key: "Projects", link: "/projects" },
+          ],
+        },
+        {
+          key: "researchAndSupervision",
+          link: "/academic-data/researches",
+          sub: [
+            { key: "researches", link: "/scientific-researches" },
+            { key: "supervisionThesis", link: "/supervision-thesis" },
+            { key: "myThesis", link: "/my-thesis" },
+            { key: "researcherProfile", link: "/researcher-profile" },
+            { key: "nominatedResearches", link: "/nominated-researches" },
           ],
         },
       ],
