@@ -56,6 +56,7 @@ import Projects from "../components/Projects";
 import AddProject from "../components/AddProject";
 import EditProject from "../components/EditProject";
 import ParticipationInJournals from "../pages/ParticipationInJournals";
+import QuotesChartChart from "../components/widgets/Researchs/QuotesChart";
 
 import ScientificResearches from "../pages/ScientificResearches";
 import SupervisionThesis from "../pages/SupervisionThesis";
