@@ -32,7 +32,11 @@ export default function SupervisionThesisCard({
         />
       </div>
 
-      <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+      <h3
+        className={`text-lg font-semibold mb-2 ${isArabic ? "pl-12" : "pr-12"}`}
+      >
+        {item.title}
+      </h3>
 
       <p className="text-sm text-gray-700">{item.type}</p>
 

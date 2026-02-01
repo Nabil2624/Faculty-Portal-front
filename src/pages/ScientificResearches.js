@@ -132,7 +132,7 @@ export default function ScientificResearches() {
               ))}
             </div>
 
-            <div className="fixed bottom-36 left-0 w-full flex justify-center z-50">
+            <div className="fixed bottom-10 left-0 w-full flex justify-center z-50">
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}

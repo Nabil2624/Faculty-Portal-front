@@ -1,0 +1,31 @@
+{
+  "title": "تفاصيل البحث العلمي",
+  "summary": "ملخص البحث",
+  "edit": "تعديل",
+
+  "researchType": "نوع البحث",
+  "publicationYear": "سنة النشر",
+  "publisher": "الناشر",
+  "publishingBody": "جهة النشر",
+  "issueNumber": "العدد",
+  "journalOrConference": "المجلة / المؤتمر",
+  "link": "الرابط ",
+  "pages": "الصفحات",
+  "publicationType": "نوع النشر",
+  "year": "العام",
+  "derivedFrom": "مستمد من",
+
+  "internalContributors": "المشاركون من داخل الجامعة",
+  "externalContributors": "المشاركون من خارح الجامعة",
+  "contributors": "المشاركون",
+
+  "attachments": "المرفقات",
+  "citations": "عدد الاستشهادات",
+  "derivedResearches": "الأبحاث المستخرجة",
+  "none": "لا يوجد",
+
+  "researchRelated": "بحث له صلة",
+  "abstract": "الملخص",
+  "noAbstract": "لا يوجد ملخص",
+  "noRelatedResearch": "لا يوجد بحث ذو صلة"
+}

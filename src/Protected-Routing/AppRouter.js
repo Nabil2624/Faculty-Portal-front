@@ -60,8 +60,12 @@ import QuotesChartChart from "../components/widgets/Researchs/QuotesChart";
 
 import ScientificResearches from "../pages/ScientificResearches";
 import SupervisionThesis from "../pages/SupervisionThesis";
-import Thesis from "../pages/Theses";
+import Theses from "../pages/Theses";
 import ScientificResearchDetails from "../pages/ScientificResearchDetails";
+import NominatedScientificResearch from "../pages/NominatedResearch";
+import SupervisionInfo from "../pages/SupervisionInfo";
+import ThesesDetails from "../pages/ThesisDetails";
+import ScientificResearchFullDetails from "../pages/ScientificResearchFullDetails";
 function AppRouterInner() {
   const navigate = useNavigate();
 
@@ -85,9 +89,19 @@ function AppRouterInner() {
       <Route path="/add-scientific-task" element={<AddScientificTask />} />
       <Route path="/edit-scientific-task" element={<EditScientificTask />} />
 
-      <Route path="/theses" element={<Thesis />} />
+      <Route path="/theses" element={<Theses />} />
       <Route path="/scientific-researches" element={<ScientificResearches />} />
       <Route path="/supervision-thesis" element={<SupervisionThesis />} />
+      <Route path="/supervision-info" element={<SupervisionInfo />} />
+      <Route path="/theses-details" element={<ThesesDetails />} />
+      <Route
+        path="/scientific-research-full-details"
+        element={<ScientificResearchFullDetails />}
+      />
+      <Route
+        path="/Nominated-research"
+        element={<NominatedScientificResearch />}
+      />
       <Route
         path="/scientific-research-details"
         element={<ScientificResearchDetails />}

@@ -32,7 +32,11 @@ export default function ScientificResearchCard({
         />
       </div>
 
-      <h3 className="text-lg font-semibold mb-2">{item.researchTitle}</h3>
+      <h3
+        className={`text-lg font-semibold mb-2 ${isArabic ? "pl-12" : "pr-12"}`}
+      >
+        {item.researchTitle}
+      </h3>
 
       <p className="text-sm text-gray-700">{item.journalName}</p>
 
