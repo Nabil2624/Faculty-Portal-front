@@ -66,6 +66,14 @@ import NominatedScientificResearch from "../pages/NominatedResearch";
 import SupervisionInfo from "../pages/SupervisionInfo";
 import ThesesDetails from "../pages/ThesisDetails";
 import ScientificResearchFullDetails from "../pages/ScientificResearchFullDetails";
+import ResearcherProfile from "../pages/ResearcherProfile";
+import AddThesis from "../pages/AddThesis";
+import AddScientificResearch from "../pages/AddScientificResearch";
+import EditScientificResearch from "../pages/EditScientificResearch";
+import EditThesis from "../pages/EditThesis";
+import AddSupervisionOrJudgement from "../pages/AddSupervisionOrJudgement";
+import EditSupervisionOrJudgement from "../pages/EditSupervisionOrJudgement";
+
 function AppRouterInner() {
   const navigate = useNavigate();
 
@@ -94,19 +102,34 @@ function AppRouterInner() {
       <Route path="/supervision-thesis" element={<SupervisionThesis />} />
       <Route path="/supervision-info" element={<SupervisionInfo />} />
       <Route path="/theses-details" element={<ThesesDetails />} />
+      <Route path="/researcher-profile" element={<ResearcherProfile />} />
+      <Route path="/add-thesis" element={<AddThesis />} />
+      <Route path="/edit-thesis" element={<EditThesis />} />
+      <Route path="/add-supervision" element={<AddSupervisionOrJudgement />} />
+      <Route
+        path="/edit-supervision"
+        element={<EditSupervisionOrJudgement />}
+      />
+      <Route
+        path="edit-scientific-research"
+        element={<EditScientificResearch />}
+      />
+      <Route
+        path="/add-scientific-research"
+        element={<AddScientificResearch />}
+      />
       <Route
         path="/scientific-research-full-details"
         element={<ScientificResearchFullDetails />}
       />
       <Route
-        path="/Nominated-research"
+        path="/nominated-research"
         element={<NominatedScientificResearch />}
       />
       <Route
-        path="/scientific-research-details"
+        path="/scientific-research-details/:id"
         element={<ScientificResearchDetails />}
       />
-
       <Route
         path="/add-academic-qualification"
         element={<AddAcademicQualification />}

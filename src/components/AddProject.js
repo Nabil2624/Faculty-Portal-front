@@ -99,9 +99,13 @@ export default function AddProject() {
     setLocalError("");
 
     try {
-      await axiosInstance.post("/ProjectsAndCommittees/CreateProject", payload, {
-        skipGlobalErrorHandler: true,
-      });
+      await axiosInstance.post(
+        "/ProjectsAndCommittees/CreateProject",
+        payload,
+        {
+          skipGlobalErrorHandler: true,
+        },
+      );
 
       navigate("/projects");
     } catch (err) {
@@ -115,10 +119,9 @@ export default function AddProject() {
     "w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 bg-[#E2E2E2] outline-none transition-all duration-150 ease-linear text-[12px]";
   const focusStyle =
     "focus:border-gray-300 focus:shadow-[0_0_0_4px_rgba(179,142,25,0.5)]";
-if (loading) return <LoadingSpinner />;
+  if (loading) return <LoadingSpinner />;
   return (
     <Layout>
-
       <div
         dir={isArabic ? "rtl" : "ltr"}
         className="p-4 sm:p-6 flex flex-col bg-white"
@@ -172,7 +175,8 @@ if (loading) return <LoadingSpinner />;
               {/* Project Name */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("fields.projectName")} <span className="text-[#b38e19]">*</span>
+                  {t("fields.projectName")}{" "}
+                  <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -186,7 +190,8 @@ if (loading) return <LoadingSpinner />;
               {/* Project Type */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("fields.projectType")} <span className="text-[#B38E19]">*</span>
+                  {t("fields.projectType")}{" "}
+                  <span className="text-[#B38E19]">*</span>
                 </label>
                 <div className="relative flex items-center">
                   <select
@@ -201,9 +206,11 @@ if (loading) return <LoadingSpinner />;
                     {projectTypes.map((p) =>
                       p ? (
                         <option key={p.id} value={p.id}>
-                          {isArabic ? p.valueAr || p.valueEn : p.valueEn || p.valueAr}
+                          {isArabic
+                            ? p.valueAr || p.valueEn
+                            : p.valueEn || p.valueAr}
                         </option>
-                      ) : null
+                      ) : null,
                     )}
                   </select>
                   <ChevronDown
@@ -232,9 +239,11 @@ if (loading) return <LoadingSpinner />;
                     {projectRoles.map((r) =>
                       r ? (
                         <option key={r.id} value={r.id}>
-                          {isArabic ? r.valueAr || r.valueEn : r.valueEn || r.valueAr}
+                          {isArabic
+                            ? r.valueAr || r.valueEn
+                            : r.valueEn || r.valueAr}
                         </option>
-                      ) : null
+                      ) : null,
                     )}
                   </select>
                   <ChevronDown
@@ -253,7 +262,8 @@ if (loading) return <LoadingSpinner />;
                 {/* Start */}
                 <div>
                   <label className="block mb-2 text-lg font-medium">
-                    {t("fields.startDate")} <span className="text-[#B38E19]">*</span>
+                    {t("fields.startDate")}{" "}
+                    <span className="text-[#B38E19]">*</span>
                   </label>
                   <div className="relative">
                     <input
@@ -314,7 +324,8 @@ if (loading) return <LoadingSpinner />;
               {/* Funding */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("fields.funding")} <span className="text-[#B38E19]">*</span>
+                  {t("fields.funding")}{" "}
+                  <span className="text-[#B38E19]">*</span>
                 </label>
                 <input
                   type="text"

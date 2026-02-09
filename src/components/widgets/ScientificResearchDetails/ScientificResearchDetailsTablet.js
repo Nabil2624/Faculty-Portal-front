@@ -24,13 +24,13 @@ export default function ScientificResearchDetailsTablet({ research, t }) {
           <div className="bg-white rounded-lg shadow-lg p-6">
             <ContributorsWidget
               title={t("contributors")}
-              contributors={research.contributors}
+              contributors={research.contributors || []}
             />
           </div>
           <div className="bg-white rounded-lg shadow-lg p-6">
             <JournalsWidget
               title={t("journals")}
-              journals={research.journals}
+              journals={research.journals || []}
             />
           </div>
           <div className="bg-white rounded-lg shadow-lg p-6">

@@ -1,32 +1,49 @@
+import { useState, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
+import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
+import LoadingSpinner from "../components/LoadingSpinner";
 import useBreakpoint from "../hooks/useBreakpoint";
+
 import ScientificResearchDetailsMobile from "../components/widgets/ScientificResearchDetails/ScientificResearchDetailsMobile";
 import ScientificResearchDetailsTablet from "../components/widgets/ScientificResearchDetails/ScientificResearchDetailsTablet";
 import ScientificResearchDetailsDesktop from "../components/widgets/ScientificResearchDetails/ScientificResearchDetailsDesktop";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import ResearchTitle from "../components/ui/ResearchTitle";
-import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import LoadingSpinner from "../components/LoadingSpinner";
+
 import PageHeaderAction from "../components/ui/PageHeaderAction";
+import ResearchTitle from "../components/ui/ResearchTitle";
+
+import { getResearchDetails } from "../services/scientificResearchService";
 
 export default function ScientificResearchDetails() {
   const { t, i18n } = useTranslation("ScientificResearchDetails");
   const isArabic = i18n.language === "ar";
   const bp = useBreakpoint();
-  const [research, setResearch] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const { id } = useParams();
 
-  // fetch data
+  // ✅ State for research
+  const [research, setResearch] = useState(location.state?.research || null);
+  const [loading, setLoading] = useState(!research); // only loading if we need to fetch
+
   useEffect(() => {
-    import("../services/researchService").then(({ getResearchDetails }) => {
-      getResearchDetails().then(setResearch);
-    });
-  }, []);
+    if (id) {
+      getResearchDetails(id).then(setResearch);
+    }
+  }, [id]);
+  // Fetch research details if we don't have it already
+  useEffect(() => {
+    if (!research && id) {
+      setLoading(true);
+      getResearchDetails(id)
+        .then((res) => setResearch(res))
+        .catch((err) => console.error(err))
+        .finally(() => setLoading(false));
+    }
+  }, [id, research]);
 
-  // render nothing until research is loaded
-  if (!research) return null;
+  if (loading || !research) return <LoadingSpinner />;
 
-  if (loading) return <LoadingSpinner />;
   return (
     <ResponsiveLayoutProvider>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
@@ -36,11 +53,9 @@ export default function ScientificResearchDetails() {
         {bp === "mobile" && (
           <ScientificResearchDetailsMobile research={research} t={t} />
         )}
-
         {bp === "tablet" && (
           <ScientificResearchDetailsTablet research={research} t={t} />
         )}
-
         {bp === "desktop" && (
           <ScientificResearchDetailsDesktop research={research} t={t} />
         )}

@@ -1,6 +1,6 @@
 import SectionCard from "../../ui/SectionCard";
 
-export default function ContributorsWidget({ contributors, title }) {
+export default function ContributorsWidget({ contributors = [], title }) {
   return (
     <SectionCard title={title}>
       <ol

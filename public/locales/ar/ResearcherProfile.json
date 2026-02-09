@@ -1,0 +1,11 @@
+{
+  "title": "ملف الباحث",
+
+  "orcidId": "معرّف ORCID",
+  "googleScholar": "جوجل سكولار",
+  "emailDomain": "نطاق البريد الإلكتروني المؤسسي",
+  "organizationId": "المعرّف المؤسسي",
+
+  "interestsTitle": "اهتمامات الباحث",
+  "notFound": "لا يوجد"
+}

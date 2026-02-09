@@ -1,0 +1,50 @@
+{
+  "pageTitle": "إضافة رسالة ماجستير أو دكتوراه",
+
+  "thesisType": "نوع الرسالة",
+  "phd": "رسالة دكتوراه",
+  "master": "رسالة ماجستير",
+
+  "thesisTitle": "عنوان الرسالة",
+  "thesisTitlePlaceholder": "ادخل عنوان الرسالة",
+
+  "degree": "الدرجة",
+  "selectDegree": "اختر الدرجة",
+
+  "registrationDate": "تاريخ القيد",
+  "enrollmentDate": "تاريخ التسجيل",
+  "internalDegreeDate": "تاريخ منح الدرجة الداخلية",
+  "jointSupervisionDate": "تاريخ منح الدرجة إشراف مشترك",
+  "selectDate": "اختر {{date}}",
+  "registrationDatePlaceholder": "اختر تاريخ التسجيل",
+  "enrollmentDatePlaceholder": "اختر تاريخ التشكيل",
+  "internalDegreeDatePlaceholder": "اختر تاريخ المناقشة",
+  "jointSupervisionDatePlaceholder": "اختر تاريخ المنح",
+
+  "addCommitteeMember": "إضافة عضو لجنة",
+  "supervision": "إشراف",
+  "review": "تحكيم",
+  "both": "إشراف و تحكيم",
+
+  "memberName": "اسم العضو",
+  "memberNamePlaceholder": "اكتب اسم العضو",
+
+  "organization": "الجهة",
+  "selectOrganization": "اختر الجهة",
+
+  "jobTitle": "الدرجة الوظيفية",
+  "selectJobTitle": "اختر الدرجة الوظيفية",
+
+  "attachments": "المرفقات",
+  "attachmentsNote": "قم برفع اي ملفات ذات صلة بالبحث",
+  "uploadAttachments": "رفع المرفقات",
+
+  "relatedResearch": "الأبحاث المستمدة من الرسالة",
+  "research": "البحث",
+  "researchPlaceholder": "ابحث عن البحث في النظام",
+
+  "save": "حفظ",
+  "back": "عودة",
+
+  "required": "مطلوب"
+}

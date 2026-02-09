@@ -17,9 +17,12 @@ export default function ScientificResearchDetailsMobile({ research, t }) {
 
         <ContributorsWidget
           title={t("contributors")}
-          contributors={research.contributors}
+          contributors={research.contributors || []}
         />
-        <JournalsWidget title={t("journals")} journals={research.journals} />
+        <JournalsWidget
+          title={t("journals")}
+          journals={research.journals || []}
+        />
         <CitationsWidget title={t("citations")} />
       </div>
     </div>

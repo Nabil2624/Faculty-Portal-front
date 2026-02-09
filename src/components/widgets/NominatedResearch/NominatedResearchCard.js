@@ -40,7 +40,10 @@ export default function NominatedResearchCard({
 
       {/* Reserve space for icons */}
       <h3
-        className={`text-lg font-semibold mb-2 ${isArabic ? "pl-12" : "pr-12"}`}
+        className={`text-lg font-semibold mb-2 truncate overflow-hidden whitespace-nowrap ${
+          isArabic ? "pl-32" : " pl-4 pr-20"
+        }`}
+        title={item.title} // optional: show full text on hover
       >
         {item.title}
       </h3>
