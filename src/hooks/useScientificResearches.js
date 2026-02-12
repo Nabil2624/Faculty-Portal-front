@@ -19,7 +19,7 @@ export default function useScientificResearches(pageSize = 4) {
       const response = await axiosInstance.get(
         "/ResearchesAndTheses/Researches",
         {
-          params: { pageIndex: 1, pageSize },
+          params: { pageIndex: page, pageSize },
         },
       );
 

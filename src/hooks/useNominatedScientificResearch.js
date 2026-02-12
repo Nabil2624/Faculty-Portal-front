@@ -9,7 +9,8 @@ export default function useNominatedScientificResearch() {
   const { t, i18n } = useTranslation("NominatedResearch");
   const isArabic = i18n.language === "ar";
 
-  const [items, setItems] = useState([]);
+  const [allItems, setAllItems] = useState([]); // store all fetched data
+  const [items, setItems] = useState([]); // store current page items
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -23,44 +24,66 @@ export default function useNominatedScientificResearch() {
     setError("");
 
     try {
-      const response = await fetchNominatedResearches(currentPage, pageSize);
+      // always fetch pageIndex 1 (backend requirement)
+      const response = await fetchNominatedResearches(1, 1000); // large number to fetch all
       const result = response.data;
 
       if (!result?.data?.length) {
         setError(t("empty"));
+        setAllItems([]);
         setItems([]);
         setTotalPages(1);
       } else {
-        setItems(
-          result.data.map((item) => ({
-            id: item.id,
-            title: item.title,
-            journal: item.journalOrConfernce,
-            year: item.pubYear,
-          })),
-        );
-        setTotalPages(Math.ceil(result.totalCount / pageSize));
+        const mapped = result.data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          journal: item.journalOrConfernce,
+          year: item.pubYear,
+        }));
+
+        setAllItems(mapped);
+        setTotalPages(Math.ceil(mapped.length / pageSize));
+
+        // slice current page
+        const start = (currentPage - 1) * pageSize;
+        setItems(mapped.slice(start, start + pageSize));
       }
     } catch (err) {
       setError(err?.response?.data?.ErrorMessage || t("fetchError"));
+      setAllItems([]);
       setItems([]);
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
   };
 
+  // update items when currentPage changes
+  useEffect(() => {
+    const start = (currentPage - 1) * pageSize;
+    setItems(allItems.slice(start, start + pageSize));
+  }, [currentPage, allItems]);
+
   useEffect(() => {
     loadData();
-  }, [currentPage]);
+  }, []);
 
-  // ✅ Approve research
   const handleApprove = async (item) => {
     try {
       await approveNominatedResearch(item.id);
-      // Remove approved item from the list
-      setItems((prev) => prev.filter((i) => i.id !== item.id));
+      // remove from allItems
+      const newAll = allItems.filter((i) => i.id !== item.id);
+      setAllItems(newAll);
+
+      // adjust totalPages if needed
+      setTotalPages(Math.ceil(newAll.length / pageSize));
+
+      // adjust currentPage if last page becomes empty
+      if ((currentPage - 1) * pageSize >= newAll.length) {
+        setCurrentPage(Math.max(1, currentPage - 1));
+      }
     } catch (err) {
-      alert("Failed to approve research"); // Or use a toast
+      alert("Failed to approve research");
       console.error(err);
     }
   };
@@ -74,6 +97,6 @@ export default function useNominatedScientificResearch() {
     currentPage,
     totalPages,
     setCurrentPage,
-    handleApprove, // expose the approve function
+    handleApprove,
   };
 }

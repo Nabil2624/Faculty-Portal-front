@@ -1,8 +1,8 @@
-import SectionCard from "../../ui/SectionCard";
+import HalfSectionCard from "../../ui/HalfSectionCard";
 
 export default function JournalsWidget({ journals, title }) {
   return (
-    <SectionCard title={title}>
+    <HalfSectionCard title={title}>
       <ol
         dir="ltr"
         className="list-decimal list-inside text-center space-y-3 text-lg font-black"
@@ -11,6 +11,6 @@ export default function JournalsWidget({ journals, title }) {
           <li key={i}>{j}</li>
         ))}
       </ol>
-    </SectionCard>
+    </HalfSectionCard>
   );
 }

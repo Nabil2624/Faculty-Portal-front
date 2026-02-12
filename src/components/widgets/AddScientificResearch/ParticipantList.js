@@ -43,7 +43,7 @@ export default function ParticipantList({
       <label className="block mb-3 font-medium text-lg">{label}</label>
 
       {/* ORCID input */}
-      <div className="flex flex-col sm:flex-row items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-2">
         <input
           type="text"
           className={`w-full sm:flex-1 h-[40px] bg-[#E2E2E2] rounded-md px-3 text-[12px] outline-none text-gray-800 placeholder:text-gray-600 mt-2 sm:mt-0 ${
@@ -56,7 +56,7 @@ export default function ParticipantList({
         />
         <button
           type="button"
-          className="w-[36px] h-[36px] bg-[#B38E19] text-white rounded-md flex items-center justify-center mt-2 sm:mt-0 sm:ml-2"
+          className="w-[36px] h-[36px] bg-[#B38E19] text-white rounded-md flex items-center justify-center mt-2 sm:mt-0 sm:ml-2 "
           onClick={handleAddContributor}
         >
           <Plus size={22} />
@@ -97,7 +97,7 @@ export default function ParticipantList({
               <input
                 type="checkbox"
                 className="accent-[#B38E19]"
-                checked={p.internal}
+                // checked={p.internal}
                 onChange={() =>
                   setParticipants(
                     participants.map((pp, i) =>

@@ -1,6 +1,6 @@
 import useBreakpoint from "../hooks/useBreakpoint";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeaderDualAction from "../components/ui/PageHeaderDualAction";
+import PageHeaderAction from "../components/ui/PageHeaderAction"; // use single action
 import ResearchTitle from "../components/ui/ResearchTitle";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useTranslation } from "react-i18next";
@@ -48,8 +48,6 @@ export default function ScientificResearchFullDetails() {
         },
       ],
       citations: 12,
-
-      // **Add text here for grey boxes**
       relatedResearch:
         "هذا البحث يستند إلى أبحاث سابقة في مجال الذكاء الاصطناعي في التعليم.",
       abstract:
@@ -63,12 +61,11 @@ export default function ScientificResearchFullDetails() {
   return (
     <ResponsiveLayoutProvider>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
-        <PageHeaderDualAction
+        {/* Single Action Header */}
+        <PageHeaderAction
           title={t("title")}
-          primaryLabel={t("summary")}
-          secondaryLabel={t("edit")}
-          onPrimary={() => setShowSummary(true)}
-          onSecondary={() => console.log("Edit")}
+          actionLabel={t("edit")}
+          onClick={() => console.log("Edit")}
         />
 
         <ResearchTitle title={research.title} />

@@ -181,7 +181,7 @@ export default function ResearcherProfile() {
             <h1 className="text-5xl font-bold text-[#19355A] mt-5">
               {researcher.academicName}
             </h1>
-            <p className="text-2xl text-gray-700 mt-4 max-w-[650px]">
+            <p className="text-2xl text-gray-700 mt-4 max-w-[700px]">
               {researcher.jobTitle}
             </p>
           </div>

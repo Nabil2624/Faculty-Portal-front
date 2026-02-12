@@ -1,6 +1,6 @@
 import axiosInstance from "../utils/axiosInstance";
 
-// Fetch nominated researches (already exists)
+// Fetch nominated researches with pageSize = 4 by default
 export const fetchNominatedResearches = (pageIndex = 1, pageSize = 4) => {
   return axiosInstance.get("/ResearchesAndTheses/RecommendedResearches", {
     params: { pageIndex, pageSize },

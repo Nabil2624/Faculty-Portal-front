@@ -40,8 +40,9 @@ export default function NominatedResearchCard({
 
       {/* Reserve space for icons */}
       <h3
+        dir={isArabic ? "ltr" : "ltr"} //
         className={`text-lg font-semibold mb-2 truncate overflow-hidden whitespace-nowrap ${
-          isArabic ? "pl-32" : " pl-4 pr-20"
+          isArabic ? "pl-32 text-right" : " pr-28 text-left"
         }`}
         title={item.title} // optional: show full text on hover
       >

@@ -45,7 +45,7 @@
   "publisherPlaceholder": "ادخل اسم الناشر",
   "isRequired": "مطلوب",
   "doiRequired": "الـ DOI مطلوب",
-  "fetchDOIError": "الـ DOI غير صالح أو لم يتم العثور على البيانات",
+  "fetchDOIError": "الـ DOI خطأ",
   "orcidRequired": "رقم ORCID مطلوب",
   "contributorNotFound": "المشارك غير موجود",
   "fetchContributorError": "حدث خطأ أثناء جلب المشارك"

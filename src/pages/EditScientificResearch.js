@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
-import LoadingSpinner from "../components/LoadingSpinner";
 
-// UI & Widgets
+// UI & Widgets (SAME AS ADD)
 import InputField from "../components/ui/InputField";
 import RadioGroup from "../components/widgets/AddScientificResearch/RadioGroup";
 import ParticipantList from "../components/widgets/AddScientificResearch/ParticipantList";
@@ -11,32 +13,51 @@ import TextareaField from "../components/ui/TextAreaField";
 import AttachmentUploader from "../components/widgets/AddScientificResearch/AttachmentUploader";
 import DOIInput from "../components/widgets/AddScientificResearch/DOIInput";
 
-import { useEditScientificResearch } from "../hooks/useEditScientificResearch";
-
 export default function EditScientificResearch() {
   const { t, i18n } = useTranslation("AddScientificResearch");
   const isArabic = i18n.language === "ar";
+  const navigate = useNavigate();
 
-  const {
-    loading,
-    abstract,
-    setAbstract,
-    researchTitle,
-    setResearchTitle,
-    participants,
-    setParticipants,
-    form,
-    handleChange,
-    handleSave,
-  } = useEditScientificResearch(1); // 🔴 ID from route later
+  // 🔥 Placeholder data (mock existing research)
+  const [researchType, setResearchType] = useState("manual");
+  const [publisherType, setPublisherType] = useState("journal");
+  const [publicationType, setPublicationType] = useState("international");
 
-  if (loading) return <LoadingSpinner />;
+  const [researchTitle, setResearchTitle] = useState(
+    "Artificial Intelligence in Healthcare Systems",
+  );
+  const [journalOrConference, setJournalOrConference] = useState(
+    "International Journal of Computer Science",
+  );
+  const [issue, setIssue] = useState("Vol. 12");
+  const [pages, setPages] = useState("120 - 135");
+  const [year, setYear] = useState("2024");
+  const [publisher, setPublisher] = useState("Springer");
+  const [relatedResearchLink, setRelatedResearchLink] = useState(
+    "https://example.com/research",
+  );
+  const [abstract, setAbstract] = useState(
+    "This research explores the impact of artificial intelligence in modern healthcare systems, focusing on predictive analytics and clinical decision support systems.",
+  );
+  const [participants, setParticipants] = useState([
+    "Dr. Ahmed Hassan",
+    "Dr. Mona Ali",
+  ]);
+  const [doi, setDoi] = useState("10.1000/xyz123");
+
+  const handleSave = () => {
+    console.log("Edited Research Saved");
+  };
+
+  const handleCancel = () => {
+    navigate("/scientific-researches");
+  };
 
   return (
     <ResponsiveLayoutProvider>
       <div className="overflow-y-hidden">
         <div
-          className={`${isArabic ? "rtl" : "ltr"} p-6 bg-white min-h-screen max-w-[1600px] mx-auto`}
+          className={`${isArabic ? "rtl" : "ltr"} p-6 bg-white max-w-[1600px] mx-auto`}
         >
           <PageHeaderNoAction title={t("editPageTitle")} />
 
@@ -45,7 +66,7 @@ export default function EditScientificResearch() {
               isArabic ? "mr-2" : "ml-2"
             }`}
           >
-            {/* LEFT */}
+            {/* LEFT COLUMN */}
             <div className="space-y-8 order-2 md:-mt-10">
               <div className="grid grid-cols-1 md:grid-cols-2 md:gap-72">
                 <RadioGroup
@@ -55,6 +76,8 @@ export default function EditScientificResearch() {
                     { label: t("conference"), value: "conference" },
                   ]}
                   name="publisherType"
+                  value={publisherType}
+                  onChange={setPublisherType}
                 />
 
                 <RadioGroup
@@ -64,41 +87,37 @@ export default function EditScientificResearch() {
                     { label: t("international"), value: "international" },
                   ]}
                   name="publicationType"
+                  value={publicationType}
+                  onChange={setPublicationType}
                 />
               </div>
 
               <InputField
                 label={t("journalOrConference")}
-                value={form.journalOrConference}
-                onChange={(e) =>
-                  handleChange("journalOrConference", e.target.value)
-                }
+                value={journalOrConference}
+                setValue={setJournalOrConference}
               />
 
               <div className="grid grid-cols-2 gap-4">
                 <InputField
                   label={t("issue")}
-                  value={form.issue}
-                  onChange={(e) => handleChange("issue", e.target.value)}
+                  value={issue}
+                  setValue={setIssue}
                 />
                 <InputField
                   label={t("pages")}
-                  value={form.pages}
-                  onChange={(e) => handleChange("pages", e.target.value)}
+                  value={pages}
+                  setValue={setPages}
                 />
               </div>
 
               <InputField
                 label={t("researchLink")}
-                value={form.researchLink}
-                onChange={(e) => handleChange("researchLink", e.target.value)}
+                value={relatedResearchLink}
+                setValue={setRelatedResearchLink}
               />
 
-              <InputField
-                label={t("year")}
-                value={form.year}
-                onChange={(e) => handleChange("year", e.target.value)}
-              />
+              <InputField label={t("year")} value={year} setValue={setYear} />
 
               <ParticipantList
                 label={t("participants")}
@@ -113,7 +132,7 @@ export default function EditScientificResearch() {
               />
             </div>
 
-            {/* RIGHT */}
+            {/* RIGHT COLUMN */}
             <div className="space-y-6 order-1 -mt-9">
               <RadioGroup
                 label={t("researchType")}
@@ -122,35 +141,25 @@ export default function EditScientificResearch() {
                   { label: "DOI", value: "doi" },
                 ]}
                 name="researchType"
+                value={researchType}
+                onChange={setResearchType}
               />
 
-              <DOIInput />
+              <DOIInput value={doi} setValue={setDoi} />
 
               <TextareaField
                 label={t("researchTitle")}
                 value={researchTitle}
                 setValue={setResearchTitle}
-                required
                 height="h-[167px]"
-                className="border-2 border-[#B38E19]"
+                className="border-2 border-[#B38E19] focus:border-[#B38E19] focus:ring-0"
               />
 
-              <div className="mb-2">
-                <InputField
-                  label={t("publisher")}
-                  placeholder={t("publisherPlaceholder")}
-                />
-              </div>
-
-              <div className="pt-2">
-                <InputField
-                  label={t("relatedResearch")}
-                  value={form.relatedResearch}
-                  onChange={(e) =>
-                    handleChange("relatedResearch", e.target.value)
-                  }
-                />
-              </div>
+              <InputField
+                label={t("publisher")}
+                value={publisher}
+                setValue={setPublisher}
+              />
 
               <RadioGroup
                 label={t("basedOn")}
@@ -181,7 +190,11 @@ export default function EditScientificResearch() {
             >
               {t("save")}
             </button>
-            <button className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md">
+
+            <button
+              onClick={handleCancel}
+              className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md"
+            >
               {t("back")}
             </button>
           </div>

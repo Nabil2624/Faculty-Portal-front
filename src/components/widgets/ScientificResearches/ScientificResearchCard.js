@@ -11,10 +11,8 @@ export default function ScientificResearchCard({
 
   const handleClick = () => {
     if (item.source === "External") {
-      // Navigate and pass item as state
       navigate("/scientific-research-details", { state: { research: item } });
     } else if (item.source === "Internal") {
-      // handle internal case later
       onEdit && onEdit(item);
     }
   };
@@ -22,7 +20,6 @@ export default function ScientificResearchCard({
   return (
     <div
       onClick={() => navigate(`/scientific-research-details/${item.id}`)}
-      // <-- entire card is clickable
       className={`relative bg-[#EDEDED] rounded-xl shadow-lg p-4 border-[1.5px] border-[#19355a] cursor-pointer ${
         isArabic ? "border-r-[18px]" : "border-l-[18px]"
       }`}
@@ -30,7 +27,7 @@ export default function ScientificResearchCard({
       {/* Actions */}
       <div
         className={`absolute top-4 flex gap-3 ${isArabic ? "left-4" : "right-4"}`}
-        onClick={(e) => e.stopPropagation()} // prevent card click when clicking icon
+        onClick={(e) => e.stopPropagation()}
       >
         {item.source === "Internal" && (
           <Pencil
@@ -48,8 +45,13 @@ export default function ScientificResearchCard({
         )}
       </div>
 
+      {/* Title with proper RTL ellipsis */}
       <h3
-        className={`text-lg font-semibold mb-2 ${isArabic ? "pl-12" : "pr-12"} truncate`}
+        dir={isArabic ? "ltr" : "rtl"} // add this
+        className={`text-lg font-semibold mb-2 truncate overflow-hidden whitespace-nowrap ${
+          isArabic ? "pl-12 text-right" : "pr-12 text-left"
+        }`}
+        title={item.title || item.researchTitle}
       >
         {item.title || item.researchTitle}
       </h3>

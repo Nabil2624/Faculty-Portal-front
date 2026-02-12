@@ -27,5 +27,7 @@
   "researchRelated": "بحث له صلة",
   "abstract": "الملخص",
   "noAbstract": "لا يوجد ملخص",
-  "noRelatedResearch": "لا يوجد بحث ذو صلة"
+  "noRelatedResearch": "لا يوجد بحث ذو صلة",
+
+  "relatedResearch": "بحث له صلة"
 }

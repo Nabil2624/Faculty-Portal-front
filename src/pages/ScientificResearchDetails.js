@@ -22,7 +22,7 @@ export default function ScientificResearchDetails() {
   const location = useLocation();
   const { id } = useParams();
 
-  // ✅ State for research
+  // State for research
   const [research, setResearch] = useState(location.state?.research || null);
   const [loading, setLoading] = useState(!research); // only loading if we need to fetch
 
@@ -47,7 +47,16 @@ export default function ScientificResearchDetails() {
   return (
     <ResponsiveLayoutProvider>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
-        <PageHeaderAction title={t("title")} actionLabel={t("showFull")} />
+        <PageHeaderAction
+          title={t("title")}
+          actionLabel={t("showFull")}
+          onClick={() => {
+            if (research?.researchLink) {
+              window.open(research.researchLink, "_blank"); // open in new tab
+            }
+          }}
+        />
+
         <ResearchTitle title={research.title} />
 
         {bp === "mobile" && (

@@ -27,5 +27,7 @@
   "researchRelated": "Related Research",
   "abstract": "Abstract",
   "noAbstract": "No abstract available",
-  "noRelatedResearch": "No related research available"
+  "noRelatedResearch": "No related research available",
+
+  "relatedResearch": "Related Research"
 }

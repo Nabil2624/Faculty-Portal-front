@@ -1,5 +1,7 @@
 import InfoRow from "../../ui/InfoRow";
 import SectionCardLongTitle from "../../ui/SectionCardLongTitle";
+import AbstractWidget from "../ScientificResearchDetails/AbstractWidget";
+import JournalsWidget from "../ScientificResearchDetails/JournalsWidget"; // Will be used for "Related Research"
 
 export default function ScientificResearchFullDetailsDesktop({ research, t }) {
   return (
@@ -39,6 +41,7 @@ export default function ScientificResearchFullDetailsDesktop({ research, t }) {
 
       {/* Cards */}
       <div className="grid grid-cols-3 gap-x-16">
+        {/* Internal Contributors */}
         <SectionCardLongTitle title={t("internalContributors")}>
           <ol className="space-y-4 -mt-4">
             {research.internalContributors.map((c, i) => (
@@ -55,15 +58,16 @@ export default function ScientificResearchFullDetailsDesktop({ research, t }) {
           </ol>
         </SectionCardLongTitle>
 
-        <SectionCardLongTitle
-          title={t("externalContributors")}
-          className="-ml-8 pt-0"
-        >
-          {research.externalContributors.length === 0 ? (
-            <p className="text-gray-950 font-semibold mt-0">{t("none")}</p>
-          ) : null}
-        </SectionCardLongTitle>
+        {/* Replace External Contributors with Journals and Abstract */}
+        <div className="flex flex-col gap-6">
+          <JournalsWidget
+            title={t("relatedResearch")}
+            journals={research.journals || []}
+          />
+          <AbstractWidget title={t("abstract")} abstract={research.abstract} />
+        </div>
 
+        {/* Attachments */}
         <SectionCardLongTitle title={t("attachments")}>
           <ol className="space-y-2 -mt-4">
             {research.attachments.map((a, i) => (

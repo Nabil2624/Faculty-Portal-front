@@ -15,6 +15,8 @@ export default function useAddScientificResearch() {
   const [participants, setParticipants] = useState([]);
   const [doi, setDoi] = useState("");
   const [doiError, setDoiError] = useState("");
+  const [doiFetched, setDoiFetched] = useState(false);
+
   const [orcidError, setOrcidError] = useState("");
   const [saveError, setSaveError] = useState("");
   const [researchTitle, setResearchTitle] = useState("");
@@ -77,6 +79,7 @@ export default function useAddScientificResearch() {
       setPages(data.pages ?? "");
       setRelatedResearchLink(data.relatedResearchLink ?? data.url ?? "");
       setAbstract(data.abstract ?? "");
+      setDoiFetched(true);
 
       if (Array.isArray(data.authors)) {
         const mappedParticipants = data.authors.map((author) => ({
@@ -90,7 +93,7 @@ export default function useAddScientificResearch() {
         setParticipants(mappedParticipants);
       }
     } catch (error) {
-      console.error(error);
+      setDoiFetched(false);
       setDoiError(t("fetchDOIError"));
     } finally {
       setLoading(false);
@@ -159,5 +162,7 @@ export default function useAddScientificResearch() {
     handleSave,
     handleFetchDOI,
     handleFetchContributor,
+    doiFetched,
+    setDoiFetched,
   };
 }

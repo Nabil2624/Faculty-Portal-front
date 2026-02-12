@@ -7,7 +7,8 @@ export default function TextareaField({
   setValue,
   className = "",
   isAbstract = false,
-  error, // new prop for validation
+  error,
+  disabled = false, // disable the text area field
 }) {
   // Determine typing direction dynamically for abstract only
   const isArabic = isAbstract && /[\u0600-\u06FF]/.test(value);
@@ -61,20 +62,21 @@ export default function TextareaField({
         // Regular textarea
         <textarea
           value={value}
-          onChange={(e) => setValue && setValue(e.target.value)}
+          disabled={disabled}
+          onChange={(e) => !disabled && setValue && setValue(e.target.value)}
           className={`
-            w-full ${height}
-            bg-[#E2E2E2]
-            rounded-md
-            resize-none
-            outline-none
-            text-[12px]
-            px-3 py-4 pt-16
-            placeholder:text-gray-600
-            text-center
-            border ${error ? "border-red-500" : "border"}
-            ${className}
-          `}
+    w-full ${height}
+    ${disabled ? "bg-[#A8A8A8]" : "bg-[#E2E2E2]"}
+    rounded-md
+    resize-none
+    outline-none
+    text-[12px]
+    px-3 py-4 pt-20 pr-7
+    placeholder:text-gray-600
+    text-center
+    border ${error ? "border-red-500" : "border"}
+    ${className}
+  `}
           placeholder={placeholder}
         />
       )}

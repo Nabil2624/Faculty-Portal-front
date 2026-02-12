@@ -44,9 +44,15 @@ export default function AddScientificResearch() {
     handleSave: saveHook,
     handleFetchDOI,
     handleFetchContributor,
+    doiFetched,
+    setDoiFetched,
   } = useAddScientificResearch();
 
   const [errors, setErrors] = useState({});
+  const [researchType, setResearchType] = useState("manual");
+
+  const [publisherType, setPublisherType] = useState(""); // جهة النشر
+  const [publicationType, setPublicationType] = useState(""); // نوع النشر
 
   const navigate = useNavigate();
 
@@ -64,8 +70,9 @@ export default function AddScientificResearch() {
       newErrors.journalOrConference =
         t("journalOrConference") + " " + t("isRequired");
 
-    if (!researchTitle.trim())
+    if (researchType === "manual" && !researchTitle.trim()) {
       newErrors.researchTitle = t("researchTitle") + " " + t("isRequired");
+    }
 
     if (!abstract.trim())
       newErrors.abstract = t("abstract") + " " + t("isRequired");
@@ -73,7 +80,13 @@ export default function AddScientificResearch() {
     if (!participants.length)
       newErrors.participants = t("participants") + " " + t("isRequired");
 
-    if (!doi.trim()) newErrors.doi = "DOI " + t("isRequired");
+    if (researchType === "doi") {
+      if (!doi.trim()) {
+        newErrors.doi = "DOI " + t("isRequired");
+      } else if (!doiFetched) {
+        newErrors.doi = t("fetchDOIError"); // invalid DOI
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -82,6 +95,15 @@ export default function AddScientificResearch() {
   const handleSave = async () => {
     if (!validate()) return;
     await saveHook();
+  };
+
+  const clearError = (field) => {
+    setErrors((prev) => {
+      if (!prev[field]) return prev;
+      const copy = { ...prev };
+      delete copy[field];
+      return copy;
+    });
   };
 
   return (
@@ -105,7 +127,10 @@ export default function AddScientificResearch() {
                     { label: t("conference"), value: "conference" },
                   ]}
                   name="publisherType"
+                  value={publisherType}
+                  onChange={(val) => setPublisherType(val)}
                 />
+
                 <RadioGroup
                   label={t("publicationType")}
                   options={[
@@ -113,6 +138,8 @@ export default function AddScientificResearch() {
                     { label: t("international"), value: "international" },
                   ]}
                   name="publicationType"
+                  value={publicationType}
+                  onChange={(val) => setPublicationType(val)}
                 />
               </div>
 
@@ -120,7 +147,10 @@ export default function AddScientificResearch() {
                 label={t("journalOrConference")}
                 placeholder={t("journalOrConferencePlaceholder")}
                 value={journalOrConference}
-                setValue={setJournalOrConference}
+                setValue={(val) => {
+                  setJournalOrConference(val);
+                  clearError("journalOrConference");
+                }}
                 required
                 error={errors.journalOrConference}
               />
@@ -184,15 +214,43 @@ export default function AddScientificResearch() {
                   { label: "DOI", value: "doi" },
                 ]}
                 name="researchType"
+                value={researchType}
+                onChange={(val) => {
+                  setResearchType(val);
+
+                  setErrors((prev) => {
+                    const copy = { ...prev };
+
+                    if (val === "doi") {
+                      delete copy.researchTitle; // clear title error
+                    }
+
+                    return copy;
+                  });
+
+                  if (val === "manual") {
+                    setDoi("");
+                    setDoiFetched(false);
+                  }
+                }}
               />
 
               <div className="md:translate-y-3">
                 <DOIInput
                   placeholder={t("doiPlaceholder")}
                   value={doi}
-                  setValue={setDoi}
+                  setValue={(val) => {
+                    setDoi(val);
+                    setDoiFetched(false); // reset validity
+                    setErrors((prev) => {
+                      const copy = { ...prev };
+                      delete copy.doi;
+                      return copy;
+                    });
+                  }}
                   onSearch={handleFetchDOI}
-                  error={doiError}
+                  error={errors.doi || doiError}
+                  disabled={researchType === "manual"}
                 />
               </div>
 
@@ -201,15 +259,19 @@ export default function AddScientificResearch() {
                   label={t("researchTitle")}
                   placeholder={t("researchTitlePlaceholder")}
                   value={researchTitle}
-                  setValue={setResearchTitle}
+                  setValue={(val) => {
+                    setResearchTitle(val);
+                    clearError("researchTitle");
+                  }}
                   required
                   height="h-[167px]"
                   className="border-2 border-[#B38E19] focus:border-[#B38E19] focus:ring-0"
                   error={errors.researchTitle}
+                  disabled={researchType === "doi"} // DOI selected
                 />
               </div>
 
-              <div className="mb-2 md:translate-y-4">
+              <div className="mb-2 md:translate-y-3">
                 <InputField
                   label={t("publisher")}
                   placeholder={t("publisherPlaceholder")}
@@ -218,7 +280,7 @@ export default function AddScientificResearch() {
                 />
               </div>
 
-              <div className="pt-2 md:translate-y-4">
+              <div className="pt-1 md:translate-y-2">
                 <InputField
                   label={t("relatedResearch")}
                   placeholder={t("relatedResearchPlaceholder")}

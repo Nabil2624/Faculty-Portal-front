@@ -8,5 +8,10 @@
   "citations": "الأقتباسات",
   "publisher": "الناشر",
   "journals": "المجلات",
-  "contributors": "المساهمين"
+  "contributors": "المساهمين",
+  "volume": "المجلد",
+  "issue": "العدد",
+  "relatedResearch": "أبحاث ذات صلة",
+  "viewRelated": "عرض الابحاث",
+  "abstract": "الملخص"
 }
