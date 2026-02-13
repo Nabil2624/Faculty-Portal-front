@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { FiCalendar } from "react-icons/fi";
 
 export default function DateInput({
@@ -8,10 +9,17 @@ export default function DateInput({
   error,
   inputClass,
   isArabic,
-  inputRef,
-  onOpen,
   onChange,
 }) {
+  const dateRef = useRef(null);
+
+  const openDatePicker = () => {
+    if (dateRef.current) {
+      dateRef.current.showPicker?.(); // modern browsers support showPicker()
+      dateRef.current.focus(); // fallback for older browsers
+    }
+  };
+
   return (
     <div>
       <label className="block mb-4 text-lg">
@@ -25,7 +33,7 @@ export default function DateInput({
           readOnly
           placeholder={placeholder}
           className={inputClass}
-          onFocus={onOpen}
+          onFocus={openDatePicker}
         />
 
         <FiCalendar
@@ -33,13 +41,14 @@ export default function DateInput({
           className={`absolute top-1/2 -translate-y-1/2 cursor-pointer text-[#B38E19] ${
             isArabic ? "left-3" : "right-3"
           }`}
-          onClick={onOpen}
+          onClick={openDatePicker}
         />
 
         <input
           type="date"
-          ref={inputRef}
-          className="absolute opacity-0 pointer-events-none"
+          ref={dateRef}
+          className="absolute opacity-0 w-0 h-0"
+          value={value}
           onChange={(e) => onChange(e.target.value)}
         />
       </div>

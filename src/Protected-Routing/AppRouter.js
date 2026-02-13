@@ -101,7 +101,8 @@ function AppRouterInner() {
       <Route path="/scientific-researches" element={<ScientificResearches />} />
       <Route path="/supervision-thesis" element={<SupervisionThesis />} />
       <Route path="/supervision-info" element={<SupervisionInfo />} />
-      <Route path="/theses-details" element={<ThesesDetails />} />
+      <Route path="/theses-details/:id" element={<ThesesDetails />} />
+
       <Route path="/researcher-profile" element={<ResearcherProfile />} />
       <Route path="/add-thesis" element={<AddThesis />} />
       <Route path="/edit-thesis" element={<EditThesis />} />

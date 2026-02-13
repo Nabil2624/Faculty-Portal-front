@@ -5,10 +5,12 @@ export default function SupervisionThesisCard({
   isArabic,
   onDelete,
   onEdit,
+  onClick,
 }) {
   return (
     <div
-      className={`relative bg-[#EDEDED] rounded-xl shadow-lg p-4 border-[1.5px] border-[#19355a] ${
+      onClick={() => onClick(item)}
+      className={`relative bg-[#EDEDED] rounded-xl shadow-lg p-4 border-[1.5px] border-[#19355a] cursor-pointer hover:shadow-xl transition ${
         isArabic ? "border-r-[18px]" : "border-l-[18px]"
       }`}
     >
@@ -18,17 +20,21 @@ export default function SupervisionThesisCard({
           isArabic ? "left-4" : "right-4"
         }`}
       >
-        {/* Edit */}
         <Pencil
           className="w-5 h-5 cursor-pointer"
           style={{ color: "#B38E19" }}
-          onClick={() => onEdit(item)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(item);
+          }}
         />
 
-        {/* Delete */}
         <Trash2
           className="text-red-500 w-5 h-5 cursor-pointer"
-          onClick={() => onDelete(item)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(item);
+          }}
         />
       </div>
 

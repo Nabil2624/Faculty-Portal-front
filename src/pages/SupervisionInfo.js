@@ -3,13 +3,15 @@ import { useTranslation } from "react-i18next";
 
 import useBreakpoint from "../hooks/useBreakpoint";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeaderAction from "../components/ui/PageHeaderAction";
+
 import ResearchTitle from "../components/ui/ResearchTitle";
 import LoadingSpinner from "../components/LoadingSpinner";
 import SupervisionInfoMobile from "../components/widgets/SupervisionInfo/SupervisionInfoMobile";
 import SupervisionInfoTablet from "../components/widgets/SupervisionInfo/SupervisionInfoTablet";
 import SupervisionInfoDesktop from "../components/widgets/SupervisionInfo/SupervisionInfoDesktop";
 import PageHeaderLongAction from "../components/ui/PageHeaderLongAction";
+import { useLocation, useNavigate } from "react-router-dom";
+
 export default function SupervisionInfo() {
   const { t, i18n } = useTranslation("SupervisionInfo");
   const isArabic = i18n.language === "ar";
@@ -17,21 +19,17 @@ export default function SupervisionInfo() {
   const [loading, setLoading] = useState(false);
   const [info, setInfo] = useState(null);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    // mock for now – replace with real service later
-    setInfo({
-      thesisType: "رسالة ماجستير",
-      role: "مشرف",
-      studentName: "أحمد محمد علي",
-      specialization: "علوم الحاسب",
-      degree: "ماجستير",
-      registrationDate: "2021-09-12",
-      formationDate: "2022-01-20",
-      discussionDate: "2023-06-10",
-      grantDate: "2023-07-01",
-      university: "جامعة القاهرة - كلية الحاسبات",
-    });
-  }, []);
+    if (location.state) {
+      setInfo(location.state);
+    } else {
+      // If user refreshes page, go back safely
+      navigate("/supervision-thesis");
+    }
+  }, [location.state, navigate]);
 
   if (!info) return null;
 
