@@ -1,36 +1,53 @@
 import { useState } from "react";
 import { updateThesisSupervision } from "../services/supervisionThesis.service";
 
-export default function useEditSupervision(initialData = {}) {
+export default function useEditSupervision(navigate, initialData = {}) {
   const [formData, setFormData] = useState(initialData);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState(null);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  /* ---------------- VALIDATION ---------------- */
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.title?.trim()) newErrors.title = "thesisTitleRequired";
+
+    if (!formData.studentName?.trim())
+      newErrors.studentName = "studentNameRequired";
+
+    if (!formData.gradeId) newErrors.gradeId = "degreeRequired";
+
+    if (!formData.facultyMemberRole)
+      newErrors.facultyMemberRole = "facultyRoleRequired";
+
+    if (!formData.type) newErrors.type = "thesisTypeRequired";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  /* ---------------- SUBMIT ---------------- */
   const submitEdit = async (thesesId) => {
+    if (!validateForm()) return;
+
     try {
       setLoading(true);
-      setError(null);
-      setSuccess(false);
+      setServerError(null);
 
       await updateThesisSupervision(thesesId, formData);
 
-      setSuccess(true);
+      // NAVIGATE
+      navigate("/supervision-thesis");
     } catch (err) {
-      if (err.response?.status === 400) {
-        setError(
-          err.response.data?.message ||
-            "Validation error. Please check your inputs.",
-        );
-      } else if (err.response?.status === 409) {
-        setError("Conflict: This record may already exist.");
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
+      setServerError(
+        err.response?.data?.message ||
+          "Something went wrong. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -41,8 +58,8 @@ export default function useEditSupervision(initialData = {}) {
     handleChange,
     submitEdit,
     loading,
-    error,
-    success,
-    setFormData, // for pre-filling data
+    errors,
+    serverError,
+    setFormData,
   };
 }

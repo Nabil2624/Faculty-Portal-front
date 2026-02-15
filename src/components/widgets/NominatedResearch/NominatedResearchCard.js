@@ -19,38 +19,41 @@ export default function NominatedResearchCard({
           isArabic ? "left-4" : "right-4"
         }`}
       >
-        {/* View / Go */}
         <ArrowRightCircle
           className="w-6 h-6 cursor-pointer text-[#B38E19]"
           onClick={() => onView(item)}
         />
-
-        {/* Reject */}
         <XCircle
           className="w-6 h-6 cursor-pointer text-red-600"
           onClick={() => onReject(item)}
         />
-
-        {/* Accept */}
         <CircleCheck
           className="w-6 h-6 cursor-pointer text-[#19355a]"
           onClick={() => onAccept(item)}
         />
       </div>
 
-      {/* Reserve space for icons */}
+      {/* Title */}
       <h3
-        dir={isArabic ? "ltr" : "ltr"} //
+        dir="ltr"
         className={`text-lg font-semibold mb-2 truncate overflow-hidden whitespace-nowrap ${
-          isArabic ? "pl-32 text-right" : " pr-28 text-left"
+          isArabic ? "pl-32 text-right" : "pr-28 text-left"
         }`}
-        title={item.title} // optional: show full text on hover
+        title={item.title}
       >
         {item.title}
       </h3>
 
-      <p className="text-sm text-gray-700">{item.journal}</p>
-      <p className="text-xs text-gray-500 mt-1">{item.year}</p>
+      {/* Journal / Conference */}
+      <p
+        className="text-sm text-gray-700 truncate"
+        title={item.journalOrConfernce}
+      >
+        {item.journalOrConfernce || "-"}
+      </p>
+
+      {/* Publication Year */}
+      <p className="text-xs text-gray-500 mt-1">{item.pubYear || "-"}</p>
     </div>
   );
 }

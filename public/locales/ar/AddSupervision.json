@@ -7,8 +7,8 @@
   "both": "مشرف و محكم",
   "degree": "الدرجة",
   "chooseDegree": "اختر الدرجة",
-  "master": "ماجستير",
-  "phd": "دكتوراة",
+  "MASTER": "ماجستير",
+  "PHD": "دكتوراة",
   "registrationDate": "تاريخ التسجيل",
   "formationDate": "تاريخ التشكيل",
   "defenseDate": "تاريخ المناقشة",
@@ -29,5 +29,11 @@
   "specialization": "التخصص",
   "specializationPlaceholder": "مثل هندسة البرمجيات",
   "save": "حفظ",
-  "back": "عودة"
+  "back": "عودة",
+
+  "thesisTitleRequired": "عنوان الرسالة مطلوب",
+  "studentNameRequired": "اسم الطالب مطلوب",
+  "degreeRequired": "الدرجة مطلوبة",
+  "facultyRoleRequired": "دور عضو هيئة التدريس مطلوب",
+  "thesisTypeRequired": "نوع الرسالة مطلوب"
 }

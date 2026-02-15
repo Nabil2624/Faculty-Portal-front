@@ -4,47 +4,89 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 import DateInput from "../components/ui/DateInput";
 import SelectWithIcon from "../components/ui/SelectWithIcon";
-import InputField from "../components/ui/InputField";
+import InputFieldArea from "../components/ui/InputFieldArea";
 import TextareaField from "../components/ui/TextAreaField";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useEditSupervision from "../hooks/useEditSupervision";
+import { getAcademicGrades } from "../services/lookup.service";
 
 export default function EditSupervisionOrJudgment() {
   const { t, i18n } = useTranslation("AddSupervision");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
-  const { state } = useLocation(); // receives item from SupervisionThesisCard
+  const { state } = useLocation();
   const thesesId = state?.id;
-
   const {
     formData,
     handleChange,
     submitEdit,
     loading,
-    error,
-    success,
+    errors,
+    serverError,
     setFormData,
-  } = useEditSupervision();
+  } = useEditSupervision(navigate);
 
-  // pre-fill data when page loads
+  const [grades, setGrades] = useState([]);
+
+  /* ---------------- LOAD GRADES ---------------- */
   useEffect(() => {
-    if (state) {
-      setFormData({
-        type: state.type,
-        title: state.title,
-        facultyMemberRole: state.facultyMemberRole,
-        studentName: state.studentName,
-        specialization: state.specialization,
-        gradeId: state.gradeId,
-        registrationDate: state.registrationDate,
-        supervisionFormationDate: state.supervisionFormationDate,
-        discussionDate: state.discussionDate,
-        grantingDate: state.grantingDate,
-        universityOrFaculty: state.universityOrFaculty,
-        facultyMemberId: state.facultyMemberId,
-      });
-    }
+    const fetchGrades = async () => {
+      try {
+        const res = await getAcademicGrades();
+        setGrades(res.data || []);
+      } catch (err) {
+        console.error("Failed to fetch grades", err);
+      }
+    };
+    fetchGrades();
+  }, []);
+
+  /* ---------------- PREFILL ---------------- */
+  useEffect(() => {
+    if (!state) return;
+
+    const mappedType = state.type === "PHD" ? "PHD" : "MASTER";
+
+    let mappedRole = 1;
+    if (state.facultyMemberRole === "Adminstrator") mappedRole = 1;
+    else if (state.facultyMemberRole === "Reviewer") mappedRole = 2;
+    else if (
+      state.facultyMemberRole === "AdminstratorAndReviewer" ||
+      state.facultyMemberRole === "ReviewerAndAdminstrator"
+    )
+      mappedRole = 3;
+
+    setFormData({
+      type: mappedType,
+      facultyMemberRole: mappedRole,
+      gradeId: state.gradeId || state.grade?.id || "",
+      registrationDate: state.registrationDate || "",
+      supervisionFormationDate: state.supervisionFormationDate || "",
+      discussionDate: state.discussionDate || "",
+      grantingDate: state.grantingDate || "",
+      universityOrFaculty: state.universityOrFaculty || "",
+      title: state.title || "",
+      studentName: state.studentName || "",
+      specialization: state.specialization || "",
+    });
   }, [state, setFormData]);
+
+  /* ---------------- MATCH ADD BEHAVIOR ---------------- */
+
+  const setThesisType = (value) => handleChange("type", value);
+  const setFacultyRole = (value) => handleChange("facultyMemberRole", value);
+  const setDegreeId = (value) => handleChange("gradeId", value);
+  const setRegistrationDate = (value) =>
+    handleChange("registrationDate", value);
+  const setFormationDate = (value) =>
+    handleChange("supervisionFormationDate", value);
+  const setDiscussionDate = (value) => handleChange("discussionDate", value);
+  const setGrantingDate = (value) => handleChange("grantingDate", value);
+  const setUniversityOrFaculty = (value) =>
+    handleChange("universityOrFaculty", value);
+  const setTitle = (value) => handleChange("title", value);
+  const setStudentName = (value) => handleChange("studentName", value);
+  const setSpecialization = (value) => handleChange("specialization", value);
 
   const input =
     "w-full h-[40px] bg-[#E2E2E2] rounded-md px-3 text-[12px] outline-none text-gray-800 placeholder:text-gray-600";
@@ -62,7 +104,6 @@ export default function EditSupervisionOrJudgment() {
         >
           <PageHeaderNoAction title={t("editPageTitle")} />
 
-          {/* --- MAIN FORM (KEEP DESIGN EXACTLY SAME) --- */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-32 mt-12 max-w-[1500px] mx-auto">
             {/* LEFT COLUMN */}
             <div
@@ -76,37 +117,31 @@ export default function EditSupervisionOrJudgment() {
                   {t("facultyRole")}
                 </label>
                 <div className="flex gap-8 text-sm text-gray-700">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="facultyRole"
-                      checked={formData.facultyMemberRole === 1}
-                      onChange={() => handleChange("facultyMemberRole", 1)}
-                      className="accent-[#B38E19]"
-                    />
-                    {t("supervisor")}
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="facultyRole"
-                      checked={formData.facultyMemberRole === 2}
-                      onChange={() => handleChange("facultyMemberRole", 2)}
-                      className="accent-[#B38E19]"
-                    />
-                    {t("examiner")}
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="facultyRole"
-                      checked={formData.facultyMemberRole === 3}
-                      onChange={() => handleChange("facultyMemberRole", 3)}
-                      className="accent-[#B38E19]"
-                    />
-                    {t("supervisorAndExaminer")}
-                  </label>
+                  {[1, 2, 3].map((val) => (
+                    <label
+                      key={val}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="facultyRole"
+                        checked={formData.facultyMemberRole === val}
+                        onChange={() => setFacultyRole(val)}
+                        className="accent-[#B38E19]"
+                      />
+                      {val === 1
+                        ? t("supervisor")
+                        : val === 2
+                          ? t("examiner")
+                          : t("supervisorAndExaminer")}
+                    </label>
+                  ))}
                 </div>
+                {errors.facultyMemberRole && (
+                  <p className="text-red-600 text-sm mt-2">
+                    {t("facultyRoleRequired")}
+                  </p>
+                )}
               </div>
 
               {/* DEGREE */}
@@ -117,13 +152,22 @@ export default function EditSupervisionOrJudgment() {
                 <SelectWithIcon
                   className={input}
                   isArabic={isArabic}
-                  value={formData.type}
-                  onChange={(e) => handleChange("type", e.target.value)}
+                  value={formData.gradeId || ""}
+                  onChange={(e) => setDegreeId(e.target.value)}
                 >
                   <option value="">{t("chooseDegree")}</option>
-                  <option value="MASTER">{t("master")}</option>
-                  <option value="PHD">{t("phd")}</option>
+                  {grades.map((grade) => (
+                    <option key={grade.id} value={grade.id}>
+                      {isArabic ? grade.valueAr : grade.valueEn}
+                    </option>
+                  ))}
                 </SelectWithIcon>
+
+                {errors.gradeId && (
+                  <p className="text-red-600 text-sm mt-2">
+                    {t(errors.gradeId)}
+                  </p>
+                )}
               </div>
 
               {/* DATES */}
@@ -134,7 +178,7 @@ export default function EditSupervisionOrJudgment() {
                   inputClass={input}
                   isArabic={isArabic}
                   value={formData.registrationDate}
-                  onChange={(v) => handleChange("registrationDate", v)}
+                  onChange={setRegistrationDate}
                 />
                 <DateInput
                   label={t("formationDate")}
@@ -142,7 +186,7 @@ export default function EditSupervisionOrJudgment() {
                   inputClass={input}
                   isArabic={isArabic}
                   value={formData.supervisionFormationDate}
-                  onChange={(v) => handleChange("supervisionFormationDate", v)}
+                  onChange={setFormationDate}
                 />
                 <DateInput
                   label={t("defenseDate")}
@@ -150,7 +194,7 @@ export default function EditSupervisionOrJudgment() {
                   inputClass={input}
                   isArabic={isArabic}
                   value={formData.discussionDate}
-                  onChange={(v) => handleChange("discussionDate", v)}
+                  onChange={setDiscussionDate}
                 />
                 <DateInput
                   label={t("grantDate")}
@@ -158,18 +202,16 @@ export default function EditSupervisionOrJudgment() {
                   inputClass={input}
                   isArabic={isArabic}
                   value={formData.grantingDate}
-                  onChange={(v) => handleChange("grantingDate", v)}
+                  onChange={setGrantingDate}
                 />
               </div>
 
               {/* UNIVERSITY */}
-              <InputField
+              <InputFieldArea
                 label={t("university")}
                 placeholder={t("universityPlaceholder")}
                 value={formData.universityOrFaculty}
-                onChange={(e) =>
-                  handleChange("universityOrFaculty", e.target.value)
-                }
+                onChange={(e) => setUniversityOrFaculty(e.target.value)}
               />
             </div>
 
@@ -185,30 +227,27 @@ export default function EditSupervisionOrJudgment() {
                   {t("thesisType")}
                 </label>
                 <div className="flex gap-6 text-sm text-gray-700">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="thesisType"
-                      value="PHD"
-                      checked={formData.type === "PHD"}
-                      onChange={(e) => handleChange("type", e.target.value)}
-                    />
-                    {t("phdThesis")}
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="thesisType"
-                      value="MASTER"
-                      checked={formData.type === "MASTER"}
-                      onChange={(e) => handleChange("type", e.target.value)}
-                    />
-                    {t("masterThesis")}
-                  </label>
+                  {["PHD", "MASTER"].map((val) => (
+                    <label key={val} className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="thesisType"
+                        value={val}
+                        checked={formData.type === val}
+                        onChange={() => setThesisType(val)}
+                      />
+                      {val === "PHD" ? t("phdThesis") : t("masterThesis")}
+                    </label>
+                  ))}
                 </div>
+                {errors.type && (
+                  <p className="text-red-600 text-sm mt-2">
+                    {t("thesisTypeRequired")}
+                  </p>
+                )}
               </div>
 
-              {/* THESIS TITLE */}
+              {/* TITLE + STUDENT + SPECIALIZATION */}
               <div className="space-y-6 md:col-start-1 md:row-start-1 md:pl-12">
                 <TextareaField
                   label={t("thesisTitle")}
@@ -216,52 +255,49 @@ export default function EditSupervisionOrJudgment() {
                   required
                   height="h-[160px]"
                   value={formData.title}
-                  onChange={(e) => handleChange("title", e.target.value)}
+                  onChange={setTitle}
                   className="border-2 border-[#B38E19] focus:border-[#B38E19]"
+                  error={errors.title ? t(errors.title) : ""}
                 />
 
-                <InputField
+                <InputFieldArea
                   label={t("studentName")}
                   placeholder={t("studentNamePlaceholder")}
                   required
                   value={formData.studentName}
-                  onChange={(e) => handleChange("studentName", e.target.value)}
+                  onChange={(e) => setStudentName(e.target.value)}
                   className="-mt-1.5"
+                  error={errors.studentName ? t(errors.studentName) : ""}
                 />
 
-                {/* SPECIALIZATION */}
                 <div className="translate-y-1">
-                  <InputField
+                  <InputFieldArea
                     label={t("specialization")}
                     placeholder={t("specializationPlaceholder")}
                     value={formData.specialization}
-                    onChange={(e) =>
-                      handleChange("specialization", e.target.value)
-                    }
+                    onChange={(e) => setSpecialization(e.target.value)}
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* ERROR / SUCCESS */}
-          {(error || success) && (
+          {/* {(error || success) && (
             <div className="text-center mt-6 text-sm">
               {error && <div className="text-red-600">{error}</div>}
               {success && (
                 <div className="text-green-600">Saved successfully!</div>
               )}
             </div>
-          )}
+          )} */}
 
-          {/* ACTION BUTTONS */}
           <div className="flex gap-4 mt-16 justify-center md:mt-36 md:justify-end px-4">
             <button
               onClick={handleSubmit}
               disabled={loading}
               className="bg-[#B38E19] text-white px-10 py-1.5 rounded-md"
             >
-              {loading ? "Saving..." : t("save")}
+              {t("save")}
             </button>
 
             <button

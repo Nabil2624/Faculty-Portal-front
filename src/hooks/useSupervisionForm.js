@@ -1,28 +1,37 @@
-import { useState } from "react";
 import { addSupervisionThesis } from "../services/supervisionThesis.service";
+import { getAcademicGrades } from "../services/lookup.service";
+import { useState, useEffect } from "react";
 
 export default function useSupervisionForm(navigate) {
-  const [thesisType, setThesisType] = useState(""); // PHD or MASTER
-  const [facultyRole, setFacultyRole] = useState(""); // default
+  const [thesisType, setThesisType] = useState(null);
+  const [facultyRole, setFacultyRole] = useState(null);
   const [studentName, setStudentName] = useState("");
   const [thesisTitle, setThesisTitle] = useState("");
   const [specialization, setSpecialization] = useState("");
   const [degreeId, setDegreeId] = useState("");
   const [universityOrFaculty, setUniversityOrFaculty] = useState("");
-
   const [registrationDate, setRegistrationDate] = useState("");
   const [formationDate, setFormationDate] = useState("");
   const [discussionDate, setDiscussionDate] = useState("");
   const [grantingDate, setGrantingDate] = useState("");
-
+  const [grades, setGrades] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   // ---------------- VALIDATION ----------------
   const validateForm = () => {
     const newErrors = {};
-    if (!thesisTitle.trim()) newErrors.thesisTitle = "Thesis title is required";
-    if (!studentName.trim()) newErrors.studentName = "Student name is required";
+
+    if (!thesisTitle.trim()) newErrors.thesisTitle = "thesisTitleRequired";
+
+    if (!studentName.trim()) newErrors.studentName = "studentNameRequired";
+
+    if (!degreeId) newErrors.degreeId = "degreeRequired";
+
+    if (!facultyRole) newErrors.facultyRole = "facultyRoleRequired";
+
+    if (!thesisType) newErrors.thesisType = "thesisTypeRequired";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -34,12 +43,12 @@ export default function useSupervisionForm(navigate) {
     setLoading(true);
     try {
       await addSupervisionThesis({
-        type: thesisType || "PHD",
+        type: thesisType,
         title: thesisTitle,
         facultyMemberRole: facultyRole,
         studentName,
         specialization,
-        gradeId: degreeId || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        gradeId: degreeId,
         registrationDate,
         supervisionFormationDate: formationDate,
         discussionDate,
@@ -47,15 +56,28 @@ export default function useSupervisionForm(navigate) {
         universityOrFaculty,
       });
 
-      alert("Thesis supervision added successfully!");
-      navigate("/supervision-list");
+      // Navigate to supervision thesis list page after success
+      navigate("/supervision-thesis");
     } catch (error) {
       console.error("Failed to add supervision:", error);
-      alert("Failed to add supervision. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
+  //--------- LOOKUPS ----------------
+  useEffect(() => {
+    const fetchGrades = async () => {
+      try {
+        const res = await getAcademicGrades();
+        setGrades(res.data || []);
+      } catch (error) {
+        console.error("Failed to fetch academic grades:", error);
+      }
+    };
+
+    fetchGrades();
+  }, []);
 
   return {
     thesisType,
@@ -70,6 +92,7 @@ export default function useSupervisionForm(navigate) {
     setSpecialization,
     degreeId,
     setDegreeId,
+    grades,
     universityOrFaculty,
     setUniversityOrFaculty,
     registrationDate,

@@ -4,7 +4,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 import { useNavigate } from "react-router-dom";
 // UI & Widgets
-import InputField from "../components/ui/InputField";
+import InputFieldArea from "../components/ui/InputFieldArea";
 import RadioGroup from "../../src/components/widgets/AddScientificResearch/RadioGroup";
 import ParticipantList from "../../src/components/widgets/AddScientificResearch/ParticipantList";
 import TextareaField from "../components/ui/TextAreaField";
@@ -31,12 +31,12 @@ export default function AddScientificResearch() {
     setResearchTitle,
     publisher,
     setPublisher,
-    journalOrConference,
+    JournalOrConference,
     setJournalOrConference,
     year,
     setYear,
-    issue,
-    setIssue,
+    volume,
+    setVolume,
     pages,
     setPages,
     relatedResearchLink,
@@ -50,6 +50,8 @@ export default function AddScientificResearch() {
 
   const [errors, setErrors] = useState({});
   const [researchType, setResearchType] = useState("manual");
+  const [researchLink, setResearchLink] = useState(""); // left column
+  const [basedOn, setBasedOn] = useState(""); // empty initially
 
   const [publisherType, setPublisherType] = useState(""); // جهة النشر
   const [publicationType, setPublicationType] = useState(""); // نوع النشر
@@ -66,8 +68,8 @@ export default function AddScientificResearch() {
   const validate = () => {
     const newErrors = {};
 
-    if (!journalOrConference.trim())
-      newErrors.journalOrConference =
+    if (!JournalOrConference.trim())
+      newErrors.JournalOrConference =
         t("journalOrConference") + " " + t("isRequired");
 
     if (researchType === "manual" && !researchTitle.trim()) {
@@ -123,8 +125,8 @@ export default function AddScientificResearch() {
                 <RadioGroup
                   label={t("publisherType")}
                   options={[
-                    { label: t("journal"), value: "journal" },
-                    { label: t("conference"), value: "conference" },
+                    { label: t("journal"), value: 1 },
+                    { label: t("conference"), value: 2 },
                   ]}
                   name="publisherType"
                   value={publisherType}
@@ -134,8 +136,8 @@ export default function AddScientificResearch() {
                 <RadioGroup
                   label={t("publicationType")}
                   options={[
-                    { label: t("local"), value: "local" },
-                    { label: t("international"), value: "international" },
+                    { label: t("local"), value: 1 },
+                    { label: t("international"), value: 2 },
                   ]}
                   name="publicationType"
                   value={publicationType}
@@ -143,26 +145,26 @@ export default function AddScientificResearch() {
                 />
               </div>
 
-              <InputField
+              <InputFieldArea
                 label={t("journalOrConference")}
                 placeholder={t("journalOrConferencePlaceholder")}
-                value={journalOrConference}
+                value={JournalOrConference}
                 setValue={(val) => {
                   setJournalOrConference(val);
                   clearError("journalOrConference");
                 }}
                 required
-                error={errors.journalOrConference}
+                error={errors.JournalOrConference}
               />
 
               <div className="grid grid-cols-2 gap-4">
-                <InputField
+                <InputFieldArea
                   label={t("issue")}
                   placeholder={t("issuePlaceholder")}
-                  value={issue}
-                  setValue={setIssue}
+                  value={volume}
+                  setValue={setVolume}
                 />
-                <InputField
+                <InputFieldArea
                   label={t("pages")}
                   placeholder={t("pagesPlaceholder")}
                   value={pages}
@@ -170,13 +172,14 @@ export default function AddScientificResearch() {
                 />
               </div>
 
-              <InputField
+              <InputFieldArea
                 label={t("researchLink")}
                 placeholder={t("researchLinkPlaceholder")}
-                value={relatedResearchLink}
-                setValue={setRelatedResearchLink}
+                value={researchLink}
+                setValue={setResearchLink}
               />
-              <InputField
+
+              <InputFieldArea
                 label={t("year")}
                 placeholder={t("yearPlaceholder")}
                 value={year}
@@ -272,7 +275,7 @@ export default function AddScientificResearch() {
               </div>
 
               <div className="mb-2 md:translate-y-3">
-                <InputField
+                <InputFieldArea
                   label={t("publisher")}
                   placeholder={t("publisherPlaceholder")}
                   value={publisher}
@@ -281,7 +284,7 @@ export default function AddScientificResearch() {
               </div>
 
               <div className="pt-1 md:translate-y-2">
-                <InputField
+                <InputFieldArea
                   label={t("relatedResearch")}
                   placeholder={t("relatedResearchPlaceholder")}
                   value={relatedResearchLink}
@@ -293,11 +296,13 @@ export default function AddScientificResearch() {
                 <RadioGroup
                   label={t("basedOn")}
                   options={[
-                    { label: t("master"), value: "master" },
-                    { label: t("phd"), value: "phd" },
-                    { label: t("other"), value: "other" },
+                    { label: t("master"), value: 1 },
+                    { label: t("phd"), value: 2 },
+                    { label: t("other"), value: 3 },
                   ]}
                   name="basedOn"
+                  value={basedOn}
+                  onChange={(val) => setBasedOn(val)}
                 />
               </div>
 

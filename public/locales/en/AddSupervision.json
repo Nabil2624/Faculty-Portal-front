@@ -7,8 +7,8 @@
   "both": "Supervisor and Examiner",
   "degree": "Degree",
   "chooseDegree": "Choose Degree",
-  "master": "Master's",
-  "phd": "PhD",
+  "MASTER": "Master's",
+  "PHD": "PHD",
   "registrationDate": "Registration Date",
   "formationDate": "Formation Date",
   "defenseDate": "Defense Date",
@@ -29,5 +29,11 @@
   "specialization": "Specialization",
   "specializationPlaceholder": "e.g., Software Engineering",
   "save": "Save",
-  "back": "Back"
+  "back": "Back",
+
+  "thesisTitleRequired": "Thesis title is required",
+  "studentNameRequired": "Student name is required",
+  "degreeRequired": "Degree is required",
+  "facultyRoleRequired": "Faculty role is required",
+  "thesisTypeRequired": "Thesis type is required"
 }

@@ -1,4 +1,4 @@
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiX } from "react-icons/fi";
 import { ChevronDown } from "lucide-react";
 
 export default function CommitteeMembersCard({
@@ -7,11 +7,20 @@ export default function CommitteeMembersCard({
   addMember,
   updateMember,
   isArabic,
+  jobLevelOptions = [],
 }) {
   const card = "border border-[#B38E19] rounded-[5px] p-4 relative bg-white";
 
+  const removeMember = (index) => {
+    if (members.length === 1) return;
+    const copy = [...members];
+    copy.splice(index, 1);
+    updateMember(-1, "replace", copy);
+  };
+
   return (
     <div className={`${card} min-h-[auto] md:min-h-[370px] pb-6`}>
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h4 className="text-start font-semibold text-lg pr-4">
           {t("addCommitteeMember")}
@@ -27,9 +36,19 @@ export default function CommitteeMembersCard({
       {members.map((member, index) => (
         <div
           key={index}
-          className="mb-10 border-b border-dashed pb-6 last:border-b-0"
+          className="mb-10 border-b border-dashed pb-6 last:border-b-0 relative"
         >
-          {/* ROLE */}
+          {/* Remove Button */}
+          <button
+            type="button"
+            onClick={() => removeMember(index)}
+            className="w-10 h-10 bg-red-700 text-white rounded-md flex items-center justify-center shadow absolute top-0"
+            style={isArabic ? { left: "1px" } : { right: "1px" }}
+          >
+            <FiX size={24} />
+          </button>
+
+          {/* Role */}
           <div className="flex flex-wrap gap-4 md:gap-16 mb-4 text-[12px] mr-4">
             {["supervision", "review", "both"].map((role) => (
               <label key={role} className="flex items-center gap-1">
@@ -45,7 +64,7 @@ export default function CommitteeMembersCard({
             ))}
           </div>
 
-          {/* NAME */}
+          {/* Name */}
           <label className="block mb-4 text-lg">{t("memberName")}</label>
           <input
             className="h-[40px] bg-[#E2E2E2] text-[12px] outline-none w-full md:max-w-[490px] rounded-[3px] pr-3"
@@ -54,37 +73,43 @@ export default function CommitteeMembersCard({
             onChange={(e) => updateMember(index, "name", e.target.value)}
           />
 
+          {/* Job Title & Organization */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            {/* JOB TITLE */}
+            {/* Job Title */}
             <div>
-              <label className="block mb-4 text-lg mt-3">{t("jobTitle")}</label>
-              <div className="relative w-[219px]">
+              <label className="block mb-2 text-lg mt-3">{t("jobTitle")}</label>
+              <div className="relative">
                 <select
-                  className="h-[40px] bg-[#E2E2E2] rounded-[3px] px-3 text-[12px] outline-none w-full text-gray-600 appearance-none"
-                  value={member.jobTitle}
+                  className="h-[40px] bg-[#E2E2E2] rounded-[3px] px-3 text-[12px] outline-none w-full text-gray-700 appearance-none"
+                  value={member.jobTitle || ""}
                   onChange={(e) =>
                     updateMember(index, "jobTitle", e.target.value)
                   }
                 >
                   <option value="">{t("selectJobTitle")}</option>
+                  {jobLevelOptions.map((j) => (
+                    <option key={j.id} value={j.id}>
+                      {isArabic ? j.valueAr : j.valueEn}
+                    </option>
+                  ))}
                 </select>
                 <ChevronDown
-                  size={26}
+                  size={20}
                   className="absolute top-1/2 -translate-y-1/2 text-[#B38E19] pointer-events-none"
-                  style={isArabic ? { left: "8px" } : { right: "12px" }}
+                  style={isArabic ? { left: "8px" } : { right: "8px" }}
                 />
               </div>
             </div>
 
-            {/* ORGANIZATION */}
+            {/* Organization */}
             <div>
-              <label className="block mb-4 text-lg mt-3">
+              <label className="block mb-2 text-lg mt-3">
                 {t("organization")}
               </label>
-              <div className="relative w-[219px]">
+              <div className="relative">
                 <select
-                  className="h-[40px] bg-[#E2E2E2] rounded-[3px] px-3 text-[12px] outline-none w-full text-gray-600 appearance-none"
-                  value={member.organization}
+                  className="h-[40px] bg-[#E2E2E2] rounded-[3px] px-3 text-[12px] outline-none w-full text-gray-700 appearance-none"
+                  value={member.organization || ""}
                   onChange={(e) =>
                     updateMember(index, "organization", e.target.value)
                   }
@@ -94,7 +119,7 @@ export default function CommitteeMembersCard({
                   <option value="org2">Organization 2</option>
                 </select>
                 <ChevronDown
-                  size={26}
+                  size={20}
                   className="absolute top-1/2 -translate-y-1/2 text-[#B38E19] pointer-events-none"
                   style={isArabic ? { left: "8px" } : { right: "8px" }}
                 />

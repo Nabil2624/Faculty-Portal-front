@@ -12,6 +12,7 @@ import DeleteResearchModal from "../components/widgets/ScientificResearches/Dele
 
 import useScientificResearches from "../hooks/useScientificResearches";
 
+import { deleteScientificResearch } from "../services/scientificResearchService";
 export default function ScientificResearches() {
   const { t, i18n } = useTranslation("ScientificResearches");
   const isArabic = i18n.language === "ar";
@@ -24,13 +25,30 @@ export default function ScientificResearches() {
     currentPage,
     totalPages,
     setCurrentPage,
+    fetchResearches, // fetch researches
   } = useScientificResearches(4);
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
-  const handleDelete = () => {
-    setShowDelete(false);
-    // optionally call API to delete
+  const handleDelete = async () => {
+    if (!selectedItem) return;
+
+    try {
+      await deleteScientificResearch(selectedItem.id);
+
+      // refresh list after deletion
+      await fetchResearches(currentPage);
+
+      setShowDelete(false);
+      setSelectedItem(null);
+    } catch (err) {
+      console.error(err);
+
+      const apiMessage =
+        err?.response?.data?.errorMessage || err?.response?.data?.message;
+
+      alert(apiMessage || t("deleteError"));
+    }
   };
 
   if (loading) return <LoadingSpinner />;

@@ -12,5 +12,12 @@
   "formationDate": "تاريخ التشكيل",
   "discussionDate": "تاريخ المناقشة",
   "grantDate": "تاريخ المنح",
-  "university": "الجامعة / الكلية"
+  "university": "الجامعة / الكلية",
+
+  "PHD": "دكتوراه",
+  "MASTERS": "ماجستير",
+
+  "Adminstrator": "مشرف",
+  "Reviewer": "مشرف و محكم",
+  "AdminstratorAndReviewer": "مشرف و محكم"
 }

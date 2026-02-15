@@ -73,6 +73,7 @@ import EditScientificResearch from "../pages/EditScientificResearch";
 import EditThesis from "../pages/EditThesis";
 import AddSupervisionOrJudgement from "../pages/AddSupervisionOrJudgement";
 import EditSupervisionOrJudgement from "../pages/EditSupervisionOrJudgement";
+import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -107,6 +108,7 @@ function AppRouterInner() {
       <Route path="/add-thesis" element={<AddThesis />} />
       <Route path="/edit-thesis" element={<EditThesis />} />
       <Route path="/add-supervision" element={<AddSupervisionOrJudgement />} />
+      <Route path="/missing-scholar-card" element={<MissingScholarCard />} />
       <Route
         path="/edit-supervision"
         element={<EditSupervisionOrJudgement />}

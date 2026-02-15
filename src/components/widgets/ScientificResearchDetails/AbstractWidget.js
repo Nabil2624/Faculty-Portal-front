@@ -13,9 +13,9 @@ export default function AbstractWidget({ abstract, title, isArabic }) {
 
   // Remove trailing ellipsis for hover tooltip only
   const tooltipText =
-    abstract.endsWith("...") || abstract.endsWith("…")
+    abstract && (abstract.endsWith("...") || abstract.endsWith("…"))
       ? abstract.slice(0, -2)
-      : abstract;
+      : abstract || "-"; // fallback for undefined
 
   const tooltipDirection = isMostlyArabic(abstract)
     ? "text-right"

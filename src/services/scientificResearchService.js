@@ -17,7 +17,10 @@ export const getResearchDetails = async (id) => {
 // Save research
 export const saveScientificResearch = async (data) => {
   try {
-    const response = await axiosInstance.post("/scientific-research", data);
+    const response = await axiosInstance.post(
+      "/ResearchesAndTheses/AddResearch",
+      data,
+    );
     return response.data;
   } catch (error) {
     console.error(error);
@@ -52,6 +55,22 @@ export const fetchContributorByORCID = async (orcid) => {
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
+  }
+};
+
+// Delete research
+export const deleteScientificResearch = async (researchId) => {
+  if (!researchId) throw new Error("Research ID is required");
+
+  try {
+    const response = await axiosInstance.delete(
+      `/ResearchesAndTheses/RemoveResearch/${researchId}`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Delete error:", error);
     throw error;
   }
 };

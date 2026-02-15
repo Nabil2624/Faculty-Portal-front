@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
@@ -19,6 +19,7 @@ export default function ScientificResearchDetails() {
   const { t, i18n } = useTranslation("ScientificResearchDetails");
   const isArabic = i18n.language === "ar";
   const bp = useBreakpoint();
+  const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
 
@@ -26,21 +27,20 @@ export default function ScientificResearchDetails() {
   const [research, setResearch] = useState(location.state?.research || null);
   const [loading, setLoading] = useState(!research); // only loading if we need to fetch
 
-  useEffect(() => {
-    if (id) {
-      getResearchDetails(id).then(setResearch);
-    }
-  }, [id]);
-  // Fetch research details if we don't have it already
+  //  Fetch research details only if we don't already have it
   useEffect(() => {
     if (!research && id) {
       setLoading(true);
       getResearchDetails(id)
         .then((res) => setResearch(res))
-        .catch((err) => console.error(err))
+        .catch((err) => {
+          console.error(err);
+          // alert("Research details not found or unavailable");
+          navigate(-1); // go back if not found
+        })
         .finally(() => setLoading(false));
     }
-  }, [id, research]);
+  }, [id, research, navigate]);
 
   if (loading || !research) return <LoadingSpinner />;
 

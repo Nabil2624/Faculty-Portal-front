@@ -7,5 +7,7 @@
   "empty": "No nominated research found",
   "fetchError": "Failed to load nominated research",
   "previous": "Previous",
-  "next": "Next"
+  "next": "Next",
+  "page": "page",
+  "of": "of"
 }

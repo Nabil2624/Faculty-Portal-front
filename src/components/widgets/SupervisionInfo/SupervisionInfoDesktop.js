@@ -15,7 +15,6 @@ export default function SupervisionInfoDesktop({ info, t }) {
       <InfoRow label={t("discussionDate")} value={info.discussionDate} />
       <InfoRow label={t("grantDate")} value={info.grantDate} />
 
-      {/* Last row → only one item (this is OK and expected) */}
       <InfoRow label={t("university")} value={info.university} />
     </div>
   );

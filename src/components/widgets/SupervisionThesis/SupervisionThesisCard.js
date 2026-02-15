@@ -1,4 +1,5 @@
 import { Trash2, Pencil } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function SupervisionThesisCard({
   item,
@@ -7,6 +8,14 @@ export default function SupervisionThesisCard({
   onEdit,
   onClick,
 }) {
+  const { t } = useTranslation("SupervisionThesis");
+
+  // Translate type
+  const typeTranslated = t(item.type);
+
+  // Translate faculty member role
+  const roleTranslated = t(item.facultyMemberRole);
+
   return (
     <div
       onClick={() => onClick(item)}
@@ -16,9 +25,7 @@ export default function SupervisionThesisCard({
     >
       {/* Actions */}
       <div
-        className={`absolute top-4 flex gap-3 ${
-          isArabic ? "left-4" : "right-4"
-        }`}
+        className={`absolute top-4 flex gap-3 ${isArabic ? "left-4" : "right-4"}`}
       >
         <Pencil
           className="w-5 h-5 cursor-pointer"
@@ -38,15 +45,22 @@ export default function SupervisionThesisCard({
         />
       </div>
 
+      {/* Title */}
       <h3
         className={`text-lg font-semibold mb-2 ${isArabic ? "pl-12" : "pr-12"}`}
       >
         {item.title}
       </h3>
 
-      <p className="text-sm text-gray-700">{item.type}</p>
+      {/* Type + Faculty Member Role */}
+      <p className="text-sm text-gray-700">
+        {typeTranslated} - {roleTranslated}
+      </p>
 
-      <p className="text-xs text-gray-500 mt-1">{item.student}</p>
+      {/* Student */}
+      <p className="text-xs text-gray-500 mt-1">
+        {t("Student")}: {item.studentName}
+      </p>
     </div>
   );
 }

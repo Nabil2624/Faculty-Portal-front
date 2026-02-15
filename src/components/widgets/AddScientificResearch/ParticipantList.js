@@ -97,7 +97,7 @@ export default function ParticipantList({
               <input
                 type="checkbox"
                 className="accent-[#B38E19]"
-                // checked={p.internal}
+                checked={!!p.internal} // ensures false/undefined is treated as false
                 onChange={() =>
                   setParticipants(
                     participants.map((pp, i) =>
@@ -106,6 +106,7 @@ export default function ParticipantList({
                   )
                 }
               />
+
               <span className="text-xs sm:text-sm">Internal Member</span>
             </label>
           </div>

@@ -12,5 +12,12 @@
   "formationDate": "Committee Formation Date",
   "discussionDate": "Defense Date",
   "grantDate": "Degree Award Date",
-  "university": "University / College"
+  "university": "University / College",
+
+  "PHD": "PhD",
+  "MASTERS": "Masters",
+
+  "Adminstrator": "Supervisor",
+  "Reviewer": "Examiner",
+  "AdminstratorAndReviewer": "Supervisor and Examiner"
 }

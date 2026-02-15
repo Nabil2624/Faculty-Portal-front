@@ -6,7 +6,7 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 
 // UI & Widgets (SAME AS ADD)
-import InputField from "../components/ui/InputField";
+import InputFieldArea from "../components/ui/InputFieldArea";
 import RadioGroup from "../components/widgets/AddScientificResearch/RadioGroup";
 import ParticipantList from "../components/widgets/AddScientificResearch/ParticipantList";
 import TextareaField from "../components/ui/TextAreaField";
@@ -18,7 +18,7 @@ export default function EditScientificResearch() {
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
 
-  // 🔥 Placeholder data (mock existing research)
+  // Placeholder data (mock existing research)
   const [researchType, setResearchType] = useState("manual");
   const [publisherType, setPublisherType] = useState("journal");
   const [publicationType, setPublicationType] = useState("international");
@@ -92,32 +92,36 @@ export default function EditScientificResearch() {
                 />
               </div>
 
-              <InputField
+              <InputFieldArea
                 label={t("journalOrConference")}
                 value={journalOrConference}
                 setValue={setJournalOrConference}
               />
 
               <div className="grid grid-cols-2 gap-4">
-                <InputField
+                <InputFieldArea
                   label={t("issue")}
                   value={issue}
                   setValue={setIssue}
                 />
-                <InputField
+                <InputFieldArea
                   label={t("pages")}
                   value={pages}
                   setValue={setPages}
                 />
               </div>
 
-              <InputField
+              <InputFieldArea
                 label={t("researchLink")}
                 value={relatedResearchLink}
                 setValue={setRelatedResearchLink}
               />
 
-              <InputField label={t("year")} value={year} setValue={setYear} />
+              <InputFieldArea
+                label={t("year")}
+                value={year}
+                setValue={setYear}
+              />
 
               <ParticipantList
                 label={t("participants")}
@@ -155,7 +159,7 @@ export default function EditScientificResearch() {
                 className="border-2 border-[#B38E19] focus:border-[#B38E19] focus:ring-0"
               />
 
-              <InputField
+              <InputFieldArea
                 label={t("publisher")}
                 value={publisher}
                 setValue={setPublisher}

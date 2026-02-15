@@ -1,10 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
-import InputField from "../components/ui/InputField";
+import InputFieldArea from "../components/ui/InputFieldArea";
 import TextareaField from "../components/ui/TextAreaField";
 import SelectWithIcon from "../components/ui/SelectWithIcon";
 import DateInput from "../components/ui/DateInput";
@@ -16,6 +17,9 @@ export default function AddSupervisionOrJudgement() {
   const { t, i18n } = useTranslation("AddSupervision");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
+
+  const [degrees, setDegrees] = useState([]);
+  const [degreesLoading, setDegreesLoading] = useState(false);
 
   const {
     thesisType,
@@ -30,6 +34,7 @@ export default function AddSupervisionOrJudgement() {
     setSpecialization,
     degreeId,
     setDegreeId,
+    grades,
     universityOrFaculty,
     setUniversityOrFaculty,
     registrationDate,
@@ -79,27 +84,40 @@ export default function AddSupervisionOrJudgement() {
             } md:row-start-1`}
           >
             {/* Faculty Role */}
+            {/* Faculty Role */}
             <div>
               <label className="block mb-3 font-medium text-lg">
                 {t("facultyRole")}
               </label>
+
               <div className="flex gap-8 text-sm text-gray-700">
-                {["supervisor", "Examiner", "both"].map((role) => (
+                {[
+                  { label: t("supervisor"), value: 1 },
+                  { label: t("examiner"), value: 2 },
+                  { label: t("both"), value: 3 },
+                ].map((role) => (
                   <label
-                    key={role}
+                    key={role.value}
                     className="flex items-center gap-2 cursor-pointer"
                   >
                     <input
                       type="radio"
                       name="facultyRole"
-                      value={role}
-                      checked={facultyRole === role}
-                      onChange={(e) => setFacultyRole(e.target.value)}
+                      value={role.value}
+                      checked={facultyRole === role.value}
+                      onChange={(e) => setFacultyRole(Number(e.target.value))}
                     />
-                    {t(role.toLowerCase())}
+                    {role.label}
                   </label>
                 ))}
               </div>
+
+              {/* ERROR MESSAGE */}
+              {errors.facultyRole && (
+                <p className="text-red-600 text-sm mt-2">
+                  {t("facultyRoleRequired")}
+                </p>
+              )}
             </div>
 
             {/* Degree */}
@@ -114,11 +132,19 @@ export default function AddSupervisionOrJudgement() {
                 isArabic={isArabic}
               >
                 <option value="">{t("chooseDegree")}</option>
-                <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">
-                  {t("master")}
-                </option>
-                <option value="another-id">{t("phd")}</option>
+
+                {grades.map((grade) => (
+                  <option key={grade.id} value={grade.id}>
+                    {isArabic ? grade.valueAr : grade.valueEn}
+                  </option>
+                ))}
               </SelectWithIcon>
+
+              {errors.degreeId && (
+                <p className="text-red-600 text-sm mt-2">
+                  {t(errors.degreeId)}
+                </p>
+              )}
             </div>
 
             {/* Dates */}
@@ -158,7 +184,7 @@ export default function AddSupervisionOrJudgement() {
             </div>
 
             {/* University */}
-            <InputField
+            <InputFieldArea
               label={t("university")}
               placeholder={t("universityPlaceholder")}
               value={universityOrFaculty}
@@ -179,20 +205,31 @@ export default function AddSupervisionOrJudgement() {
               <label className="block mb-2 font-medium text-lg">
                 {t("thesisType")}
               </label>
+
               <div className="flex gap-6 text-sm text-gray-700">
-                {["PHD", "MASTER"].map((type) => (
-                  <label key={type} className="flex items-center gap-2">
+                {[
+                  { label: t("PHD"), value: 1 },
+                  { label: t("MASTER"), value: 2 },
+                ].map((type) => (
+                  <label key={type.value} className="flex items-center gap-2">
                     <input
                       type="radio"
                       name="thesisType"
-                      value={type}
-                      checked={thesisType === type}
-                      onChange={(e) => setThesisType(e.target.value)}
+                      value={type.value}
+                      checked={thesisType === type.value}
+                      onChange={(e) => setThesisType(Number(e.target.value))}
                     />
-                    {t(type.toLowerCase() + "Thesis")}
+                    {type.label}
                   </label>
                 ))}
               </div>
+
+              {/* ERROR MESSAGE */}
+              {errors.thesisType && (
+                <p className="text-red-600 text-sm mt-2">
+                  {t("thesisTypeRequired")}
+                </p>
+              )}
             </div>
 
             {/* Thesis Title */}
@@ -204,25 +241,25 @@ export default function AddSupervisionOrJudgement() {
               required
               height="h-[160px]"
               className="border-2 border-[#B38E19]"
-              error={errors.thesisTitle}
+              error={errors.thesisTitle ? t(errors.thesisTitle) : ""}
             />
 
             {/* Student Name */}
             <div className="md:-translate-y-5">
-              <InputField
+              <InputFieldArea
                 label={t("studentName")}
                 placeholder={t("studentNamePlaceholder")}
                 value={studentName}
                 onChange={(e) => setStudentName(e.target.value)}
                 required
                 className="-mt-1.5"
-                error={errors.studentName}
+                error={errors.studentName ? t(errors.studentName) : ""}
               />
             </div>
 
             {/* Specialization */}
             <div className="md:-translate-y-5">
-              <InputField
+              <InputFieldArea
                 label={t("specialization")}
                 placeholder={t("specializationPlaceholder")}
                 value={specialization}
@@ -237,13 +274,14 @@ export default function AddSupervisionOrJudgement() {
           <button
             className="bg-[#B38E19] text-white px-10 py-1.5 rounded-md"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading} // just prevents double submit
           >
             {t("save")}
           </button>
+
           <button
             className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md"
-            onClick={() => navigate("/supervision-list")}
+            onClick={() => navigate("/supervision-thesis")}
           >
             {t("back")}
           </button>

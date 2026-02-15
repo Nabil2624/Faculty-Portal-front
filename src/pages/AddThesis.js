@@ -1,27 +1,45 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { Info } from "lucide-react";
+import { Info, ChevronDown } from "lucide-react";
 
 import { useAddThesisForm } from "../hooks/useAddThesisForm";
 import DateInput from "../components/ui/DateInput";
-import SelectWithIcon from "../components/ui/SelectWithIcon";
 import CommitteeMembersCard from "../components/widgets/AddThesis/CommitteeMembersCard";
 import RelatedResearchCard from "../components/widgets/AddThesis/RelatedResearchCard";
+import axiosInstance from "../utils/axiosInstance";
 
 export default function AddThesis() {
   const { t, i18n } = useTranslation("AddThesis");
   const isArabic = i18n.language === "ar";
 
-  const { refs, values, setters, helpers, errors } = useAddThesisForm(t);
+  const { refs, values, setters, helpers, errors, loading } =
+    useAddThesisForm(t);
+  const [qualificationOptions, setQualificationOptions] = useState([]);
+  const [academicGradeOptions, setAcademicGradeOptions] = useState([]);
 
+  const [jobLevelOptions, setJobLevelOptions] = useState([]);
   const input =
     "w-full h-[40px] bg-[#E2E2E2] rounded-md px-3 text-[12px] outline-none text-gray-800 placeholder:text-gray-600";
 
-  const card = "border border-[#B38E19] rounded-[5px] p-4 relative bg-white";
+  // Fetch dropdowns for academic qualifications
+  useEffect(() => {
+    const fetchAcademicQualifications = async () => {
+      try {
+        const { data } = await axiosInstance.get(
+          "/LookUpItems/AcademicQualifications",
+        );
+        setJobLevelOptions(data || []);
+      } catch (err) {
+        console.error("Failed to load Academic Qualifications", err);
+      }
+    };
 
-  const loading = false;
+    fetchAcademicQualifications();
+  }, []);
+
   if (loading) return <LoadingSpinner />;
 
   return (
@@ -38,12 +56,14 @@ export default function AddThesis() {
         >
           {/* LEFT COLUMN */}
           <div className="space-y-8 order-2 mt-6 md:mt-20">
+            {/* Committee Members Card */}
             <CommitteeMembersCard
               t={t}
               members={values.members}
               addMember={helpers.addMember}
               updateMember={helpers.updateMember}
               isArabic={isArabic}
+              jobLevelOptions={jobLevelOptions} // Pass job levels
             />
 
             {/* Attachments */}
@@ -51,21 +71,11 @@ export default function AddThesis() {
               <label className="block mb-2 font-medium text-xl">
                 {t("attachments")}
               </label>
-
               <div className="flex items-center gap-2 text-[11px] text-[#B38E19] mb-4">
                 <Info size={14} style={{ color: "#19355A" }} />
                 <span>{t("attachmentsNote")}</span>
               </div>
-
-              <button
-                className="
-                  bg-[#19355A] text-white
-                  w-[190px] h-[32px]
-                  rounded-md mr-9
-                  border-2 border-[#B38E19]/50
-                  text-base
-                "
-              >
+              <button className="bg-[#19355A] text-white w-[190px] h-[32px] rounded-md mr-9 border-2 border-[#B38E19]/50 text-base">
                 {t("uploadAttachments")}
               </button>
             </div>
@@ -79,13 +89,22 @@ export default function AddThesis() {
                 {t("thesisType")}
               </label>
               <div className="flex gap-6 text-sm text-gray-600">
-                <label className="flex items-center gap-1">
-                  <input type="radio" name="thesisType" /> {t("phd")}
-                </label>
-                <label className="flex items-center gap-1">
-                  <input type="radio" name="thesisType" /> {t("master")}
-                </label>
+                {["PHD", "Master"].map((type) => (
+                  <label key={type} className="flex items-center gap-1">
+                    <input
+                      type="radio"
+                      name="thesisType"
+                      value={type}
+                      checked={values.thesisType === type}
+                      onChange={(e) => setters.setThesisType(e.target.value)}
+                    />
+                    {t(type.toLowerCase())}
+                  </label>
+                ))}
               </div>
+              {errors.thesisType && (
+                <p className="text-red-500 text-xs mt-1">{errors.thesisType}</p>
+              )}
             </div>
 
             {/* Thesis Title */}
@@ -93,22 +112,14 @@ export default function AddThesis() {
               <label className="block mb-4 font-medium text-lg">
                 {t("thesisTitle")} <span className="text-[#B38E19]">*</span>
               </label>
-
               <div className="w-full h-[150px] bg-[#E2E2E2] border border-[#B38E19] rounded-md flex items-center shadow-xl">
                 <textarea
-                  className="
-                    w-full h-full bg-transparent
-                    text-center text-[12px]
-                    resize-none outline-none
-                    px-3 py-16 text-black
-                    placeholder:text-gray-600
-                  "
+                  className="w-full h-full bg-transparent text-center text-[12px] resize-none outline-none px-3 py-16 text-black placeholder:text-gray-600"
                   placeholder={t("thesisTitlePlaceholder")}
                   value={values.thesisTitle}
                   onChange={(e) => setters.setThesisTitle(e.target.value)}
                 />
               </div>
-
               {errors.thesisTitle && (
                 <p className="text-red-500 text-xs mt-1">
                   {errors.thesisTitle}
@@ -116,15 +127,33 @@ export default function AddThesis() {
               )}
             </div>
 
-            {/* Degree */}
+            {/* Degree Dropdown */}
             <div>
               <label className="block mb-2 font-medium text-lg">
                 {t("degree")}
               </label>
-
-              <SelectWithIcon className={input} isArabic={isArabic}>
-                <option>{t("selectDegree")}</option>
-              </SelectWithIcon>
+              <div className="relative w-full md:max-w-[750px]">
+                <select
+                  className={input + " appearance-none"}
+                  value={values.degreeId}
+                  onChange={(e) => setters.setDegreeId(e.target.value)}
+                >
+                  <option value="">{t("selectDegree")}</option>
+                  {values.grades.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {isArabic ? d.valueAr : d.valueEn}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  size={26}
+                  className="absolute top-1/2 -translate-y-1/2 text-[#B38E19] pointer-events-none"
+                  style={isArabic ? { left: "8px" } : { right: "8px" }}
+                />
+              </div>
+              {errors.degreeId && (
+                <p className="text-red-500 text-xs mt-1">{errors.degreeId}</p>
+              )}
             </div>
 
             {/* Dates */}
@@ -141,7 +170,6 @@ export default function AddThesis() {
                 onOpen={() => helpers.openDatePicker(refs.registrationDateRef)}
                 onChange={setters.setRegistrationDate}
               />
-
               <DateInput
                 label={t("enrollmentDate")}
                 required
@@ -154,7 +182,6 @@ export default function AddThesis() {
                 onOpen={() => helpers.openDatePicker(refs.enrollmentDateRef)}
                 onChange={setters.setEnrollmentDate}
               />
-
               <DateInput
                 label={t("internalDegreeDate")}
                 value={values.internalDegreeDate}
@@ -167,7 +194,6 @@ export default function AddThesis() {
                 }
                 onChange={setters.setInternalDegreeDate}
               />
-
               <DateInput
                 label={t("jointSupervisionDate")}
                 value={values.jointSupervisionDate}
@@ -182,6 +208,7 @@ export default function AddThesis() {
               />
             </div>
 
+            {/* Related Research */}
             <RelatedResearchCard
               t={t}
               researches={values.researches}
@@ -191,19 +218,19 @@ export default function AddThesis() {
             />
           </div>
         </div>
-      </div>
 
-      {/* Bottom Buttons */}
-      <div className="flex gap-4 mt-16 w-full px-6 justify-center md:justify-end">
-        <button
-          className="bg-[#B38E19] text-white px-10 py-1.5 rounded-md"
-          onClick={helpers.handleSave}
-        >
-          {t("save")}
-        </button>
-        <button className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md">
-          {t("back")}
-        </button>
+        {/* Bottom Buttons */}
+        <div className="flex gap-4 mt-16 w-full px-6 justify-center md:justify-end">
+          <button
+            className="bg-[#B38E19] text-white px-10 py-1.5 rounded-md"
+            onClick={helpers.handleSave}
+          >
+            {t("save")}
+          </button>
+          <button className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md">
+            {t("back")}
+          </button>
+        </div>
       </div>
     </ResponsiveLayoutProvider>
   );

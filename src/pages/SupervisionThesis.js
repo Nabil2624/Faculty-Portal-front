@@ -36,25 +36,20 @@ export default function SupervisionThesis() {
     setDeleteError(null);
 
     try {
-      const res = await deleteSupervisionThesis(selectedItem.id);
+      await deleteSupervisionThesis(selectedItem.id);
 
-      // Backend returns statusCode
-      if (res.data.statusCode !== 200 && res.data.statusCode !== 0) {
-        throw new Error(res.data.errorMessage || "Delete failed");
-      }
-
+      // Close the modal
       setShowDelete(false);
 
-      // If deleting last item on last page  go back one page
+      // Reload the list automatically
       if (items.length === 1 && currentPage > 1) {
         setCurrentPage((prev) => prev - 1);
       } else {
         loadData();
       }
     } catch (err) {
-      setDeleteError(
-        err?.response?.data?.errorMessage || err.message || t("fetchError"),
-      );
+      // Show translated error inside modal
+      setDeleteError(err?.response?.data?.errorMessage || t("deleteFailed"));
     }
   };
 
@@ -85,15 +80,41 @@ export default function SupervisionThesis() {
                   key={item.id}
                   item={item}
                   isArabic={isArabic}
-                  onClick={(item) =>
-                    navigate("/supervision-info", { state: item })
-                  }
+                  onClick={(item) => {
+                    navigate("/supervision-info", {
+                      state: {
+                        ...item, // preserve all original fields
+                      },
+                    });
+                  }}
                   onDelete={(item) => {
                     setSelectedItem(item);
                     setShowDelete(true);
                   }}
                   onEdit={(item) => {
-                    navigate("/edit-supervision", { state: item });
+                    // Map role string to numeric value
+                    let roleValue;
+                    switch (item.facultyMemberRole) {
+                      case "Adminstrator":
+                        roleValue = 1; // Supervisor
+                        break;
+                      case "Reviewer":
+                        roleValue = 2; // Examiner
+                        break;
+                      case "AdminstratorAndReviewer":
+                      case "ReviewerAndAdminstrator": // whatever your API returns for both
+                        roleValue = 3; // Supervisor + Examiner
+                        break;
+                      default:
+                        roleValue = 1; // default fallback
+                    }
+
+                    navigate("/edit-supervision", {
+                      state: {
+                        ...item,
+                        facultyMemberRole: roleValue,
+                      },
+                    });
                   }}
                 />
               ))}
