@@ -1,5 +1,12 @@
 import { Pencil, Trash2 } from "lucide-react";
 
+/* helper */
+function normalizeUrl(url) {
+  if (!url) return null;
+  if (/^https?:\/\//i.test(url)) return url;
+  return `https://${url}`;
+}
+
 export default function JournalCard({
   item,
   isArabic,
@@ -7,44 +14,102 @@ export default function JournalCard({
   onDelete,
   onDetails,
 }) {
+  const websiteUrl = normalizeUrl(item.websiteOfMagazine);
+
+  const handleOpenWebsite = (e) => {
+    e.stopPropagation();
+    if (!websiteUrl) return;
+    window.open(websiteUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div
       onClick={() => onDetails(item)}
-      className={`relative bg-gray-100 rounded-[12px] shadow-md p-3 border-[4px] border-[#19355a] cursor-pointer ${
-        isArabic ? "border-r-[19px]" : "border-l-[19px]"
-      }`}
+      className={`relative h-full
+        min-h-[clamp(140px,9vw,260px)]
+        px-[clamp(0.75rem,0.5vw,1.25rem)]
+        rounded-[clamp(12px,1.4vw,18px)]
+        shadow-md
+        bg-gray-100
+        border-[clamp(2px,0.35vw,4px)]
+        border-[#19355a]
+        cursor-pointer
+        ${
+          isArabic
+            ? "border-r-[clamp(12px,2vw,20px)]"
+            : "border-l-[clamp(12px,2vw,20px)]"
+        }
+      `}
     >
+      {/* Actions */}
       <div
-        className={`absolute top-4 ${
-          isArabic ? "left-4" : "right-4"
-        } flex gap-3`}
+        className={`absolute top-[clamp(0.75rem,1vw,1.25rem)]
+          ${
+            isArabic
+              ? "left-[clamp(0.75rem,1.2vw,1.25rem)]"
+              : "right-[clamp(0.75rem,1.2vw,1.25rem)]"
+          }
+          flex gap-[clamp(0.5rem,1vw,0.9rem)]
+        `}
         onClick={(e) => e.stopPropagation()}
       >
         <Pencil
-          className="text-[#b38e19] w-5 h-5 hover:scale-110"
+          className="text-[#b38e19] w-[clamp(1.1rem,1.6vw,2.3rem)] h-[clamp(1.1rem,1.6vw,2.3rem)] hover:scale-110 transition"
           onClick={() => onEdit(item)}
         />
         <Trash2
-          className="text-[#E53935] w-5 h-5 hover:scale-110"
+          className="text-[#E53935] w-[clamp(1.1rem,1.6vw,2.3rem)] h-[clamp(1.1rem,1.6vw,2.3rem)] hover:scale-110 transition"
           onClick={() => onDelete(item)}
         />
       </div>
 
-      <h3 className="text-xl font-semibold mb-1">
-        {item.nameOfMagazine}
-      </h3>
-
-      <a
-        href={item.websiteOfMagazine}
-        target="_blank"
-        rel="noreferrer"
-        className="text-[#b38e19] underline"
-        onClick={(e) => e.stopPropagation()}
+      {/* Title */}
+      <div
+        className="relative mt-[clamp(0.5rem,1vw,0.75rem)]"
+        style={{ maxWidth: "clamp(12rem, 22vw, 48rem)" }}
       >
-        {item.websiteOfMagazine}
-      </a>
+        <h3
+          className="font-semibold
+            text-[clamp(1rem,1.6vw,2.2rem)]
+            whitespace-nowrap
+            overflow-hidden
+            text-ellipsis
+            pointer-events-none"
+        >
+          {item.nameOfMagazine}
+        </h3>
+      </div>
 
-      <p className="text-sm text-gray-400 mt-2">
+      {/* Website – FIXED */}
+      {item.websiteOfMagazine && websiteUrl && (
+        <span
+          onClick={handleOpenWebsite}
+          title={item.websiteOfMagazine}
+          className="
+  inline-flex
+  w-fit
+  max-w-[100%]
+  mt-[clamp(0.4rem,0.8vw,0.6rem)]
+  text-[#b38e19]
+  underline
+  text-[clamp(0.8rem,1.1vw,1.6rem)]
+  cursor-pointer
+  overflow-hidden
+  whitespace-nowrap
+  text-ellipsis
+"
+        >
+          {item.websiteOfMagazine}
+        </span>
+      )}
+
+      {/* Participation Type */}
+      <p
+        className="text-gray-400
+          mt-[clamp(0.4rem,0.8vw,0.6rem)]
+          text-[clamp(0.75rem,1vw,1.4rem)]
+        "
+      >
         {isArabic
           ? item.typeOfParticipation?.valueAr
           : item.typeOfParticipation?.valueEn}

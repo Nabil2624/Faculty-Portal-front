@@ -47,21 +47,28 @@ import AdministrativePositions from "../components/AdministrativePositions";
 import ScientificMissions from "../components/ScientificMissions";
 import SeminarsAndConferences from "../components/SeminarsAndConferences";
 import TrainingPrograms from "../components/TrainingPrograms";
-import CommitteesAndAssociationsPage from "../components/CommitteesAndAssociationsPage";
-import AddCommitteeAssociation from "../components/AddCommitteeAssociation";
-import EditCommitteeAssociation from "../components/EditCommitteeAssociation";
-import ArticleReviews from "../components/ArticleReviews";
+import CommitteesAndAssociationsPage from "../pages/CommitteeAndAssociationPage";
+import AddCommitteeAssociation from "../pages/AddCommitteeAssociation";
+import EditCommitteeAssociation from "../pages/EditCommitteeAssociation";
 
-import Projects from "../components/Projects";
-import AddProject from "../components/AddProject";
-import EditProject from "../components/EditProject";
+import AddProject from "../pages/AddProject";
+import EditProject from "../pages/EditProject";
 import ParticipationInJournals from "../pages/ParticipationInJournals";
-import QuotesChartChart from "../components/widgets/Researchs/QuotesChart";
 
 import ScientificResearches from "../pages/ScientificResearches";
 import SupervisionThesis from "../pages/SupervisionThesis";
 import Thesis from "../pages/Theses";
 import ScientificResearchDetails from "../pages/ScientificResearchDetails";
+import ProjectsPage from "../pages/ProjectsPage";
+import ArticleReviewsPage from "../pages/ArticleReviews";
+import GeneralExperiencesPage from "../pages/GeneralExperiencesPage";
+import AddGeneralExperience from "../pages/AddGeneralExperience";
+import EditGeneralExperience from "../pages/EditGeneralExperience";
+
+import TeachingExperiences from "../pages/TeachingExperiences";
+import AddTeachingExperience from "../pages/AddTeachingExperience";
+import EditTeachingExperience from "../pages/EditTeachingExperience";
+
 function AppRouterInner() {
   const navigate = useNavigate();
 
@@ -132,9 +139,7 @@ function AppRouterInner() {
         path="/edit-committee-associations"
         element={<EditCommitteeAssociation />}
       />
-      <Route path="/article-reviews" element={<ArticleReviews />} />
       <Route path="/journals" element={<ParticipationInJournals />} />
-      <Route path="/projects" element={<Projects />} />
       <Route path="/add-project" element={<AddProject />} />
       <Route path="/edit-project" element={<EditProject />} />
       <Route path="/under-development" element={<UnderDevelopment />} />
@@ -158,6 +163,21 @@ function AppRouterInner() {
       <Route path="/edit-admin-pos" element={<EditAdminPosition />} />
       <Route path="/add-admin-pos" element={<AddAdministrativePosition />} />
       <Route path="/journals" element={<ParticipationInJournals />} />
+      <Route path="/projects" element={<ProjectsPage />} />
+      <Route path="/article-reviews" element={<ArticleReviewsPage />} />
+      <Route path="/general-experiences" element={<GeneralExperiencesPage />} />
+      <Route path="/teaching-experiences" element={<TeachingExperiences />} />
+      <Route path="/add-teaching-experiences" element={<AddTeachingExperience />} />
+      
+      <Route path="/edit-teaching-experiences" element={<EditTeachingExperience />} />
+      <Route
+        path="/add-general-experiences"
+        element={<AddGeneralExperience />}
+      />
+      <Route
+        path="/edit-general-experiences"
+        element={<EditGeneralExperience />}
+      />
 
       {/* ✅ Protected Routes */}
       <Route element={<ProtectedRoute />}></Route>

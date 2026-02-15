@@ -1,0 +1,22 @@
+{
+  "organization": "Organization",
+  "location": "Country / City",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "present": "Present",
+  "title": "General Experiences",
+  "add": "Add",
+  "empty": "No data available",
+  "areYouSureDelete": "Are you sure you want to delete?",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of",
+  "search": "Search in Experiences...",
+  "errors": {
+    "loadFailed": "Failed to load data",
+    "deleteFailed": "Failed to delete item"
+  }
+}

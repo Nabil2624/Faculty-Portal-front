@@ -19,6 +19,15 @@ export default function Header({ isExpanded }) {
 
   const isArabic = i18n.language === "ar";
 
+  /* ===============================
+     Responsive sizes (Tablet → XL)
+  =============================== */
+
+  const iconClass =
+    "w-[clamp(20px,1.6vw,60px)] h-[clamp(20px,1.6vw,60px)] shrink-0";
+
+  /* =============================== */
+
   useEffect(() => {
     document.documentElement.dir = isArabic ? "rtl" : "ltr";
 
@@ -41,7 +50,7 @@ export default function Header({ isExpanded }) {
     navigate("/login", { replace: true });
   };
 
-  // Close language dropdown on outside click
+  // close dropdown on outside click
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -54,68 +63,71 @@ export default function Header({ isExpanded }) {
 
   return (
     <header
-      className={`flex items-center justify-between 
-      w-[calc(100%-0.5rem)]
-      bg-[#19355a] px-4 py-2 text-white rounded-lg
-      ${isArabic ? "mr-1" : "ml-1"}
-      relative z-50
-      sticky top-0
-    `}
+      className={`flex items-center justify-between
+        w-[calc(100%-0.5rem)]
+        h-[clamp(48px,3.2vw,130px)]
+        px-[clamp(16px,2vw,50px)]
+        bg-[#19355a]
+        text-white rounded-[clamp(1px,0.5vw,20px)]
+        ${isArabic ? "mr-1" : "ml-1"}
+        relative z-50 top-0
+      `}
     >
       {/* Right side icons */}
-      <div className="flex items-center gap-3">
-        <Bell className="cursor-pointer" size={18} />
-        <Mail className="cursor-pointer" size={18} />
+      <div className="flex items-center gap-[clamp(8px,1vw,16px)]">
+        <Bell className={iconClass} />
+        <Mail className={iconClass} />
 
-        {/* Search icon */}
         <button
           onClick={() => setSearchOpen(true)}
-          className="p-1 hover:bg-white/20 rounded-full transition"
+          className="p-[clamp(4px,0.6vw,8px)] hover:bg-white/20 rounded-full transition"
         >
-          <Search size={18} />
+          <Search className={iconClass} />
         </button>
       </div>
 
       {/* Left controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-[clamp(8px,1vw,16px)]">
         {/* Language dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className={`flex items-center gap-2 px-3 py-1 rounded-md border text-sm 
-              bg-[#19355a] text-white`}
+            className="flex items-center gap-[clamp(13px,1vw,20px)] bg-[#19355a] text-white text-[clamp(13px,0.9vw,15px)]"
           >
             {isArabic ? (
               <>
-                <img src={egyptFlag} alt="Arabic" className="w-5 h-4" />
-                <span>ع</span>
+                <img src={egyptFlag} alt="Arabic" className="w-[clamp(8px,2vw,80px)] h-[clamp(8px,1.5vw,50px)]" />
+                <span className="text-[clamp(13px,1.2vw,45px)]">ع</span>
               </>
             ) : (
               <>
-                <img src={ukFlag} alt="English" className="w-5 h-4" />
+                <img src={ukFlag} alt="English" className="w-[clamp(8px,2vw,50px)] h-[clamp(8px,2vw,50px)]" />
                 <span>En</span>
               </>
             )}
-            <ChevronDown size={14} />
+
+            <ChevronDown className="w-[clamp(12px,1.5vw,50px)] h-[clamp(12px,1.5vw,50px)]" />
           </button>
 
           {dropdownOpen && (
             <div
-              className={`absolute mt-1 bg-[#19355a] text-white border rounded-md shadow-md z-[2000] text-sm 
+              className={`absolute mt-1 bg-[#19355a] text-white shadow-md z-[2000] text-sm
               ${isArabic ? "left-0" : "right-0"}`}
             >
               <button
                 onClick={() => handleLanguageChange("ar")}
-                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#17314f]"
+                className="flex items-center gap-[clamp(13px,1vw,20px)] w-full px-3 py-2 hover:bg-[#17314f]"
               >
-                <img src={egyptFlag} className="w-5 h-4" /> العربية
+                <img src={egyptFlag} className="w-5 h-4" alt="" />
+                العربية
               </button>
 
               <button
                 onClick={() => handleLanguageChange("en")}
-                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#17314f]"
+                className="flex items-center gap-[clamp(13px,1vw,20px)] w-full px-3 py-2 hover:bg-[#17314f]"
               >
-                <img src={ukFlag} className="w-5 h-4" /> English
+                <img src={ukFlag} className="w-5 h-4" alt="" />
+                English
               </button>
             </div>
           )}
@@ -124,14 +136,17 @@ export default function Header({ isExpanded }) {
         {/* Logout */}
         <button
           onClick={handleLogout}
-          className="font-semibold text-sm hover:underline"
+          className="font-semibold hover:underline text-[clamp(13px,1.2vw,45px)]"
         >
           {t("logout")}
         </button>
       </div>
 
       {/* Floating Search */}
-      <FloatingSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <FloatingSearch
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
     </header>
   );
 }

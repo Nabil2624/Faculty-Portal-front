@@ -1,0 +1,17 @@
+{
+    "contribution_name": "Contribution Name",
+    "enter_contribution_name": "Enter contribution name",
+    "contribution_name_required": "Contribution name is required",
+    "contribution_type": "Contribution Type",
+    "select_contribution_type": "Select contribution type",
+    "contribution_type_required": "Contribution type is required",
+    "contribution_date": "Contribution Date",
+    "select_contribution_date": "Select contribution date",
+    "contribution_date_required": "Contribution date is required",
+    "contribution_date_invalid": "Contribution date cannot be before today",
+    "description": "Description",
+    "enter_description": "Enter description",
+    "save": "Save",
+    "loading": "Loading",
+    "submit_error": "Failed to submit the form. Please try again."
+  }

@@ -1,14 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Calendar, Plus } from "lucide-react";
-import axiosInstance from "../utils/axiosInstance";
+import { Calendar, Pen } from "lucide-react";
+import axiosInstance from "../../../utils/axiosInstance";
 
-export default function AddArticleForm({ onCancel, onSuccess }) {
+export default function EditArticleForm({ item, onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("AddArticleForm");
   const dir = i18n.dir();
   const isArabic = i18n.language === "ar";
 
-  // Form state with backend field names
   const [formData, setFormData] = useState({
     titleOfArticle: "",
     authority: "",
@@ -19,11 +18,24 @@ export default function AddArticleForm({ onCancel, onSuccess }) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  /* load existing data */
+  useEffect(() => {
+    if (item) {
+      setFormData({
+        titleOfArticle: item.titleOfArticle || "",
+        authority: item.authority || "",
+        reviewingDate: item.reviewingDate || "",
+        description: item.description || "",
+      });
+    }
+  }, [item]);
+
   const reviewDateRef = useRef(null);
   const [reviewFocused, setReviewFocused] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors((prev) => ({ ...prev, [e.target.name]: null }));
   };
 
   const openDatePicker = (ref) => {
@@ -35,11 +47,13 @@ export default function AddArticleForm({ onCancel, onSuccess }) {
     }
   };
 
+  /* ✅ validation نفس Add بالظبط */
   const validate = () => {
     const newErrors = {};
     if (!formData.titleOfArticle.trim())
       newErrors.titleOfArticle = t("required_article_name");
-    if (!formData.authority.trim()) newErrors.authority = t("required_entity");
+    if (!formData.authority.trim())
+      newErrors.authority = t("required_entity");
     if (!formData.reviewingDate.trim())
       newErrors.reviewingDate = t("required_review_date");
     setErrors(newErrors);
@@ -54,19 +68,14 @@ export default function AddArticleForm({ onCancel, onSuccess }) {
     setErrors({});
 
     try {
-      const response = await axiosInstance.post(
-        "/ProjectsAndCommittees/CreateReviewingArticle",
+      const response = await axiosInstance.put(
+        `/ProjectsAndCommittees/UpdateReviewingArticle/${item.id}`,
         formData,
         { skipGlobalErrorHandler: true }
       );
 
-      // تحقق على نجاح الإضافة
-      if (response.status === 200 && response.data?.id) {
-        onSuccess && onSuccess(response.data);
-        onCancel && onCancel();
-      } else {
-        setErrors({ submit: t("submit_error") });
-      }
+      onSuccess && onSuccess(response.data);
+      onCancel && onCancel();
     } catch (err) {
       console.error(err);
       setErrors({ submit: t("submit_error") });
@@ -85,17 +94,19 @@ export default function AddArticleForm({ onCancel, onSuccess }) {
       key={i18n.language}
       dir={dir}
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto mt-6 bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
+      className="w-[420px] max-w-full bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
     >
       {/* Header */}
       <div className="flex items-center justify-center mb-6">
-        <Plus className="text-[#B38E19] mx-1" size={23} />
-        <h2 className="text-xl font-semibold text-gray-800">{t("add_article")}</h2>
+        <Pen className="text-[#B38E19] mx-1" size={20} />
+        <h2 className="text-xl font-semibold text-gray-800">
+          {t("edit_article")}
+        </h2>
       </div>
 
-      {/* Title of Article */}
+      {/* Title */}
       <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
+        <label className="block text-lg font-medium mb-2">
           {t("article_name")} <span className="text-[#B38E19]">*</span>
         </label>
         <input
@@ -107,13 +118,15 @@ export default function AddArticleForm({ onCancel, onSuccess }) {
           placeholder={t("enter_article_name")}
         />
         {errors.titleOfArticle && (
-          <p className="text-red-500 text-sm mt-1">{errors.titleOfArticle}</p>
+          <p className="text-red-500 text-sm mt-1">
+            {errors.titleOfArticle}
+          </p>
         )}
       </div>
 
       {/* Authority */}
       <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
+        <label className="block text-lg font-medium mb-2">
           {t("entity")} <span className="text-[#B38E19]">*</span>
         </label>
         <input
@@ -125,19 +138,20 @@ export default function AddArticleForm({ onCancel, onSuccess }) {
           placeholder={t("enter_entity")}
         />
         {errors.authority && (
-          <p className="text-red-500 text-sm mt-1">{errors.authority}</p>
+          <p className="text-red-500 text-sm mt-1">
+            {errors.authority}
+          </p>
         )}
       </div>
 
       {/* Reviewing Date */}
       <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
+        <label className="block text-lg font-medium mb-2">
           {t("review_date")} <span className="text-[#B38E19]">*</span>
         </label>
         <div className="relative">
           <input
             type="text"
-            name="reviewingDate"
             value={formData.reviewingDate}
             readOnly
             onClick={() => openDatePicker(reviewDateRef)}
@@ -151,13 +165,14 @@ export default function AddArticleForm({ onCancel, onSuccess }) {
             type="date"
             value={formData.reviewingDate}
             onChange={(e) =>
-              setFormData((p) => ({ ...p, reviewingDate: e.target.value }))
+              setFormData((p) => ({
+                ...p,
+                reviewingDate: e.target.value,
+              }))
             }
             onFocus={() => setReviewFocused(true)}
             onBlur={() => setReviewFocused(false)}
             className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10"
-            style={{ colorScheme: "light" }}
-            aria-hidden="true"
             tabIndex={-1}
           />
           <Calendar
@@ -168,13 +183,15 @@ export default function AddArticleForm({ onCancel, onSuccess }) {
           />
         </div>
         {errors.reviewingDate && (
-          <p className="text-red-500 text-sm mt-1">{errors.reviewingDate}</p>
+          <p className="text-red-500 text-sm mt-1">
+            {errors.reviewingDate}
+          </p>
         )}
       </div>
 
       {/* Description */}
       <div className="mb-6">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
+        <label className="block text-lg font-medium mb-2">
           {t("description")}
         </label>
         <textarea
@@ -182,33 +199,24 @@ export default function AddArticleForm({ onCancel, onSuccess }) {
           rows="3"
           value={formData.description}
           onChange={handleChange}
+          className={`${inputClass} ${focusClasses} resize-none`}
           placeholder={t("enter_description")}
-          className={`${inputClass} ${focusClasses} bg-[#f5f5f5] resize-none text-gray-600`}
         />
       </div>
 
-      {/* Submit Error */}
-      {errors.submit && <p className="text-red-500 text-center mb-4">{errors.submit}</p>}
+      {errors.submit && (
+        <p className="text-red-500 text-center mb-4">
+          {errors.submit}
+        </p>
+      )}
 
-      {/* Buttons */}
-      <div className="flex justify-center gap-3 mt-8">
+      <div className="flex justify-center gap-3">
         <button
           type="submit"
           disabled={loading}
-          className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-            isArabic ? "cairo" : "roboto"
-          } text-sm`}
+          className="bg-[#b38e19] text-white w-24 h-10 rounded-md text-sm"
         >
-          {loading ? t("loading") : t("add")}
-        </button>
-        <button
-          type="button"
-          onClick={() => onCancel && onCancel()}
-          className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-            isArabic ? "cairo" : "roboto"
-          } text-sm`}
-        >
-          {t("cancel")}
+          {loading ? t("loading") : t("save")}
         </button>
       </div>
     </form>

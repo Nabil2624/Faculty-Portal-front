@@ -1,0 +1,36 @@
+{
+  "titles": {
+    "addTeachingExperience": "إضافة خبرة تدريسية",
+    "editTeachingExperience": "تعديل خبرة تدريسية"
+  },
+  "fields": {
+    "course": "المقرر",
+    "AcademicLevel": "الفرقة الدراسية",
+    "university": "الجامعة / الكلية",
+    "startDate": "تاريخ البداية",
+    "endDate": "تاريخ النهاية",
+    "description": "الوصف"
+  },
+  "placeholders": {
+    "course": "أدخل اسم المقرر",
+    "AcademicLevel": "أدخل الفرقة الدراسية",
+    "university": "أدخل اسم الجامعة أو الكلية",
+    "startDate": "اختر تاريخ البداية",
+    "endDate": "اختر تاريخ النهاية",
+    "description": "أدخل الوصف"
+  },
+  "buttons": {
+    "save": "حفظ",
+    "cancel": "إلغاء"
+  },
+  "messages": {
+    "courseRequired": "حقل المقرر مطلوب",
+    "academicLevelRequired": "حقل الفرقة الدراسية مطلوب",
+    "universityRequired": "حقل الجامعة / الكلية مطلوب",
+    "startDateRequired": "حقل تاريخ البداية مطلوب",
+    "endDateRequired": "حقل تاريخ النهاية مطلوب",
+    "descriptionRequired": "حقل الوصف مطلوب",
+    "invalidDate": "تاريخ غير صالح",
+    "endDateBeforeStartDate": "تاريخ النهاية لا يمكن أن يكون قبل تاريخ البداية"
+  }
+}

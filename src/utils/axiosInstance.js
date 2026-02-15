@@ -27,18 +27,18 @@ axiosInstance.interceptors.response.use(
     const { status } = error.response;
 
     // Refresh token flow
-    if (status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        // Backend should send Set-Cookie for refresh token
-        await axiosInstance.post("/auth/refresh-token", {}, { withCredentials: true });
-        return axiosInstance(originalRequest);
-      } catch (refreshError) {
-        alert("⚠️ Your session has expired. Please login again.");
-        window.location.href = "/login";
-        return Promise.reject(refreshError);
-      }
-    }
+    // if (status === 401 && !originalRequest._retry) {
+    //   originalRequest._retry = true;
+    //   try {
+    //     // Backend should send Set-Cookie for refresh token
+    //     await axiosInstance.post("/auth/refresh-token", {}, { withCredentials: true });
+    //     return axiosInstance(originalRequest);
+    //   } catch (refreshError) {
+    //     alert("⚠️ Your session has expired. Please login again.");
+    //     window.location.href = "/login";
+    //     return Promise.reject(refreshError);
+    //   }
+    // }
 
     // Handle validation or conflict errors
     if (status === 400 || status === 409) return Promise.reject(error);

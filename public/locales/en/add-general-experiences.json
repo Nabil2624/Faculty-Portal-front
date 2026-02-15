@@ -1,0 +1,36 @@
+{
+  "addGeneralExperience": {
+    "title": "Add General Experience"
+  },
+  "editGeneralExperience": {
+    "title": "Edit General Experience"
+  },
+  "fields": {
+    "experience": "Experience",
+    "countryCity": "Country / City",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "description": "Description",
+    "authority" : "Authority"
+  },
+  "placeholders": {
+    "experience": "Enter experience title",
+    "countryCity": "Enter country and city",
+    "startDate": "Select start date",
+    "endDate": "Select end date",
+    "description": "Enter experience details",
+    "authority" : "Enter Authority"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "errors": {
+    "failedAdd": "Failed to add general experience. Please try again.",
+    "experienceRequired": "Experience is required",
+    "countryCityRequired": "Country and city are required",
+    "startDateRequired": "Start date is required",
+    "endDateInvalid": "End date cannot be before start date",
+    "authorityRequired" :"Authority is required"
+  }
+}

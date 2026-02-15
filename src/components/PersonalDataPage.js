@@ -70,7 +70,7 @@ export default function PersonalDataPage() {
 
   return (
     <Layout>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-5 flex flex-col`}>
+      <div className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col`}>
         <h2 className="text-3xl font-bold inline-block relative text-start mb-[80px]">
           {t("personalData")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>

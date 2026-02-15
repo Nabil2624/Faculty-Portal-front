@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
@@ -18,26 +18,42 @@ const data = [
   { year: 2024, value: 8 },
 ];
 
-const MAX_VISIBLE_YEARS = 5;
+const MAX_VISIBLE_YEARS = 7;
 
 export default function QuotesChart() {
   const { t } = useTranslation("QuotesChart");
   const [startIndex, setStartIndex] = useState(
     data.length - MAX_VISIBLE_YEARS
   );
+  const [maxBarHeight, setMaxBarHeight] = useState(220);
 
-  const visibleData = data.slice(
-    startIndex,
-    startIndex + MAX_VISIBLE_YEARS
-  );
+  // responsive bar height
+  useEffect(() => {
+    const updateHeight = () => {
+      if (window.innerWidth < 640) setMaxBarHeight(140); // mobile
+      else if (window.innerWidth < 768) setMaxBarHeight(180); // tablet
+      else setMaxBarHeight(220); // desktop
+    };
 
-  const maxValue = Math.max(...visibleData.map(d => d.value));
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
+
+  const visibleData = data.slice(startIndex, startIndex + MAX_VISIBLE_YEARS);
+  const maxValue = Math.max(...visibleData.map((d) => d.value));
 
   const canGoPrev = startIndex > 0;
   const canGoNext = startIndex + MAX_VISIBLE_YEARS < data.length;
 
   return (
-    <div className="w-[250px] rounded-xl border border-slate-300 bg-[#EDEDED] p-4">
+    <div
+      className="
+        w-full max-w-[320px] sm:max-w-[340px] md:max-w-[400px]
+        rounded-xl border border-slate-300
+        bg-[#EDEDED] p-4
+      "
+    >
       {/* Title */}
       <h3 className="text-center font-bold relative">
         {t("quotes")}
@@ -45,21 +61,29 @@ export default function QuotesChart() {
       </h3>
 
       {/* Chart */}
-     <div className="mt-6 flex items-center justify-center gap-2">
-
-        {/* Older years */}
+      <div className="mt-6 flex items-center justify-center gap-2">
+        {/* Older */}
         <FiChevronRight
-          onClick={() => canGoPrev && setStartIndex(prev => prev - 1)}
-          className={`text-3xl transition cursor-pointer ${
-            canGoPrev
-              ? "text-black hover:text-[#B38E19]"
-              : "text-[#D9D9D9] cursor-not-allowed"
-          }`}
+          onClick={() => canGoPrev && setStartIndex((prev) => prev - 1)}
+          className={`
+            transition cursor-pointer
+            text-[30px] sm:text-[28px] md:text-[26px]
+            ${
+              canGoPrev
+                ? "text-black hover:text-[#B38E19]"
+                : "text-[#D9D9D9] cursor-not-allowed"
+            }
+          `}
         />
 
-        {/* Bars container */}
-        <div className="relative flex items-end gap-1 h-[200px] pb-1">
-
+        {/* Bars */}
+        <div
+          className="
+            relative flex items-end gap-1 sm:gap-2
+            h-[160px] sm:h-[220px] md:h-[300px]
+            pb-1
+          "
+        >
           {/* Baseline */}
           <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#D9D9D9]" />
 
@@ -74,7 +98,7 @@ export default function QuotesChart() {
                 {/* Value */}
                 <span
                   className="
-                    mb-1 min-w-[20px] h-[14px]
+                    mb-1 min-w-[22px] h-[14px]
                     flex items-center justify-center
                     text-[9px] text-[#19355A]
                     bg-[#D9D9D9] rounded-md
@@ -89,7 +113,8 @@ export default function QuotesChart() {
                 {/* Bar */}
                 <div
                   className={`
-                    w-[18px] rounded-md
+                    w-[16px] sm:w-[18px] md:w-[20px]
+                    rounded-md
                     ${isGold ? "bg-[#B38E19]" : "bg-[#19355A]"}
                     border-2 border-transparent
                     ${
@@ -97,17 +122,17 @@ export default function QuotesChart() {
                         ? "group-hover:border-[#19355A]"
                         : "group-hover:border-[#B38E19]"
                     }
-                    transition-all duration-1000 ease-in-out
+                    transition-all duration-700 ease-in-out
                   `}
                   style={{
-                    height: `${(item.value / maxValue) * 160}px`,
+                    height: `${(item.value / maxValue) * maxBarHeight}px`,
                   }}
                 />
 
                 {/* Year */}
                 <span
                   className="
-                    mt-1 min-w-[28px] h-[14px]
+                    mt-1 min-w-[30px] h-[14px]
                     flex items-center justify-center
                     text-[7px] text-[#19355A]
                     bg-[#D9D9D9] rounded-md
@@ -123,14 +148,18 @@ export default function QuotesChart() {
           })}
         </div>
 
-        {/* Newer years */}
+        {/* Newer */}
         <FiChevronLeft
-          onClick={() => canGoNext && setStartIndex(prev => prev + 1)}
-          className={`text-3xl transition cursor-pointer ${
-            canGoNext
-              ? "text-black hover:text-[#B38E19]"
-              : "text-[#D9D9D9] cursor-not-allowed"
-          }`}
+          onClick={() => canGoNext && setStartIndex((prev) => prev + 1)}
+          className={`
+            transition cursor-pointer
+            text-[30px] sm:text-[28px] md:text-[26px]
+            ${
+              canGoNext
+                ? "text-black hover:text-[#B38E19]"
+                : "text-[#D9D9D9] cursor-not-allowed"
+            }
+          `}
         />
       </div>
     </div>

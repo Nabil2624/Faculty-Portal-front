@@ -1,0 +1,22 @@
+{
+  "AcademicLevel": "Academic Level",
+  "university": "University / College",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "present": "Present",
+  "areYouSureDelete": "Are you sure you want to delete?",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "title": "Teaching Experiences",
+  "add": "Add",
+  "empty": "No data available",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of",
+  "search": "Search in experiences...",
+  "errors": {
+    "loadFailed": "Failed to load data",
+    "deleteFailed": "Failed to delete"
+  }
+}

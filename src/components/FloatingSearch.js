@@ -48,7 +48,7 @@ export default function FloatingSearch({ isOpen, onClose }) {
           autoFocus={isOpen}
           type="text"
           placeholder={t("searchPlaceholder")}
-          className="flex-1 outline-none text-gray-700"
+          className="flex-1 outline-none text-gray-700" 
         />
         <button
           onClick={onClose}

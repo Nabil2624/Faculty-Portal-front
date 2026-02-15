@@ -1,9 +1,13 @@
+import { useTranslation } from "react-i18next";
+
 export default function DeleteJournalModal({
   item,
-  t,
   onConfirm,
   onCancel,
+  deleteError,
 }) {
+  const { t } = useTranslation("ParticipationJournals");
+
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-[360px] text-center">
@@ -11,9 +15,15 @@ export default function DeleteJournalModal({
           {t("areYouSureDelete")}
         </h3>
 
-        <p className="text-sm text-gray-600 mb-5">
+        <p className="text-sm text-gray-600 mb-4">
           {item?.nameOfMagazine}
         </p>
+
+        {deleteError && (
+          <p className="text-sm text-red-600 mb-4">
+            {deleteError}
+          </p>
+        )}
 
         <div className="flex justify-center gap-4">
           <button

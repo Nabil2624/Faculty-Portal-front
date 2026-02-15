@@ -1,13 +1,14 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Calendar, Pen } from "lucide-react";
-import axiosInstance from "../utils/axiosInstance";
+import { Calendar, Plus } from "lucide-react";
+import axiosInstance from "../../../utils/axiosInstance";
 
-export default function EditArticleForm({ data, onCancel, onSuccess }) {
+export default function AddArticleForm({ onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("AddArticleForm");
   const dir = i18n.dir();
   const isArabic = i18n.language === "ar";
 
+  // Form state with backend field names
   const [formData, setFormData] = useState({
     titleOfArticle: "",
     authority: "",
@@ -15,19 +16,8 @@ export default function EditArticleForm({ data, onCancel, onSuccess }) {
     description: "",
   });
 
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (data) {
-      setFormData({
-        titleOfArticle: data.titleOfArticle || "",
-        authority: data.authority || "",
-        reviewingDate: data.reviewingDate || "",
-        description: data.description || "",
-      });
-    }
-  }, [data]);
 
   const reviewDateRef = useRef(null);
   const [reviewFocused, setReviewFocused] = useState(false);
@@ -45,38 +35,41 @@ export default function EditArticleForm({ data, onCancel, onSuccess }) {
     }
   };
 
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.titleOfArticle.trim())
+      newErrors.titleOfArticle = t("required_article_name");
+    if (!formData.authority.trim()) newErrors.authority = t("required_entity");
+    if (!formData.reviewingDate.trim())
+      newErrors.reviewingDate = t("required_review_date");
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
+
     setLoading(true);
-    setError("");
+    setErrors({});
 
     try {
-      const response = await axiosInstance.put(
-        `/ProjectsAndCommittees/UpdateReviewingArticle/${data.id}`,
-        {
-          titleOfArticle: formData.titleOfArticle,
-          authority: formData.authority,
-          reviewingDate: formData.reviewingDate,
-          description: formData.description,
-        },
+      const response = await axiosInstance.post(
+        "/ProjectsAndCommittees/CreateReviewingArticle",
+        formData,
         { skipGlobalErrorHandler: true }
       );
 
-      // Call onSuccess callback if provided
-      if (onSuccess) onSuccess(response.data);
-    } catch (err) {
-      console.error("Failed to update article:", err);
-
-      // Local error handling
-      if (err.response?.data?.errors) {
-        // Example: array of validation errors
-        const messages = err.response.data.errors
-          .map((e) => e.errors.join(" | "))
-          .join(", ");
-        setError(messages);
+      // تحقق على نجاح الإضافة
+      if (response.status === 200 && response.data?.id) {
+        onSuccess && onSuccess(response.data);
+        onCancel && onCancel();
       } else {
-        setError(t("updateError") || "Failed to update article");
+        setErrors({ submit: t("submit_error") });
       }
+    } catch (err) {
+      console.error(err);
+      setErrors({ submit: t("submit_error") });
     } finally {
       setLoading(false);
     }
@@ -92,25 +85,18 @@ export default function EditArticleForm({ data, onCancel, onSuccess }) {
       key={i18n.language}
       dir={dir}
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto mt-6 bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
+      className="w-[420px] max-w-full bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
     >
       {/* Header */}
       <div className="flex items-center justify-center mb-6">
-        <Pen className="text-[#B38E19] mx-1" size={20} />
-        <h2 className="text-xl font-semibold text-gray-800">
-          {t("edit_article")}
-        </h2>
+        <Plus className="text-[#B38E19] mx-1" size={23} />
+        <h2 className="text-xl font-semibold text-gray-800">{t("add_article")}</h2>
       </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="text-red-500 text-center mb-4">{error}</div>
-      )}
-
-      {/* Article Name */}
+      {/* Title of Article */}
       <div className="mb-4">
         <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("article_name")} <span className="text-[#b38e19]"> * </span>
+          {t("article_name")} <span className="text-[#B38E19]">*</span>
         </label>
         <input
           type="text"
@@ -120,12 +106,15 @@ export default function EditArticleForm({ data, onCancel, onSuccess }) {
           className={`${inputClass} ${focusClasses}`}
           placeholder={t("enter_article_name")}
         />
+        {errors.titleOfArticle && (
+          <p className="text-red-500 text-sm mt-1">{errors.titleOfArticle}</p>
+        )}
       </div>
 
-      {/* Entity */}
+      {/* Authority */}
       <div className="mb-4">
         <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("entity")} <span className="text-[#b38e19]"> * </span>
+          {t("entity")} <span className="text-[#B38E19]">*</span>
         </label>
         <input
           type="text"
@@ -135,12 +124,15 @@ export default function EditArticleForm({ data, onCancel, onSuccess }) {
           className={`${inputClass} ${focusClasses}`}
           placeholder={t("enter_entity")}
         />
+        {errors.authority && (
+          <p className="text-red-500 text-sm mt-1">{errors.authority}</p>
+        )}
       </div>
 
-      {/* Review Date */}
+      {/* Reviewing Date */}
       <div className="mb-4">
         <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("review_date")} <span className="text-[#b38e19]"> * </span>
+          {t("review_date")} <span className="text-[#B38E19]">*</span>
         </label>
         <div className="relative">
           <input
@@ -154,7 +146,6 @@ export default function EditArticleForm({ data, onCancel, onSuccess }) {
             } cursor-pointer`}
             placeholder={t("select_review_date")}
           />
-
           <input
             ref={reviewDateRef}
             type="date"
@@ -169,7 +160,6 @@ export default function EditArticleForm({ data, onCancel, onSuccess }) {
             aria-hidden="true"
             tabIndex={-1}
           />
-
           <Calendar
             size={18}
             className="absolute top-2.5 text-[#B38E19] cursor-pointer z-20"
@@ -177,6 +167,9 @@ export default function EditArticleForm({ data, onCancel, onSuccess }) {
             onClick={() => openDatePicker(reviewDateRef)}
           />
         </div>
+        {errors.reviewingDate && (
+          <p className="text-red-500 text-sm mt-1">{errors.reviewingDate}</p>
+        )}
       </div>
 
       {/* Description */}
@@ -191,30 +184,24 @@ export default function EditArticleForm({ data, onCancel, onSuccess }) {
           onChange={handleChange}
           placeholder={t("enter_description")}
           className={`${inputClass} ${focusClasses} bg-[#f5f5f5] resize-none text-gray-600`}
-        ></textarea>
+        />
       </div>
 
+      {/* Submit Error */}
+      {errors.submit && <p className="text-red-500 text-center mb-4">{errors.submit}</p>}
+
       {/* Buttons */}
-      <div className="flex justify-center gap-3">
+      <div className="flex justify-center gap-3 mt-8">
         <button
           type="submit"
           disabled={loading}
           className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
             isArabic ? "cairo" : "roboto"
-          } text-sm ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
-        >
-          {loading ? t("saving") : t("save")}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => onCancel && onCancel()}
-          className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${
-            isArabic ? "cairo" : "roboto"
           } text-sm`}
         >
-          {t("cancel")}
+          {loading ? t("loading") : t("add")}
         </button>
+      
       </div>
     </form>
   );

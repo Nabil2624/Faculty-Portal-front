@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDown, Plus } from "lucide-react";
-import axiosInstance from "../../../utils/axiosInstance";
-import CustomDropdown from "../../ui/CustomDropdown";
+import { Plus } from "lucide-react";
+
+import Dropdown from "../../ui/Dropdown";
+import CustomInputField from "../../ui/CustomInputField";
+
+import useAddJournal from "../../../hooks/useAddJournal";
+import useMagazineParticipationTypes from "../../../hooks/useMagazineParticipationTypes";
 
 export default function AddJournalForm({ onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("journal-forms");
@@ -15,157 +19,133 @@ export default function AddJournalForm({ onCancel, onSuccess }) {
     typeOfParticipationId: "",
   });
 
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [types, setTypes] = useState([]);
-  const [loadingTypes, setLoadingTypes] = useState(false);
-
-  useEffect(() => {
-    const fetchTypes = async () => {
-      setLoadingTypes(true);
-      try {
-        const response = await axiosInstance.get("/LookUpItems/MagazineParticipationRoles", {
-          skipGlobalErrorHandler: true,
-        });
-        const options = (response.data || []).map((item) => ({
-          id: item.id,
-          label: isArabic ? item.valueAr : item.valueEn,
-        }));
-        setTypes(options);
-      } catch (err) {
-        console.error("Failed to fetch participation types:", err);
-        setTypes([
-          { id: "research", label: t("research_participation") },
-          { id: "review", label: t("review_participation") },
-          { id: "other", label: t("other_participation") },
-        ]);
-      } finally {
-        setLoadingTypes(false);
-      }
-    };
-
-    fetchTypes();
-  }, [i18n.language, isArabic, t]);
+  const { types, loading: loadingTypes } = useMagazineParticipationTypes();
+  const { submit, loading, errors } = useAddJournal({ onCancel, onSuccess });
 
   const handleChange = (key, value) => {
-    setFormData({ ...formData, [key]: value });
+    setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const validate = () => {
-    const newErrors = {};
-    if (!formData.nameOfMagazine.trim()) newErrors.nameOfMagazine = t("required_journal_name");
-    if (!formData.typeOfParticipationId) newErrors.typeOfParticipationId = t("required_participation_type");
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validate()) return;
-
-    setLoading(true);
-    setErrors({});
-
-    try {
-      const response = await axiosInstance.post(
-        "/ProjectsAndCommittees/CreateParticipationInMagazine",
-        formData,
-        { skipGlobalErrorHandler: true }
-      );
-
-      if (response.status === 200 && response.data?.id) {
-        onSuccess && onSuccess(response.data);
-        onCancel && onCancel();
-      } else {
-        setErrors({ submit: t("submit_error") });
-      }
-    } catch (err) {
-      console.error(err);
-      setErrors({ submit: t("submit_error") });
-    } finally {
-      setLoading(false);
-    }
+    submit(formData);
   };
-
-  const inputClass =
-    "w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 transition duration-150 bg-[#E2E2E2]";
-  const focusClasses =
-    "focus:outline-none focus:ring-2 focus:ring-[#B38E19] transition duration-150 shadow";
 
   return (
     <form
-      key={i18n.language}
       dir={dir}
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto mt-6 bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
+      style={{
+        /* فرق واضح بين الموبايل والشاشات الكبيرة */
+        width: "clamp(320px, 32vw, 600px)",
+        padding: "clamp(1rem, 2.5vw, 2rem)",
+        borderRadius: "clamp(12px, 1.8vw, 22px)",
+      }}
+      className="bg-[#EDEDED] border-2 border-[#b38e19] shadow-sm mx-auto"
     >
       {/* Header */}
-      <div className="flex items-center justify-center mb-6">
-        <Plus className="text-[#B38E19] mx-1" size={23} />
-        <h2 className="text-xl font-semibold text-gray-800">{t("add_journal")}</h2>
+      <div
+        className="flex items-center justify-center"
+        style={{ marginBottom: "clamp(1rem, 3vw, 2rem)" }}
+      >
+        <Plus
+          className="text-[#B38E19]"
+          style={{
+            width: "clamp(20px, 3vw, 28px)",
+            height: "clamp(20px, 3vw, 28px)",
+            marginInline: "0.5rem",
+          }}
+        />
+        <h2
+          className="font-semibold text-gray-800"
+          style={{
+            fontSize: "clamp(1.1rem, 2.6vw, 1.6rem)",
+          }}
+        >
+          {t("add_journal")}
+        </h2>
       </div>
 
       {/* Journal Name */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("journal_name")} <span className="text-[#b38e19]">*</span>
-        </label>
-        <input
-          type="text"
-          name="nameOfMagazine"
+      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
+        <CustomInputField
+          label={t("journal_name")}
           value={formData.nameOfMagazine}
-          onChange={(e) => handleChange("nameOfMagazine", e.target.value)}
+          onChange={(e) =>
+            handleChange("nameOfMagazine", e.target.value)
+          }
           placeholder={t("enter_journal_name")}
-          className={`${inputClass} ${focusClasses}`}
+          error={errors.nameOfMagazine}
+          required
         />
-        {errors.nameOfMagazine && (
-          <p className="text-red-500 text-sm mt-1">{errors.nameOfMagazine}</p>
-        )}
       </div>
 
       {/* Journal Website */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("journal_website")}
-        </label>
-        <input
-          type="text"
-          name="websiteOfMagazine"
+      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
+        <CustomInputField
+          label={t("journal_website")}
           value={formData.websiteOfMagazine}
-          onChange={(e) => handleChange("websiteOfMagazine", e.target.value)}
+          onChange={(e) =>
+            handleChange("websiteOfMagazine", e.target.value)
+          }
           placeholder={t("enter_journal_website")}
-          className={`${inputClass} ${focusClasses}`}
         />
       </div>
 
       {/* Participation Type */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("participation_type")} <span className="text-[#b38e19]">*</span>
+      <div style={{ marginBottom: "clamp(1rem, 2.5vw, 1.5rem)" }}>
+        <label
+          className="block font-medium"
+          style={{
+            fontSize: "clamp(0.9rem, 2vw, 1.05rem)",
+            marginBottom: "clamp(0.5rem, 1.5vw, 0.75rem)",
+          }}
+        >
+          {t("participation_type")}
+          <span className="text-[#b38e19] ml-1">*</span>
         </label>
-        <CustomDropdown
+
+        <Dropdown
           value={formData.typeOfParticipationId}
-          onChange={(val) => handleChange("typeOfParticipationId", val)}
+          onChange={(val) =>
+            handleChange("typeOfParticipationId", val)
+          }
           options={types}
           placeholder={t("select_participation_type")}
-          isArabic={isArabic}
+          error={errors.typeOfParticipationId}
+          disabled={loadingTypes}
         />
-        {errors.typeOfParticipationId && (
-          <p className="text-red-500 text-sm mt-1">{errors.typeOfParticipationId}</p>
-        )}
       </div>
 
       {/* Submit Error */}
-      {errors.submit && <p className="text-red-500 text-center mb-4">{errors.submit}</p>}
+      {errors.submit && (
+        <p
+          className="text-red-500 text-center"
+          style={{
+            fontSize: "clamp(0.8rem, 1.8vw, 0.95rem)",
+            marginBottom: "clamp(0.75rem, 2vw, 1rem)",
+          }}
+        >
+          {errors.submit}
+        </p>
+      )}
 
-      {/* Buttons */}
-      <div className="flex justify-center gap-3 mt-8">
+      {/* Actions */}
+      <div
+        className="flex justify-center"
+        style={{ marginTop: "clamp(1.25rem, 4vw, 2.25rem)" }}
+      >
         <button
           type="submit"
           disabled={loading}
-          className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
+          style={{
+            width: "clamp(6.5rem, 16vw, 9rem)",
+            height: "clamp(2.5rem, 5.5vw, 3.2rem)",
+            fontSize: "clamp(0.85rem, 1.6vw, 1.05rem)",
+          }}
+          className={`bg-[#b38e19] text-white rounded-md font-${
             isArabic ? "cairo" : "roboto"
-          } text-sm`}
+          }`}
         >
           {loading ? t("loading") : t("add")}
         </button>

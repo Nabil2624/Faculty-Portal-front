@@ -13,6 +13,7 @@
   "page": "Page",
   "of": "of",
   "empty": "No data available",
+    "areYouSureDelete": "Are you sure you want to delete this journal?",
   "errors": {
     "loadFailed": "An error occurred while loading data",
     "deleteFailed": "Failed to delete the item"

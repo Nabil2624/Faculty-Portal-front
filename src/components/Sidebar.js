@@ -3,187 +3,202 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
   Home,
-  GraduationCap,
+  User,
+  BookOpenText,
+  University,
+  Goal,
+  FolderKanban,
   Briefcase,
-  CreditCard,
-  FileText,
-  BookOpen,
-  Settings,
-  Headphones,
+  BookMarkedIcon,
+  HelpingHand,
+  Award
 } from "lucide-react";
-import logo from "../assets/helwan-logo.png";
+import logo from "../assets/Capital.png";
 
 export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const { t } = useTranslation("headerandsidebar");
-  const [openMenu, setOpenMenu] = useState(null);
-  const [openSubMenu, setOpenSubMenu] = useState(null);
-
-  const toggleSidebar = () => setIsExpanded((prev) => !prev);
-  const toggleMenu = (menu) => setOpenMenu(openMenu === menu ? null : menu);
-  const toggleSubMenu = (submenu) =>
-    setOpenSubMenu(openSubMenu === submenu ? null : submenu);
+  const [openMenus, setOpenMenus] = useState({});
 
   const isArabic = lang === "ar";
 
+  const toggleSidebar = () => setIsExpanded((prev) => !prev);
+
+  const toggleMenu = (key, level = 1) => {
+    setOpenMenus((prev) => ({
+      ...prev,
+      [level]: prev[level] === key ? null : key,
+    }));
+  };
+
+  const iconClass =
+    "w-[clamp(20px,1.6vw,60px)] h-[clamp(20px,1.6vw,60px)] shrink-0";
+
   const navItems = [
+    { key: "home", icon: <Home />, link: "/under-development" },
     {
-      key: "home",
-      icon: <Home size={22} />,
-      link: "/under-development",
-      sub: [],
-    },
-    {
-      key: "academicData",
-      icon: <GraduationCap size={22} />,
+      key: "personalInfo",
+      icon: <User />,
       sub: [
-        {
-          key: "personalInfo",
-          link: "/academic-data/personal-data",
-          sub: [
-            { key: "personalData", link: "/personal" },
-            { key: "contactInfo", link: "/contact-info" },
-            { key: "socialNetworking", link: "/social-networking" },
-            { key: "identificationCard", link: "/identification-card" },
-          ],
-        },
-        {
-          key: "scientificProgression",
-          link: "/academic-data/scientific-progression",
-          sub: [
-            { key: "academicQualifications", link: "/academic-qualifications" },
-            { key: "jobGrades", link: "/job-rankings" },
-            {
-              key: "administrativePositions",
-              link: "/administrative-positions",
-            },
-          ],
-        },
-        {
-          key: "missions",
-          link: "/academic-data/missions",
-          sub: [
-            { key: "scientificMissions", link: "/scientific-missions" },
-            {
-              key: "seminarsAndConferences",
-              link: "/seminars-and-conferences",
-            },
-            { key: "trainingPrograms", link: "/training-programs" },
-          ],
-        },
-        {
-          key: "projectsAndCommittee",
-          link: "/academic-data/projectsAndCommittee",
-          sub: [
-            { key: "committeeAndAssociation", link: "/committee-associations" },
-            {
-              key: "articleReviews",
-              link: "/article-reviews",
-            },
-            { key: "participationJournals", link: "/journals" },
-            { key: "Projects", link: "/projects" },
-          ],
-        },
-        {
-          key: "researchAndSupervision",
-          link: "/academic-data/researches",
-          sub: [
-            { key: "researches", link: "/scientific-researches" },
-            { key: "supervisionThesis", link: "/supervision-thesis" },
-            { key: "myThesis", link: "/my-thesis" },
-            { key: "researcherProfile", link: "/researcher-profile" },
-            { key: "nominatedResearches", link: "/nominated-researches" },
-          ],
-        },
+        { key: "personalData", link: "/personal" },
+        { key: "contactInfo", link: "/contact-info" },
+        { key: "socialNetworking", link: "/social-networking" },
+        { key: "identificationCard", link: "/identification-card" },
       ],
     },
     {
-      key: "studyAndExams",
-      icon: <Briefcase size={22} />,
+      key: "researchAndSupervision",
+      icon: <BookOpenText />,
       sub: [
-        // { key: "midterms", link: "/study-exams/midterms" },
-        // { key: "finals", link: "/study-exams/finals" },
+        { key: "researches", link: "/scientific-researches" },
+        { key: "supervisionThesis", link: "/supervision-thesis" },
+        { key: "myThesis", link: "/my-thesis" },
+        { key: "researcherProfile", link: "/researcher-profile" },
+        { key: "nominatedResearches", link: "/nominated-researches" },
       ],
     },
     {
-      key: "financialDues",
-      icon: <CreditCard size={22} />,
+      key: "scientificProgression",
+      icon: <University />,
       sub: [
-        // { key: "tuition", link: "/financial-dues/tuition" },
-        // { key: "payments", link: "/financial-dues/payments" },
+        { key: "academicQualifications", link: "/academic-qualifications" },
+        { key: "jobGrades", link: "/job-rankings" },
+        { key: "administrativePositions", link: "/administrative-positions" },
+      ],
+    },
+     {
+      key: "experiences",
+      icon: <Briefcase />,
+      sub: [
+      ],
+    },
+     {
+      key: "Publications&Patents",
+      icon: <BookMarkedIcon />,
+      sub: [
       ],
     },
     {
-      key: "leavesDocs",
-      icon: <FileText size={22} />,
+      key: "projectsAndCommittee",
+      icon: <FolderKanban />,
       sub: [
-        { key: "leaveRequest", link: "/under-development" },
-        // { key: "certificates", link: "/leaves-docs/certificates" },
+        { key: "committeeAndAssociation", link: "/committee-associations" },
+        { key: "articleReviews", link: "/article-reviews" },
+        { key: "participationJournals", link: "/journals" },
+        { key: "Projects", link: "/projects" },
       ],
     },
     {
-      key: "trainingsCourses",
-      icon: <BookOpen size={22} />,
+      key: "missions",
+      icon: <Goal />,
       sub: [
-        // { key: "onlineTraining", link: "/trainings-courses/online" },
-        // { key: "onsiteTraining", link: "/trainings-courses/onsite" },
+        { key: "scientificMissions", link: "/scientific-missions" },
+        { key: "seminarsAndConferences", link: "/seminars-and-conferences" },
+        { key: "trainingPrograms", link: "/training-programs" },
       ],
     },
+     {
+      key: "contributions",
+      icon: <HelpingHand />,
+      sub: [
+      ],
+    },
+     {
+      key: "awards",
+      icon: <Award />,
+      sub: [
+      ],
+    },
+    
   ];
 
-  const renderSubMenu = (sub, level = 1) => (
-    <ul className={`mt-1 ml-2 ${isArabic ? "mr-5" : "ml-5"}`}>
-      {sub.map((item) => (
-        <li
-          key={item.key}
-          className={`relative 
-            before:content-[''] before:absolute before:top-0 before:bottom-0 before:w-px before:bg-gray-400
-            ${isArabic ? "before:right-0 pr-3" : "before:left-0 pl-3"}`}
-        >
-          {item.sub ? (
-            <>
-              <button
-                onClick={() => toggleSubMenu(item.key)}
-                className={`block py-1 text-sm text-gray-200 hover:text-white hover:bg-[#B38e19] rounded-md w-full
-                  ${
-                    isArabic
-                      ? `text-right pr-${level * 4}`
-                      : `text-left pl-${level * 4}`
-                  }`}
-              >
+  // line offset و حجم الـ border responsive
+  const lineOffset = "clamp(15px,1vw,50px)";
+  const lineWidth = "clamp(1px, 0.1vw, 2px)";
+
+  const renderMenu = (items, level = 1) => {
+    return items.map((item) => {
+      const hasSub = item.sub && item.sub.length > 0;
+      const isOpen = openMenus[level] === item.key;
+
+      return (
+        <li key={item.key} className="relative">
+          {/* Parent button */}
+
+          <button
+            onClick={() => hasSub && toggleMenu(item.key, level)}
+            className={`flex items-center gap-[clamp(0.5rem,0.5vw,1rem)] px-[clamp(0.2rem,0.3vw,1rem)] py-[clamp(0.25rem,0.5vw,0.5rem)] w-full rounded-md hover:bg-[#B38e19] transition ${
+              isExpanded ? "justify-start" : "justify-center"
+            }`}
+          >
+            {React.cloneElement(item.icon, {
+              className: iconClass,
+            })}
+
+            {isExpanded && (
+              <span className="text-[clamp(0.75rem,1vw,9rem)] font-medium">
                 {t(item.key)}
-              </button>
-              {openSubMenu === item.key && renderSubMenu(item.sub, level + 1)}
-            </>
-          ) : (
-            <Link
-              to={item.link}
-              className={`block py-1 text-sm text-gray-200 hover:text-white hover:bg-[#B38e19] rounded-md
-                ${
+              </span>
+            )}
+          </button>
+          {/* Sub-menu */}
+          {hasSub && isOpen && isExpanded && (
+            <ul className="relative mt-[clamp(0.25rem,0.5vw,0.5rem)]">
+              <div
+                className="absolute bg-gray-400"
+                style={
                   isArabic
-                    ? `text-right pr-${level * 4}`
-                    : `text-left pl-${level * 4}`
-                }`}
-            >
-              {t(item.key)}
-            </Link>
+                    ? {
+                        right: lineOffset,
+                        top: "4px",
+                        bottom: "4px",
+                        width: lineWidth,
+                      }
+                    : {
+                        left: lineOffset,
+                        top: "4px",
+                        bottom: "4px",
+                        width: lineWidth,
+                      }
+                }
+              />
+
+              {item.sub.map((subItem) => (
+                <li
+                  key={subItem.key}
+                  className={`relative mt-[clamp(2px,0.5vw,4px)] ${
+                    isArabic
+                      ? "mr-[clamp(1rem,1vw,4rem)]"
+                      : "ml-[clamp(1rem,0.5vw,3rem)]"
+                  }`}
+                >
+                  <Link
+                    to={subItem.link}
+                    className="block py-[clamp(0rem,0.2vw,3rem)] px-[clamp(0.5rem,0.5vw,6rem)] text-gray-200 text-[clamp(0.75rem,0.9vw,8rem)] hover:text-white hover:bg-[#B38e19] rounded-md"
+                  >
+                    {t(subItem.key)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           )}
         </li>
-      ))}
-    </ul>
-  );
+      );
+    });
+  };
 
   return (
     <aside
-      className={`flex flex-col justify-between bg-[#19355a] text-white 
-        ${isExpanded ? "w-56" : "w-[51px]"} 
-        fixed top-2 bottom-2 ${isArabic ? "right-2" : "left-2"} 
-        rounded-xl transition-all duration-300 ease-in-out`}
+      className={`flex flex-col justify-between bg-[#19355a] text-white ${
+        isExpanded
+          ? "w-[clamp(14rem,14vw,30rem)]"
+          : "w-[clamp(3rem,3.7vw,8rem)]"
+      } fixed top-2 bottom-2 ${isArabic ? "right-2" : "left-2"} rounded-[clamp(1px,0.5vw,20px)] transition-all duration-300 ease-in-out`}
       style={{ height: "calc(100vh - 16px)" }}
       dir={isArabic ? "rtl" : "ltr"}
     >
-      {/* Header / Logo */}
+      {/* Header */}
       <div
-        className={`flex items-center gap-2 cursor-pointer px-2 py-2 ${
+        className={`flex items-center gap-[clamp(0.5rem,0.5vw,1rem)] cursor-pointer px-[clamp(0.5rem,0.5vw,1rem)] py-[clamp(0.25rem,1vw,0.5rem)] ${
           isExpanded ? "justify-start" : "justify-center"
         }`}
         onClick={toggleSidebar}
@@ -191,64 +206,28 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         <img
           src={logo}
           alt="Logo"
-          className={`w-10 h-10 ${!isExpanded && "mx-auto"}`}
+          className={`w-[clamp(2.5rem,2vw,7rem)] h-[clamp(3rem,4vw,8rem)] ${
+            !isExpanded && "mx-auto"
+          }`}
         />
+
         {isExpanded && (
-          <h2 className="font-bold text-lg">{t("helwanUniversity")}</h2>
+          <h2
+            className={`font-bold ${
+              isArabic
+                ? "text-[clamp(1rem,1.5vw,2rem)]"
+                : "text-[clamp(1rem,1.3vw,2rem)]"
+            }`}
+          >
+            {t("capitalUniversity")}
+          </h2>
         )}
       </div>
 
       {/* Menu */}
-      <ul className="flex flex-col flex-1 gap-2 mt-6">
-        {navItems.map((item) => (
-          <li key={item.key}>
-            {item.sub.length === 0 ? (
-              <Link
-                to={item.link}
-                className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#B38e19] transition
-                  ${isExpanded ? "justify-start" : "justify-center"}`}
-              >
-                {item.icon}
-                {isExpanded && <span>{t(item.key)}</span>}
-              </Link>
-            ) : (
-              <div>
-                <button
-                  onClick={() => toggleMenu(item.key)}
-                  className={`flex items-center gap-3 px-3 py-2 w-full rounded-md hover:bg-[#B38e19] transition
-                    ${isExpanded ? "justify-start" : "justify-center"}`}
-                >
-                  {item.icon}
-                  {isExpanded && <span>{t(item.key)}</span>}
-                </button>
-
-                {/* Submenu */}
-                {openMenu === item.key && isExpanded && renderSubMenu(item.sub)}
-              </div>
-            )}
-          </li>
-        ))}
+      <ul className="flex flex-col flex-1 mt-6 gap-[clamp(0.25rem,0.5vw,0.5rem)]">
+        {renderMenu(navItems)}
       </ul>
-
-      {/* Footer */}
-      <div className="flex flex-col gap-3 mt-auto mb-4">
-        <Link
-          to="/settings"
-          className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#B38e19] transition
-            ${isExpanded ? "justify-start" : "justify-center"}`}
-        >
-          <Settings size={22} />
-          {isExpanded && <span>{t("settings")}</span>}
-        </Link>
-        <Link
-          to="/support"
-          className={`flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#B38e19] transition
-            ${isExpanded ? "justify-start" : "justify-center"}`}
-        >
-          <Headphones size={22} />
-          {isExpanded && <span>{t("support")}</span>}
-        </Link>
-      </div>
     </aside>
   );
 }

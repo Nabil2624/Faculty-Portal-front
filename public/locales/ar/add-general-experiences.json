@@ -1,0 +1,36 @@
+{
+  "addGeneralExperience": {
+    "title": "إضافة خبرة عامة"
+  },
+  "editGeneralExperience": {
+    "title": "تعديل خبرة عامة"
+  },
+  "fields": {
+    "experience": "الخبرة",
+    "countryCity": "الدولة / المدينة",
+    "startDate": "تاريخ البداية",
+    "endDate": "تاريخ النهاية",
+    "description": "الوصف",
+    "authority" : "الجهة"
+  },
+  "placeholders": {
+    "experience": "أدخل عنوان الخبرة",
+    "countryCity": "أدخل الدولة والمدينة",
+    "startDate": "اختر تاريخ البداية",
+    "endDate": "اختر تاريخ النهاية",
+    "description": "أدخل تفاصيل الخبرة",
+    "authority" : "ادخل الدجهة"
+  },
+  "buttons": {
+    "save": "حفظ",
+    "cancel": "إلغاء"
+  },
+  "errors": {
+    "failedAdd": "فشل في إضافة الخبرة العامة. حاول مرة أخرى.",
+    "experienceRequired": "الخبرة مطلوبة",
+    "countryCityRequired": "الدولة والمدينة مطلوبتان",
+    "startDateRequired": "تاريخ البداية مطلوب",
+    "endDateInvalid": "لا يمكن أن يكون تاريخ النهاية قبل تاريخ البداية",
+    "authorityRequired" :"الجهة مطلوبة"
+  }
+}

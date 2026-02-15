@@ -10,6 +10,12 @@ import {
   BookOpen,
   Settings,
   Headphones,
+  User,
+  BookOpenText,
+  University,
+  Goal,
+  FileTextIcon,
+  FolderKanban
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import logo from "../assets/helwan-logo.png";
@@ -20,52 +26,63 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
   const [openMenus, setOpenMenus] = useState({});
   const isArabic = lang === "ar";
 
+  // Nav items بعد تعديل الليفلات: كل ليفل 2 سابق أصبح ليفل 1، والمحتوى جوه أصبح ليفل 2
   const navItems = [
-    { key: "home", icon: <Home size={22} />, link: "/under-development", sub: [] },
     {
-      key: "academicData",
-      icon: <GraduationCap size={22} />,
+      key: "home",
+      icon: <Home size={22} />,
+      link: "/under-development",
+      sub: [],
+    },
+    {
+      key: "personalInfo",
+      icon: <User size={22} />,
       sub: [
-        {
-          key: "personalInfo",
-          sub: [
-            { key: "personalData", link: "/personal" },
-            { key: "contactInfo", link: "/contact-info" },
-            { key: "socialNetworking", link: "/social-networking" },
-            { key: "identificationCard", link: "/identification-card" },
-          ],
-        },
-        {
-          key: "scientificProgression",
-          sub: [
-            { key: "academicQualifications", link: "/academic-qualifications" },
-            { key: "jobGrades", link: "/job-rankings" },
-            { key: "administrativePositions", link: "/administrative-positions" },
-          ],
-        },
-        {
-          key: "missions",
-          sub: [
-            { key: "scientificMissions", link: "/scientific-missions" },
-            { key: "seminarsAndConferences", link: "/seminars-and-conferences" },
-            { key: "trainingPrograms", link: "/training-programs" },
-          ],
-        },
-        {
-          key: "projectsAndCommittee",
-          sub: [
-            { key: "committeeAndAssociation", link: "/committee-associations" },
-            { key: "articleReviews", link: "/article-reviews" },
-            { key: "participationJournals", link: "/journals" },
-            { key: "Projects", link: "/projects" },
-          ],
-        },
+        { key: "personalData", link: "/personal" },
+        { key: "contactInfo", link: "/contact-info" },
+        { key: "socialNetworking", link: "/social-networking" },
+        { key: "identificationCard", link: "/identification-card" },
       ],
     },
-    { key: "studyAndExams", icon: <Briefcase size={20} />, sub: [] },
-    { key: "financialDues", icon: <CreditCard size={20} />, sub: [] },
-    { key: "leavesDocs", icon: <FileText size={20} />, sub: [] },
-    { key: "trainingsCourses", icon: <BookOpen size={20} />, sub: [] },
+    {
+      key: "researchAndSupervision",
+      icon: <BookOpenText size={22} />,
+      sub: [
+        { key: "researches", link: "/scientific-researches" },
+        { key: "supervisionThesis", link: "/supervision-thesis" },
+        { key: "myThesis", link: "/my-thesis" },
+        { key: "researcherProfile", link: "/researcher-profile" },
+        { key: "nominatedResearches", link: "/nominated-researches" },
+      ],
+    },
+    {
+      key: "scientificProgression",
+      icon: <University size={22} />,
+      sub: [
+        { key: "academicQualifications", link: "/academic-qualifications" },
+        { key: "jobGrades", link: "/job-rankings" },
+        { key: "administrativePositions", link: "/administrative-positions" },
+      ],
+    },
+    {
+      key: "projectsAndCommittee",
+      icon: <FolderKanban size={22} />,
+      sub: [
+        { key: "committeeAndAssociation", link: "/committee-associations" },
+        { key: "articleReviews", link: "/article-reviews" },
+        { key: "participationJournals", link: "/journals" },
+        { key: "projects", link: "/projects" },
+      ],
+    },
+    {
+      key: "missions",
+      icon: <Goal size={22} />,
+      sub: [
+        { key: "scientificMissions", link: "/scientific-missions" },
+        { key: "seminarsAndConferences", link: "/seminars-and-conferences" },
+        { key: "trainingPrograms", link: "/training-programs" },
+      ],
+    },
   ];
 
   useEffect(() => {
@@ -78,12 +95,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, onClose]);
 
-  // زق الخط لكل Level
-  const lineOffsetByLevel = {
-    2: 15,
-    3: 23,
-    4: 36,
-  };
+  const lineOffsetByLevel = { 2: 15 };
 
   const toggleMenu = (key, level) => {
     setOpenMenus((prev) => ({
@@ -100,7 +112,11 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
         className="relative"
         style={{
           paddingLeft: isArabic ? 0 : level > 1 ? level * containerPadding : 0,
-          paddingRight: isArabic ? (level > 1 ? level * containerPadding : 0) : 0,
+          paddingRight: isArabic
+            ? level > 1
+              ? level * containerPadding
+              : 0
+            : 0,
         }}
       >
         {level > 1 && (
@@ -128,7 +144,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
               className="relative z-10"
               style={{
                 marginTop: "4px",
-                marginBottom: level === 1 ? "20px" : level === 2 ? "2px" : "2px",
+                marginBottom: level === 1 ? "20px" : "2px",
               }}
             >
               <button
@@ -164,8 +180,13 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
         {/* Header */}
         <div className="flex items-center justify-between mb-10 text-start">
           <img src={logo} alt="Logo" className="w-10 h-10" />
-          <h2 className="font-bold text-lg text-start">{t("helwanUniversity")}</h2>
-          <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-full">
+          <h2 className="font-bold text-lg text-start">
+            {t("helwanUniversity")}
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-white/20 rounded-full"
+          >
             <X size={20} />
           </button>
         </div>

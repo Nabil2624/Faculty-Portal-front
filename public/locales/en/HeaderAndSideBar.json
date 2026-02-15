@@ -1,7 +1,7 @@
 {
   "logout": "Logout",
   "searchPlaceholder": "Search for faculty members",
-  "helwanUniversity": "Helwan University",
+  "capitalUniversity": "Capital University",
   "home": "Home",
   "academicData": "Academic Data",
   "studyAndExams": "Study & Exams",
@@ -34,5 +34,9 @@
   "myThesis": "Master’s & PhD Theses",
   "researcherProfile": "Researcher Profile",
   "nominatedResearches": "Nominated Researches",
-  "researchAndSupervision": "Researches & Supervision"
+  "researchAndSupervision": "Researches & Supervision",
+  "awards" : "Awards",
+  "contributions" : "Contributions",
+  "experiences"   : "Experiences",
+  "Publications&Patents" : "Publications & Patents"
 }

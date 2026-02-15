@@ -13,12 +13,14 @@
   "edit": "Edit",
   "cancel": "Cancel",
   "confirmDelete": "Are you sure you want to delete this record?",
-  "prev": "Previous",
+  "previous": "Previous",
   "next": "Next",
   "page": "Page",
   "of": "of",
   "noData": "No projects recorded",
-  "fetchError": "Failed to fetch projects",
-  "deleteError": "Failed to delete project",
-  "empty": "No projects found"
+  "empty": "No projects found",
+  "errors": {
+    "loadFailed": "An error occurred while loading data",
+    "deleteFailed": "Failed to delete the item"
+  }
 }

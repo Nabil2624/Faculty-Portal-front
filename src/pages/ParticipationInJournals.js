@@ -23,51 +23,56 @@ export default function ParticipationInJournals() {
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
 
-  const {
-    items,
-    totalPages,
-    loading,
-    error,
-    loadData,
-  } = useJournals(page, 9);
+  const { items, totalPages, loading, error, loadData } = useJournals(page, 9);
 
   const handleDelete = async () => {
     if (!selectedItem) return;
+
     setDeleteError(null);
+
     try {
       await deleteParticipationJournal(selectedItem.id);
       setShowDelete(false);
+      setSelectedItem(null);
       loadData();
     } catch (err) {
       setDeleteError(t("errors.deleteFailed"));
     }
   };
 
-  if (loading) return <LoadingSpinner />;
 
-  if (error) {
-    return (
-      <div className="text-center text-red-500 mt-10">
-        {t("errors.loadFailed")}
-      </div>
-    );
-  }
 
   return (
     <ResponsiveLayoutProvider>
       <div
-        className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
+        className={`${isArabic ? "rtl" : "ltr"} flex flex-col min-h-[90vh]`}
+        style={{
+          padding: "clamp(6px, 0.5vw, 20px)",
+        }}
       >
         <PageHeader
           title={t("title")}
           addLabel={t("add")}
           onAdd={() => setShowAdd(true)}
           onFilter={() => console.log("Filter clicked")}
+          isArabic={isArabic}
         />
+        <div className="items-center justify-center">
+          {!loading && error && (
+            <div className="text-red-500 text-lg text-center">
+              {t("errors.loadFailed")}
+            </div>
+          )}
 
-        <div className="flex-1">
-          {items.length ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {!loading && !error && items.length === 0 && (
+            <div className="text-gray-500 text-xl text-center">
+              {t("empty")}
+            </div>
+          )}
+        </div>
+        <div className="flex-1 ">
+          {!loading && !error && items.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr h-full">
               {items.map((item) => (
                 <JournalCard
                   key={item.id}
@@ -87,10 +92,6 @@ export default function ParticipationInJournals() {
                   }}
                 />
               ))}
-            </div>
-          ) : (
-            <div className="text-center text-gray-500 text-xl">
-              {t("empty")}
             </div>
           )}
         </div>

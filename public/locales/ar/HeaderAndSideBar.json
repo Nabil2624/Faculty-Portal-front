@@ -1,7 +1,7 @@
 {
   "logout": "تسجيل خروج",
   "searchPlaceholder": "البحث عن اعضاء هيئة التدريس",
-  "helwanUniversity": "جامعة حلوان",
+  "capitalUniversity": "جامعة العاصمة",
   "home": "الصفحة الرئيسية",
   "academicData": "البيانات الأكاديمية",
   "studyAndExams": "الدراسة والامتحانات",
@@ -34,5 +34,9 @@
   "myThesis": "رسالتي الماجستير و الدكتوراة",
   "researcherProfile": "ملف الباحث",
   "nominatedResearches": "الأبحاث المرشحة",
-  "researchAndSupervision": "الأبحاث و الإشراف"
+  "researchAndSupervision": "الأبحاث و الإشراف",
+    "awards" : "الجوائز",
+  "contributions" : "المساهمات",
+  "experiences"   : "الخبرات",
+  "Publications&Patents" : "المؤلفات و البراءات"
 }

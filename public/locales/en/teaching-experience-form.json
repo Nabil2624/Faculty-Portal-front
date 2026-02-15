@@ -1,0 +1,36 @@
+{
+  "titles": {
+    "addTeachingExperience": "Add Teaching Experience",
+    "editTeachingExperience": "Edit Teaching Experience"
+  },
+  "fields": {
+    "course": "Course",
+    "academicLevel": "Study Year",
+    "university": "University / College",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "description": "Description"
+  },
+  "placeholders": {
+    "course": "Enter course name",
+    "AcademicLevel": "Enter study year",
+    "university": "Enter university or college",
+    "startDate": "Select start date",
+    "endDate": "Select end date",
+    "description": "Enter description"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "courseRequired": "Course field is required",
+    "academicLevelRequired": "Study Year field is required",
+    "universityRequired": "University / College field is required",
+    "startDateRequired": "Start Date field is required",
+    "endDateRequired": "End Date field is required",
+    "descriptionRequired": "Description field is required",
+    "invalidDate": "Invalid date",
+    "endDateBeforeStartDate": "End Date cannot be before Start Date"
+  }
+}

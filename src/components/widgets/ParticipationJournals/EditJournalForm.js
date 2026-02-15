@@ -1,192 +1,178 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pen, ChevronDown } from "lucide-react";
-import axiosInstance from "../../../utils/axiosInstance";
-import CustomDropdown from "../../ui/CustomDropdown";
+import { Pen } from "lucide-react";
 
+import Dropdown from "../../ui/Dropdown";
+import CustomInputField from "../../ui/CustomInputField";
+
+import useEditJournal from "../../../hooks/useEditJournal";
+import useMagazineParticipationTypes from "../../../hooks/useMagazineParticipationTypes";
 
 export default function EditJournalForm({ data, onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("journal-forms");
   const dir = i18n.dir();
   const isArabic = i18n.language === "ar";
 
-  const [participationRoles, setParticipationRoles] = useState([]);
-  const [loadingRoles, setLoadingRoles] = useState(true);
-
   const [formData, setFormData] = useState({
     nameOfMagazine: "",
     websiteOfMagazine: "",
-    participationType: "", // this will store the ID
+    typeOfParticipationId: "",
   });
 
-  const [errors, setErrors] = useState({});
+  const { types, loading: loadingTypes } =
+    useMagazineParticipationTypes();
 
-  // Load existing data
+  const { submit, loading, errors } = useEditJournal({
+    id: data?.id,
+    onCancel,
+    onSuccess,
+  });
+
   useEffect(() => {
-    if (data) {
-      setFormData({
-        nameOfMagazine: data.nameOfMagazine || "",
-        websiteOfMagazine: data.websiteOfMagazine || "",
-        participationType: data.participationTypeId || "",
-      });
-    }
-  }, [data]);
+    if (!data || !types.length) return;
 
-  // Fetch participation roles
-  useEffect(() => {
-    async function fetchRoles() {
-      try {
-        const res = await axiosInstance.get(
-          "/LookUpItems/MagazineParticipationRoles",
-          { skipGlobalErrorHandler: true }
-        );
+    const matchedType = types.find(
+      (t) =>
+        t.label ===
+        (isArabic
+          ? data.typeOfParticipation?.valueAr
+          : data.typeOfParticipation?.valueEn)
+    );
 
-        setParticipationRoles(res.data || []);
-      } catch (err) {
-        console.error("Failed to load roles:", err);
-      } finally {
-        setLoadingRoles(false);
-      }
-    }
+    setFormData({
+      nameOfMagazine: data.nameOfMagazine ?? "",
+      websiteOfMagazine: data.websiteOfMagazine ?? "",
+      typeOfParticipationId: matchedType?.id ?? "",
+    });
+  }, [data, types, isArabic]);
 
-    fetchRoles();
-  }, []);
-
-  const validate = () => {
-    const errs = {};
-
-    if (!formData.nameOfMagazine.trim()) errs.nameOfMagazine = t("required");
-    if (!formData.participationType) errs.participationType = t("required");
-
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+  const handleChange = (key, value) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
   };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors((prev) => ({ ...prev, [e.target.name]: null })); // remove local error
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validate()) return;
-
-    const payload = {
-      nameOfMagazine: formData.nameOfMagazine,
-      websiteOfMagazine: formData.websiteOfMagazine,
-      typeOfParticipationId:  formData.participationType,
-  
-    };
-
-    try {
-      await axiosInstance.put(
-        `/ProjectsAndCommittees/UpdateParticipationInMagazine/${data.id}`,
-        payload,
-        { skipGlobalErrorHandler: true }
-      );
-
-      if (onSuccess) onSuccess();
-    } catch (err) {
-      console.log("Update failed:", err);
-    }
-  };
-
-  const inputClass =
-    "w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 transition duration-150 bg-[#E2E2E2]";
-  const focusClasses =
-    "focus:outline-none focus:ring-2 focus:ring-[#B38E19] transition duration-150 shadow";
 
   return (
     <form
       key={i18n.language}
       dir={dir}
-      onSubmit={handleSubmit}
-      className="max-w-md mx-auto mt-6 bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
+      onSubmit={(e) => {
+        e.preventDefault();
+        submit(formData);
+      }}
+      style={{
+        width: "clamp(320px, 32vw, 600px)",
+        padding: "clamp(1.25rem, 2.5vw, 2.25rem)",
+        borderRadius: "clamp(14px, 1.8vw, 22px)",
+      }}
+      className="
+        bg-[#F6F6F6]
+        border border-[#D6B55C]
+        shadow-[0_10px_30px_rgba(0,0,0,0.08)]
+        mx-auto
+      "
     >
-      <div className="flex items-center justify-center mb-6">
-        <Pen className="text-[#B38E19] mx-1" size={20} />
-        <h2 className="text-xl font-semibold text-gray-800">
+      {/* Header */}
+      <div
+        className="flex items-center justify-center text-center"
+        style={{ marginBottom: "clamp(1.25rem, 3vw, 2rem)" }}
+      >
+        <Pen
+          className="text-[#B38E19]"
+          style={{
+            width: "clamp(20px, 2.8vw, 26px)",
+            height: "clamp(20px, 2.8vw, 26px)",
+            marginInline: "0.5rem",
+          }}
+        />
+        <h2
+          className="font-semibold text-gray-800"
+          style={{ fontSize: "clamp(1.15rem, 2.6vw, 1.6rem)" }}
+        >
           {t("edit_journal")}
         </h2>
       </div>
 
-      {/* Journal Name */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-1">
-          {t("journal_name")} <span className="text-[#B38E19]">*</span>
-        </label>
-
-        <input
-          type="text"
-          name="nameOfMagazine"
+      {/* Fields */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "clamp(0.9rem, 2vw, 1.4rem)",
+        }}
+      >
+        <CustomInputField
+          label={t("journal_name")}
           value={formData.nameOfMagazine}
-          onChange={handleChange}
-          className={`${inputClass} ${focusClasses}`}
+          onChange={(e) =>
+            handleChange("nameOfMagazine", e.target.value)
+          }
           placeholder={t("enter_journal_name")}
+          required
+          error={errors.nameOfMagazine}
         />
 
-        {errors.nameOfMagazine && (
-          <p className="text-red-600 text-xs mt-1">{errors.nameOfMagazine}</p>
-        )}
-      </div>
-
-      {/* Journal Website */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-1">
-          {t("journal_website")}
-        </label>
-
-        <input
-          type="text"
-          name="websiteOfMagazine"
+        <CustomInputField
+          label={t("journal_website")}
           value={formData.websiteOfMagazine}
-          onChange={handleChange}
-          className={`${inputClass} ${focusClasses}`}
+          onChange={(e) =>
+            handleChange("websiteOfMagazine", e.target.value)
+          }
           placeholder={t("enter_journal_website")}
         />
+
+        <div>
+          <label
+            className="block font-medium text-gray-700"
+            style={{
+              fontSize: "clamp(0.9rem, 2vw, 1.05rem)",
+              marginBottom: "clamp(0.5rem, 1.5vw, 0.75rem)",
+            }}
+          >
+            {t("participation_type")}
+            <span className="text-[#b38e19] ml-1">*</span>
+          </label>
+
+          <Dropdown
+            value={formData.typeOfParticipationId}
+            onChange={(val) =>
+              handleChange("typeOfParticipationId", val)
+            }
+            options={types}
+            placeholder={t("select_participation_type")}
+            disabled={loadingTypes}
+            error={errors.typeOfParticipationId}
+          />
+        </div>
       </div>
 
-      {/* Participation Type */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-1">
-          {t("participation_type")} <span className="text-[#B38E19]">*</span>
-        </label>
-
-        <CustomDropdown
-          value={formData.participationType}
-          onChange={(val) => {
-            setFormData({ ...formData, participationType: val });
-            setErrors((prev) => ({ ...prev, participationType: null }));
+      {/* Submit Error */}
+      {errors.submit && (
+        <p
+          className="text-red-500 text-center"
+          style={{
+            fontSize: "clamp(0.8rem, 1.8vw, 0.95rem)",
+            marginTop: "clamp(0.75rem, 2vw, 1rem)",
           }}
-          options={participationRoles.map((role) => ({
-            id: role.id,
-            label: isArabic ? role.valueAr : role.valueEn,
-          }))}
-          placeholder={t("select_participation_type")}
-          isArabic={isArabic}
-        />
+        >
+          {errors.submit}
+        </p>
+      )}
 
-        {errors.participationType && (
-          <p className="text-red-600 text-xs mt-1">
-            {errors.participationType}
-          </p>
-        )}
-
-        {errors.participationType && (
-          <p className="text-red-600 text-xs mt-1">
-            {errors.participationType}
-          </p>
-        )}
-      </div>
-
-      {/* Buttons */}
-      <div className="flex justify-center gap-3">
+      {/* Actions */}
+      <div
+        className="flex justify-center"
+        style={{ marginTop: "clamp(1.5rem, 4vw, 2.25rem)" }}
+      >
         <button
           type="submit"
-          className="bg-[#b38e19] text-white w-24 h-10 rounded-md text-sm"
+          disabled={loading}
+          style={{
+            width: "clamp(6.5rem, 16vw, 9rem)",
+            height: "clamp(2.5rem, 5.5vw, 3.2rem)",
+            fontSize: "clamp(0.85rem, 1.6vw, 1.05rem)",
+          }}
+          className="bg-[#b38e19] text-white rounded-md shadow-sm hover:opacity-90 transition"
         >
-          {t("save")}
+          {loading ? t("loading") : t("save")}
         </button>
       </div>
     </form>
