@@ -1,0 +1,13 @@
+{
+  "title": "Nominated Scientific Research",
+  "filter": "Filter",
+  "accept": "Accept",
+  "reject": "Reject",
+  "view": "View",
+  "empty": "No nominated research found",
+  "fetchError": "Failed to load nominated research",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "page",
+  "of": "of"
+}

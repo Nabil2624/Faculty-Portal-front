@@ -1,4 +1,4 @@
-export default function SectionCard({ title, children }) {
+export default function SectionCard({ title, children, className = "" }) {
   return (
     <div className="bg-[#EDEDED] border border-[#19355a] rounded-[14px] shadow-[0_4px_10px_rgba(0,0,0,0.08)] px-6 pt-6 pb-8 min-h-[360px] max-w-[365px] mt-6">
       <div className="flex flex-col h-full">

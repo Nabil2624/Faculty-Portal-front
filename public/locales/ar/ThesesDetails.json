@@ -1,0 +1,15 @@
+{
+  "title": "تفاصيل الرسالة",
+  "edit": "تعديل",
+
+  "thesisType": "نوع الرسالة",
+  "degree": "الدرجة",
+  "registrationDate": "تاريخ القيد",
+  "internalGrantDate": "تاريخ منح الدرجة الداخلية",
+  "jointSupervisionGrantDate": "تاريخ منح درجة إشراف مشترك",
+
+  "attachments": "المرفقات",
+  "derivedResearches": "الأبحاث المستمدة من الرسالة",
+  "committeeMembers": "أعضاء اللجنة",
+  "enrollmentDate": "تاريخ التسجيل"
+}

@@ -10,6 +10,9 @@
   "page": "Page",
   "of": "of",
   "areYouSureDelete": "Are you sure you want to delete this scientific research?",
+
+  "deleteError": "Failed to delete research.",
+
   "delete": "Delete",
   "cancel": "Cancel"
 }

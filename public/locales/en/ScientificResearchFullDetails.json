@@ -1,0 +1,33 @@
+{
+  "title": "Scientific Research Details",
+  "summary": "Reasearch Summary",
+  "edit": "Edit",
+
+  "researchType": "Research Type",
+  "publicationYear": "Publication Year",
+  "publisher": "Publisher",
+  "publishingBody": "Publishing Body",
+  "issueNumber": "Issue Number",
+  "journalOrConference": "Journal / Conference",
+  "link": "Research Link",
+  "pages": "Number of Pages",
+  "publicationType": "Publication Type",
+  "year": "Year",
+  "derivedFrom": "Derived From",
+
+  "internalContributors": "Internal Contributors",
+  "externalContributors": "External Contributors",
+  "contributors": "Contributors",
+
+  "attachments": "Attachments",
+  "citations": "Citations",
+  "derivedResearches": "Derived Researches",
+  "none": "None",
+
+  "researchRelated": "Related Research",
+  "abstract": "Abstract",
+  "noAbstract": "No abstract available",
+  "noRelatedResearch": "No related research available",
+
+  "relatedResearch": "Related Research"
+}

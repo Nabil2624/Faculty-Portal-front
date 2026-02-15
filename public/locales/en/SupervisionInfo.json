@@ -1,0 +1,23 @@
+{
+  "title": "Supervision & Examination",
+  "subtitle": "Supervision Information on Master's and Doctoral Theses",
+  "edit": "Edit",
+
+  "thesisType": "Thesis Type",
+  "role": "Faculty Member Role",
+  "studentName": "Student Name",
+  "specialization": "Specialization",
+  "degree": "Degree",
+  "registrationDate": "Registration Date",
+  "formationDate": "Committee Formation Date",
+  "discussionDate": "Defense Date",
+  "grantDate": "Degree Award Date",
+  "university": "University / College",
+
+  "PHD": "PhD",
+  "MASTERS": "Masters",
+
+  "Adminstrator": "Supervisor",
+  "Reviewer": "Examiner",
+  "AdminstratorAndReviewer": "Supervisor and Examiner"
+}

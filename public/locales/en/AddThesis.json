@@ -1,0 +1,50 @@
+{
+  "pageTitle": "Add Master’s or PhD Thesis",
+
+  "thesisType": "Thesis Type",
+  "phd": "PhD Thesis",
+  "master": "Master’s Thesis",
+
+  "thesisTitle": "Thesis Title",
+  "thesisTitlePlaceholder": "Enter thesis title",
+
+  "degree": "Degree",
+  "selectDegree": "Select degree",
+
+  "registrationDate": "Registration Date",
+  "enrollmentDate": "Enrollment Date",
+  "internalDegreeDate": "Internal Degree Award Date",
+  "jointSupervisionDate": "Joint Supervision Degree Date",
+  "selectDate": "Select {{date}}",
+  "registrationDatePlaceholder": "Select registration date",
+  "enrollmentDatePlaceholder": "Select formation date",
+  "internalDegreeDatePlaceholder": "Select discussion date",
+  "jointSupervisionDatePlaceholder": "Select joint supervision date",
+
+  "addCommitteeMember": "Add Committee Member",
+  "supervision": "Supervision",
+  "review": "Review",
+  "both": "Supervision & Review",
+
+  "memberName": "Member Name",
+  "memberNamePlaceholder": "Enter member name",
+
+  "organization": "Organization",
+  "selectOrganization": "Select organization",
+
+  "jobTitle": "Job Title",
+  "selectJobTitle": "Select job title",
+
+  "attachments": "Attachments",
+  "attachmentsNote": "Upload any files related to the research",
+  "uploadAttachments": "Upload Attachments",
+
+  "relatedResearch": "Research Derived from Thesis",
+  "research": "Research",
+  "researchPlaceholder": "Search for research in the system",
+
+  "save": "Save",
+  "back": "Back",
+
+  "required": "is required"
+}

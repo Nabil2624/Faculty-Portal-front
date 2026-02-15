@@ -7,5 +7,15 @@
   "delete": "حذف",
   "cancel": "إلغاء",
   "previous": "السابق",
-  "next": "التالي"
+  "next": "التالي",
+  "page": "الصفحة",
+  "of": "من",
+  "deleteSuccess": "تم حذف الرسالة بنجاح",
+  "deleteFailed": "فشل حذف الرسالة",
+  "MASTER": "ماجستير",
+  "PHD": "دكتوراة",
+  "Adminstrator": "مشرف",
+  "Reviewer": "محكم",
+  "AdminstratorAndReviewer": "مشرف و محكم",
+  "Student": "الطالب"
 }

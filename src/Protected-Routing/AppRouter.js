@@ -57,7 +57,7 @@ import ParticipationInJournals from "../pages/ParticipationInJournals";
 
 import ScientificResearches from "../pages/ScientificResearches";
 import SupervisionThesis from "../pages/SupervisionThesis";
-import Thesis from "../pages/Theses";
+import Theses from "../pages/Theses";
 import ScientificResearchDetails from "../pages/ScientificResearchDetails";
 import ProjectsPage from "../pages/ProjectsPage";
 import ArticleReviewsPage from "../pages/ArticleReviews";
@@ -68,6 +68,18 @@ import EditGeneralExperience from "../pages/EditGeneralExperience";
 import TeachingExperiences from "../pages/TeachingExperiences";
 import AddTeachingExperience from "../pages/AddTeachingExperience";
 import EditTeachingExperience from "../pages/EditTeachingExperience";
+import NominatedScientificResearch from "../pages/NominatedResearch";
+import SupervisionInfo from "../pages/SupervisionInfo";
+import ThesesDetails from "../pages/ThesisDetails";
+import ScientificResearchFullDetails from "../pages/ScientificResearchFullDetails";
+import ResearcherProfile from "../pages/ResearcherProfile";
+import AddThesis from "../pages/AddThesis";
+import AddScientificResearch from "../pages/AddScientificResearch";
+import EditScientificResearch from "../pages/EditScientificResearch";
+import EditThesis from "../pages/EditThesis";
+import AddSupervisionOrJudgement from "../pages/AddSupervisionOrJudgement";
+import EditSupervisionOrJudgement from "../pages/EditSupervisionOrJudgement";
+import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -92,14 +104,41 @@ function AppRouterInner() {
       <Route path="/add-scientific-task" element={<AddScientificTask />} />
       <Route path="/edit-scientific-task" element={<EditScientificTask />} />
 
-      <Route path="/theses" element={<Thesis />} />
+      <Route path="/theses" element={<Theses />} />
       <Route path="/scientific-researches" element={<ScientificResearches />} />
       <Route path="/supervision-thesis" element={<SupervisionThesis />} />
+      <Route path="/supervision-info" element={<SupervisionInfo />} />
+      <Route path="/theses-details/:id" element={<ThesesDetails />} />
+
+      <Route path="/researcher-profile" element={<ResearcherProfile />} />
+      <Route path="/add-thesis" element={<AddThesis />} />
+      <Route path="/edit-thesis" element={<EditThesis />} />
+      <Route path="/add-supervision" element={<AddSupervisionOrJudgement />} />
+      <Route path="/missing-scholar-card" element={<MissingScholarCard />} />
       <Route
-        path="/scientific-research-details"
+        path="/edit-supervision"
+        element={<EditSupervisionOrJudgement />}
+      />
+      <Route
+        path="edit-scientific-research"
+        element={<EditScientificResearch />}
+      />
+      <Route
+        path="/add-scientific-research"
+        element={<AddScientificResearch />}
+      />
+      <Route
+        path="/scientific-research-full-details"
+        element={<ScientificResearchFullDetails />}
+      />
+      <Route
+        path="/nominated-research"
+        element={<NominatedScientificResearch />}
+      />
+      <Route
+        path="/scientific-research-details/:id"
         element={<ScientificResearchDetails />}
       />
-
       <Route
         path="/add-academic-qualification"
         element={<AddAcademicQualification />}
@@ -167,9 +206,15 @@ function AppRouterInner() {
       <Route path="/article-reviews" element={<ArticleReviewsPage />} />
       <Route path="/general-experiences" element={<GeneralExperiencesPage />} />
       <Route path="/teaching-experiences" element={<TeachingExperiences />} />
-      <Route path="/add-teaching-experiences" element={<AddTeachingExperience />} />
-      
-      <Route path="/edit-teaching-experiences" element={<EditTeachingExperience />} />
+      <Route
+        path="/add-teaching-experiences"
+        element={<AddTeachingExperience />}
+      />
+
+      <Route
+        path="/edit-teaching-experiences"
+        element={<EditTeachingExperience />}
+      />
       <Route
         path="/add-general-experiences"
         element={<AddGeneralExperience />}

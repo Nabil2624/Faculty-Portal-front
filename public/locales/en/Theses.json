@@ -7,5 +7,7 @@
   "delete": "Delete",
   "cancel": "Cancel",
   "previous": "Prev",
-  "next": "Next"
+  "next": "Next",
+  "page": "page",
+  "of": "of"
 }

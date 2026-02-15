@@ -1,103 +1,57 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 
-import LoadingSpinner from "../components/LoadingSpinner";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
+import LoadingSpinner from "../components/LoadingSpinner";
 import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
 
 import ScientificResearchCard from "../components/widgets/ScientificResearches/ScientificResearchCard";
 import DeleteResearchModal from "../components/widgets/ScientificResearches/DeleteResearchModal";
 
-const MOCK_RESEARCHES = [
-  {
-    id: 1,
-    researchTitle: "AI in Healthcare",
-    journalName: "International Journal of AI",
-    publishYear: 2022,
-  },
-  {
-    id: 2,
-    researchTitle: "Blockchain Security Models",
-    journalName: "Computer Science Review",
-    publishYear: 2021,
-  },
-  {
-    id: 3,
-    researchTitle: "IoT and Smart Cities",
-    journalName: "Engineering Today",
-    publishYear: 2023,
-  },
-  {
-    id: 4,
-    researchTitle:
-      "IoT and Smart Cities and scanning the modern trends in technology",
-    journalName: "Engineering Today",
-    publishYear: 2023,
-  },
-  {
-    id: 6,
-    researchTitle:
-      "IoT and Smart Cities and scanning the modern trends in technology",
-    journalName: "Engineering Today",
-    publishYear: 2023,
-  },
-  {
-    id: 7,
-    researchTitle:
-      "IoT and Smart Cities and scanning the modern trends in technology",
-    journalName: "Engineering Today",
-    publishYear: 2023,
-  },
-];
+import useScientificResearches from "../hooks/useScientificResearches";
 
+import { deleteScientificResearch } from "../services/scientificResearchService";
 export default function ScientificResearches() {
   const { t, i18n } = useTranslation("ScientificResearches");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
 
-  const [researches, setResearches] = useState([]);
+  const {
+    researches,
+    loading,
+    error,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+    fetchResearches, // fetch researches
+  } = useScientificResearches(4);
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const pageSize = 4;
-
-  const fetchResearches = async () => {
-    setLoading(true);
-    setError(null);
+  const handleDelete = async () => {
+    if (!selectedItem) return;
 
     try {
-      setResearches(MOCK_RESEARCHES);
-      setTotalPages(Math.ceil(MOCK_RESEARCHES.length / pageSize));
+      await deleteScientificResearch(selectedItem.id);
+
+      // refresh list after deletion
+      await fetchResearches(currentPage);
+
+      setShowDelete(false);
+      setSelectedItem(null);
     } catch (err) {
-      setError(t("fetchError"));
-    } finally {
-      setLoading(false);
+      console.error(err);
+
+      const apiMessage =
+        err?.response?.data?.errorMessage || err?.response?.data?.message;
+
+      alert(apiMessage || t("deleteError"));
     }
   };
 
-  useEffect(() => {
-    fetchResearches();
-    // eslint-disable-next-line
-  }, []);
-
-  const handleDelete = () => {
-    setResearches((prev) => prev.filter((item) => item.id !== selectedItem.id));
-    setShowDelete(false);
-  };
-
   if (loading) return <LoadingSpinner />;
-
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const paginatedResearches = researches.slice(startIndex, endIndex);
 
   return (
     <ResponsiveLayoutProvider>
@@ -110,7 +64,7 @@ export default function ScientificResearches() {
 
         {error && <div className="text-red-500 text-center mb-6">{error}</div>}
 
-        {!loading && researches.length === 0 && (
+        {!loading && researches.length === 0 && !error && (
           <div className="p-10 text-center text-gray-500 text-xl">
             {t("empty")}
           </div>
@@ -119,7 +73,7 @@ export default function ScientificResearches() {
         {researches.length > 0 && (
           <>
             <div className="grid grid-cols-1 gap-6 max-w-5xl">
-              {paginatedResearches.map((item) => (
+              {researches.map((item) => (
                 <ScientificResearchCard
                   key={item.id}
                   item={item}
@@ -128,11 +82,16 @@ export default function ScientificResearches() {
                     setSelectedItem(item);
                     setShowDelete(true);
                   }}
+                  onEdit={(item) =>
+                    item.source === "Internal"
+                      ? navigate(`/edit-scientific-research/${item.id}`)
+                      : null
+                  }
                 />
               ))}
             </div>
 
-            <div className="fixed bottom-36 left-0 w-full flex justify-center z-50">
+            <div className="fixed bottom-10 left-0 w-full flex justify-center z-50">
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}

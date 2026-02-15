@@ -1,0 +1,15 @@
+{
+  "title": "Thesis Details",
+  "edit": "Edit",
+
+  "thesisType": "Thesis Type",
+  "degree": "Degree",
+  "registrationDate": "Registration Date",
+  "internalGrantDate": "Internal Degree Grant Date",
+  "jointSupervisionGrantDate": "Joint Supervision Grant Date",
+
+  "attachments": "Attachments",
+  "derivedResearches": "Derived Researches",
+  "committeeMembers": "Committee Members",
+  "enrollmentDate": "Enrollment Date"
+}

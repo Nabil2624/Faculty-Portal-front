@@ -1,35 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
-const GOLD = "#B38E19";
-const BLUE = "#19355A";
-
-const data = [
-  { year: 2015, value: 4 },
-  { year: 2016, value: 5 },
-  { year: 2017, value: 6 },
-  { year: 2018, value: 5 },
-  { year: 2019, value: 6 },
-  { year: 2020, value: 8 },
-  { year: 2021, value: 7 },
-  { year: 2022, value: 9 },
-  { year: 2023, value: 7 },
-  { year: 2024, value: 8 },
-];
-
 const MAX_VISIBLE_YEARS = 7;
 
-export default function CitationsWidget() {
+export default function CitationsChart({ data = [], title }) {
   const { t } = useTranslation("CitationsChart");
-  const [startIndex, setStartIndex] = useState(data.length - MAX_VISIBLE_YEARS);
+
+  // Sort by year ASC
+  const sortedData = useMemo(() => {
+    return [...data]
+      .sort((a, b) => b.year - a.year)
+      .map((item) => ({
+        year: item.year,
+        value: item.numberOfCites,
+      }));
+  }, [data]);
+
+  const [startIndex, setStartIndex] = useState(
+    Math.max(sortedData.length - MAX_VISIBLE_YEARS, 0),
+  );
+
   const [maxBarHeight, setMaxBarHeight] = useState(220);
 
-  // responsive bar height
+  // Responsive height
   useEffect(() => {
     const updateHeight = () => {
-      if (window.innerWidth < 640) setMaxBarHeight(180);
-      else if (window.innerWidth < 768) setMaxBarHeight(180);
+      if (window.innerWidth < 768) setMaxBarHeight(180);
       else setMaxBarHeight(220);
     };
 
@@ -38,17 +35,40 @@ export default function CitationsWidget() {
     return () => window.removeEventListener("resize", updateHeight);
   }, []);
 
-  const visibleData = data.slice(startIndex, startIndex + MAX_VISIBLE_YEARS);
-  const maxValue = Math.max(...visibleData.map((d) => d.value));
+  // Update start index if data changes
+  useEffect(() => {
+    setStartIndex(Math.max(sortedData.length - MAX_VISIBLE_YEARS, 0));
+  }, [sortedData]);
+
+  const visibleData = sortedData.slice(
+    startIndex,
+    startIndex + MAX_VISIBLE_YEARS,
+  );
+
+  const maxValue =
+    visibleData.length > 0 ? Math.max(...visibleData.map((d) => d.value)) : 1;
 
   const canGoPrev = startIndex > 0;
-  const canGoNext = startIndex + MAX_VISIBLE_YEARS < data.length;
+  const canGoNext = startIndex + MAX_VISIBLE_YEARS < sortedData.length;
+
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-[#EDEDED] border border-[#19355a] rounded-[14px] px-6 pt-6 pb-8 min-h-[360px] max-w-[365px] mt-6">
+        <h4 className="text-2xl font-semibold text-center text-[#19355a]">
+          {title || t("citations")}
+        </h4>
+        <div className="flex items-center justify-center h-[200px] text-gray-500">
+          No citation data
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#EDEDED] border border-[#19355a] rounded-[14px] shadow-[0_4px_10px_rgba(0,0,0,0.08)] px-6 pt-6 pb-8 min-h-[360px] max-w-[365px] mt-6">
       {/* Title */}
       <h4 className="text-2xl font-semibold text-center text-[#19355a] -translate-y-2">
-        {t("citations")}
+        {title || t("citations")}
       </h4>
       <span className="block w-[145px] h-[5px] bg-[#b38e19] mx-auto mt-2 rounded-[5px]" />
 
@@ -67,7 +87,6 @@ export default function CitationsWidget() {
 
           {/* Bars */}
           <div className="relative flex items-end gap-2 h-[220px] pb-1">
-            {/* Baseline */}
             <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#D9D9D9]" />
 
             {visibleData.map((item, index) => {
@@ -87,10 +106,6 @@ export default function CitationsWidget() {
                   <div
                     className={`w-[18px] rounded-md ${
                       isGold ? "bg-[#B38E19]" : "bg-[#19355A]"
-                    } border-2 border-transparent ${
-                      isGold
-                        ? "group-hover:border-[#19355A]"
-                        : "group-hover:border-[#B38E19]"
                     } transition-all duration-700 ease-in-out`}
                     style={{
                       height: `${(item.value / maxValue) * maxBarHeight}px`,

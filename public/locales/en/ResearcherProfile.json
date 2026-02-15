@@ -1,0 +1,13 @@
+{
+  "title": "Researcher Profile",
+
+  "orcidId": "ORCID ID",
+  "googleScholar": "Google Scholar",
+  "emailDomain": "Organizational Email Domain",
+  "organizationId": "Organization ID",
+
+  "interestsTitle": "Researcher’s Interests",
+  "notFound": "Not Found",
+
+  "citationsperyear": "Citations per Year"
+}

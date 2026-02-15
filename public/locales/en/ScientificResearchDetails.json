@@ -8,5 +8,10 @@
   "citations": "Citations",
   "publisher": "Publisher",
   "journals": "Journals",
-  "contributors": "Contributors"
+  "contributors": "Contributors",
+  "volume": "Volume",
+  "issue": "Issue",
+  "relatedResearch": "Related Research",
+  "viewRelated": "View",
+  "abstract": "Abstract"
 }

@@ -1,89 +1,70 @@
-// export default function ScientificResearchDetails() {
-//   const { t, i18n } = useTranslation("ScientificResearchDetails");
-//   const isArabic = i18n.language === "ar";
+import { useState, useEffect } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-//   useEffect(() => {
-//     getResearchDetails().then(setResearch);
-//   }, []);
-
-//   if (!research) return null;
-
-//   return (
-//     <ResponsiveLayoutProvider>
-//       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
-//         <PageHeaderAction title={t("title")} actionLabel={t("showFull")} />
-//         <ResearchTitle title={research.title} />
-
-//         <div className="max-w-[1500px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-x-24 gap-y-10">
-//           <div className="flex flex-col gap-6">
-//             <InfoRow label={t("doi")} value={research.doi} />
-//             <InfoRow label={t("publisher")} value={research.publisher} />
-//             <ContributorsWidget
-//               title={t("contributors")}
-//               contributors={research.contributors}
-//             />
-//           </div>
-
-//           <div className="flex flex-col gap-6">
-//             <InfoRow label={t("publishYear")} value={research.publishYear} />
-//             <InfoRow label={t("citations")} value={research.citations} />
-//             <JournalsWidget
-//               title={t("journals")}
-//               journals={research.journals}
-//             />
-//           </div>
-
-//           <div className="flex flex-col gap-6">
-//             <InfoRow label={t("pages")} value={research.pages} />
-//             <InfoRow label={t("source")} value={research.source} />
-//             <CitationsWidget title={t("citations")} />{" "}
-//           </div>
-//         </div>
-//       </div>
-//     </ResponsiveLayoutProvider>
-//   );
-// }
+import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
+import LoadingSpinner from "../components/LoadingSpinner";
 import useBreakpoint from "../hooks/useBreakpoint";
+
 import ScientificResearchDetailsMobile from "../components/widgets/ScientificResearchDetails/ScientificResearchDetailsMobile";
 import ScientificResearchDetailsTablet from "../components/widgets/ScientificResearchDetails/ScientificResearchDetailsTablet";
 import ScientificResearchDetailsDesktop from "../components/widgets/ScientificResearchDetails/ScientificResearchDetailsDesktop";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import ResearchTitle from "../components/ui/ResearchTitle";
-import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 
 import PageHeaderAction from "../components/ui/PageHeaderAction";
+import ResearchTitle from "../components/ui/ResearchTitle";
+
+import { getResearchDetails } from "../services/scientificResearchService";
 
 export default function ScientificResearchDetails() {
   const { t, i18n } = useTranslation("ScientificResearchDetails");
   const isArabic = i18n.language === "ar";
   const bp = useBreakpoint();
-  const [research, setResearch] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { id } = useParams();
 
-  // fetch data
+  // State for research
+  const [research, setResearch] = useState(location.state?.research || null);
+  const [loading, setLoading] = useState(!research); // only loading if we need to fetch
+
+  //  Fetch research details only if we don't already have it
   useEffect(() => {
-    import("../services/researchService").then(({ getResearchDetails }) => {
-      getResearchDetails().then(setResearch);
-    });
-  }, []);
+    if (!research && id) {
+      setLoading(true);
+      getResearchDetails(id)
+        .then((res) => setResearch(res))
+        .catch((err) => {
+          console.error(err);
+          // alert("Research details not found or unavailable");
+          navigate(-1); // go back if not found
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [id, research, navigate]);
 
-  // render nothing until research is loaded
-  if (!research) return null;
+  if (loading || !research) return <LoadingSpinner />;
 
   return (
     <ResponsiveLayoutProvider>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
-        <PageHeaderAction title={t("title")} actionLabel={t("showFull")} />
+        <PageHeaderAction
+          title={t("title")}
+          actionLabel={t("showFull")}
+          onClick={() => {
+            if (research?.researchLink) {
+              window.open(research.researchLink, "_blank"); // open in new tab
+            }
+          }}
+        />
+
         <ResearchTitle title={research.title} />
 
         {bp === "mobile" && (
           <ScientificResearchDetailsMobile research={research} t={t} />
         )}
-
         {bp === "tablet" && (
           <ScientificResearchDetailsTablet research={research} t={t} />
         )}
-
         {bp === "desktop" && (
           <ScientificResearchDetailsDesktop research={research} t={t} />
         )}

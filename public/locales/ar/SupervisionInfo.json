@@ -1,0 +1,23 @@
+{
+  "title": "الإشراف والتحكيم",
+  "subtitle": "بيانات الإشراف على رسائل الماجستير والدكتوراه",
+  "edit": "تعديل",
+
+  "thesisType": "نوع الرسالة",
+  "role": "دور عضو هيئة التدريس",
+  "studentName": "اسم الطالب",
+  "specialization": "التخصص",
+  "degree": "الدرجة",
+  "registrationDate": "تاريخ التسجيل",
+  "formationDate": "تاريخ التشكيل",
+  "discussionDate": "تاريخ المناقشة",
+  "grantDate": "تاريخ المنح",
+  "university": "الجامعة / الكلية",
+
+  "PHD": "دكتوراه",
+  "MASTERS": "ماجستير",
+
+  "Adminstrator": "مشرف",
+  "Reviewer": "مشرف و محكم",
+  "AdminstratorAndReviewer": "مشرف و محكم"
+}
