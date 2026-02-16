@@ -1,0 +1,32 @@
+{
+  "titles": {
+    "addPrizeOrReward": "إضافة جائزة أو مكافأة",
+    "editPrizeOrReward": "تعديل جائزة أو مكافأة"
+  },
+  "fields": {
+    "prize": "اسم الجائزة",
+    "awardingAuthority": "الجهة المانحة",
+    "dateReceived": "تاريخ الاستلام",
+    "description": "الوصف",
+    "attachments": "المرفقات"
+  },
+  "placeholders": {
+    "prize": "اختر الجائزة من القائمة",
+    "awardingAuthority": "أدخل الجهة المانحة",
+    "dateReceived": "اختر تاريخ الاستلام",
+    "description": "أدخل الوصف",
+    "attachmentsNote": "يُسمح بملفات PDF فقط"
+  },
+  "buttons": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "addAttachment": "إضافة مرفق"
+  },
+  "messages": {
+    "prizeRequired": "حقل الجائزة مطلوب",
+    "awardingRequired": "حقل الجهة المانحة مطلوب",
+    "dateReceivedRequired": "حقل تاريخ الاستلام مطلوب",
+    "descriptionRequired": "حقل الوصف مطلوب",
+    "failedSave": "فشل الحفظ. حاول مرة أخرى."
+  }
+}

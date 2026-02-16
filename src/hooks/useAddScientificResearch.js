@@ -22,20 +22,21 @@ export default function useAddScientificResearch() {
   const [publisher, setPublisher] = useState("");
   const [JournalOrConference, setJournalOrConference] = useState("");
   const [year, setYear] = useState("");
+  const [issue, setIssue] = useState("");
 
-  const [pages, setPages] = useState("");
+  // const [pages, setPages] = useState("");
   const [relatedResearchLink, setRelatedResearchLink] = useState("");
   const [researchLink, setResearchLink] = useState("");
 
   // Publication & type states
 
   // Additional optional fields
-  const [volume, setVolume] = useState(""); // add a field if you have volume input
+  // const [volume, setVolume] = useState(""); // add a field if you have volume input
   const [pubDate, setPubDate] = useState(""); // add a field if you have pubDate input
   const [publisherType, setPublisherType] = useState(0);
   const [publicationType, setPublicationType] = useState(0);
   const [basedOn, setBasedOn] = useState(0);
-
+  const [noOfPages, setNoOfPages] = useState("");
   // DOI
   const [doi, setDoi] = useState("");
   const [doiFetched, setDoiFetched] = useState(false);
@@ -44,11 +45,67 @@ export default function useAddScientificResearch() {
   const [participants, setParticipants] = useState([]);
 
   // Save research
-  const handleSave = async () => {
+  // const handleSave = async () => {
+  //   setLoading(true);
+  //   setSaveError("");
+  //   try {
+  //     // Map frontend values to backend DTO
+  //     const data = {
+  //       doi: doi || "",
+  //       title: researchTitle || "",
+  //       relatedResearchLink: relatedResearchLink || null,
+  //       publisher: publisher || null,
+  //       researchLink: researchLink || null,
+  //       journalOrConfernce: JournalOrConference || "",
+  //       publisherType:
+  //         publisherType === "journal"
+  //           ? 1
+  //           : publisherType === "conference"
+  //             ? 2
+  //             : 0,
+  //       publicationType:
+  //         publicationType === "local"
+  //           ? 1
+  //           : publicationType === "international"
+  //             ? 2
+  //             : 0,
+
+  //       noOfPages: pages || null,
+  //       pubYear: year || null,
+  //       pubDate: pubDate || null, // add a field if you have pubDate input
+  //       volume: volume || null,
+  //       researchDerivedFrom:
+  //         basedOn === "master"
+  //           ? 1
+  //           : basedOn === "phd"
+  //             ? 2
+  //             : basedOn === "other"
+  //               ? 3
+  //               : 0,
+  //       abstract: abstract || "",
+  //       noOfCititations: 0,
+  //       contributions: participants.map((p) => ({
+  //         memberAcademicName: p.name,
+  //         contributorType: p.internal ? 1 : 2, // adjust if backend expects different
+  //         isTheMajorResearcher: p.main || false,
+  //       })),
+  //     };
+
+  //     await saveScientificResearch(data);
+  //     // Success message handling
+  //   } catch (error) {
+  //     console.error(error);
+  //     setSaveError(t("saveFailed"));
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleSave = async (navigate) => {
+    // accept navigate
     setLoading(true);
     setSaveError("");
     try {
-      // Map frontend values to backend DTO
       const data = {
         doi: doi || "",
         title: researchTitle || "",
@@ -56,42 +113,27 @@ export default function useAddScientificResearch() {
         publisher: publisher || null,
         researchLink: researchLink || null,
         journalOrConfernce: JournalOrConference || "",
-        publisherType:
-          publisherType === "journal"
-            ? 1
-            : publisherType === "conference"
-              ? 2
-              : 0,
-        publicationType:
-          publicationType === "local"
-            ? 1
-            : publicationType === "international"
-              ? 2
-              : 0,
-
-        noOfPages: pages || null,
+        publisherType: Number(publisherType) || 0,
+        publicationType: Number(publicationType) || 0,
+        noOfPages: noOfPages || null,
         pubYear: year || null,
-        pubDate: pubDate || null, // add a field if you have pubDate input
-        volume: volume || null,
-        researchDerivedFrom:
-          basedOn === "master"
-            ? 1
-            : basedOn === "phd"
-              ? 2
-              : basedOn === "other"
-                ? 3
-                : 0,
+        // pubDate: pubDate || null,
+        issue: issue || null,
+        // volume: volume || null,
+        researchDerivedFrom: Number(basedOn) || 0,
         abstract: abstract || "",
         noOfCititations: 0,
         contributions: participants.map((p) => ({
           memberAcademicName: p.name,
-          contributorType: p.internal ? 1 : 2, // adjust if backend expects different
+          contributorType: p.internal ? 1 : 2,
           isTheMajorResearcher: p.main || false,
         })),
       };
 
       await saveScientificResearch(data);
-      // Success message handling
+
+      // Navigate after successful save
+      if (navigate) navigate("/scientific-researches");
     } catch (error) {
       console.error(error);
       setSaveError(t("saveFailed"));
@@ -124,8 +166,8 @@ export default function useAddScientificResearch() {
       setJournalOrConference(data.journal || "");
       setPublisher(data.publisher || "");
       setYear(data.year ? String(data.year) : "");
-      setVolume(data.volume || "");
-      setPages(data.pages || "");
+      // setVolume(data.volume || "");
+      setNoOfPages(data.noOfPages || "");
       setAbstract(data.abstract || "");
       setRelatedResearchLink(data.relatedResearchLink || "");
 
@@ -208,9 +250,10 @@ export default function useAddScientificResearch() {
     setJournalOrConference,
     year,
     setYear,
-
-    pages,
-    setPages,
+    noOfPages,
+    setNoOfPages,
+    // pages,
+    // setPages,
     relatedResearchLink,
     setRelatedResearchLink,
     researchLink,
@@ -233,8 +276,10 @@ export default function useAddScientificResearch() {
     handleSave,
     handleFetchDOI,
     handleFetchContributor,
-    volume,
-    setVolume,
+    issue,
+    setIssue,
+    // volume,
+    // setVolume,
     pubDate,
     setPubDate,
   };

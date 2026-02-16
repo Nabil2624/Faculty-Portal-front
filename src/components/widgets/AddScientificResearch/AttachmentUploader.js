@@ -33,8 +33,10 @@ export default function AttachmentUploader({ label, note, buttonLabel }) {
 
   return (
     <div>
-      <label className="block font-medium text-gray-700 mb-2">{label}</label>
-      {note && <p className="text-sm text-gray-500 mb-2">{note}</p>}
+      <label className="block font-medium text-gray-700 mb-2 text-2xl">
+        {label}
+      </label>
+      {note && <p className="text-base text-[#B38E19] mb-2">{note}</p>}
 
       {/* Hidden input */}
       <input
@@ -50,7 +52,7 @@ export default function AttachmentUploader({ label, note, buttonLabel }) {
       <button
         type="button"
         onClick={handleButtonClick}
-        className="bg-[#19355A] text-white w-[190px] h-[32px] rounded-md border-2 border-[#B38E19]/50 text-base"
+        className="bg-[#19355A] text-white w-[230px] h-[32px] rounded-md border-2 border-[#B38E19]/50 text-base"
       >
         {buttonLabel}
       </button>

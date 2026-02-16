@@ -5,7 +5,7 @@ export default function SearchBar({
   value,
   onChange,
   placeholder = "",
-  isArabic = false
+  isArabic = false,
 }) {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -17,7 +17,7 @@ export default function SearchBar({
         paddingBottom: "2px",
         transition: "border-color 0.4s ease",
         paddingLeft: isArabic ? "clamp(0.5rem, 6vw, 15rem)" : 0,
-        paddingRight: isArabic ? 0 : "clamp(0.5rem, 6vw, 15rem)"
+        paddingRight: isArabic ? 0 : "clamp(0.5rem, 6vw, 15rem)",
       }}
     >
       {/* Icon */}

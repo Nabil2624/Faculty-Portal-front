@@ -10,6 +10,7 @@ export default function PageHeader({
   onSearchChange,
   searchPlaceholder = "",
   isArabic = false,
+  onFilterClick, // 👈 جديد
 }) {
   return (
     <div
@@ -47,6 +48,7 @@ export default function PageHeader({
 
         {/* Filter */}
         <div
+          onClick={onFilterClick}
           className="border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer"
           style={{
             flexShrink: 0,

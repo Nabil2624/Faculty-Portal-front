@@ -22,3 +22,16 @@ export const approveNominatedResearch = async (researchId) => {
     throw err;
   }
 };
+
+// Reject nominated research
+export const rejectNominatedResearch = async (researchId) => {
+  try {
+    const response = await axiosInstance.delete(
+      `/ResearchesAndTheses/RejectRecommendedResearch/${researchId}`,
+    );
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};

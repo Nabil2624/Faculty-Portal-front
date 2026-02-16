@@ -80,7 +80,15 @@ import EditThesis from "../pages/EditThesis";
 import AddSupervisionOrJudgement from "../pages/AddSupervisionOrJudgement";
 import EditSupervisionOrJudgement from "../pages/EditSupervisionOrJudgement";
 import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
-
+import PrizesAndRewards from "../pages/PrizesAndRewards";
+import AddPrizesAndRewards from "../pages/AddPrizesAndRewards";
+import EditPrizesAndRewards from "../pages/EditPrizesAndRewards";
+import ManifestationsOfScientificAppreciation from "../pages/ManifestationsOfScientificAppreciation";
+import EditManifestation from "../pages/EditManifestation";
+import AddManifestation from "../pages/AddManifestation";
+import Patents from "../pages/Patents";
+import AddPatent from "../pages/AddPatent";
+import EditPatent from "../pages/EditPatent";
 function AppRouterInner() {
   const navigate = useNavigate();
 
@@ -115,12 +123,34 @@ function AppRouterInner() {
       <Route path="/edit-thesis" element={<EditThesis />} />
       <Route path="/add-supervision" element={<AddSupervisionOrJudgement />} />
       <Route path="/missing-scholar-card" element={<MissingScholarCard />} />
+      <Route path="/prizes-and-rewards" element={<PrizesAndRewards />} />
+      <Route path="/add-prizes-and-rewards" element={<AddPrizesAndRewards />} />
+
+      <Route
+        path="/manifestations-of-scientific-appreciation"
+        element={<ManifestationsOfScientificAppreciation />}
+      />
+      <Route path="/patents" element={<Patents />} />
+      <Route path="/add-patent" element={<AddPatent />} />
+      <Route path="/edit-patent" element={<EditPatent />} />
+      <Route
+        path="/add-manifestations-of-scientific-appreciation"
+        element={<AddManifestation />}
+      />
+      <Route
+        path="/edit-manifestations-of-scientific-appreciation"
+        element={<EditManifestation />}
+      />
+      <Route
+        path="/edit-prizes-and-rewards"
+        element={<EditPrizesAndRewards />}
+      />
       <Route
         path="/edit-supervision"
         element={<EditSupervisionOrJudgement />}
       />
       <Route
-        path="edit-scientific-research"
+        path="edit-scientific-research/:id"
         element={<EditScientificResearch />}
       />
       <Route
@@ -128,7 +158,7 @@ function AppRouterInner() {
         element={<AddScientificResearch />}
       />
       <Route
-        path="/scientific-research-full-details"
+        path="/scientific-research-full-details/:id"
         element={<ScientificResearchFullDetails />}
       />
       <Route
@@ -139,6 +169,7 @@ function AppRouterInner() {
         path="/scientific-research-details/:id"
         element={<ScientificResearchDetails />}
       />
+      <Route path="/" element={<ScientificResearchDetails />} />
       <Route
         path="/add-academic-qualification"
         element={<AddAcademicQualification />}
@@ -165,6 +196,7 @@ function AppRouterInner() {
         path="/seminars-and-conferences"
         element={<SeminarsAndConferences />}
       />
+
       <Route path="/personal" element={<PersonalDataPage />} />
       <Route
         path="/committee-associations"

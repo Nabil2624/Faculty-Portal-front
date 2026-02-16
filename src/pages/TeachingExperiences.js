@@ -24,6 +24,9 @@ export default function TeachingExperiences() {
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
+  const [showCustomize, setShowCustomize] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
+  const [filtersList, setFiltersList] = useState([]);
 
   const {
     items: experiences = [],
@@ -90,6 +93,7 @@ export default function TeachingExperiences() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowCustomize(true)} // 👈 ده المهم
         />
 
         {/* Error / Empty */}
@@ -160,13 +164,21 @@ export default function TeachingExperiences() {
         <TeachingExperienceModal
           showDelete={showDelete}
           showDetails={showDetails}
+          showCustomize={showCustomize} // 👈 جديد
           selectedItem={selectedItem}
           setShowDelete={setShowDelete}
           setShowDetails={setShowDetails}
+          setShowCustomize={setShowCustomize} // 👈 جديد
           onDelete={handleDelete}
+          onApplyFilters={(data) => {
+            setSortValue(data.sortValue);
+            setFiltersList(data.filtersList);
+            setShowCustomize(false);
+
+            console.log("Sort:", data.sortValue);
+            console.log("Filters:", data.filtersList);
+          }}
           deleteError={deleteError}
-          t={t}
-          isArabic={isArabic}
         />
       </div>
     </ResponsiveLayoutProvider>

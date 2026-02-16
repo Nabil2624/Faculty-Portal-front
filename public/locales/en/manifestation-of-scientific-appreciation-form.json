@@ -1,0 +1,31 @@
+{
+  "titles": {
+    "addManifestation": "Add Manifestation of Scientific Appreciation",
+    "editManifestation": "Edit Manifestation of Scientific Appreciation"
+  },
+  "fields": {
+    "titleOfAppreciation": "Title of Appreciation",
+    "issuingAuthority": "Issuing Authority",
+    "dateOfAppreciation": "Date of Appreciation",
+    "description": "Description",
+    "attachments": "Attachments"
+  },
+  "placeholders": {
+    "titleOfAppreciation": "Enter title of appreciation",
+    "issuingAuthority": "Enter issuing authority",
+    "dateOfAppreciation": "Select appreciation date",
+    "description": "Enter description (optional)"
+  },
+  "messages": {
+    "titleRequired": "Title of appreciation is required",
+    "issuingAuthorityRequired": "Issuing authority is required",
+    "dateRequired": "Date of appreciation is required",
+    "failedSave": "Failed to save manifestation. Please try again.",
+    "pdfOnly": "Only PDF files are allowed"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "upload": "Upload Attachment"
+  }
+}

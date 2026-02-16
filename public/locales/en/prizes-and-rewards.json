@@ -1,0 +1,23 @@
+{
+  "prizeName": "Prize Name",
+  "organization": "Awarding Organization",
+  "date": "Date",
+  "country": "Country",
+  "areYouSureDelete": "Are you sure you want to delete?",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "title": "Prizes and Rewards",
+  "add": "Add",
+  "empty": "No data available",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of",
+  "search": "Search in prizes...",
+  "errors": {
+    "loadFailed": "Failed to load data",
+    "deleteFailed": "Failed to delete"
+  },
+  "attachments": "Attachments",
+  "attachment": "Attachment"
+}

@@ -1,0 +1,36 @@
+{
+  "titles": {
+    "addPatent": "إضافة براءة اختراع"
+  },
+  "fields": {
+    "type": "نوع براءة الاختراع",
+    "local": "محلية",
+    "international": "دولية",
+    "name": "اسم براءة الاختراع",
+    "authority": "جهة الاعتماد / الدولة",
+    "applyingDate": "تاريخ التقديم",
+    "accreditationDate": "تاريخ الاعتماد",
+    "description": "الوصف",
+    "attachment": "المرفق"
+  },
+  "placeholders": {
+    "name": "أدخل اسم براءة الاختراع",
+    "authority": "أدخل جهة الاعتماد أو الدولة",
+    "applyingDate": "اختر تاريخ التقديم",
+    "accreditationDate": "اختر تاريخ الاعتماد",
+    "description": "أدخل وصف براءة الاختراع"
+  },
+  "buttons": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "upload": "رفع ملف"
+  },
+  "messages": {
+    "failedSave": "فشل في حفظ براءة الاختراع. يرجى المحاولة مرة أخرى.",
+    "typeRequired": "يرجى اختيار نوع براءة الاختراع",
+    "nameRequired": "اسم براءة الاختراع مطلوب",
+    "authorityRequired": "جهة الاعتماد أو الدولة مطلوبة",
+    "applyingDateRequired": "تاريخ التقديم مطلوب"
+  },
+  "validation": {}
+}

@@ -60,6 +60,7 @@ export default function ScientificResearches() {
           title={t("title")}
           addLabel={t("add")}
           onAdd={() => navigate("/add-scientific-research")}
+          isArabic
         />
 
         {error && <div className="text-red-500 text-center mb-6">{error}</div>}
@@ -78,6 +79,11 @@ export default function ScientificResearches() {
                   key={item.id}
                   item={item}
                   isArabic={isArabic}
+                  onClick={() =>
+                    item.source === "Internal"
+                      ? navigate(`/scientific-research-full-details/${item.id}`)
+                      : navigate(`/scientific-research-details/${item.id}`)
+                  }
                   onDelete={(item) => {
                     setSelectedItem(item);
                     setShowDelete(true);

@@ -11,7 +11,7 @@ import {
   Briefcase,
   BookMarkedIcon,
   HelpingHand,
-  Award
+  Award,
 } from "lucide-react";
 import logo from "../assets/Capital.png";
 
@@ -51,9 +51,9 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
       sub: [
         { key: "researches", link: "/scientific-researches" },
         { key: "supervisionThesis", link: "/supervision-thesis" },
-        { key: "myThesis", link: "/my-thesis" },
+        { key: "theses", link: "/theses" },
         { key: "researcherProfile", link: "/researcher-profile" },
-        { key: "nominatedResearches", link: "/nominated-researches" },
+        { key: "nominatedResearches", link: "/nominated-research" },
       ],
     },
     {
@@ -65,17 +65,15 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         { key: "administrativePositions", link: "/administrative-positions" },
       ],
     },
-     {
+    {
       key: "experiences",
       icon: <Briefcase />,
-      sub: [
-      ],
+      sub: [],
     },
-     {
+    {
       key: "Publications&Patents",
       icon: <BookMarkedIcon />,
-      sub: [
-      ],
+      sub: [{ key: "patents", link: "/patents" }],
     },
     {
       key: "projectsAndCommittee",
@@ -96,19 +94,22 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         { key: "trainingPrograms", link: "/training-programs" },
       ],
     },
-     {
+    {
       key: "contributions",
       icon: <HelpingHand />,
-      sub: [
-      ],
+      sub: [],
     },
-     {
+    {
       key: "awards",
       icon: <Award />,
       sub: [
+        { key: "prizesAndRewards", link: "/prizes-and-rewards" },
+        {
+          key: "manifiestation",
+          link: "/manifestations-of-scientific-appreciation",
+        },
       ],
     },
-    
   ];
 
   // line offset و حجم الـ border responsive

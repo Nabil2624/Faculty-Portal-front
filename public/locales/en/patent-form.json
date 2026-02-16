@@ -1,0 +1,37 @@
+{
+  "titles": {
+    "addPatent": "Add Patent"
+  },
+  "fields": {
+    "type": "Patent Type",
+    "local": "Local",
+    "international": "International",
+    "name": "Patent Name",
+    "authority": "Accrediting Authority / Country",
+    "applyingDate": "Application Date",
+    "accreditationDate": "Accreditation Date",
+    "description": "Description",
+    "attachment": "Attachment"
+  },
+  "placeholders": {
+    "name": "Enter patent name",
+    "authority": "Enter accrediting authority or country",
+    "applyingDate": "Select application date",
+    "accreditationDate": "Select accreditation date",
+    "description": "Enter patent description"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "upload": "Upload File"
+  },
+  "messages": {
+    "failedSave": "Failed to save patent. Please try again."
+  },
+  "validation": {
+    "typeRequired": "Please select patent type",
+    "nameRequired": "Patent name is required",
+    "authorityRequired": "Accrediting authority or country is required",
+    "applyingDateRequired": "Application date is required"
+  }
+}

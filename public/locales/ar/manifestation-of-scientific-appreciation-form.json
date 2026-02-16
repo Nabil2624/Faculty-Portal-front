@@ -1,0 +1,31 @@
+{
+  "titles": {
+    "addManifestation": "إضافة مظهر من مظاهر التقدير العلمي",
+    "editManifestation": "تعديل مظهر من مظاهر التقدير العلمي"
+  },
+  "fields": {
+    "titleOfAppreciation": "عنوان التقدير",
+    "issuingAuthority": "جهة الإصدار",
+    "dateOfAppreciation": "تاريخ التقدير",
+    "description": "الوصف",
+    "attachments": "المرفقات"
+  },
+  "placeholders": {
+    "titleOfAppreciation": "أدخل عنوان التقدير",
+    "issuingAuthority": "أدخل جهة الإصدار",
+    "dateOfAppreciation": "اختر تاريخ التقدير",
+    "description": "أدخل الوصف (اختياري)"
+  },
+  "messages": {
+    "titleRequired": "عنوان التقدير مطلوب",
+    "issuingAuthorityRequired": "جهة الإصدار مطلوبة",
+    "dateRequired": "تاريخ التقدير مطلوب",
+    "failedSave": "فشل في حفظ المظهر. يرجى المحاولة مرة أخرى.",
+    "pdfOnly": "يسمح فقط بملفات PDF"
+  },
+  "buttons": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "upload": "رفع مرفق"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "title": "Patents",
+  "add": "Add",
+  "empty": "No patents available",
+  "search": "Search in patents...",
+
+  "type": "Type",
+  "local": "Local",
+  "international": "International",
+
+  "nameOfPatent": "Patent Name",
+  "authority": "Accrediting Authority / Country",
+  "applyingDate": "Applying Date",
+  "accreditationDate": "Accreditation Date",
+  "description": "Description",
+
+  "areYouSureDelete": "Are you sure you want to delete this patent?",
+  "delete": "Delete",
+  "cancel": "Cancel",
+
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of",
+
+  "errors": {
+    "loadFailed": "Failed to load patents",
+    "deleteFailed": "Failed to delete patent"
+  }
+}

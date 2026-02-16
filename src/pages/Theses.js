@@ -56,6 +56,7 @@ export default function Theses() {
           title={t("title")}
           addLabel={t("add")}
           onAdd={() => navigate("/add-thesis")}
+          isArabic
         />
 
         <div className="flex-1">

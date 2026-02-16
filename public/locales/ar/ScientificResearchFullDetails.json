@@ -9,14 +9,27 @@
   "publishingBody": "جهة النشر",
   "issueNumber": "العدد",
   "journalOrConference": "المجلة / المؤتمر",
-  "link": "الرابط ",
-  "pages": "الصفحات",
+  "link": "الرابط",
+  "volume": "الصفحات",
   "publicationType": "نوع النشر",
   "year": "العام",
   "derivedFrom": "مستمد من",
+  "pages": "المجلد",
+  "issue": "العدد",
+
+  "publicationTypes": {
+    "PHD": "رسالة دكتوراه",
+    "MASTERS": "رسالة ماجستير",
+    "RESEARCH": "بحث علمي"
+  },
+
+  "sources": {
+    "INTERNAL": "داخلي",
+    "EXTERNAL": "خارجي"
+  },
 
   "internalContributors": "المشاركون من داخل الجامعة",
-  "externalContributors": "المشاركون من خارح الجامعة",
+  "externalContributors": "المشاركون من خارج الجامعة",
   "contributors": "المشاركون",
 
   "attachments": "المرفقات",
@@ -28,6 +41,5 @@
   "abstract": "الملخص",
   "noAbstract": "لا يوجد ملخص",
   "noRelatedResearch": "لا يوجد بحث ذو صلة",
-
   "relatedResearch": "بحث له صلة"
 }

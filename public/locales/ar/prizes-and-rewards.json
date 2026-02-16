@@ -1,0 +1,24 @@
+{
+  "prizeName": "اسم الجائزة",
+  "organization": "الجهة المانحة",
+  "date": "التاريخ",
+  "country": "الدولة",
+  "areYouSureDelete": "هل أنت متأكد أنك تريد الحذف؟",
+  "delete": "حذف",
+  "cancel": "إلغاء",
+  "title": "الجوائز والمكافآت",
+  "add": "إضافة",
+  "empty": "لا توجد بيانات",
+  "previous": "السابق",
+  "next": "التالي",
+  "page": "الصفحة",
+  "of": "من",
+  "search": "ابحث في الجوائز...",
+  "errors": {
+    "loadFailed": "فشل تحميل البيانات",
+    "deleteFailed": "فشل في عملية الحذف"
+  },
+
+  "attachments": "المرفقات",
+  "attachment": "مرفق"
+}

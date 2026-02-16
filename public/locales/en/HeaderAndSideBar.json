@@ -35,8 +35,11 @@
   "researcherProfile": "Researcher Profile",
   "nominatedResearches": "Nominated Researches",
   "researchAndSupervision": "Researches & Supervision",
-  "awards" : "Awards",
-  "contributions" : "Contributions",
-  "experiences"   : "Experiences",
-  "Publications&Patents" : "Publications & Patents"
+  "awards": "Awards",
+  "contributions": "Contributions",
+  "experiences": "Experiences",
+  "Publications&Patents": "Patents",
+  "patents": "Patents",
+  "prizesAndRewards": "Prizes And Rewards",
+  "manifiestation": "Manifestations of Scientific Appreciation"
 }

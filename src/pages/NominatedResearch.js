@@ -3,7 +3,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import Pagination from "../components/ui/Pagination";
 import PageHeaderWithFilter from "../components/ui/PageHeaderWithFilter";
 import NominatedResearchCard from "../components/widgets/NominatedResearch/NominatedResearchCard";
-
+import { useState } from "react";
 import useNominatedScientificResearch from "../hooks/useNominatedScientificResearch";
 
 import useResearcherProfile from "../hooks/useResearcherProfile";
@@ -13,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function NominatedScientificResearch() {
   const navigate = useNavigate();
+  const [selectedResearch, setSelectedResearch] = useState(null);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
   const {
     t,
@@ -24,6 +26,7 @@ export default function NominatedScientificResearch() {
     totalPages,
     setCurrentPage,
     handleApprove,
+    handleReject,
   } = useNominatedScientificResearch();
 
   const { researcher, loading: profileLoading } = useResearcherProfile();
@@ -71,7 +74,10 @@ export default function NominatedScientificResearch() {
               item={item}
               isArabic={isArabic}
               onAccept={(item) => handleApprove(item)}
-              onReject={(item) => console.log("Rejected", item)}
+              onReject={(item) => {
+                setSelectedResearch(item);
+                setIsRejectModalOpen(true);
+              }}
               onView={(item) => {
                 navigate(`/scientific-research-details/${item.id}`, {
                   state: { research: item },
@@ -92,6 +98,41 @@ export default function NominatedScientificResearch() {
           />
         </div>
       </div>
+
+      {isRejectModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-[400px] shadow-lg">
+            <h2 className="text-lg font-semibold mb-4 text-center">
+              {isArabic
+                ? "هل أنت متأكد من رفض هذا البحث؟"
+                : "Are you sure you want to reject this research?"}
+            </h2>
+
+            <div className="flex justify-between mt-6">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded-md"
+                onClick={() => {
+                  setIsRejectModalOpen(false);
+                  setSelectedResearch(null);
+                }}
+              >
+                {isArabic ? "إلغاء" : "Cancel"}
+              </button>
+
+              <button
+                className="px-4 py-2 bg-red-600 text-white rounded-md"
+                onClick={async () => {
+                  await handleReject(selectedResearch);
+                  setIsRejectModalOpen(false);
+                  setSelectedResearch(null);
+                }}
+              >
+                {isArabic ? "تأكيد الرفض" : "Confirm Reject"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </ResponsiveLayoutProvider>
   );
 }

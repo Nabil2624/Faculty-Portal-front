@@ -35,8 +35,12 @@
   "researcherProfile": "ملف الباحث",
   "nominatedResearches": "الأبحاث المرشحة",
   "researchAndSupervision": "الأبحاث و الإشراف",
-    "awards" : "الجوائز",
-  "contributions" : "المساهمات",
-  "experiences"   : "الخبرات",
-  "Publications&Patents" : "المؤلفات و البراءات"
+  "awards": "الجوائز",
+  "contributions": "المساهمات",
+  "experiences": "الخبرات",
+
+  "Publications&Patents": " البراءات",
+  "patents": "براءات الاختراع",
+  "prizesAndRewards": "الجوائز و المكافآت",
+  "manifiestation": "مظاهر التقدير العلمي"
 }

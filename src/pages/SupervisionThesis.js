@@ -70,6 +70,7 @@ export default function SupervisionThesis() {
           title={t("title")}
           addLabel={t("add")}
           onAdd={() => navigate("/add-supervision")}
+          isArabic
         />
 
         <div className="flex-1">

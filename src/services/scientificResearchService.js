@@ -59,6 +59,21 @@ export const fetchContributorByORCID = async (orcid) => {
   }
 };
 
+export const updateScientificResearch = async (id, data) => {
+  if (!id) throw new Error("Research ID is required");
+
+  try {
+    const response = await axiosInstance.put(
+      `/ResearchesAndTheses/UpdateResearch/${id}`,
+      data,
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 // Delete research
 export const deleteScientificResearch = async (researchId) => {
   if (!researchId) throw new Error("Research ID is required");

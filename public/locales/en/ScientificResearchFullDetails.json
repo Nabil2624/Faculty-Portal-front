@@ -1,6 +1,6 @@
 {
   "title": "Scientific Research Details",
-  "summary": "Reasearch Summary",
+  "summary": "Research Summary",
   "edit": "Edit",
 
   "researchType": "Research Type",
@@ -9,11 +9,24 @@
   "publishingBody": "Publishing Body",
   "issueNumber": "Issue Number",
   "journalOrConference": "Journal / Conference",
-  "link": "Research Link",
-  "pages": "Number of Pages",
+  "link": "Link",
+  "pages": "Pages",
   "publicationType": "Publication Type",
   "year": "Year",
   "derivedFrom": "Derived From",
+  "volume": "Volume",
+  "issue": "Issue",
+
+  "publicationTypes": {
+    "PHD": "PhD Thesis",
+    "MASTERS": "Master's Thesis",
+    "RESEARCH": "Scientific Research"
+  },
+
+  "sources": {
+    "INTERNAL": "Internal",
+    "EXTERNAL": "External"
+  },
 
   "internalContributors": "Internal Contributors",
   "externalContributors": "External Contributors",
@@ -26,8 +39,7 @@
 
   "researchRelated": "Related Research",
   "abstract": "Abstract",
-  "noAbstract": "No abstract available",
-  "noRelatedResearch": "No related research available",
-
+  "noAbstract": "No Abstract",
+  "noRelatedResearch": "No Related Research",
   "relatedResearch": "Related Research"
 }

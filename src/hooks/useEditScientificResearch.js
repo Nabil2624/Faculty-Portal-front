@@ -1,79 +1,199 @@
-// import { useEffect, useState } from "react";
-// import {
-//   fetchScientificResearchById,
-//   updateScientificResearch,
-// } from "../services/scientificResearchService";
+// hooks/useEditScientificResearch.js
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  getResearchDetails,
+  updateScientificResearch,
+  fetchDOIData,
+  fetchContributorByORCID,
+} from "../services/scientificResearchService";
 
-// export function useEditScientificResearch(researchId) {
-//   const [loading, setLoading] = useState(true);
+export default function useEditScientificResearch(researchId) {
+  const { t, i18n } = useTranslation("AddScientificResearch");
+  const isArabic = i18n.language === "ar";
 
-//   const [abstract, setAbstract] = useState("");
-//   const [researchTitle, setResearchTitle] = useState("");
-//   const [participants, setParticipants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saveError, setSaveError] = useState("");
 
-//   const [form, setForm] = useState({
-//     journalOrConference: "",
-//     issue: "",
-//     pages: "",
-//     researchLink: "",
-//     year: "",
-//     relatedResearch: "",
-//   });
+  // =======================
+  // Fields (SAME AS ADD)
+  // =======================
+  const [doi, setDoi] = useState("");
+  const [researchTitle, setResearchTitle] = useState("");
+  const [publisher, setPublisher] = useState("");
+  const [JournalOrConference, setJournalOrConference] = useState("");
+  const [year, setYear] = useState("");
+  const [issue, setIssue] = useState("");
+  const [volume, setVolume] = useState("");
+  const [pages, setPages] = useState("");
+  const [pubDate, setPubDate] = useState("");
+  const [researchLink, setResearchLink] = useState("");
+  const [relatedResearchLink, setRelatedResearchLink] = useState("");
+  const [abstract, setAbstract] = useState("");
 
-//   useEffect(() => {
-//     async function loadData() {
-//       setLoading(true);
-//       const data = await fetchScientificResearchById(researchId);
+  // radio values (NUMBERS)
+  const [publisherType, setPublisherType] = useState(0);
+  const [publicationType, setPublicationType] = useState(0);
+  const [basedOn, setBasedOn] = useState(0);
 
-//       setAbstract(data.abstract);
-//       setResearchTitle(data.researchTitle);
-//       setParticipants(data.participants);
+  const [participants, setParticipants] = useState([]);
+  const [originalParticipants, setOriginalParticipants] = useState([]);
 
-//       setForm({
-//         journalOrConference: data.journalOrConference,
-//         issue: data.issue,
-//         pages: data.pages,
-//         researchLink: data.researchLink,
-//         year: data.year,
-//         relatedResearch: data.relatedResearch,
-//       });
+  // =======================
+  // LOAD DATA
+  // =======================
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await getResearchDetails(researchId);
 
-//       setLoading(false);
-//     }
+        setDoi(data.doi || "");
+        setResearchTitle(data.title || "");
+        setPublisher(data.publisher || "");
+        setJournalOrConference(data.journalOrConfernce || "");
+        setYear(data.pubYear || "");
+        setIssue(data.issue || "");
+        setVolume(data.volume || "");
+        setPages(data.noOfPages || "");
+        setPubDate(data.pubDate || "");
+        setResearchLink(data.researchLink || "");
+        setRelatedResearchLink(data.relatedResearchLink || "");
+        setAbstract(data.abstract || "");
 
-//     loadData();
-//   }, [researchId]);
+        setPublisherType(Number(data.publisherType) || 0);
+        setPublicationType(Number(data.publicationType) || 0);
+        setBasedOn(Number(data.researchDerivedFrom) || 0);
 
-//   function handleChange(key, value) {
-//     setForm((prev) => ({ ...prev, [key]: value }));
-//   }
+        const mapped =
+          data.contributions?.map((c) => ({
+            id: c.id,
+            name: c.memberAcademicName,
+            internal: c.contributorType === 1,
+            main: c.isTheMajorResearcher,
+            contributorId: c.contributorId,
+          })) || [];
 
-//   async function handleSave() {
-//     const payload = {
-//       ...form,
-//       abstract,
-//       researchTitle,
-//       participants,
-//     };
+        setParticipants(mapped);
+        setOriginalParticipants(mapped);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-//     await updateScientificResearch(researchId, payload);
-//   }
+    if (researchId) load();
+  }, [researchId]);
 
-//   return {
-//     loading,
+  // =======================
+  // SAVE
+  // =======================
+  const handleSave = async (navigate) => {
+    setLoading(true);
+    setSaveError("");
 
-//     abstract,
-//     setAbstract,
+    try {
+      // ===== CONTRIBUTION DIFF LOGIC =====
+      const toDelete = originalParticipants
+        .filter((op) => !participants.find((p) => p.id === op.id))
+        .map((p) => ({
+          id: p.id,
+          memberAcademicName: p.name,
+          contributorType: p.internal ? 1 : 2,
+          isTheMajorResearcher: p.main,
+          researchId,
+          contributorId: p.contributorId,
+        }));
 
-//     researchTitle,
-//     setResearchTitle,
+      const toAdd = participants
+        .filter((p) => !p.id)
+        .map((p) => ({
+          memberAcademicName: p.name,
+          contributorType: p.internal ? 1 : 2,
+          isTheMajorResearcher: p.main,
+        }));
 
-//     participants,
-//     setParticipants,
+      const toUpdate = participants
+        .filter((p) => p.id)
+        .map((p) => ({
+          id: p.id,
+          data: {
+            memberAcademicName: p.name,
+            contributorType: p.internal ? 1 : 2,
+            isTheMajorResearcher: p.main,
+          },
+        }));
 
-//     form,
-//     handleChange,
+      const payload = {
+        doi: doi || "",
+        title: researchTitle || "",
+        relatedResearchLink: relatedResearchLink || "",
+        publisher: publisher || "",
+        researchLink: researchLink || "",
+        journalOrConfernce: JournalOrConference || "",
+        publisherType: Number(publisherType) || 0,
+        publicationType: Number(publicationType) || 0,
+        issue: issue || "",
+        volume: volume || "",
+        noOfPages: pages || "",
+        pubYear: year || "",
+        source: "Internal",
+        researchDerivedFrom: Number(basedOn) || 0,
+        abstract: abstract || "",
+        pubDate: pubDate || "",
+        researchContributionsToDelete: toDelete,
+        researchContributionsToAdd: toAdd,
+        researchContributionsToUpdate: toUpdate,
+      };
 
-//     handleSave,
-//   };
-// }
+      await updateScientificResearch(researchId, payload);
+
+      if (navigate) navigate("/scientific-researches");
+    } catch (err) {
+      console.error(err);
+      setSaveError(t("saveFailed"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    t,
+    isArabic,
+    loading,
+    saveError,
+    doi,
+    setDoi,
+    researchTitle,
+    setResearchTitle,
+    publisher,
+    setPublisher,
+    JournalOrConference,
+    setJournalOrConference,
+    year,
+    setYear,
+    issue,
+    setIssue,
+    volume,
+    setVolume,
+    pages,
+    setPages,
+    pubDate,
+    setPubDate,
+    researchLink,
+    setResearchLink,
+    relatedResearchLink,
+    setRelatedResearchLink,
+    abstract,
+    setAbstract,
+    publisherType,
+    setPublisherType,
+    publicationType,
+    setPublicationType,
+    basedOn,
+    setBasedOn,
+    participants,
+    setParticipants,
+    handleSave,
+  };
+}

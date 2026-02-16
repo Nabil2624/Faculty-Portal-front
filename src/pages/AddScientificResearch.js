@@ -35,10 +35,24 @@ export default function AddScientificResearch() {
     setJournalOrConference,
     year,
     setYear,
-    volume,
-    setVolume,
-    pages,
-    setPages,
+    issue,
+    setIssue,
+    noOfPages,
+    setNoOfPages,
+    // volume,
+    // setVolume,
+    researchLink,
+    setResearchLink,
+    publisherType,
+    setPublisherType,
+    publicationType,
+    setPublicationType,
+    basedOn,
+    setBasedOn,
+    pubDate,
+    setPubDate,
+    // pages,
+    // setPages,
     relatedResearchLink,
     setRelatedResearchLink,
     handleSave: saveHook,
@@ -50,11 +64,11 @@ export default function AddScientificResearch() {
 
   const [errors, setErrors] = useState({});
   const [researchType, setResearchType] = useState("manual");
-  const [researchLink, setResearchLink] = useState(""); // left column
-  const [basedOn, setBasedOn] = useState(""); // empty initially
+  // const [researchLink, setResearchLink] = useState(""); // left column
+  // const [basedOn, setBasedOn] = useState(""); // empty initially
 
-  const [publisherType, setPublisherType] = useState(""); // جهة النشر
-  const [publicationType, setPublicationType] = useState(""); // نوع النشر
+  // const [publisherType, setPublisherType] = useState(""); // جهة النشر
+  // const [publicationType, setPublicationType] = useState(""); // نوع النشر
 
   const navigate = useNavigate();
 
@@ -76,11 +90,11 @@ export default function AddScientificResearch() {
       newErrors.researchTitle = t("researchTitle") + " " + t("isRequired");
     }
 
-    if (!abstract.trim())
-      newErrors.abstract = t("abstract") + " " + t("isRequired");
+    // if (!abstract.trim())
+    //   newErrors.abstract = t("abstract") + " " + t("isRequired");
 
-    if (!participants.length)
-      newErrors.participants = t("participants") + " " + t("isRequired");
+    // if (!participants.length)
+    //   newErrors.participants = t("participants") + " " + t("isRequired");
 
     if (researchType === "doi") {
       if (!doi.trim()) {
@@ -96,7 +110,7 @@ export default function AddScientificResearch() {
 
   const handleSave = async () => {
     if (!validate()) return;
-    await saveHook();
+    await saveHook(navigate); // <-- pass navigate
   };
 
   const clearError = (field) => {
@@ -161,14 +175,15 @@ export default function AddScientificResearch() {
                 <InputFieldArea
                   label={t("issue")}
                   placeholder={t("issuePlaceholder")}
-                  value={volume}
-                  setValue={setVolume}
+                  value={issue}
+                  setValue={setIssue}
                 />
+
                 <InputFieldArea
                   label={t("pages")}
                   placeholder={t("pagesPlaceholder")}
-                  value={pages}
-                  setValue={setPages}
+                  value={noOfPages}
+                  setValue={setNoOfPages}
                 />
               </div>
 

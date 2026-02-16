@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   fetchNominatedResearches,
   approveNominatedResearch,
+  rejectNominatedResearch,
 } from "../services/nominatedResearchService";
 
 export default function useNominatedScientificResearch() {
@@ -66,6 +67,15 @@ export default function useNominatedScientificResearch() {
     }
   };
 
+  const handleReject = async (item) => {
+    try {
+      await rejectNominatedResearch(item.id);
+      loadData(); // refresh page after reject
+    } catch (err) {
+      // alert("Failed to reject research");
+    }
+  };
+
   return {
     t,
     isArabic,
@@ -76,5 +86,6 @@ export default function useNominatedScientificResearch() {
     totalPages,
     setCurrentPage,
     handleApprove,
+    handleReject,
   };
 }
