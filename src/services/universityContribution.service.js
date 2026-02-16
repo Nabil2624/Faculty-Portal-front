@@ -7,12 +7,12 @@ export const getUniversityContribution = (pageIndex, pageSize) => {
   });
 }
 export const createUniversityContribution = (data) => {
-  return axiosInstance.post("/Contributions/CreateContributionToUniversity", data, {
+  return axiosInstance.post("/Contributions/CreateContributionToCommunityService", data, {
     skipGlobalErrorHandler: true,
   });
 };
 export const updateUniversityContribution = (id , data) => {
-  return axiosInstance.put(`/Contributions/UpdateContributionToUniversity/${contributionId}`, data, {
+  return axiosInstance.put(`/Contributions/UpdateContributionToUniversity/${id}`, data, {
     skipGlobalErrorHandler: true,
   });
 }
@@ -22,3 +22,8 @@ export const deleteUniversityContribution = (id ) => {
     skipGlobalErrorHandler: true,
   });
 };
+export const getContributionTypeLookups = () => {
+  return axiosInstance.get("/LookUpItems/ContributionTypes", {
+    skipGlobalErrorHandler: true,
+  });
+}

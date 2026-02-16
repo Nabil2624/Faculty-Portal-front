@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { getArticleReviews } from "../services/articleReviews.service";
 
 export default function useArticleReviews(page, pageSize) {
+  const { t } = useTranslation(); // hook الترجمة
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,7 @@ export default function useArticleReviews(page, pageSize) {
       setItems(data || []);
       setTotalPages(Math.ceil(totalCount / pageSize));
     } catch (err) {
-      setError("Failed to load articles");
+      setError(t("Failed-to-load-articles")); // استخدم الترجمة هنا
     } finally {
       setLoading(false);
     }

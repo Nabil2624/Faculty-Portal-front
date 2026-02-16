@@ -80,6 +80,10 @@ import EditThesis from "../pages/EditThesis";
 import AddSupervisionOrJudgement from "../pages/AddSupervisionOrJudgement";
 import EditSupervisionOrJudgement from "../pages/EditSupervisionOrJudgement";
 import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
+import UniversityContributions from "../pages/UniversityContributions";
+import CommunityServiceContributions from "../pages/CommunityServiceContributions";
+import ParticipationInQualityWorks from "../pages/ParticipationInQualityWorks";
+import ProfileDashboard from "../pages/ProfileDashboard";
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -223,7 +227,22 @@ function AppRouterInner() {
         path="/edit-general-experiences"
         element={<EditGeneralExperience />}
       />
-
+      <Route
+        path="/university-contribution"
+        element={<UniversityContributions />}
+      />
+      <Route
+        path="/Contributions-community-service"
+        element={<CommunityServiceContributions />}
+      />
+      <Route
+        path="/participation-in-quality-work"
+        element={<ParticipationInQualityWorks />}
+      />
+      <Route
+        path="/profile"
+        element={<ProfileDashboard />}
+      />
       {/* ✅ Protected Routes */}
       <Route element={<ProtectedRoute />}></Route>
 

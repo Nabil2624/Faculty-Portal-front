@@ -18,7 +18,7 @@ function formatDate(dateString, i18n, t) {
   });
 }
 
-export default function UniversityContributionDetailsModal({ item, onClose }) {
+export default function CommunityServiceContributionsDetailsModal({ item, onClose }) {
   const { t, i18n } = useTranslation("university-contribution");
   const isArabic = i18n.language === "ar";
 
@@ -89,12 +89,6 @@ export default function UniversityContributionDetailsModal({ item, onClose }) {
           text-[clamp(0.85rem,1.2vw,2.5rem)]
         "
       >
-        {/* Type Of Contribution */}
-        <div className="flex justify-between gap-3">
-          <span className="font-medium">{t("typeOfContribution")}</span>
-          <span className="text-right break-words">{isArabic?item.typeOfContribution.valueAr:item.typeOfContribution.valueEn}</span>
-        </div>
-
 
         {/*  Date Of Contribution */}
         <div className="flex justify-between gap-3">

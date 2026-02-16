@@ -1,9 +1,9 @@
 import ModalWrapper from "../../ui/ModalWrapper";
-import UniversityContributionForm from "./UniversityContributionForm";
-import UniversityContributionDeleteModal from "./UniversityContributionDeleteModal";
-import UniversityContributionDetailsModal from "./UniversityContributionDetailsModal";
+import ParticipationInQualityWorkDeleteModal from "./ParticipationInQualityWorkDeleteModal";
+import ParticipationInQualityWorkDetailsModal from "./ParticipationInQualityWorkDetailsModal";
+import ParticipationInQualityWorkForm from "./ParticipationInQualityWorkForm";
 
-export default function UniversityContributionModal({
+export default function ParticipationInQualityWorkModal({
   mode,
   showForm,
   showDelete,
@@ -29,18 +29,18 @@ export default function UniversityContributionModal({
   const formTitle =
     mode === "add"
       ? isArabic
-        ? "إضافة مساهمة جامعية"
-        : "Add University Contribution"
+        ? "إضافة مشاركة في اعمال الجودة"
+        : "Add Participation In Quality Work"
       : isArabic
-      ? "تعديل المساهمة الجامعية"
-      : "Edit University Contribution";
+        ? "تعديل مشاركة في اعمال الجودة"
+        : "Edit Participation In Quality Work";
 
   return (
     <>
       {/* ================= FORM MODAL ================= */}
       {showForm && (
         <ModalWrapper onClose={() => setShowForm(false)}>
-          <UniversityContributionForm
+          <ParticipationInQualityWorkForm
             title={formTitle}
             types={types}
             loadingTypes={loadingTypes}
@@ -57,7 +57,7 @@ export default function UniversityContributionModal({
       {/* ================= DELETE MODAL ================= */}
       {showDelete && selectedItem && (
         <ModalWrapper onClose={() => setShowDelete(false)}>
-          <UniversityContributionDeleteModal
+          <ParticipationInQualityWorkDeleteModal
             item={selectedItem}
             deleteError={deleteError}
             onConfirm={() => onDelete(selectedItem.id)}
@@ -69,7 +69,7 @@ export default function UniversityContributionModal({
       {/* ================= DETAILS MODAL ================= */}
       {showDetails && selectedItem && (
         <ModalWrapper onClose={() => setShowDetails(false)}>
-          <UniversityContributionDetailsModal
+          <ParticipationInQualityWorkDetailsModal
             item={selectedItem}
             onClose={() => setShowDetails(false)}
           />

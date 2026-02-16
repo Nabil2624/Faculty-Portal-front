@@ -11,7 +11,7 @@ import {
   Briefcase,
   BookMarkedIcon,
   HelpingHand,
-  Award
+  Award,
 } from "lucide-react";
 import logo from "../assets/Capital.png";
 
@@ -65,17 +65,18 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         { key: "administrativePositions", link: "/administrative-positions" },
       ],
     },
-     {
+    {
       key: "experiences",
       icon: <Briefcase />,
       sub: [
+        { key: "general-experiences", link: "/general-experiences" },
+        { key: "teaching-experiences", link: "/teaching-experiences" },
       ],
     },
-     {
+    {
       key: "Publications&Patents",
       icon: <BookMarkedIcon />,
-      sub: [
-      ],
+      sub: [],
     },
     {
       key: "projectsAndCommittee",
@@ -96,19 +97,20 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         { key: "trainingPrograms", link: "/training-programs" },
       ],
     },
-     {
+    {
       key: "contributions",
       icon: <HelpingHand />,
       sub: [
+        { key: "university-contribution", link: "/university-contribution" },
+        { key: "Contributions-community-service", link: "/Contributions-community-service" },
+        { key: "participation-in-quality-work", link: "/participation-in-quality-work" },
       ],
     },
-     {
+    {
       key: "awards",
       icon: <Award />,
-      sub: [
-      ],
+      sub: [],
     },
-    
   ];
 
   // line offset و حجم الـ border responsive

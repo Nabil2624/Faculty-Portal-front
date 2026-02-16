@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-export default function UniversityContributionDeleteModal({
+export default function CommunityServiceContributionsDeleleModal({
   item,
   onConfirm,
   onCancel,

@@ -35,8 +35,13 @@
   "researcherProfile": "ملف الباحث",
   "nominatedResearches": "الأبحاث المرشحة",
   "researchAndSupervision": "الأبحاث و الإشراف",
-    "awards" : "الجوائز",
-  "contributions" : "المساهمات",
-  "experiences"   : "الخبرات",
-  "Publications&Patents" : "المؤلفات و البراءات"
+  "awards": "الجوائز",
+  "contributions": "المساهمات",
+  "experiences": "الخبرات",
+  "Publications&Patents": "المؤلفات و البراءات",
+  "university-contribution": "المساهمات الحامعية",
+  "Contributions-community-service": "المساهمات لخدمة المجتمع",
+  "participation-in-quality-work": "المشاركة في اعمال الجودة",
+  "general-experiences": "الخبرات العامة",
+  "teaching-experiences": "الخبرات التدريسية"
 }

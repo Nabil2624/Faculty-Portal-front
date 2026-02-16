@@ -1,0 +1,22 @@
+{
+  "participationTitle": "اسم المشاركة",
+  "startDate": "تاريخ البداية",
+  "endDate": "تاريخ النهاية",
+  "title": "المشاركة في اعمال الجودة",
+  "present": "حتى الآن",
+  "areYouSureDelete": "هل أنت متأكد أنك تريد الحذف؟",
+  "delete": "حذف",
+  "cancel": "إلغاء",
+  "contributionTitle": "المساهمات لخدمة المجتمع",
+  "add": "إضافة",
+  "empty": "لا توجد بيانات",
+  "previous": "السابق",
+  "next": "التالي",
+  "page": "الصفحة",
+  "of": "من",
+  "search": "ابحث في المساهمات...",
+  "errors": {
+    "loadFailed": "فشل تحميل البيانات",
+    "deleteFailed": "فشل في عملية الحذف"
+  }
+}

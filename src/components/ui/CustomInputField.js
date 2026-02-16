@@ -10,7 +10,7 @@ export default function InputField({
   textarea = false,
 }) {
   const base =
-    "w-full border text-black border-gray-300 rounded-[clamp(0.2rem,0.4vw,0.7rem)] bg-white outline-none transition placeholder-black";
+    "w-full border text-black border-gray-300 rounded-[clamp(0.2rem,0.4vw,0.7rem)] bg-[#E2E2E2] outline-none transition placeholder-black";
 
   const responsive = `
     px-[clamp(12px,1.4vw,28px)]
@@ -37,7 +37,7 @@ export default function InputField({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className={`${shared} resize-none min-h-[clamp(90px,10.8vw,195px)]`}
+          className={`${shared} resize-none min-h-[clamp(90px,7vw,195px)]`}
         />
       ) : (
         <input

@@ -1,0 +1,21 @@
+{
+  "typeOfContribution": "نوع المساهمة",
+  "dateOfContribution": "تاريخ المساهمة",
+  "present": "حتى الآن",
+  "areYouSureDelete": "هل أنت متأكد أنك تريد الحذف؟",
+  "delete": "حذف",
+  "cancel": "إلغاء",
+  "title": "المساهمات الجامعية",
+  "contributionTitle": "المساهمات لخدمة المجتمع",
+  "add": "إضافة",
+  "empty": "لا توجد بيانات",
+  "previous": "السابق",
+  "next": "التالي",
+  "page": "الصفحة",
+  "of": "من",
+  "search": "ابحث في المساهمات...",
+  "errors": {
+    "loadFailed": "فشل تحميل البيانات",
+    "deleteFailed": "فشل في عملية الحذف"
+  }
+}

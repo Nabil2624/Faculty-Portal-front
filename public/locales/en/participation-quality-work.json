@@ -1,0 +1,22 @@
+{
+  "participationTitle": "Participation Name",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "title": "Participation Quality Works",
+  "present": "Present",
+  "areYouSureDelete": "Are you sure you want to delete?",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "contributionTitle": "Community Service Contribution",
+  "add": "Add",
+  "empty": "No data available",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of",
+  "search": "Search in contributions...",
+  "errors": {
+    "loadFailed": "Failed to load data",
+    "deleteFailed": "Failed to delete"
+  }
+}

@@ -1,14 +1,11 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 
-import Dropdown from "../../ui/Dropdown";
 import CustomInputField from "../../ui/CustomInputField";
 import CustomDateField from "../../ui/CustomDateField";
 
-export default function UniversityContributionForm({
+export default function ParticipationInQualityWorkForm({
   title,
-  types = [],
-  loadingTypes,
   isArabic,
   formData,
   errors = {},
@@ -16,17 +13,8 @@ export default function UniversityContributionForm({
   submitForm,
   loading,
 }) {
-  const { t } = useTranslation("university-contribution-form");
+  const { t, i18n } = useTranslation("participation-quality-work-form");
   const dir = isArabic ? "rtl" : "ltr";
-
-  // Map types to Dropdown options
-  const mappedTypes = useMemo(() => {
-    return types.map((type) => ({
-      id: type.id,
-      label: isArabic ? type.valueAr : type.valueEn,
-    }));
-  }, [types, isArabic]);
-
 
   return (
     <form
@@ -53,47 +41,40 @@ export default function UniversityContributionForm({
         </h2>
       </div>
 
-      {/* Contribution Name */}
+      {/* Participation Name */}
       <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
         <CustomInputField
-          label={t("contribution_name")}
-          value={formData.contributionName || ""}
-          onChange={(e) => handleChange("contributionName", e.target.value)}
-          placeholder={t("enter_contribution_name")}
-          error={errors.contributionName}
+          label={t("participation_name")}
+          value={formData.participationTitle}
+          onChange={(e) => handleChange("participationTitle", e.target.value)}
+          placeholder={t("enter_participation_name")}
+          error={errors.participationTitle}
           required
           isArabic={isArabic}
         />
       </div>
 
-      {/* Contribution Type */}
+      {/* Start Date */}
       <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
-        <label
-          className="block font-medium mb-2 text-[clamp(14px,1.2vw,32px)]"
-          style={{ textAlign: isArabic ? "right" : "left" }}
-        >
-          {t("contribution_type")}
-        </label>
-
-        <Dropdown
-          value={formData.contributionTypeId}
-          onChange={(id) => handleChange("contributionTypeId", id)}
-          options={mappedTypes}
-          placeholder={t("select_contribution_type")}
-          error={errors.contributionTypeId}
-          disabled={loadingTypes}
+        <CustomDateField
+          label={t("start_date")}
+          value={formData.startDate || ""}
+          onChange={(val) => handleChange("startDate", val)}
+          placeholder={t("select_start_date")}
+          error={errors.startDate}
+          required
           isArabic={isArabic}
         />
       </div>
 
-      {/* Contribution Date */}
+      {/* End Date */}
       <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
         <CustomDateField
-          label={t("contribution_date")}
-          value={formData.contributionDate || ""}
-          onChange={(val) => handleChange("contributionDate", val)}
-          placeholder={t("select_contribution_date")}
-          error={errors.contributionDate}
+          label={t("end_date")}
+          value={formData.endDate || ""}
+          onChange={(val) => handleChange("endDate", val)}
+          placeholder={t("select_end_date")}
+          error={errors.endDate}
           required
           isArabic={isArabic}
         />

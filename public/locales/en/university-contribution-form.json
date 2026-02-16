@@ -13,5 +13,6 @@
     "enter_description": "Enter description",
     "save": "Save",
     "loading": "Loading",
-    "submit_error": "Failed to submit the form. Please try again."
+    "submit_error": "Failed to submit the form. Please try again.",
+    "general_error": "general Error"
   }
