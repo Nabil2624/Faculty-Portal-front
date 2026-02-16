@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
 
-export default function UniversityContributionDeleteModal({
+export default function ParticipationInQualityWorkDeleteModal({
   item,
   onConfirm,
   onCancel,
   deleteError,
 }) {
-  const { t, i18n } = useTranslation("university-contribution");
+  const { t, i18n } = useTranslation("participation-quality-work");
   const isArabic = i18n.language === "ar";
 
   return (
@@ -47,7 +47,7 @@ export default function UniversityContributionDeleteModal({
             break-words
           "
         >
-          {item?.contributionTitle}
+          {item?.participationTitle}
         </p>
 
         {/* Error */}

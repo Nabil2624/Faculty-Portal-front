@@ -4,14 +4,11 @@ import { useNavigate } from "react-router-dom";
 
 import LoadingSpinner from "../components/LoadingSpinner";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import GeneralExperienceForm from
-  "../components/widgets/GeneralExperiences/GeneralExperienceForm";
+import GeneralExperienceForm from "../components/widgets/GeneralExperiences/GeneralExperienceForm";
 
-import useGeneralExperienceForm from
-  "../hooks/useGeneralExperienceForm";
+import useGeneralExperienceForm from "../hooks/useGeneralExperienceForm";
 
-import { createGeneralExperience } from
-  "../services/generalExperience.service";
+import { createGeneralExperience } from "../services/generalExperience.service";
 
 export default function AddGeneralExperience() {
   const { t, i18n } = useTranslation("add-general-experiences");
@@ -19,13 +16,8 @@ export default function AddGeneralExperience() {
   const dir = i18n.dir();
   const navigate = useNavigate();
 
-  const {
-    form,
-    setForm,
-    errors,
-    validate,
-    setServerErrors,
-  } = useGeneralExperienceForm(t);
+  const { form, setForm, errors, validate, setServerErrors } =
+    useGeneralExperienceForm(t);
 
   const [loading, setLoading] = useState(false);
 
@@ -38,59 +30,36 @@ export default function AddGeneralExperience() {
       await createGeneralExperience(form);
       navigate("/general-experiences");
     } catch (error) {
-      setServerErrors(
-        error.response?.data || { message: t("errors.failedAdd") }
-      );
+      setServerErrors({ message: t("errors.failedAdd") });
     } finally {
       setLoading(false);
     }
   };
-{loading && <LoadingSpinner />}
+  {
+    loading && <LoadingSpinner />;
+  }
   return (
     <ResponsiveLayoutProvider>
       <div dir={dir}>
-        
-
         <GeneralExperienceForm
           title={t("addGeneralExperience.title")}
           t={t}
           isArabic={isArabic}
-
           experience={form.experienceTitle}
-          setExperience={(v) =>
-            setForm({ ...form, experienceTitle: v })
-          }
-
+          setExperience={(v) => setForm({ ...form, experienceTitle: v })}
           authority={form.authority}
-          setAuthority={(v) =>
-            setForm({ ...form, authority: v })
-          }
-
+          setAuthority={(v) => setForm({ ...form, authority: v })}
           countryCity={form.countryOrCity}
-          setCountryCity={(v) =>
-            setForm({ ...form, countryOrCity: v })
-          }
-
+          setCountryCity={(v) => setForm({ ...form, countryOrCity: v })}
           startDate={form.startDate}
-          setStartDate={(v) =>
-            setForm({ ...form, startDate: v })
-          }
-
+          setStartDate={(v) => setForm({ ...form, startDate: v })}
           endDate={form.endDate}
-          setEndDate={(v) =>
-            setForm({ ...form, endDate: v })
-          }
-
+          setEndDate={(v) => setForm({ ...form, endDate: v })}
           description={form.description}
-          setDescription={(v) =>
-            setForm({ ...form, description: v })
-          }
-
+          setDescription={(v) => setForm({ ...form, description: v })}
           error={errors}
           onSave={handleSave}
-          onCancel={() =>
-            navigate("/general-experiences")
-          }
+          onCancel={() => navigate("/general-experiences")}
         />
       </div>
     </ResponsiveLayoutProvider>

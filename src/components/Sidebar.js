@@ -68,12 +68,23 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
     {
       key: "experiences",
       icon: <Briefcase />,
+<<<<<<< HEAD
       sub: [],
+=======
+      sub: [
+        { key: "general-experiences", link: "/general-experiences" },
+        { key: "teaching-experiences", link: "/teaching-experiences" },
+      ],
+>>>>>>> 4c883b9784cb3f80bca540f6a3bc40bcc64b8f04
     },
     {
       key: "Publications&Patents",
       icon: <BookMarkedIcon />,
+<<<<<<< HEAD
       sub: [{ key: "patents", link: "/patents" }],
+=======
+      sub: [],
+>>>>>>> 4c883b9784cb3f80bca540f6a3bc40bcc64b8f04
     },
     {
       key: "projectsAndCommittee",
@@ -97,11 +108,20 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
     {
       key: "contributions",
       icon: <HelpingHand />,
+<<<<<<< HEAD
       sub: [],
+=======
+      sub: [
+        { key: "university-contribution", link: "/university-contribution" },
+        { key: "Contributions-community-service", link: "/Contributions-community-service" },
+        { key: "participation-in-quality-work", link: "/participation-in-quality-work" },
+      ],
+>>>>>>> 4c883b9784cb3f80bca540f6a3bc40bcc64b8f04
     },
     {
       key: "awards",
       icon: <Award />,
+<<<<<<< HEAD
       sub: [
         { key: "prizesAndRewards", link: "/prizes-and-rewards" },
         {
@@ -109,6 +129,9 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
           link: "/manifestations-of-scientific-appreciation",
         },
       ],
+=======
+      sub: [],
+>>>>>>> 4c883b9784cb3f80bca540f6a3bc40bcc64b8f04
     },
   ];
 

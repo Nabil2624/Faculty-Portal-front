@@ -1,14 +1,11 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import Dropdown from "../../ui/Dropdown";
 import CustomInputField from "../../ui/CustomInputField";
 import CustomDateField from "../../ui/CustomDateField";
 
-export default function UniversityContributionForm({
+export default function CommunityServiceContributionsForm({
   title,
-  types = [],
-  loadingTypes,
   isArabic,
   formData,
   errors = {},
@@ -16,17 +13,9 @@ export default function UniversityContributionForm({
   submitForm,
   loading,
 }) {
-  const { t } = useTranslation("university-contribution-form");
+  const { t } = useTranslation("participation-quality-work-form");
   const dir = isArabic ? "rtl" : "ltr";
-
-  // Map types to Dropdown options
-  const mappedTypes = useMemo(() => {
-    return types.map((type) => ({
-      id: type.id,
-      label: isArabic ? type.valueAr : type.valueEn,
-    }));
-  }, [types, isArabic]);
-
+  
 
   return (
     <form
@@ -62,26 +51,6 @@ export default function UniversityContributionForm({
           placeholder={t("enter_contribution_name")}
           error={errors.contributionName}
           required
-          isArabic={isArabic}
-        />
-      </div>
-
-      {/* Contribution Type */}
-      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
-        <label
-          className="block font-medium mb-2 text-[clamp(14px,1.2vw,32px)]"
-          style={{ textAlign: isArabic ? "right" : "left" }}
-        >
-          {t("contribution_type")}
-        </label>
-
-        <Dropdown
-          value={formData.contributionTypeId}
-          onChange={(id) => handleChange("contributionTypeId", id)}
-          options={mappedTypes}
-          placeholder={t("select_contribution_type")}
-          error={errors.contributionTypeId}
-          disabled={loadingTypes}
           isArabic={isArabic}
         />
       </div>

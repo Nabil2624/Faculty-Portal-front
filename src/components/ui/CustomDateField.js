@@ -18,7 +18,7 @@ export default function DateField({
   };
 
   const base =
-    "w-full border border-gray-300 rounded-[clamp(0.2rem,0.4vw,0.7rem)] bg-[#ffffff] outline-none cursor-pointer transition";
+    "w-full border  border-gray-300 rounded-[clamp(0.2rem,0.4vw,0.7rem)] bg-[#E2E2E2] outline-none cursor-pointer transition";
 
   const responsive =
     `
@@ -45,7 +45,7 @@ export default function DateField({
           readOnly
           value={value}
           placeholder={placeholder}
-          className={`${base} ${responsive} ${focus}`}
+          className={`${base} ${responsive} ${focus} placeholder-black`}
         />
 
         <FiCalendar
@@ -53,6 +53,7 @@ export default function DateField({
             absolute top-1/2 -translate-y-1/2 text-[#B38E19] pointer-events-none
             w-[clamp(16px,1.7vw,50px)]
             h-[clamp(16px,1.7vw,50px)]
+
           "
           style={isArabic ? { left: 12 } : { right: 12 }}
         />

@@ -1,9 +1,9 @@
 import ModalWrapper from "../../ui/ModalWrapper";
-import UniversityContributionForm from "./UniversityContributionForm";
-import UniversityContributionDeleteModal from "./UniversityContributionDeleteModal";
-import UniversityContributionDetailsModal from "./UniversityContributionDetailsModal";
+import CommunityServiceContributionsDeleleModal from "./CommunityServiceContributionsDeleleModal";
+import CommunityServiceContributionsDetailsModal from "./CommunityServiceContributionsDetailsModal";
+import CommunityServiceContributionsForm from "./CommunityServiceContributionsForm";
 
-export default function UniversityContributionModal({
+export default function CommunityServiceContributionsModal({
   mode,
   showForm,
   showDelete,
@@ -29,18 +29,18 @@ export default function UniversityContributionModal({
   const formTitle =
     mode === "add"
       ? isArabic
-        ? "إضافة مساهمة جامعية"
-        : "Add University Contribution"
+        ? "إضافة مساهمة لخدمة المجتمع"
+        : "Add Community Service Contribution"
       : isArabic
-      ? "تعديل المساهمة الجامعية"
-      : "Edit University Contribution";
+        ? "تعديل مساهمة لخدمة المجتمع"
+        : "Edit Community Service Contribution";
 
   return (
     <>
       {/* ================= FORM MODAL ================= */}
       {showForm && (
         <ModalWrapper onClose={() => setShowForm(false)}>
-          <UniversityContributionForm
+          <CommunityServiceContributionsForm
             title={formTitle}
             types={types}
             loadingTypes={loadingTypes}
@@ -57,7 +57,7 @@ export default function UniversityContributionModal({
       {/* ================= DELETE MODAL ================= */}
       {showDelete && selectedItem && (
         <ModalWrapper onClose={() => setShowDelete(false)}>
-          <UniversityContributionDeleteModal
+          <CommunityServiceContributionsDeleleModal
             item={selectedItem}
             deleteError={deleteError}
             onConfirm={() => onDelete(selectedItem.id)}
@@ -69,7 +69,7 @@ export default function UniversityContributionModal({
       {/* ================= DETAILS MODAL ================= */}
       {showDetails && selectedItem && (
         <ModalWrapper onClose={() => setShowDetails(false)}>
-          <UniversityContributionDetailsModal
+          <CommunityServiceContributionsDetailsModal
             item={selectedItem}
             onClose={() => setShowDetails(false)}
           />

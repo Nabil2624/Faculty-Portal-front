@@ -1,0 +1,22 @@
+{
+  "form_title": "Participation in Quality Work",
+  "participation_name": "Participation Name",
+  "enter_participation_name": "Enter Participation Name",
+  "start_date": "Start Date",
+  "select_start_date": "Select Start Date",
+  "end_date": "End Date",
+  "select_end_date": "Select End Date",
+  "description": "Description",
+  "enter_description": "Enter Description",
+  "save": "Save",
+  "loading": "Loading...",
+
+  "errors": {
+    "participationName_required": "Participation Name is required",
+    "startDate_required": "Start Date is required",
+    "endDate_invalid": "End Date must be after Start Date",
+    "description_required": "Description is required",
+    "submit_failed": "Save failed, please try again",
+    "loadFailed": "Load failed"
+  }
+}

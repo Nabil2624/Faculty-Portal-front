@@ -46,16 +46,10 @@ export default function CustomDropdown({
     <div
       ref={wrapperRef}
       className="relative w-full"
-      dir={isArabic ? "rtl" : "ltr"}
     >
       {/* INPUT BOX */}
-      <div
-        onClick={() => !disabled && setOpen((p) => !p)}
-        className={shared}
-      >
-        <span className="truncate">
-          {selectedLabel || placeholder}
-        </span>
+      <div onClick={() => !disabled && setOpen((p) => !p)} className={shared}>
+        <span className="truncate">{selectedLabel || placeholder}</span>
         <ChevronDown className="text-[#B38E19] w-[clamp(16px,1.3vw,32px)] h-[clamp(16px,1.3vw,32px)] shrink-0" />
       </div>
 

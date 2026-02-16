@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  createUniversityContribution,
-  updateUniversityContribution,
-} from "../services/universityContribution.service";
+  createCommunityServiceContribution,
+  updateCommunityServiceContribution,
+} from "../services/communityServiceContribution.service";
 
-export default function useUniversityContributionForm({
+export default function useCommunityServiceContributionForm({
   mode = "add",
   selectedItem,
   onSuccess,
@@ -15,7 +15,6 @@ export default function useUniversityContributionForm({
 
   const [formData, setFormData] = useState({
     contributionName: "",
-    contributionTypeId: "", // always string
     contributionDate: "",
     description: "",
   });
@@ -23,41 +22,43 @@ export default function useUniversityContributionForm({
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  // لو في تعديل، نحط البيانات القديمة
   useEffect(() => {
     if (isEdit && selectedItem) {
       setFormData({
         contributionName: selectedItem.contributionTitle || "",
-        contributionTypeId: selectedItem.contributionTypeId?.toString() || "",
         contributionDate: selectedItem.dateOfContribution || "",
         description: selectedItem.description || "",
       });
     }
   }, [isEdit, selectedItem]);
 
+  // تحديث قيمة الفورم
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // لما المستخدم يكتب، نمسح ال error للفيلد
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: null }));
   };
 
+  // التحقق من صحة البيانات محلياً
   const validate = () => {
     const newErrors = {};
     if (!formData.contributionName?.trim())
       newErrors.contributionName = t("contribution_name_required");
-    if (!formData.contributionTypeId)
-      newErrors.contributionTypeId = t("contribution_type_required");
     if (!formData.contributionDate)
       newErrors.contributionDate = t("contribution_date_required");
     return newErrors;
   };
 
+  // تجهيز البيانات للإرسال
   const preparePayload = () => ({
     contributionTitle: formData.contributionName?.trim(),
-    typeOfContributionId: formData.contributionTypeId || null,
     dateOfContribution: formData.contributionDate || null,
     description:
       formData.description?.trim() === "" ? null : formData.description?.trim(),
   });
 
+  // إرسال الفورم
   const submitForm = async (e) => {
     e.preventDefault();
 
@@ -73,15 +74,17 @@ export default function useUniversityContributionForm({
       const payload = preparePayload();
 
       if (isEdit) {
-        await updateUniversityContribution(selectedItem.id, payload);
+        await updateCommunityServiceContribution(selectedItem.id, payload);
       } else {
-        await createUniversityContribution(payload);
+        await createCommunityServiceContribution(payload);
       }
 
       onSuccess?.();
     } catch (err) {
+      // هنا متعرضش اي رسالة raw لل user
+      console.error(err); // بس نسجل الخطأ console
       setErrors({
-        submit: t("general_error"),
+        submit: t("general_error"), // رسالة عامة للمستخدم
       });
     } finally {
       setLoading(false);

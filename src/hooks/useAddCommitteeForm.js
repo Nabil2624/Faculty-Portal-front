@@ -12,25 +12,32 @@ export default function useAddCommitteeForm(t) {
   });
 
   const [errors, setErrors] = useState({});
+  const [generalError, setGeneralError] = useState(""); // خطأ عام
 
   const validate = () => {
-    const newErrors = {};
-    if (!form.committee) newErrors.committee = t("errors.committeeRequired");
-    if (!form.typeValue) newErrors.typeValue = t("errors.typeRequired");
-    if (!form.degreeValue) newErrors.degreeValue = t("errors.degreeRequired");
-    if (!form.startDate) newErrors.startDate = t("errors.startDateRequired");
+    try {
+      const newErrors = {};
+      if (!form.committee) newErrors.committee = t("errors.committeeRequired");
+      if (!form.typeValue) newErrors.typeValue = t("errors.typeRequired");
+      if (!form.degreeValue) newErrors.degreeValue = t("errors.degreeRequired");
+      if (!form.startDate) newErrors.startDate = t("errors.startDateRequired");
 
-    if (form.startDate && form.endDate) {
-      const start = new Date(form.startDate);
-      const end = new Date(form.endDate);
-      if (start > end) {
-        newErrors.endDate = t("errors.startBeforeEnd");
+      if (form.startDate && form.endDate) {
+        const start = new Date(form.startDate);
+        const end = new Date(form.endDate);
+        if (start > end) {
+          newErrors.endDate = t("errors.startBeforeEnd");
+        }
       }
-    }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+      setErrors(newErrors);
+      setGeneralError(""); // لو النجاح يبقى نحذف أي خطأ عام
+      return Object.keys(newErrors).length === 0;
+    } catch (error) {
+      setGeneralError(t("errors.generalValidationError")); // رسالة عامة مترجمة
+      return false;
+    }
   };
 
-  return { form, setForm, errors, validate };
+  return { form, setForm, errors, generalError, validate };
 }

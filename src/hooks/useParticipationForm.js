@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  createUniversityContribution,
-  updateUniversityContribution,
-} from "../services/universityContribution.service";
+  createParticipation,
+  updateParticipation,
+} from "../services/participationInQualityWork.service";
 
-export default function useUniversityContributionForm({
+export default function useParticipationForm({
   mode = "add",
   selectedItem,
   onSuccess,
 }) {
-  const { t } = useTranslation("university-contribution-form");
+  const { t } = useTranslation("participation-quality-work-form");
   const isEdit = mode === "edit";
 
   const [formData, setFormData] = useState({
-    contributionName: "",
-    contributionTypeId: "", // always string
-    contributionDate: "",
+    participationTitle: "",
+    startDate: "",
+    endDate: "",
     description: "",
   });
 
@@ -26,9 +26,9 @@ export default function useUniversityContributionForm({
   useEffect(() => {
     if (isEdit && selectedItem) {
       setFormData({
-        contributionName: selectedItem.contributionTitle || "",
-        contributionTypeId: selectedItem.contributionTypeId?.toString() || "",
-        contributionDate: selectedItem.dateOfContribution || "",
+        participationTitle: selectedItem.participationTitle || "",
+        startDate: selectedItem.startDate || "",
+        endDate: selectedItem.endDate || "",
         description: selectedItem.description || "",
       });
     }
@@ -41,21 +41,29 @@ export default function useUniversityContributionForm({
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.contributionName?.trim())
-      newErrors.contributionName = t("contribution_name_required");
-    if (!formData.contributionTypeId)
-      newErrors.contributionTypeId = t("contribution_type_required");
-    if (!formData.contributionDate)
-      newErrors.contributionDate = t("contribution_date_required");
+
+    if (!formData.participationTitle?.trim())
+      newErrors.participationTitle = t("errors.participationName_required");
+
+    if (!formData.startDate)
+      newErrors.startDate = t("errors.startDate_required");
+
+    if (
+      formData.endDate &&
+      formData.startDate &&
+      formData.endDate <= formData.startDate
+    ) {
+      newErrors.endDate = t("errors.endDate_invalid");
+    }
+
     return newErrors;
   };
 
   const preparePayload = () => ({
-    contributionTitle: formData.contributionName?.trim(),
-    typeOfContributionId: formData.contributionTypeId || null,
-    dateOfContribution: formData.contributionDate || null,
-    description:
-      formData.description?.trim() === "" ? null : formData.description?.trim(),
+    participationTitle: formData.participationTitle?.trim() || null,
+    startDate: formData.startDate?.trim() || null,
+    endDate: formData.endDate?.trim() || null,
+    description: formData.description?.trim() || null,
   });
 
   const submitForm = async (e) => {
@@ -73,16 +81,15 @@ export default function useUniversityContributionForm({
       const payload = preparePayload();
 
       if (isEdit) {
-        await updateUniversityContribution(selectedItem.id, payload);
+        await updateParticipation(selectedItem.id, payload);
       } else {
-        await createUniversityContribution(payload);
+        await createParticipation(payload);
       }
 
       onSuccess?.();
     } catch (err) {
-      setErrors({
-        submit: t("general_error"),
-      });
+      console.error(err);
+      setErrors({ submit: t("errors.submit_failed") });
     } finally {
       setLoading(false);
     }

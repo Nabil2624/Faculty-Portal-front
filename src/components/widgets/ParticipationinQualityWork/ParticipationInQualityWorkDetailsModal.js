@@ -18,8 +18,8 @@ function formatDate(dateString, i18n, t) {
   });
 }
 
-export default function UniversityContributionDetailsModal({ item, onClose }) {
-  const { t, i18n } = useTranslation("university-contribution");
+export default function ParticipationInQualityWorkDetailsModal({ item, onClose }) {
+  const { t, i18n } = useTranslation("participation-quality-work");
   const isArabic = i18n.language === "ar";
 
   if (!item) return null;
@@ -77,7 +77,7 @@ export default function UniversityContributionDetailsModal({ item, onClose }) {
             break-words
           "
         >
-          {item.contributionTitle}
+          {item.participationTitle}
         </h2>
       </div>
 
@@ -89,19 +89,17 @@ export default function UniversityContributionDetailsModal({ item, onClose }) {
           text-[clamp(0.85rem,1.2vw,2.5rem)]
         "
       >
-        {/* Type Of Contribution */}
-        <div className="flex justify-between gap-3">
-          <span className="font-medium">{t("typeOfContribution")}</span>
-          <span className="text-right break-words">{isArabic?item.typeOfContribution.valueAr:item.typeOfContribution.valueEn}</span>
-        </div>
-
 
         {/*  Date Of Contribution */}
         <div className="flex justify-between gap-3">
-          <span className="font-medium">{t("dateOfContribution")}</span>
-          <span>{formatDate(item.dateOfContribution, i18n, t)}</span>
+          <span className="font-medium">{t("startDate")}</span>
+          <span>{formatDate(item.startDate, i18n, t)}</span>
         </div>
-
+        {/*  Date Of Contribution */}
+        <div className="flex justify-between gap-3">
+          <span className="font-medium">{t("endDate")}</span>
+          <span>{formatDate(item.endDate, i18n, t)}</span>
+        </div>
         <div className="mt-5 bg-gray-100 p-4 rounded-lg break-words">
           <p className="text-gray-800 leading-relaxed">{item.description}</p>
         </div>

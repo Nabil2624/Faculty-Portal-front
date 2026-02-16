@@ -1,0 +1,22 @@
+{
+  "form_title": "المشاركة في أعمال الجودة",
+  "participation_name": "اسم المشاركة",
+  "enter_participation_name": "أدخل اسم المشاركة",
+  "start_date": "تاريخ البداية",
+  "select_start_date": "اختر تاريخ البداية",
+  "end_date": "تاريخ النهاية",
+  "select_end_date": "اختر تاريخ النهاية",
+  "description": "الوصف",
+  "enter_description": "أدخل الوصف",
+  "save": "حفظ",
+  "loading": "جاري الحفظ...",
+
+  "errors": {
+    "participationName_required": "اسم المشاركة مطلوب",
+    "startDate_required": "تاريخ البداية مطلوب",
+    "endDate_invalid": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية",
+    "description_required": "الوصف مطلوب",
+    "submit_failed": "فشل الحفظ، حاول مرة أخرى",
+    "loadFailed": "فشل التحميل"
+  }
+}

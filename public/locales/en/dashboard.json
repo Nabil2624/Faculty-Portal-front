@@ -1,0 +1,22 @@
+{
+  "bio": {
+    "title": "Biography",
+    "placeholder": "Write a short academic biography highlighting your specialization and research interests"
+  },
+  "stats": {
+    "research": "Research",
+    "awards": "Awards",
+    "contributions": "Publications",
+    "projects": "Projects",
+    "services": "Community Services"
+  },
+  "empty": {
+    "noExperience": "No experience data available",
+    "addExperience": "Add experience",
+    "noEducation": "No education data available",
+    "addEducation": "Add education",
+    "noCv": "No CV uploaded",
+    "startNow": "Start building your academic profile",
+    "addSkills": "Add your academic and technical skills"
+  }
+}
