@@ -1,0 +1,22 @@
+{
+  "title": "المؤلفات العلمية",
+  "authorRole": "دور عضو هيئة التدريس",
+  "publishingDate": "تاريخ النشر",
+  "publishingHouse": "دار النشر",
+  "isbn": "رقم الايداع",
+  "present": "حتى الآن",
+  "areYouSureDelete": "هل أنت متأكد أنك تريد الحذف؟",
+  "delete": "حذف",
+  "cancel": "إلغاء",
+  "add": "إضافة",
+  "empty": "لا توجد بيانات",
+  "previous": "السابق",
+  "next": "التالي",
+  "page": "الصفحة",
+  "of": "من",
+  "search": "ابحث في الخبرات...",
+  "errors": {
+    "loadFailed": "فشل تحميل البيانات",
+    "deleteFailed": "فشل في عملية الحذف"
+  }
+}

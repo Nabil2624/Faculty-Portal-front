@@ -52,14 +52,14 @@ export default function PageHeader({
           className="border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer"
           style={{
             flexShrink: 0,
-            width: "clamp(2.5rem, 3.5vw, 5rem)",
-            height: "clamp(2.5rem, 3.5vw, 5rem)",
+            width: "clamp(2.5rem, 3vw, 4rem)",
+            height: "clamp(2.5rem, 3vw, 4rem)",
           }}
         >
           <Filter
             style={{
-              width: "clamp(1.2rem, 2vw, 4rem)",
-              height: "clamp(1.2rem, 2vw, 4rem)",
+              width: "clamp(1.2rem, 1.5vw, 3rem)",
+              height: "clamp(1.2rem, 1.5vw, 3rem)",
             }}
           />
         </div>
@@ -71,8 +71,8 @@ export default function PageHeader({
             className="bg-[#b38e19] text-white rounded-md font-medium px-4"
             style={{
               flexShrink: 0,
-              height: "clamp(2.5rem, 3.5vw, 5rem)",
-              fontSize: "clamp(0.9rem, 1.2vw, 2.2rem)",
+              height: "clamp(2.5rem, 3vw, 4rem)",
+              fontSize: "clamp(0.9rem, 1vw, 2rem)",
             }}
           >
             {addLabel}

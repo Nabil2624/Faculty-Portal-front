@@ -1,0 +1,22 @@
+{
+  "title": "Scientific Writing",
+  "authorRole": "Author Role",
+  "publishingDate": "Publishing Date",
+  "publishingHouse": "Publishing House",
+  "isbn": "ISBN",
+  "present": "Present",
+  "areYouSureDelete": "Are you sure you want to delete?",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "add": "Add",
+  "empty": "No data available",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of",
+  "search": "Search in experiences...",
+  "errors": {
+    "loadFailed": "Failed to load data",
+    "deleteFailed": "Failed to delete"
+  }
+}

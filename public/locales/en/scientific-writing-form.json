@@ -1,0 +1,45 @@
+{
+  "editScientificWriting": {
+    "title": "Edit Scientific Work"
+  },
+  "buttonsText": {
+    "update": "Update Data"
+  },
+  "addScientificWriting": {
+    "title": "Add Scientific Work"
+  },
+
+  "fields": {
+    "Booktitle": "Book Title",
+    "role": "Faculty Member Role",
+    "isbn": "ISBN Number *",
+    "publishingHouse": "Publishing House",
+    "publishingDate": "Select Publishing Date",
+    "description": "Description"
+  },
+
+  "placeholders": {
+    "Booktitle": "Enter Book Title",
+    "role": "Select Faculty Member Role",
+    "isbn": "Enter ISBN Number",
+    "publishingHouse": "Enter Publishing House Name",
+    "publishingDate": "Select Publishing Date",
+    "description": "Write a brief description of the work and achieved results."
+  },
+
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+
+  "errors": {
+    "loadLookups": "Failed to load lookup data",
+    "BooktitleRequired": "Book title is required",
+    "roleRequired": "Faculty member role is required",
+    "isbnRequired": "ISBN number is required",
+    "publishingHouseRequired": "Publishing house name is required",
+    "publishingDateRequired": "Book publishing date is required",
+    "saveFailed": "Failed to add book",
+    "startBeforeEnd": "Start date must be before end date"
+  }
+}

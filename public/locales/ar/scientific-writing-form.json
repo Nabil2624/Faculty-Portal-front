@@ -1,0 +1,45 @@
+{
+  "editScientificWriting": {
+    "title": "تعديل مؤلفة علمية"
+  },
+  "buttonsText": {
+    "update": "تحديث البيانات"
+  },
+  "addScientificWriting": {
+    "title": "إضافة مؤلفة علمية"
+  },
+
+  "fields": {
+    "Booktitle": "عنوان الكتاب",
+    "role": "دور عضو هيئة التدريس",
+    "isbn": "رقم الايداع",
+    "publishingHouse": "دار النشر",
+    "publishingDate": "اختر تاريخ نشر الكتاب",
+    "description": "الوصف"
+  },
+
+  "placeholders": {
+    "Booktitle": "ادخل عنوان الكتاب",
+    "role": "اختر دور عضو هيئة التدريس",
+    "isbn": "ادخل رقم الايداع",
+    "publishingHouse": "ادخل اسم دار النشر",
+    "publishingDate": "اختر تاريخ نشر الكتاب",
+    "description": "اكتب وصفًا مختصرًا لطبيعة الخبرة، والنتائج المحققة."
+  },
+
+  "buttons": {
+    "save": "حفظ",
+    "cancel": "إلغاء"
+  },
+
+  "errors": {
+    "loadLookups": "فشل في تحميل بيانات البحث",
+    "BooktitleRequired": "اسم الكتاب مطلوب",
+    "roleRequired": "دور عضو هيئة التدريس مطلوب",
+    "isbnRequired": "رقم الايداع مطلوبة",
+    "publishingHouseRequired": "اسم دار النشر مطلوب",
+    "publishingDateRequired": "تاريخ نشر الكتاب مطلوب",
+    "saveFailed": "فشل في إضافة كتاب",
+    "startBeforeEnd": "يجب أن يكون تاريخ البداية قبل تاريخ النهاية"
+  }
+}

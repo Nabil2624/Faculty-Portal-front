@@ -79,7 +79,7 @@ export default function LoginPage() {
 
       //  Redirect based on role
       if (userType === "Faculty Member") {
-        navigate("/article-reviews");
+        navigate("/personal");
       } else {
         navigate(redirectTo);
       }

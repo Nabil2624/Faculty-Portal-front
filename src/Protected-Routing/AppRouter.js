@@ -80,7 +80,6 @@ import EditThesis from "../pages/EditThesis";
 import AddSupervisionOrJudgement from "../pages/AddSupervisionOrJudgement";
 import EditSupervisionOrJudgement from "../pages/EditSupervisionOrJudgement";
 import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
-<<<<<<< HEAD
 import PrizesAndRewards from "../pages/PrizesAndRewards";
 import AddPrizesAndRewards from "../pages/AddPrizesAndRewards";
 import EditPrizesAndRewards from "../pages/EditPrizesAndRewards";
@@ -90,13 +89,14 @@ import AddManifestation from "../pages/AddManifestation";
 import Patents from "../pages/Patents";
 import AddPatent from "../pages/AddPatent";
 import EditPatent from "../pages/EditPatent";
-=======
 import UniversityContributions from "../pages/UniversityContributions";
 import CommunityServiceContributions from "../pages/CommunityServiceContributions";
 import ParticipationInQualityWorks from "../pages/ParticipationInQualityWorks";
 import ProfileDashboard from "../pages/ProfileDashboard";
+import ScientificWriting from "../pages/ScientificWriting";
+import AddScientificWriting from "../pages/AddScientificWriting";
+import EditScientificWriting from "../pages/EditScientificWriting";
 
->>>>>>> 4c883b9784cb3f80bca540f6a3bc40bcc64b8f04
 function AppRouterInner() {
   const navigate = useNavigate();
 
@@ -276,9 +276,15 @@ function AppRouterInner() {
         element={<ParticipationInQualityWorks />}
       />
       <Route
-        path="/profile"
-        element={<ProfileDashboard />}
+        path="/add-scientific-writing"
+        element={<AddScientificWriting />}
       />
+      <Route
+        path="/edit-scientific-writing"
+        element={<EditScientificWriting />}
+      />
+      <Route path="/scientific-writing" element={<ScientificWriting />} />
+      <Route path="/profile" element={<ProfileDashboard />} />
       {/* ✅ Protected Routes */}
       <Route element={<ProtectedRoute />}></Route>
 

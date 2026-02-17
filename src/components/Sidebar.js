@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
@@ -18,6 +18,7 @@ import logo from "../assets/Capital.png";
 export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const { t } = useTranslation("headerandsidebar");
   const [openMenus, setOpenMenus] = useState({});
+  const sidebarRef = useRef(null);
 
   const isArabic = lang === "ar";
 
@@ -29,6 +30,26 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
       [level]: prev[level] === key ? null : key,
     }));
   };
+
+  /* يقفل لما تدوس بره */
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isExpanded &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target)
+      ) {
+        setIsExpanded(false);
+        setOpenMenus({});
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isExpanded]);
 
   const iconClass =
     "w-[clamp(20px,1.6vw,60px)] h-[clamp(20px,1.6vw,60px)] shrink-0";
@@ -68,23 +89,15 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
     {
       key: "experiences",
       icon: <Briefcase />,
-<<<<<<< HEAD
-      sub: [],
-=======
       sub: [
         { key: "general-experiences", link: "/general-experiences" },
         { key: "teaching-experiences", link: "/teaching-experiences" },
       ],
->>>>>>> 4c883b9784cb3f80bca540f6a3bc40bcc64b8f04
     },
     {
       key: "Publications&Patents",
       icon: <BookMarkedIcon />,
-<<<<<<< HEAD
       sub: [{ key: "patents", link: "/patents" }],
-=======
-      sub: [],
->>>>>>> 4c883b9784cb3f80bca540f6a3bc40bcc64b8f04
     },
     {
       key: "projectsAndCommittee",
@@ -108,20 +121,21 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
     {
       key: "contributions",
       icon: <HelpingHand />,
-<<<<<<< HEAD
-      sub: [],
-=======
       sub: [
         { key: "university-contribution", link: "/university-contribution" },
-        { key: "Contributions-community-service", link: "/Contributions-community-service" },
-        { key: "participation-in-quality-work", link: "/participation-in-quality-work" },
+        {
+          key: "Contributions-community-service",
+          link: "/Contributions-community-service",
+        },
+        {
+          key: "participation-in-quality-work",
+          link: "/participation-in-quality-work",
+        },
       ],
->>>>>>> 4c883b9784cb3f80bca540f6a3bc40bcc64b8f04
     },
     {
       key: "awards",
       icon: <Award />,
-<<<<<<< HEAD
       sub: [
         { key: "prizesAndRewards", link: "/prizes-and-rewards" },
         {
@@ -129,42 +143,41 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
           link: "/manifestations-of-scientific-appreciation",
         },
       ],
-=======
-      sub: [],
->>>>>>> 4c883b9784cb3f80bca540f6a3bc40bcc64b8f04
     },
   ];
 
-  // line offset و حجم الـ border responsive
   const lineOffset = "clamp(15px,1vw,50px)";
-  const lineWidth = "clamp(1px, 0.1vw, 2px)";
+  const lineWidth = "clamp(1px, 0.1vw,2px)";
 
-  const renderMenu = (items, level = 1) => {
-    return items.map((item) => {
+  const renderMenu = (items, level = 1) =>
+    items.map((item) => {
       const hasSub = item.sub && item.sub.length > 0;
       const isOpen = openMenus[level] === item.key;
 
       return (
         <li key={item.key} className="relative">
-          {/* Parent button */}
-
           <button
-            onClick={() => hasSub && toggleMenu(item.key, level)}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!isExpanded) {
+                setIsExpanded(true);
+                if (hasSub) {
+                  setOpenMenus((prev) => ({ ...prev, [level]: item.key }));
+                }
+              } else if (hasSub) toggleMenu(item.key, level);
+            }}
             className={`flex items-center gap-[clamp(0.5rem,0.5vw,1rem)] px-[clamp(0.2rem,0.3vw,1rem)] py-[clamp(0.25rem,0.5vw,0.5rem)] w-full rounded-md hover:bg-[#B38e19] transition ${
               isExpanded ? "justify-start" : "justify-center"
             }`}
           >
-            {React.cloneElement(item.icon, {
-              className: iconClass,
-            })}
-
+            {React.cloneElement(item.icon, { className: iconClass })}
             {isExpanded && (
               <span className="text-[clamp(0.75rem,1vw,9rem)] font-medium">
                 {t(item.key)}
               </span>
             )}
           </button>
-          {/* Sub-menu */}
+
           {hasSub && isOpen && isExpanded && (
             <ul className="relative mt-[clamp(0.25rem,0.5vw,0.5rem)]">
               <div
@@ -185,7 +198,6 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
                       }
                 }
               />
-
               {item.sub.map((subItem) => (
                 <li
                   key={subItem.key}
@@ -197,6 +209,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
                 >
                   <Link
                     to={subItem.link}
+                    onClick={(e) => e.stopPropagation()}
                     className="block py-[clamp(0rem,0.2vw,3rem)] px-[clamp(0.5rem,0.5vw,6rem)] text-gray-200 text-[clamp(0.75rem,0.9vw,8rem)] hover:text-white hover:bg-[#B38e19] rounded-md"
                   >
                     {t(subItem.key)}
@@ -208,10 +221,13 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         </li>
       );
     });
-  };
 
   return (
     <aside
+      ref={sidebarRef}
+      onClick={() => {
+        if (!isExpanded) setIsExpanded(true);
+      }}
       className={`flex flex-col justify-between bg-[#19355a] text-white ${
         isExpanded
           ? "w-[clamp(14rem,14vw,30rem)]"
@@ -225,7 +241,10 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         className={`flex items-center gap-[clamp(0.5rem,0.5vw,1rem)] cursor-pointer px-[clamp(0.5rem,0.5vw,1rem)] py-[clamp(0.25rem,1vw,0.5rem)] ${
           isExpanded ? "justify-start" : "justify-center"
         }`}
-        onClick={toggleSidebar}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleSidebar();
+        }}
       >
         <img
           src={logo}
@@ -234,12 +253,11 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
             !isExpanded && "mx-auto"
           }`}
         />
-
         {isExpanded && (
           <h2
             className={`font-bold ${
               isArabic
-                ? "text-[clamp(1rem,1.5vw,2rem)]"
+                ? "text-[clamp(1rem,1.3vw,2rem)]"
                 : "text-[clamp(1rem,1.3vw,2rem)]"
             }`}
           >
