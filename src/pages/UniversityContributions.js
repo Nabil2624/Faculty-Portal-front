@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
@@ -29,7 +29,16 @@ export default function UniversityContributions() {
   const [showDetails, setShowDetails] = useState(false);
 
   const [deleteError, setDeleteError] = useState(false);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
   /* ================= DATA ================= */
   const {
     items: contributions = [],
@@ -37,7 +46,7 @@ export default function UniversityContributions() {
     loading,
     error,
     loadData,
-  } = useUniversityContribution(currentPage, 9);
+  } = useUniversityContribution(currentPage, 9, debouncedSearch);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -63,26 +72,6 @@ export default function UniversityContributions() {
       loadData();
     },
   });
-
-  /* ================= SEARCH ================= */
-  const filtered = useMemo(() => {
-    const query = (search || "").toLowerCase().trim();
-    if (!query) return contributions;
-
-    return contributions.filter((item) => {
-      const title = item?.contributionTitle || "";
-      const type =
-        item?.typeOfContribution?.valueEn ||
-        item?.typeOfContribution?.valueAr ||
-        "";
-
-      return (
-        title.toLowerCase().includes(query) ||
-        type.toLowerCase().includes(query)
-      );
-    });
-  }, [search, contributions]);
-console.log(selectedItem);
 
   /* ================= DELETE ================= */
   const handleDelete = async (id) => {
@@ -112,8 +101,6 @@ console.log(selectedItem);
     setShowForm(true);
   };
 
-
-
   return (
     <ResponsiveLayoutProvider>
       <div
@@ -141,7 +128,7 @@ console.log(selectedItem);
           </div>
         )}
 
-        {!loading && !error && filtered.length === 0 && (
+        {!loading && !error && contributions.length === 0 && (
           <div
             className="text-center text-gray-500"
             style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
@@ -151,7 +138,7 @@ console.log(selectedItem);
         )}
 
         {/* Grid */}
-        {!loading && !error && filtered.length > 0 && (
+        {!loading && !error && contributions.length > 0 && (
           <div
             className="overflow-y-auto pr-2 mb-4 flex-1"
             style={{ maxHeight: "calc(90vh - 200px)" }}
@@ -162,7 +149,7 @@ console.log(selectedItem);
               }`}
               style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
             >
-              {filtered.map((item) => (
+              {contributions.map((item) => (
                 <UniversityContributionCard
                   key={item.id}
                   item={item}
@@ -202,16 +189,13 @@ console.log(selectedItem);
           showDelete={showDelete}
           showDetails={showDetails}
           selectedItem={selectedItem}
-
           formData={formData}
           errors={errors}
           handleChange={handleChange}
           submitForm={submitForm}
           loading={formLoading}
-
           types={types}
           loadingTypes={loadingTypes}
-
           deleteError={deleteError}
           onDelete={handleDelete}
           setShowForm={setShowForm}
@@ -222,4 +206,4 @@ console.log(selectedItem);
       </div>
     </ResponsiveLayoutProvider>
   );
-}  
+}

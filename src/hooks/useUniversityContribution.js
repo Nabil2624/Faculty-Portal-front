@@ -2,7 +2,11 @@
 import { useState, useEffect } from "react";
 import { getUniversityContribution } from "../services/universityContribution.service";
 
-export default function useUniversityContribution(page = 1, pageSize = 9) {
+export default function useUniversityContribution(
+  page = 1,
+  pageSize = 9,
+  search,
+) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -13,7 +17,7 @@ export default function useUniversityContribution(page = 1, pageSize = 9) {
     setError(null);
 
     try {
-      const res = await getUniversityContribution(page, pageSize);
+      const res = await getUniversityContribution(page, pageSize, search);
       const { data, totalCount } = res.data; // زي Journals
       setItems(data || []);
       setTotalPages(Math.ceil(totalCount / pageSize) || 1);
@@ -26,7 +30,7 @@ export default function useUniversityContribution(page = 1, pageSize = 9) {
 
   useEffect(() => {
     loadData();
-  }, [page]);
+  }, [page, search]);
 
   return { items, totalPages, loading, error, loadData };
 }

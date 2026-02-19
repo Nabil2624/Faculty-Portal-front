@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
@@ -14,16 +14,28 @@ import { deleteParticipationJournal } from "../services/participationJournals.se
 export default function ParticipationInJournals() {
   const { t, i18n } = useTranslation("ParticipationJournals");
   const isArabic = i18n.language === "ar";
-
-  const [page, setPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
 
-  const { items, totalPages, loading, error, loadData } = useJournals(page, 9);
+    return () => clearTimeout(timeout);
+  }, [search]);
+  const { items, totalPages, loading, error, loadData } = useJournals(
+    currentPage,
+    9,
+    debouncedSearch,
+  );
 
   const handleDelete = async () => {
     if (!selectedItem) return;
@@ -40,8 +52,6 @@ export default function ParticipationInJournals() {
     }
   };
 
-
-
   return (
     <ResponsiveLayoutProvider>
       <div
@@ -53,6 +63,10 @@ export default function ParticipationInJournals() {
         <PageHeader
           title={t("title")}
           addLabel={t("add")}
+          showSearch
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={t("search")}
           onAdd={() => setShowAdd(true)}
           onFilter={() => console.log("Filter clicked")}
           isArabic={isArabic}
@@ -97,10 +111,10 @@ export default function ParticipationInJournals() {
         </div>
 
         <Pagination
-          currentPage={page}
+          currentPage={currentPage}
           totalPages={totalPages}
-          onPrev={() => setPage((p) => p - 1)}
-          onNext={() => setPage((p) => p + 1)}
+          onPrev={() => setCurrentPage((p) => p - 1)}
+          onNext={() => setCurrentPage((p) => p + 1)}
           t={t}
           isArabic={isArabic}
         />
@@ -118,7 +132,7 @@ export default function ParticipationInJournals() {
           deleteError={deleteError}
           onSuccessAdd={() => {
             setShowAdd(false);
-            setPage(1);
+            setCurrentPage(1);
             loadData();
           }}
           onSuccessEdit={() => {

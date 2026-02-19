@@ -13,7 +13,7 @@ export default function useScientificWritingForm(existingData = {}, t) {
   });
  
   
-console.log(existingData);
+
 
   const [errors, setErrors] = useState({});
 

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import LoadingSpinner from "../components/LoadingSpinner";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
@@ -15,6 +15,11 @@ export default function CommitteesAndAssociationsPage() {
   const { t, i18n } = useTranslation("CommitteesAssociations");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [showDelete, setShowDelete] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const {
     committees,
@@ -24,12 +29,18 @@ export default function CommitteesAndAssociationsPage() {
     error,
     setCurrentPage,
     deleteItem,
-  } = useCommitteesAndAssociations({ t });
+  } = useCommitteesAndAssociations({
+    t,
+    search: debouncedSearch,
+  });
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
 
-  const [showDelete, setShowDelete] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-
+    return () => clearTimeout(timeout);
+  }, [search, setCurrentPage]);
   /* ================= Handlers ================= */
 
   const handleDeleteClick = (item) => {
@@ -52,8 +63,6 @@ export default function CommitteesAndAssociationsPage() {
 
   /* ================= UI ================= */
 
-
-
   return (
     <ResponsiveLayoutProvider>
       <div
@@ -65,6 +74,10 @@ export default function CommitteesAndAssociationsPage() {
           addLabel={t("add")}
           onAdd={() => navigate("/add-committee-associations")}
           onFilter={() => console.log("Filter clicked")}
+          showSearch // 👈 ضيف دي
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={t("search")}
           isArabic={isArabic}
         />
 

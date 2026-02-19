@@ -1,19 +1,18 @@
 import axiosInstance from "../utils/axiosInstance";
 
 /* ================== LIST ================== */
-export const getProjects = (pageIndex, pageSize) => {
+export const getProjects = (pageIndex, pageSize, search) => {
   return axiosInstance.get("/ProjectsAndCommittees/Projects", {
-    params: { pageIndex, pageSize },
+    params: { pageIndex, pageSize, search },
     skipGlobalErrorHandler: true,
   });
 };
 
 /* ================== DELETE ================== */
 export const deleteProject = (id) => {
-  return axiosInstance.delete(
-    `/ProjectsAndCommittees/DeleteProject/${id}`,
-    { skipGlobalErrorHandler: true }
-  );
+  return axiosInstance.delete(`/ProjectsAndCommittees/DeleteProject/${id}`, {
+    skipGlobalErrorHandler: true,
+  });
 };
 
 /* ================== SERVICE ================== */
@@ -35,11 +34,9 @@ export const projectService = {
 
   /* -------- Create -------- */
   createProject: async (payload) => {
-    await axiosInstance.post(
-      "/ProjectsAndCommittees/CreateProject",
-      payload,
-      { skipGlobalErrorHandler: true }
-    );
+    await axiosInstance.post("/ProjectsAndCommittees/CreateProject", payload, {
+      skipGlobalErrorHandler: true,
+    });
   },
 
   /* -------- Update (الإضافة المطلوبة) -------- */
@@ -47,7 +44,7 @@ export const projectService = {
     await axiosInstance.put(
       `/ProjectsAndCommittees/UpdateProject/${id}`,
       payload,
-      { skipGlobalErrorHandler: true }
+      { skipGlobalErrorHandler: true },
     );
   },
 };

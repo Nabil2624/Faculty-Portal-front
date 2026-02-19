@@ -1,8 +1,8 @@
 import axiosInstance from "../utils/axiosInstance";
 
-export const getArticleReviews = async (page, pageSize) => {
+export const getArticleReviews = async (page, pageSize ,search) => {
   const response = await axiosInstance.get("/ProjectsAndCommittees/ReviewingArticles", {
-    params: { pageIndex: page, pageSize },
+    params: { pageIndex: page, pageSize ,search },
     skipGlobalErrorHandler: true,
   });
   return response.data; // { data, totalCount }

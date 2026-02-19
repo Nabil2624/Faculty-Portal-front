@@ -1,17 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-
 import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
 
 import useScientificWriting from "../hooks/useScientificWriting";
 import { deleteScientificWriting } from "../services/scientific-writing.service";
-import TeachingExperienceCard from "../components/widgets/TeachingExperiences/TeachingExperienceCard";
 
-import TeachingExperienceModal from "../components/widgets/TeachingExperiences/TeachingExperienceModal";
 import ScientificWritingCard from "../components/widgets/ScientificWriting/ScientificWritingCard";
 import ScientificWritingModal from "../components/widgets/ScientificWriting/ScientificWritingModal";
 
@@ -21,17 +18,13 @@ export default function ScientificWriting() {
   const isArabic = i18n.language === "ar";
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
-  const [showCustomize, setShowCustomize] = useState(false);
-  const [sortValue, setSortValue] = useState(null);
-  const [filtersList, setFiltersList] = useState([]);
 
   const {
-    items: experiences = [],
+    items = [],
     totalPages = 1,
     loading,
     error,
@@ -43,23 +36,6 @@ export default function ScientificWriting() {
       setCurrentPage(totalPages || 1);
     }
   }, [totalPages]);
-
-  const filteredExperiences = useMemo(() => {
-    const query = (search || "").toLowerCase().trim();
-    if (!query) return experiences;
-
-    return experiences.filter((exp) => {
-      const title = exp?.experienceTitle || "";
-      const authority = exp?.authority || "";
-      const location = exp?.countryOrCity || "";
-
-      return (
-        title.toLowerCase().includes(query) ||
-        authority.toLowerCase().includes(query) ||
-        location.toLowerCase().includes(query)
-      );
-    });
-  }, [search, experiences]);
 
   const handleDelete = async () => {
     if (!selectedItem) return;
@@ -90,38 +66,26 @@ export default function ScientificWriting() {
           title={t("title")}
           addLabel={t("add")}
           onAdd={() => navigate("/add-scientific-writing")}
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
           isArabic={isArabic}
-          onFilterClick={() => setShowCustomize(true)} // 👈 ده المهم
         />
 
-        {/* Error / Empty */}
+        {/* Error */}
         {!loading && error && (
-          <div
-            className="text-center text-red-500"
-            style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
-          >
+          <div className="text-center text-red-500">
             {t("errors.loadFailed")}
           </div>
         )}
 
-        {!loading && !error && filteredExperiences.length === 0 && (
-          <div
-            className="text-center text-gray-500"
-            style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
-          >
-            {t("empty")}
-          </div>
+        {/* Empty */}
+        {!loading && !error && items.length === 0 && (
+          <div className="text-center text-gray-500">{t("empty")}</div>
         )}
 
-        {/* Grid with fixed scroll area */}
-        {!loading && !error && filteredExperiences.length > 0 && (
+        {/* Grid */}
+        {!loading && !error && items.length > 0 && (
           <div
             className="overflow-y-auto pr-2 mb-4 flex-1"
-            style={{ maxHeight: "calc(90vh - 200px)" }} // adjust 200px حسب حجم الـ header + pagination
+            style={{ maxHeight: "calc(90vh - 200px)" }}
           >
             <div
               className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${
@@ -129,7 +93,7 @@ export default function ScientificWriting() {
               }`}
               style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
             >
-              {filteredExperiences.map((item) => (
+              {items.map((item) => (
                 <ScientificWritingCard
                   key={item.id}
                   item={item}
@@ -150,7 +114,7 @@ export default function ScientificWriting() {
           </div>
         )}
 
-        {/* Pagination ثابت تحت */}
+        {/* Pagination */}
         <div className="mt-auto">
           <Pagination
             currentPage={currentPage}
@@ -166,20 +130,10 @@ export default function ScientificWriting() {
         <ScientificWritingModal
           showDelete={showDelete}
           showDetails={showDetails}
-          showCustomize={showCustomize} // 👈 جديد
           selectedItem={selectedItem}
           setShowDelete={setShowDelete}
           setShowDetails={setShowDetails}
-          setShowCustomize={setShowCustomize} // 👈 جديد
           onDelete={handleDelete}
-          onApplyFilters={(data) => {
-            setSortValue(data.sortValue);
-            setFiltersList(data.filtersList);
-            setShowCustomize(false);
-
-            console.log("Sort:", data.sortValue);
-            console.log("Filters:", data.filtersList);
-          }}
           deleteError={deleteError}
         />
       </div>

@@ -200,9 +200,9 @@ export default function SeminarsAndConferences() {
                   {item.startDate} - {item.endDate}
                 </p>
                 <p className="text-sm text-gray-700">
-                  {item.universityOrFaculty}
+                  {item.organizingAuthority}
                 </p>
-                <p className="text-xs text-gray-400">{item.countryOrCity}</p>
+                <p className="text-xs text-gray-400">{item.venue}</p>
               </div>
             ))}
           </div>

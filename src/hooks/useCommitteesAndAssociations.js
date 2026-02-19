@@ -4,7 +4,11 @@ import {
   deleteCommitteeOrAssociation,
 } from "../services/committees.service";
 
-export default function useCommitteesAndAssociations({ t, pageSize = 9 }) {
+export default function useCommitteesAndAssociations({
+  t,
+  pageSize = 9,
+  search,
+}) {
   const [committees, setCommittees] = useState([]);
 
   // Pagination state
@@ -14,6 +18,9 @@ export default function useCommitteesAndAssociations({ t, pageSize = 9 }) {
   // UI state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   const fetchCommittees = useCallback(
     async (page) => {
@@ -24,6 +31,7 @@ export default function useCommitteesAndAssociations({ t, pageSize = 9 }) {
         const resp = await getCommitteesAndAssociations({
           pageIndex: page,
           pageSize,
+          search,
         });
 
         const data = resp?.data ?? [];
@@ -41,7 +49,7 @@ export default function useCommitteesAndAssociations({ t, pageSize = 9 }) {
         setLoading(false);
       }
     },
-    [pageSize, t]
+    [pageSize, t, search],
   );
 
   // Refetch when page changes

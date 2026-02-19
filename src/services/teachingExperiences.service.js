@@ -1,11 +1,16 @@
 import axiosInstance from "../utils/axiosInstance";
 
-export const getTeachingExperience = (pageIndex, pageSize) => {
+export const getTeachingExperience = (pageIndex, pageSize, search) => {
   return axiosInstance.get("/Experiences/TeachingExperiences", {
-    params: { pageIndex, pageSize },
+    params: { 
+      pageIndex, 
+      pageSize,
+      search 
+    },
     skipGlobalErrorHandler: true,
   });
-}
+};
+
 export const createTeachingExperience = (data) => {
   return axiosInstance.post("/Experiences/CreateTeachingExperience", data, {
     skipGlobalErrorHandler: true,
