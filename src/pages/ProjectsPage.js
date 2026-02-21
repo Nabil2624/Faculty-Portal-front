@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import LoadingSpinner from "../components/LoadingSpinner";
+
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
+import LoadingSpinner from "../components/LoadingSpinner";
 import ProjectCard from "../components/widgets/Projects/ProjectCard";
 import ProjectsModals from "../components/widgets/Projects/ProjectsModals";
 import useProjects from "../hooks/useProjects";
@@ -16,20 +17,31 @@ export default function ProjectsPage() {
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
 
-  const { projects, totalPages, loading, error, loadData } = useProjects(
-    currentPage,
-    9,
-  );
+  // 🔥 debounce search
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
+
+  const { projects, totalPages, loading, error, loadData } =
+    useProjects(currentPage, 9, debouncedSearch);
 
   // حماية لو الصفحة خرجت بره الرينج
   useEffect(() => {
     if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
+      setCurrentPage(totalPages || 1);
     }
   }, [totalPages]);
 
@@ -41,7 +53,7 @@ export default function ProjectsPage() {
       setShowDelete(false);
       setSelectedItem(null);
       setDeleteError(false);
-      loadData();
+      loadData(currentPage);
     } catch (err) {
       console.error(err);
       setDeleteError(true);
@@ -51,7 +63,6 @@ export default function ProjectsPage() {
   const handleEditNavigate = (project) => {
     navigate("/edit-project", { state: { item: project } });
   };
-
 
   return (
     <ResponsiveLayoutProvider>
@@ -63,12 +74,16 @@ export default function ProjectsPage() {
           title={t("pageTitle")}
           addLabel={t("add")}
           onAdd={() => navigate("/add-project")}
-          onFilter={() => console.log("Filter clicked")}
+          showSearch
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={t("search")}
           isArabic={isArabic}
         />
 
-        {/* Fetch Error */}
-        <div className="items-center justify-center">
+        {/* Content wrapper flex-1 عشان الباجينيشن ثابت تحت */}
+        <div className="flex-1 overflow-y-auto pr-2 mb-4">
+
           {!loading && error && (
             <div className="text-red-500 text-lg text-center">
               {t("errors.loadFailed")}
@@ -80,11 +95,8 @@ export default function ProjectsPage() {
               {t("empty")}
             </div>
           )}
-        </div>
 
-        {/* Projects Grid */}
-        {!loading && !error && projects.length && (
-          <div className="flex-1 overflow-y-auto pr-2 mb-4">
+          {!loading && !error && projects.length > 0 && (
             <div
               className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${
                 isArabic ? "text-right" : "text-left"
@@ -108,10 +120,10 @@ export default function ProjectsPage() {
                 />
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Pagination */}
+        {/* Pagination ثابت تحت */}
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

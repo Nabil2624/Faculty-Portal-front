@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { getTeachingExperience } from "../services/teachingExperiences.service";
 
-export default function useGeneralExperiences(page = 1, pageSize = 9) {
+export default function useTeachingExperiences(page = 1, pageSize = 9, search) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -13,8 +13,8 @@ export default function useGeneralExperiences(page = 1, pageSize = 9) {
     setError(null);
 
     try {
-      const res = await getTeachingExperience(page, pageSize);
-      const { data, totalCount } = res.data; // زي Journals
+      const res = await getTeachingExperience(page, pageSize ,search);
+      const { data, totalCount } = res.data; 
       setItems(data || []);
       setTotalPages(Math.ceil(totalCount / pageSize) || 1);
     } catch (err) {
@@ -26,7 +26,7 @@ export default function useGeneralExperiences(page = 1, pageSize = 9) {
 
   useEffect(() => {
     loadData();
-  }, [page]);
+  }, [page,search]);
 
   return { items, totalPages, loading, error, loadData };
 }

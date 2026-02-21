@@ -4,8 +4,8 @@ import { Pencil, Trash2, Filter, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosInstance";
-import AddAdministrativePosition from "../components/AddAdministrativePosition";
-import EditAdminPosition from "./EditAdminPosition";
+import AddAdministrativePosition from "./widgets/AdminPosition/AddAdministrativePosition";
+import EditAdminPosition from "./widgets/AdminPosition/EditAdminPosition";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 

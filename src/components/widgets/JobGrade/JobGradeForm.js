@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Calendar, ChevronDown, Plus } from "lucide-react";
-import axiosInstance from "../utils/axiosInstance";
+import axiosInstance from "../../../utils/axiosInstance";
 
 export default function JobGradeForm({ onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("form");
@@ -26,7 +26,10 @@ export default function JobGradeForm({ onCancel, onSuccess }) {
   const fetchDegrees = async () => {
     try {
       setLoadingDegrees(true);
-      const response = await axiosInstance.get("/LookUpItems/EmploymentDegrees", { skipGlobalErrorHandler: true });
+      const response = await axiosInstance.get(
+        "/LookUpItems/EmploymentDegrees",
+        { skipGlobalErrorHandler: true },
+      );
       setDegrees(response.data || []);
     } catch (err) {
       console.error("Failed to fetch degrees:", err);
@@ -74,9 +77,13 @@ export default function JobGradeForm({ onCancel, onSuccess }) {
         notes: formData.notes || "",
       };
 
-      await axiosInstance.post("/ScientificProgression/CreateJobRank", payload, {
-        skipGlobalErrorHandler: true,
-      });
+      await axiosInstance.post(
+        "/ScientificProgression/CreateJobRank",
+        payload,
+        {
+          skipGlobalErrorHandler: true,
+        },
+      );
 
       if (onSuccess) onSuccess();
     } catch (err) {
@@ -97,16 +104,25 @@ export default function JobGradeForm({ onCancel, onSuccess }) {
       key={i18n.language}
       dir={dir}
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto mt-6 bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
+      style={{
+        width: "clamp(320px, 32vw, 600px)",
+        padding: "clamp(1rem, 2.5vw, 2rem)",
+        borderRadius: "clamp(12px, 1.8vw, 22px)",
+      }}
+      className="bg-[#EDEDED] border-2 border-[#b38e19] shadow-sm mx-auto"
     >
       <div className="flex items-center justify-center mb-6">
         <Plus className="text-[#B38E19] mx-1" size={23} />
-        <h2 className="text-xl font-semibold text-gray-800">{t("add_job_grade")}</h2>
+        <h2 className="text-xl font-semibold text-gray-800">
+          {t("add_job_grade")}
+        </h2>
       </div>
 
       {/* Job Grade */}
       <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">{t("job_grade")}</label>
+        <label className="block text-lg font-medium text-gray-700 mb-2">
+          {t("job_grade")}
+        </label>
         <div className="relative">
           {loadingDegrees ? (
             <p className="text-gray-500">{t("loading")}</p>
@@ -133,13 +149,19 @@ export default function JobGradeForm({ onCancel, onSuccess }) {
             </>
           )}
         </div>
-        {errors.jobGrade && <p className="text-red-500 text-sm mt-1">{errors.jobGrade}</p>}
-        {errors.degrees && <p className="text-red-500 text-sm mt-1">{errors.degrees}</p>}
+        {errors.jobGrade && (
+          <p className="text-red-500 text-sm mt-1">{errors.jobGrade}</p>
+        )}
+        {errors.degrees && (
+          <p className="text-red-500 text-sm mt-1">{errors.degrees}</p>
+        )}
       </div>
 
       {/* Job Grade Date */}
       <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">{t("grade_date")}</label>
+        <label className="block text-lg font-medium text-gray-700 mb-2">
+          {t("grade_date")}
+        </label>
         <div className="relative">
           <input
             type="text"
@@ -154,7 +176,9 @@ export default function JobGradeForm({ onCancel, onSuccess }) {
             ref={gradeDateRef}
             type="date"
             value={formData.gradeDate}
-            onChange={(e) => setFormData((p) => ({ ...p, gradeDate: e.target.value }))}
+            onChange={(e) =>
+              setFormData((p) => ({ ...p, gradeDate: e.target.value }))
+            }
             onFocus={() => setGradeFocused(true)}
             onBlur={() => setGradeFocused(false)}
             className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10"
@@ -168,12 +192,16 @@ export default function JobGradeForm({ onCancel, onSuccess }) {
             onClick={() => openDatePicker(gradeDateRef)}
           />
         </div>
-        {errors.gradeDate && <p className="text-red-500 text-sm mt-1">{errors.gradeDate}</p>}
+        {errors.gradeDate && (
+          <p className="text-red-500 text-sm mt-1">{errors.gradeDate}</p>
+        )}
       </div>
 
       {/* Notes */}
       <div className="mb-6">
-        <label className="block text-lg font-medium text-gray-700 mb-2">{t("notes")}</label>
+        <label className="block text-lg font-medium text-gray-700 mb-2">
+          {t("notes")}
+        </label>
         <textarea
           name="notes"
           rows="3"
@@ -184,7 +212,9 @@ export default function JobGradeForm({ onCancel, onSuccess }) {
         ></textarea>
       </div>
 
-      {errors.api && <p className="text-red-500 text-center mb-4">{errors.api}</p>}
+      {errors.api && (
+        <p className="text-red-500 text-center mb-4">{errors.api}</p>
+      )}
 
       <div className="flex justify-center gap-3 mt-8">
         <button

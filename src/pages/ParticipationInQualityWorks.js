@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
@@ -30,13 +30,23 @@ export default function ParticipationInQualityWorks() {
   const [deleteError, setDeleteError] = useState(false);
 
   /* ================= DATA ================= */
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
+
   const {
     items: participations = [],
     totalPages = 1,
     loading,
     error,
     loadData,
-  } = useParticipationInQuallityWorks(currentPage, 9);
+  } = useParticipationInQuallityWorks(currentPage, 9, debouncedSearch);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -59,19 +69,6 @@ export default function ParticipationInQualityWorks() {
       loadData();
     },
   });
-
-  /* ================= SEARCH ================= */
-  const filtered = useMemo(() => {
-    const query = (search || "").toLowerCase().trim();
-    if (!query) return participations;
-
-    return participations.filter((item) => {
-      const title = item?.participationName || "";
-      const desc = item?.description || "";
-
-      return title.toLowerCase().includes(query) || desc.toLowerCase().includes(query);
-    });
-  }, [search, participations]);
 
   /* ================= DELETE ================= */
   const handleDelete = async (id) => {
@@ -103,7 +100,9 @@ export default function ParticipationInQualityWorks() {
 
   return (
     <ResponsiveLayoutProvider>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}>
+      <div
+        className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
+      >
         {/* Header */}
         <PageHeader
           title={t("title")}
@@ -126,7 +125,7 @@ export default function ParticipationInQualityWorks() {
           </div>
         )}
 
-        {!loading && !error && filtered.length === 0 && (
+        {!loading && !error && participations.length === 0 && (
           <div
             className="text-center text-gray-500"
             style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
@@ -136,7 +135,7 @@ export default function ParticipationInQualityWorks() {
         )}
 
         {/* Grid */}
-        {!loading && !error && filtered.length > 0 && (
+        {!loading && !error && participations.length > 0 && (
           <div
             className="overflow-y-auto pr-2 mb-4 flex-1"
             style={{ maxHeight: "calc(90vh - 200px)" }}
@@ -147,7 +146,7 @@ export default function ParticipationInQualityWorks() {
               }`}
               style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
             >
-              {filtered.map((item) => (
+              {participations.map((item) => (
                 <ParticipationInQualityWorkCard
                   key={item.id}
                   item={item}
@@ -187,13 +186,11 @@ export default function ParticipationInQualityWorks() {
           showDelete={showDelete}
           showDetails={showDetails}
           selectedItem={selectedItem}
-
           formData={formData}
           errors={errors}
           handleChange={handleChange}
           submitForm={submitForm}
           loading={formLoading}
-
           deleteError={deleteError}
           onDelete={handleDelete}
           setShowForm={setShowForm}

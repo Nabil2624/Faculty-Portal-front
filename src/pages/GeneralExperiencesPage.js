@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -18,42 +18,34 @@ export default function GeneralExperiencesPage() {
   const isArabic = i18n.language === "ar";
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [search, setSearch] = useState("");
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
 
+    return () => clearTimeout(timeout);
+  }, [search]);
   const {
     items: experiences = [],
     totalPages = 1,
     loading,
     error,
     loadData,
-  } = useGeneralExperience(currentPage, 9);
+  } = useGeneralExperience(currentPage, 9, debouncedSearch);
 
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages || 1);
     }
   }, [totalPages]);
-
-  const filteredExperiences = useMemo(() => {
-    const query = (search || "").toLowerCase().trim();
-    if (!query) return experiences;
-
-    return experiences.filter((exp) => {
-      const title = exp?.experienceTitle || "";
-      const authority = exp?.authority || "";
-      const location = exp?.countryOrCity || "";
-
-      return (
-        title.toLowerCase().includes(query) ||
-        authority.toLowerCase().includes(query) ||
-        location.toLowerCase().includes(query)
-      );
-    });
-  }, [search, experiences]);
 
   const handleDelete = async () => {
     if (!selectedItem) return;
@@ -90,6 +82,7 @@ export default function GeneralExperiencesPage() {
           searchPlaceholder={t("search")}
           isArabic={isArabic}
         />
+
         {/* Error / Empty */}
         {!loading && error && (
           <div
@@ -100,7 +93,7 @@ export default function GeneralExperiencesPage() {
           </div>
         )}
 
-        {!loading && !error && filteredExperiences.length === 0 && (
+        {!loading && !error && experiences.length === 0 && (
           <div
             className="text-center text-gray-500"
             style={{ fontSize: "clamp(1rem, 2vw, 1.5rem)" }}
@@ -110,10 +103,10 @@ export default function GeneralExperiencesPage() {
         )}
 
         {/* Grid with scroll */}
-        {!loading && !error && filteredExperiences.length > 0 && (
+        {!loading && !error && experiences.length > 0 && (
           <div
             className="overflow-y-auto pr-2 mb-4 flex-1"
-            style={{ maxHeight: "calc(90vh - 200px)" }} // adjust حسب ارتفاع header + pagination
+            style={{ maxHeight: "calc(90vh - 200px)" }}
           >
             <div
               className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${
@@ -121,7 +114,7 @@ export default function GeneralExperiencesPage() {
               }`}
               style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
             >
-              {filteredExperiences.map((item) => (
+              {experiences.map((item) => (
                 <GeneralExperienceCard
                   key={item.id}
                   item={item}

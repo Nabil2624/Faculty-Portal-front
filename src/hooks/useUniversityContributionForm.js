@@ -1,38 +1,36 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  createUniversityContribution,
-  updateUniversityContribution,
-} from "../services/universityContribution.service";
+import { updateUniversityContribution } from "../services/universityContribution.service";
 
 export default function useUniversityContributionForm({
-  mode = "add",
   selectedItem,
   onSuccess,
 }) {
   const { t } = useTranslation("university-contribution-form");
-  const isEdit = mode === "edit";
 
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     contributionName: "",
-    contributionTypeId: "", // always string
+    contributionTypeId: "",
     contributionDate: "",
     description: "",
-  });
+  };
 
+  const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  // populate form on edit
   useEffect(() => {
-    if (isEdit && selectedItem) {
+    if (selectedItem) {
       setFormData({
         contributionName: selectedItem.contributionTitle || "",
-        contributionTypeId: selectedItem.contributionTypeId?.toString() || "",
+        contributionTypeId: selectedItem.typeOfContribution?.id || "", // <=== هنا
         contributionDate: selectedItem.dateOfContribution || "",
         description: selectedItem.description || "",
       });
+      setErrors({});
     }
-  }, [isEdit, selectedItem]);
+  }, [selectedItem]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -72,17 +70,11 @@ export default function useUniversityContributionForm({
       setErrors({});
       const payload = preparePayload();
 
-      if (isEdit) {
-        await updateUniversityContribution(selectedItem.id, payload);
-      } else {
-        await createUniversityContribution(payload);
-      }
-
+      await updateUniversityContribution(selectedItem.id, payload);
       onSuccess?.();
     } catch (err) {
-      setErrors({
-        submit: t("general_error"),
-      });
+      console.error(err);
+      setErrors({ submit: t("general_error") });
     } finally {
       setLoading(false);
     }

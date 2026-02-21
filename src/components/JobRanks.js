@@ -4,8 +4,8 @@ import { Pencil, Trash2, Filter, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosInstance";
-import JobGradeForm from "../components/JobGradeForm";
-import EditJobGrade from "../components/EditJobGrade";
+import JobGradeForm from "./widgets/JobGrade/JobGradeForm";
+import EditJobGrade from "./widgets/JobGrade/EditJobGrade";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 

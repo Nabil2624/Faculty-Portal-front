@@ -5,44 +5,46 @@ const BASE_URL = "/ProjectsAndCommittees";
 export const getCommitteesAndAssociations = async ({
   pageIndex,
   pageSize,
+  search,
 }) => {
   const response = await axiosInstance.get(
     `${BASE_URL}/CommitteesAndAssociations`,
     {
-      params: { pageIndex, pageSize },
+      params: { pageIndex, pageSize, search },
       skipGlobalErrorHandler: true,
-    }
+    },
   );
 
   return response.data;
 };
 
 export const deleteCommitteeOrAssociation = async (id) => {
-  await axiosInstance.delete(
-    `${BASE_URL}/DeleteCommitteeOrAssociation/${id}`,
-    {
-      skipGlobalErrorHandler: true,
-    }
-  );
+  await axiosInstance.delete(`${BASE_URL}/DeleteCommitteeOrAssociation/${id}`, {
+    skipGlobalErrorHandler: true,
+  });
 };
 
 export const getCommitteeLookups = () =>
   Promise.all([
-    axiosInstance.get("/LookUpItems/TypesofCommittee", { skipGlobalErrorHandler: true }),
-    axiosInstance.get("/LookUpItems/CommitteeParticipationDegrees", { skipGlobalErrorHandler: true }),
+    axiosInstance.get("/LookUpItems/TypesofCommittee", {
+      skipGlobalErrorHandler: true,
+    }),
+    axiosInstance.get("/LookUpItems/CommitteeParticipationDegrees", {
+      skipGlobalErrorHandler: true,
+    }),
   ]);
 
 export const updateCommittee = (id, payload) =>
   axiosInstance.put(
     `/ProjectsAndCommittees/UpdateCommitteeOrAssociation/${id}`,
     payload,
-    { skipGlobalErrorHandler: true }
+    { skipGlobalErrorHandler: true },
   );
 export const createCommittee = async (data) => {
   const response = await axiosInstance.post(
     "/ProjectsAndCommittees/CreateCommitteeOrAssociation",
     data,
-    { skipGlobalErrorHandler: true }
+    { skipGlobalErrorHandler: true },
   );
   return response.data;
 };

@@ -34,23 +34,21 @@ export default function PrizesAndRewardsForm({
 
         <form className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(20px,20vw,600px)]">
           <div className="space-y-[clamp(18px,2.2vw,60px)]">
-            <div className="flex flex-col w-full">
-              <label className="mb-2 font-semibold text-[clamp(15px,1.3vw,34px)] text-start">
-                {t("fields.prize")}
-              </label>
-
-              <CustomDropdown
-                value={prizeId}
-                onChange={setPrizeId}
-                options={prizesOptions.map((p) => ({
-                  id: p.id,
-                  label: isArabic ? p.valueAr : p.valueEn,
-                }))}
-                placeholder={t("placeholders.prize")}
-                error={error.prizeId}
-                isArabic={isArabic}
-              />
-            </div>
+            {/* Prize dropdown */}
+            <label className="block mb-2 font-medium text-[clamp(14px,1.2vw,32px)]">
+              {t("fields.prize")} <span className="text-[#b38e19]">*</span>
+            </label>
+            <CustomDropdown
+              value={prizeId}
+              onChange={setPrizeId}
+              options={prizesOptions.map((p) => ({
+                id: p.id,
+                label: isArabic ? p.valueAr : p.valueEn,
+              }))}
+              placeholder={t("placeholders.prize")}
+              error={error.prizeId}
+              isArabic={isArabic}
+            />
 
             <InputField
               label={t("fields.awardingAuthority")}
@@ -70,7 +68,10 @@ export default function PrizesAndRewardsForm({
               placeholder={t("placeholders.dateReceived")}
               isArabic={isArabic}
             />
+          </div>
 
+          {/* Right column for attachments */}
+          <div className="space-y-[clamp(18px,2.2vw,60px)]">
             <InputField
               label={t("fields.description")}
               value={description}
@@ -79,10 +80,6 @@ export default function PrizesAndRewardsForm({
               textarea
               error={error.description}
             />
-          </div>
-
-          {/* Right column for attachments */}
-          <div className="space-y-[clamp(18px,2.2vw,60px)]">
             <AttachmentUploader
               label={t("fields.attachments")}
               buttonLabel={t("buttons.addAttachment")}

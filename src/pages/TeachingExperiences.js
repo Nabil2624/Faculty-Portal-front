@@ -1,16 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-
 import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
 
 import useTeachingExperiences from "../hooks/useTeachingExperiences";
 import { deleteTeachingExperience } from "../services/teachingExperiences.service";
 import TeachingExperienceCard from "../components/widgets/TeachingExperiences/TeachingExperienceCard";
-
 import TeachingExperienceModal from "../components/widgets/TeachingExperiences/TeachingExperienceModal";
 
 export default function TeachingExperiences() {
@@ -24,9 +22,16 @@ export default function TeachingExperiences() {
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
-  const [showCustomize, setShowCustomize] = useState(false);
-  const [sortValue, setSortValue] = useState(null);
-  const [filtersList, setFiltersList] = useState([]);
+  const [debouncedSearch, setDebouncedSearch] = useState(""); 
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   const {
     items: experiences = [],
@@ -34,30 +39,13 @@ export default function TeachingExperiences() {
     loading,
     error,
     loadData,
-  } = useTeachingExperiences(currentPage, 9);
+  } = useTeachingExperiences(currentPage, 9, debouncedSearch); 
 
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages || 1);
     }
   }, [totalPages]);
-
-  const filteredExperiences = useMemo(() => {
-    const query = (search || "").toLowerCase().trim();
-    if (!query) return experiences;
-
-    return experiences.filter((exp) => {
-      const title = exp?.experienceTitle || "";
-      const authority = exp?.authority || "";
-      const location = exp?.countryOrCity || "";
-
-      return (
-        title.toLowerCase().includes(query) ||
-        authority.toLowerCase().includes(query) ||
-        location.toLowerCase().includes(query)
-      );
-    });
-  }, [search, experiences]);
 
   const handleDelete = async () => {
     if (!selectedItem) return;
@@ -91,9 +79,9 @@ export default function TeachingExperiences() {
           showSearch
           searchValue={search}
           onSearchChange={setSearch}
+          onFilterClick
           searchPlaceholder={t("search")}
           isArabic={isArabic}
-          onFilterClick={() => setShowCustomize(true)} // 👈 ده المهم
         />
 
         {/* Error / Empty */}
@@ -106,7 +94,7 @@ export default function TeachingExperiences() {
           </div>
         )}
 
-        {!loading && !error && filteredExperiences.length === 0 && (
+        {!loading && !error && experiences.length === 0 && (
           <div
             className="text-center text-gray-500"
             style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
@@ -116,10 +104,10 @@ export default function TeachingExperiences() {
         )}
 
         {/* Grid with fixed scroll area */}
-        {!loading && !error && filteredExperiences.length > 0 && (
+        {!loading && !error && experiences.length > 0 && (
           <div
             className="overflow-y-auto pr-2 mb-4 flex-1"
-            style={{ maxHeight: "calc(90vh - 200px)" }} // adjust 200px حسب حجم الـ header + pagination
+            style={{ maxHeight: "calc(90vh - 200px)" }}
           >
             <div
               className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${
@@ -127,7 +115,7 @@ export default function TeachingExperiences() {
               }`}
               style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
             >
-              {filteredExperiences.map((item) => (
+              {experiences.map((item) => (
                 <TeachingExperienceCard
                   key={item.id}
                   item={item}
@@ -164,20 +152,10 @@ export default function TeachingExperiences() {
         <TeachingExperienceModal
           showDelete={showDelete}
           showDetails={showDetails}
-          showCustomize={showCustomize} // 👈 جديد
           selectedItem={selectedItem}
           setShowDelete={setShowDelete}
           setShowDetails={setShowDetails}
-          setShowCustomize={setShowCustomize} // 👈 جديد
           onDelete={handleDelete}
-          onApplyFilters={(data) => {
-            setSortValue(data.sortValue);
-            setFiltersList(data.filtersList);
-            setShowCustomize(false);
-
-            console.log("Sort:", data.sortValue);
-            console.log("Filters:", data.filtersList);
-          }}
           deleteError={deleteError}
         />
       </div>

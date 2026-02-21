@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import LoadingSpinner from "../components/LoadingSpinner";
 import PageHeader from "../components/ui/PageHeader";
 import ArticleCard from "../components/widgets/ArticleReview/ArticleCard";
 import Pagination from "../components/ui/Pagination";
@@ -16,6 +15,9 @@ export default function ArticleReviewsPage() {
   const isArabic = i18n.language === "ar";
 
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -23,27 +25,33 @@ export default function ArticleReviewsPage() {
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
 
-  const { items, totalPages, loading, error, loadData } = useArticleReviews(
-    page,
-    9,
-  );
+  // debounce
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
+
+  const { items, totalPages, loading, error, loadData } =
+    useArticleReviews(page, 9, debouncedSearch);
 
   const handleDelete = async () => {
     if (!selectedItem) return;
+
     setDeleteError(null);
+
     try {
       await deleteArticleReview(selectedItem.id);
       setShowDelete(false);
       setSelectedItem(null);
       loadData(page);
     } catch (err) {
-      setDeleteError(t("errors.deleteFailed") || "Failed to delete article");
+      setDeleteError(t("errors.deleteFailed"));
     }
   };
-
-
-
-
 
   return (
     <ResponsiveLayoutProvider>
@@ -54,22 +62,25 @@ export default function ArticleReviewsPage() {
           title={t("pageTitle")}
           addLabel={t("add")}
           onAdd={() => setShowAdd(true)}
-          onFilter={() => console.log("Filter clicked")}
+          showSearch
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={t("search")}
           isArabic={isArabic}
         />
-        <div className="items-center justify-center">
-          {!loading && error && (
-            <div className="text-red-500 text-lg text-center">
-              {t("errors.loadFailed")}
-            </div>
-          )}
 
-          {!loading && !error && items.length === 0 && (
-            <div className="text-gray-500 text-xl text-center">
-              {t("empty")}
-            </div>
-          )}
-        </div>
+        {!loading && error && (
+          <div className="text-red-500 text-lg text-center">
+            {t("errors.loadFailed")}
+          </div>
+        )}
+
+        {!loading && !error && items.length === 0 && (
+          <div className="text-gray-500 text-xl text-center">
+            {t("empty")}
+          </div>
+        )}
+
         <div className="flex-1">
           {!loading && !error && items.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -78,15 +89,15 @@ export default function ArticleReviewsPage() {
                   key={item.id}
                   item={item}
                   isArabic={isArabic}
-                  onEdit={(item) => {
+                  onEdit={() => {
                     setSelectedItem(item);
                     setShowEdit(true);
                   }}
-                  onDelete={(item) => {
+                  onDelete={() => {
                     setSelectedItem(item);
                     setShowDelete(true);
                   }}
-                  onDetails={(item) => {
+                  onDetails={() => {
                     setSelectedItem(item);
                     setShowDetails(true);
                   }}
@@ -116,16 +127,15 @@ export default function ArticleReviewsPage() {
           setShowDelete={setShowDelete}
           setShowDetails={setShowDetails}
           deleteError={deleteError}
+          onDelete={handleDelete}
           onSuccessAdd={() => {
             setShowAdd(false);
             setPage(1);
-            loadData();
           }}
           onSuccessEdit={() => {
             setShowEdit(false);
-            loadData();
+            loadData(page);
           }}
-          onDelete={handleDelete}
           t={t}
           isArabic={isArabic}
         />

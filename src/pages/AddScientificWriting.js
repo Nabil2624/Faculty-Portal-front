@@ -18,7 +18,7 @@ export default function AddScientificWriting() {
 
   const handleSave = async () => {
     if (!validate()) return;
-
+  
     try {
       await createScientificWriting({
         title: form.title,

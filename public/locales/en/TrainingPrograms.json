@@ -16,5 +16,9 @@
   "organizer": "Organizing Authority",
   "venue": "Venue",
   "startDate": "Start Date",
-  "endDate": "End Date"
+  "endDate": "End Date",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of"
 }

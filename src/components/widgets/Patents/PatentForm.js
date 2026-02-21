@@ -99,7 +99,10 @@ export default function PatentForm({
               error={errors.applyingDate}
               isArabic={isArabic}
             />
+          </div>
 
+          {/* RIGHT SIDE */}
+          <div className="space-y-[clamp(30px,2.2vw,60px)]">
             {/* Accreditation Date */}
             <DateField
               label={t("fields.accreditationDate")}
@@ -109,10 +112,6 @@ export default function PatentForm({
               error={errors.accreditationDate}
               isArabic={isArabic}
             />
-          </div>
-
-          {/* RIGHT SIDE */}
-          <div className="space-y-[clamp(30px,2.2vw,60px)] md:translate-x-36 md:translate-y-24">
             {/* Description */}
             <InputField
               label={t("fields.description")}
