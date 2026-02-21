@@ -211,9 +211,11 @@ export default function CitationsWidgetExtended({ data = [] }) {
                   </span>
 
                   <div
-                    className={`w-[18px] rounded-md ${
-                      isGold ? "bg-[#B38E19]" : "bg-[#19355A]"
-                    } transition-all duration-700`}
+                    className={`w-[18px] rounded-md border-2 transition-all duration-300 ${
+                      isGold
+                        ? "bg-[#B38E19] group-hover:border-[#19355A] border-transparent"
+                        : "bg-[#19355A] group-hover:border-[#B38E19] border-transparent"
+                    }`}
                     style={{
                       height: maxValue
                         ? `${(item.noOfCitations / maxValue) * maxBarHeight}px`

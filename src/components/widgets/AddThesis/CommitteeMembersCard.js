@@ -1,6 +1,6 @@
 import { FiPlus, FiX } from "react-icons/fi";
 import { ChevronDown } from "lucide-react";
-
+import { useState } from "react";
 export default function CommitteeMembersCard({
   t,
   members,
@@ -8,8 +8,14 @@ export default function CommitteeMembersCard({
   updateMember,
   isArabic,
   jobLevelOptions = [],
+  universityOptions = [],
 }) {
   const card = "border border-[#B38E19] rounded-[5px] p-4 relative bg-white";
+  const roles = [
+    { label: "supervision", value: 1 },
+    { label: "review", value: 2 },
+    { label: "both", value: 3 },
+  ];
 
   const removeMember = (index) => {
     if (members.length === 1) return;
@@ -17,6 +23,7 @@ export default function CommitteeMembersCard({
     copy.splice(index, 1);
     updateMember(-1, "replace", copy);
   };
+  const [openIndex, setOpenIndex] = useState(null);
 
   return (
     <div className={`${card} min-h-[auto] md:min-h-[370px] pb-6`}>
@@ -50,16 +57,19 @@ export default function CommitteeMembersCard({
 
           {/* Role */}
           <div className="flex flex-wrap gap-4 md:gap-16 mb-4 text-[12px] mr-4">
-            {["supervision", "review", "both"].map((role) => (
-              <label key={role} className="flex items-center gap-1">
+            {roles.map((role) => (
+              <label
+                key={role.value}
+                className="flex items-center gap-1 accent-[#B38E19]"
+              >
                 <input
                   type="radio"
                   name={`memberRole-${index}`}
-                  value={role}
-                  checked={member.role === role}
-                  onChange={(e) => updateMember(index, "role", e.target.value)}
+                  value={role.value}
+                  checked={member.role === role.value}
+                  onChange={() => updateMember(index, "role", role.value)}
                 />
-                {t(role)}
+                {t(role.label)}
               </label>
             ))}
           </div>
@@ -67,7 +77,7 @@ export default function CommitteeMembersCard({
           {/* Name */}
           <label className="block mb-4 text-lg">{t("memberName")}</label>
           <input
-            className="h-[40px] bg-[#E2E2E2] text-[12px] outline-none w-full md:max-w-[490px] rounded-[3px] pr-3"
+            className="h-[40px] bg-[#E2E2E2] text-[12px] outline-none w-full md:max-w-[510px] rounded-[3px] pr-3"
             placeholder={t("memberNamePlaceholder")}
             value={member.name}
             onChange={(e) => updateMember(index, "name", e.target.value)}
@@ -79,25 +89,36 @@ export default function CommitteeMembersCard({
             <div>
               <label className="block mb-2 text-lg mt-3">{t("jobTitle")}</label>
               <div className="relative">
-                <select
-                  className="h-[40px] bg-[#E2E2E2] rounded-[3px] px-3 text-[12px] outline-none w-full text-gray-700 appearance-none"
-                  value={member.jobTitle || ""}
-                  onChange={(e) =>
-                    updateMember(index, "jobTitle", e.target.value)
+                <div
+                  onClick={() =>
+                    setOpenIndex(openIndex === index ? null : index)
                   }
+                  className="h-[40px] bg-[#E2E2E2] rounded-[3px] px-3 text-[12px] flex items-center justify-between cursor-pointer"
                 >
-                  <option value="">{t("selectJobTitle")}</option>
-                  {jobLevelOptions.map((j) => (
-                    <option key={j.id} value={j.id}>
-                      {isArabic ? j.valueAr : j.valueEn}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  size={20}
-                  className="absolute top-1/2 -translate-y-1/2 text-[#B38E19] pointer-events-none"
-                  style={isArabic ? { left: "8px" } : { right: "8px" }}
-                />
+                  <span>
+                    {jobLevelOptions.find((j) => j.id === member.jobTitle)?.[
+                      isArabic ? "valueAr" : "valueEn"
+                    ] || t("selectJobTitle")}
+                  </span>
+                  <ChevronDown size={18} className="text-[#B38E19]" />
+                </div>
+
+                {openIndex === index && (
+                  <div className="absolute top-full left-0 w-full bg-white border border-[#B38E19] rounded shadow-md max-h-40 overflow-y-auto z-50">
+                    {jobLevelOptions.map((j) => (
+                      <div
+                        key={j.id}
+                        onClick={() => {
+                          updateMember(index, "jobTitle", j.id);
+                          setOpenIndex(null);
+                        }}
+                        className="px-3 py-2 hover:bg-[#F3E7C3] cursor-pointer text-[12px]"
+                      >
+                        {isArabic ? j.valueAr : j.valueEn}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -106,23 +127,42 @@ export default function CommitteeMembersCard({
               <label className="block mb-2 text-lg mt-3">
                 {t("organization")}
               </label>
+
               <div className="relative">
-                <select
-                  className="h-[40px] bg-[#E2E2E2] rounded-[3px] px-3 text-[12px] outline-none w-full text-gray-700 appearance-none"
-                  value={member.organization || ""}
-                  onChange={(e) =>
-                    updateMember(index, "organization", e.target.value)
+                <div
+                  onClick={() =>
+                    setOpenIndex(
+                      openIndex === `org-${index}` ? null : `org-${index}`,
+                    )
                   }
+                  className="h-[40px] bg-[#E2E2E2] rounded-[3px] px-3 text-[12px] flex items-center justify-between cursor-pointer"
                 >
-                  <option value="">{t("selectOrganization")}</option>
-                  <option value="org1">Organization 1</option>
-                  <option value="org2">Organization 2</option>
-                </select>
-                <ChevronDown
-                  size={20}
-                  className="absolute top-1/2 -translate-y-1/2 text-[#B38E19] pointer-events-none"
-                  style={isArabic ? { left: "8px" } : { right: "8px" }}
-                />
+                  <span>
+                    {universityOptions.find(
+                      (u) => u.id === member.organization,
+                    )?.[isArabic ? "valueAr" : "valueEn"] ||
+                      t("selectOrganization")}
+                  </span>
+
+                  <ChevronDown size={18} className="text-[#B38E19]" />
+                </div>
+
+                {openIndex === `org-${index}` && (
+                  <div className="absolute top-full left-0 w-full bg-white border border-[#B38E19] rounded shadow-md max-h-40 overflow-y-auto z-50">
+                    {universityOptions.map((u) => (
+                      <div
+                        key={u.id}
+                        onClick={() => {
+                          updateMember(index, "organization", u.id);
+                          setOpenIndex(null);
+                        }}
+                        className="px-3 py-2 hover:bg-[#F3E7C3] cursor-pointer text-[12px]"
+                      >
+                        {isArabic ? u.valueAr : u.valueEn}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>

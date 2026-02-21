@@ -58,33 +58,75 @@ export default function LoginPage() {
 
 
   
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setError(null);
+  //   setLoading(true);
+
+  //   try {
+  //     //  Login — backend sets HttpOnly cookie & returns role
+  //     const loginResponse = await axiosInstance.post(
+  //       "/Authentication/Login",
+  //       { username, password },
+  //       {
+  //         skipGlobalErrorHandler: true,
+  //         withCredentials: true,
+  //       }
+  //     );
+
+  //     // Extract role directly from login response
+  //     const userType = loginResponse?.data?.role;
+
+  //     //  Redirect based on role
+  //     if (userType === "Faculty Member") {
+  //       navigate("/personal");
+  //     } else {
+  //       navigate(redirectTo);
+  //     }
+  //   } catch (err) {
+  //     if (err.response) {
+  //       const { status } = err.response;
+
+  //       if (status === 400 || status === 401) {
+  //         setError(t("invalidCredentials"));
+  //       } else {
+  //         setError(t("unexpectedError"));
+  //       }
+  //     } else {
+  //       setError(t("networkError"));
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+  e.preventDefault();
+  setError(null);
+  setLoading(true);
 
-    try {
-      //  Login — backend sets HttpOnly cookie & returns role
-      const loginResponse = await axiosInstance.post(
-        "/Authentication/Login",
-        { username, password },
-        {
-          skipGlobalErrorHandler: true,
-          withCredentials: true,
-        }
-      );
-
-      // Extract role directly from login response
-      const userType = loginResponse?.data?.role;
-
-      //  Redirect based on role
-      if (userType === "Faculty Member") {
-        navigate("/personal");
-      } else {
-        navigate(redirectTo);
+  try {
+    const loginResponse = await axiosInstance.post(
+      "/Authentication/Login",
+      { username, password },
+      {
+        skipGlobalErrorHandler: true,
+        withCredentials: true,
       }
-    } catch (err) {
-      if (err.response) {
+    );
+
+    const userType = loginResponse?.data?.role;
+    const nationalNumber = loginResponse?.data?.nationalNumber;
+
+    if (userType === "Faculty Member") {
+      navigate("/personal", {
+        state: { nationalNumber }
+      });
+    } else {
+      navigate(redirectTo);
+    }
+  } catch (err) {
+    if (err.response) {
         const { status } = err.response;
 
         if (status === 400 || status === 401) {
@@ -95,10 +137,10 @@ export default function LoginPage() {
       } else {
         setError(t("networkError"));
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden p-5 relative">

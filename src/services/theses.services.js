@@ -25,7 +25,7 @@ export const getTheses = (pageIndex, pageSize) => {
 };
 
 export const deleteThesis = (id) => {
-  return axiosInstance.delete(`/ResearchesAndTheses/DeleteThesis/${id}`, {
+  return axiosInstance.delete(`/ResearchesAndTheses/RemoveTheses/${id}`, {
     skipGlobalErrorHandler: true,
   });
 };
@@ -35,3 +35,37 @@ export const getThesisById = (id) => {
     skipGlobalErrorHandler: true,
   });
 };
+
+
+export const searchResearchByTitle = (title) => {
+  return axiosInstance.get(
+    "/ResearchesAndTheses/ResearchFindByTitle",
+    {
+      params: { title },
+      skipGlobalErrorHandler: true,
+    }
+  );
+};
+
+export const getEmploymentDegrees = () => {
+  return axiosInstance.get("/LookUpItems/EmploymentDegrees", {
+    skipGlobalErrorHandler: true,
+  });
+};
+
+
+export const getUniversities = () => {
+  return axiosInstance.get("/LookUpItems/Universities", {
+    skipGlobalErrorHandler: true,
+  });
+};
+
+
+export const updateThesis = (id, data) => {
+  return axiosInstance.put(
+    `/ResearchesAndTheses/UpdateTheses/${id}`,
+    data,
+    { skipGlobalErrorHandler: true }
+  );
+};
+

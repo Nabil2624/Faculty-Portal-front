@@ -6,9 +6,10 @@ export default function useTheses(page, pageSize = 4) {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   const loadData = async () => {
-    setLoading(true);
+    if (!initialLoadDone) setLoading(true);
     setError(null);
 
     try {
@@ -18,7 +19,7 @@ export default function useTheses(page, pageSize = 4) {
 
       setItems(data || []);
 
-      // 🔥 FIX: prevent صفحة 1 من 0
+      // FIX: prevent
       const calculatedPages =
         totalCount && pageSize ? Math.ceil(totalCount / pageSize) : 0;
 
@@ -26,6 +27,7 @@ export default function useTheses(page, pageSize = 4) {
     } catch (err) {
       setError(err);
     } finally {
+      setInitialLoadDone(true); 
       setLoading(false);
     }
   };

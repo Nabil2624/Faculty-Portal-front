@@ -4,8 +4,9 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Info, ChevronDown } from "lucide-react";
-
-import { useAddThesisForm } from "../hooks/useAddThesisForm";
+import { useNavigate } from "react-router-dom";
+// import { useAddThesisForm } from "../hooks/useAddThesisForm";
+import { useThesisForm } from "../hooks/useThesisForm";
 import DateInput from "../components/ui/DateInput";
 import CommitteeMembersCard from "../components/widgets/AddThesis/CommitteeMembersCard";
 import RelatedResearchCard from "../components/widgets/AddThesis/RelatedResearchCard";
@@ -14,9 +15,11 @@ import axiosInstance from "../utils/axiosInstance";
 export default function AddThesis() {
   const { t, i18n } = useTranslation("AddThesis");
   const isArabic = i18n.language === "ar";
-
-  const { refs, values, setters, helpers, errors, loading } =
-    useAddThesisForm(t);
+  const navigate = useNavigate();
+  const { refs, values, setters, helpers, errors, loading } = useThesisForm({
+    mode: "add",
+    t,
+  });
   const [qualificationOptions, setQualificationOptions] = useState([]);
   const [academicGradeOptions, setAcademicGradeOptions] = useState([]);
 
@@ -63,7 +66,8 @@ export default function AddThesis() {
               addMember={helpers.addMember}
               updateMember={helpers.updateMember}
               isArabic={isArabic}
-              jobLevelOptions={jobLevelOptions} // Pass job levels
+              jobLevelOptions={values.employmentDegrees} // Pass job levels
+              universityOptions={values.universities}
             />
 
             {/* Attachments */}
@@ -90,7 +94,10 @@ export default function AddThesis() {
               </label>
               <div className="flex gap-6 text-sm text-gray-600">
                 {["PHD", "Master"].map((type) => (
-                  <label key={type} className="flex items-center gap-1">
+                  <label
+                    key={type}
+                    className="flex items-center gap-1 accent-[#B38E19]"
+                  >
                     <input
                       type="radio"
                       name="thesisType"
@@ -212,8 +219,11 @@ export default function AddThesis() {
             <RelatedResearchCard
               t={t}
               researches={values.researches}
-              addResearch={helpers.addResearch}
-              updateResearch={helpers.updateResearch}
+              searchTerm={values.searchTerm}
+              setSearchTerm={setters.setSearchTerm}
+              searchResults={values.searchResults}
+              addSelectedResearch={helpers.addSelectedResearch}
+              removeResearch={helpers.removeResearch}
               inputClass={input}
             />
           </div>
@@ -227,7 +237,10 @@ export default function AddThesis() {
           >
             {t("save")}
           </button>
-          <button className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md">
+          <button
+            className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md"
+            onClick={() => navigate("/theses")}
+          >
             {t("back")}
           </button>
         </div>

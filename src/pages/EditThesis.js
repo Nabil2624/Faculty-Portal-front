@@ -3,27 +3,42 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Info } from "lucide-react";
-import { useEditThesisForm } from "../hooks/useEditThesisForm"; // Assuming you have a hook for editing
-import DateInput from "../components/ui/DateInput";
-import SelectWithIcon from "../components/ui/SelectWithIcon";
-import CommitteeMembersCard from "../components/widgets/EditThesis/CommitteeMembersCard"; // Same component
-import RelatedResearchCard from "../components/widgets/EditThesis/RelatedResearchCard"; // Same component
+// import { useEditThesisForm } from "../hooks/useEditThesisForm"; // hook for editing
 
-export default function EditThesis({ thesisData }) {
+import DateInput from "../components/ui/DateInput";
+// import SelectWithIcon from "../components/ui/SelectWithIcon";
+import CommitteeMembersCard from "../components/widgets/AddThesis/CommitteeMembersCard"; // Same component as add
+import RelatedResearchCard from "../components/widgets/AddThesis/RelatedResearchCard"; // Same component as add
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+// import useTheses from "../hooks/useTheses";
+import { useThesisForm } from "../hooks/useThesisForm";
+
+export default function EditThesis() {
   const { t, i18n } = useTranslation("EditThesis");
   const isArabic = i18n.language === "ar";
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const { refs, values, setters, helpers, errors } = useEditThesisForm(
-    t,
+  const thesisData = location.state?.thesis;
+  useEffect(() => {
+    if (!thesisData) {
+      navigate("/theses");
+    }
+  }, [thesisData, navigate]);
+
+  const { refs, values, setters, helpers, errors, loading } = useThesisForm({
+    mode: "edit",
     thesisData,
-  ); // Assuming thesisData is passed as a prop
+    thesisId: thesisData?.id,
+    t,
+  });
 
   const input =
     "w-full h-[40px] bg-[#E2E2E2] rounded-md px-3 text-[12px] outline-none text-gray-800 placeholder:text-gray-600";
 
-  const card = "border border-[#B38E19] rounded-[5px] p-4 relative bg-white";
+  // const card = "border border-[#B38E19] rounded-[5px] p-4 relative bg-white";
 
-  const loading = false; // Loading state logic, set as needed
   if (loading) return <LoadingSpinner />;
 
   return (
@@ -46,6 +61,8 @@ export default function EditThesis({ thesisData }) {
               addMember={helpers.addMember}
               updateMember={helpers.updateMember}
               isArabic={isArabic}
+              jobLevelOptions={values.employmentDegrees} // <-- use values
+              universityOptions={values.universities} // <-- use values
             />
 
             {/* Attachments */}
@@ -72,12 +89,12 @@ export default function EditThesis({ thesisData }) {
               <label className="block mb-2 font-medium text-lg">
                 {t("thesisType")}
               </label>
-              <div className="flex gap-6 text-sm text-gray-600">
+              <div className="flex gap-6 text-sm text-gray-600 accent-[#B38E19]">
                 <label className="flex items-center gap-1">
                   <input
                     type="radio"
                     name="thesisType"
-                    checked={values.thesisType === "phd"}
+                    checked={values.thesisType.toLowerCase() === "phd"}
                     onChange={() => setters.setThesisType("phd")}
                   />
                   {t("phd")}
@@ -86,7 +103,7 @@ export default function EditThesis({ thesisData }) {
                   <input
                     type="radio"
                     name="thesisType"
-                    checked={values.thesisType === "master"}
+                    checked={values.thesisType.toLowerCase() === "master"}
                     onChange={() => setters.setThesisType("master")}
                   />
                   {t("master")}
@@ -122,9 +139,18 @@ export default function EditThesis({ thesisData }) {
                 {t("degree")}
               </label>
 
-              <SelectWithIcon className={input} isArabic={isArabic}>
-                <option>{t("selectDegree")}</option>
-              </SelectWithIcon>
+              <select
+                className={input + " appearance-none"}
+                value={values.degreeId || ""}
+                onChange={(e) => setters.setDegreeId(e.target.value)}
+              >
+                <option value="">{t("selectDegree")}</option>
+                {values.grades.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {isArabic ? d.valueAr : d.valueEn}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Dates */}
@@ -185,8 +211,11 @@ export default function EditThesis({ thesisData }) {
             <RelatedResearchCard
               t={t}
               researches={values.researches}
-              addResearch={helpers.addResearch}
-              updateResearch={helpers.updateResearch}
+              searchTerm={values.searchTerm}
+              setSearchTerm={setters.setSearchTerm}
+              searchResults={values.searchResults}
+              addSelectedResearch={helpers.addSelectedResearch}
+              removeResearch={helpers.removeResearch}
               inputClass={input}
             />
           </div>
@@ -201,9 +230,12 @@ export default function EditThesis({ thesisData }) {
         >
           {t("save")}
         </button>
-        <button className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md">
-          {t("back")}
-        </button>
+        <button
+            className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md"
+            onClick={() => navigate("/theses")}
+          >
+            {t("back")}
+          </button>
       </div>
     </ResponsiveLayoutProvider>
   );

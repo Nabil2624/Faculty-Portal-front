@@ -8,10 +8,10 @@ import {
   fetchContributorByORCID,
 } from "../services/scientificResearchService";
 
-export default function useEditScientificResearch(researchId) {
+export default function useEditScientificResearch(researchData){
   const { t, i18n } = useTranslation("AddScientificResearch");
   const isArabic = i18n.language === "ar";
-
+const researchId = researchData?.id;
   const [loading, setLoading] = useState(true);
   const [saveError, setSaveError] = useState("");
 
@@ -24,7 +24,7 @@ export default function useEditScientificResearch(researchId) {
   const [JournalOrConference, setJournalOrConference] = useState("");
   const [year, setYear] = useState("");
   const [issue, setIssue] = useState("");
-  const [volume, setVolume] = useState("");
+
   const [pages, setPages] = useState("");
   const [pubDate, setPubDate] = useState("");
   const [researchLink, setResearchLink] = useState("");
@@ -43,47 +43,46 @@ export default function useEditScientificResearch(researchId) {
   // LOAD DATA
   // =======================
   useEffect(() => {
-    async function load() {
-      try {
-        const data = await getResearchDetails(researchId);
+  if (!researchData) return;
 
-        setDoi(data.doi || "");
-        setResearchTitle(data.title || "");
-        setPublisher(data.publisher || "");
-        setJournalOrConference(data.journalOrConfernce || "");
-        setYear(data.pubYear || "");
-        setIssue(data.issue || "");
-        setVolume(data.volume || "");
-        setPages(data.noOfPages || "");
-        setPubDate(data.pubDate || "");
-        setResearchLink(data.researchLink || "");
-        setRelatedResearchLink(data.relatedResearchLink || "");
-        setAbstract(data.abstract || "");
+  setDoi(researchData.doi || "");
+  setResearchTitle(researchData.title || "");
+  setPublisher(researchData.publisher || "");
+  setJournalOrConference(researchData.journalOrConfernce || "");
+  setYear(researchData.pubYear || "");
+  setIssue(researchData.issue || "");
+  setPages(researchData.noOfPages || "");
+  setPubDate(researchData.pubDate || "");
+  setResearchLink(researchData.researchLink || "");
+  setRelatedResearchLink(researchData.relatedResearchLink || "");
+  setAbstract(researchData.abstract || "");
 
-        setPublisherType(Number(data.publisherType) || 0);
-        setPublicationType(Number(data.publicationType) || 0);
-        setBasedOn(Number(data.researchDerivedFrom) || 0);
+  // نفس mapping بتاع radio
+  const publisherMap = {
+    Journal: 1,
+    Magazine: 1,
+    Conference: 2,
+  };
 
-        const mapped =
-          data.contributions?.map((c) => ({
-            id: c.id,
-            name: c.memberAcademicName,
-            internal: c.contributorType === 1,
-            main: c.isTheMajorResearcher,
-            contributorId: c.contributorId,
-          })) || [];
+  setPublisherType(publisherMap[researchData.publisherType] || 0);
 
-        setParticipants(mapped);
-        setOriginalParticipants(mapped);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
+  const publicationMap = {
+    Local: 1,
+    International: 2,
+  };
 
-    if (researchId) load();
-  }, [researchId]);
+  setPublicationType(publicationMap[researchData.publicationType] || 0);
+
+  const basedMap = {
+    Master: 1,
+    PHD: 2,
+    Other: 3,
+  };
+
+  setBasedOn(basedMap[researchData.researchDerivedFrom] || 0);
+
+  setLoading(false);
+}, [researchData]);
 
   // =======================
   // SAVE
@@ -133,10 +132,10 @@ export default function useEditScientificResearch(researchId) {
         journalOrConfernce: JournalOrConference || "",
         publisherType: Number(publisherType) || 0,
         publicationType: Number(publicationType) || 0,
-        issue: issue || "",
-        volume: volume || "",
-        noOfPages: pages || "",
-        pubYear: year || "",
+        issue: issue || null,
+    
+        noOfPages: pages || null,
+        pubYear: year || null,
         source: "Internal",
         researchDerivedFrom: Number(basedOn) || 0,
         abstract: abstract || "",
@@ -174,8 +173,7 @@ export default function useEditScientificResearch(researchId) {
     setYear,
     issue,
     setIssue,
-    volume,
-    setVolume,
+
     pages,
     setPages,
     pubDate,

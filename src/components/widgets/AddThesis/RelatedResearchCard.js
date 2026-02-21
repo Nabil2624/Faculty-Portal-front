@@ -1,37 +1,69 @@
-import { FiPlus } from "react-icons/fi";
+import { X } from "lucide-react";
 
 export default function RelatedResearchCard({
   t,
   researches,
-  addResearch,
-  updateResearch,
+  searchTerm,
+  setSearchTerm,
+  searchResults,
+  addSelectedResearch,
+  removeResearch,
   inputClass,
 }) {
-  const card = "border border-[#B38E19] rounded-[5px] p-4 relative bg-white";
+  const card =
+    "border border-[#B38E19] rounded-[5px] p-4 relative bg-white";
 
   return (
-    <div className={`${card} min-h-[170px]`}>
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-xl">{t("relatedResearch")}</h4>
-        <button
-          onClick={addResearch}
-          className="w-10 h-10 bg-[#B38E19] text-white rounded-md flex items-center justify-center shadow"
-        >
-          <FiPlus size={24} />
-        </button>
+    <div className={`${card} min-h-[170px] relative`}>
+      <h4 className="font-semibold text-xl mb-4">
+        {t("relatedResearch")}
+      </h4>
+
+      {/* SEARCH INPUT */}
+      <div className="relative mb-4">
+        <input
+          className={inputClass}
+          placeholder={t("researchPlaceholder")}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
+        {/* DROPDOWN RESULTS */}
+        {searchResults.length > 0 && (
+          <div className="absolute z-50 bg-white border w-full mt-1 rounded shadow max-h-[200px] overflow-y-auto">
+            {searchResults.map((item) => (
+              <div
+                key={item.id}
+                className="p-2 hover:bg-gray-100 cursor-pointer text-sm"
+                onClick={() => addSelectedResearch(item)}
+              >
+                {item.title}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {researches.map((research, index) => (
-        <div key={index} className="mb-4">
-          <label className="block mb-1 text-lg">{t("research")}</label>
-          <input
-            className={inputClass}
-            placeholder={t("researchPlaceholder")}
-            value={research}
-            onChange={(e) => updateResearch(index, e.target.value)}
-          />
-        </div>
-      ))}
+      {/* SELECTED RESEARCHES LIST */}
+      {researches.length > 0 && (
+        <ol className="space-y-2 list-decimal pl-5">
+          {researches.map((research, index) => (
+            <li
+              key={research.id}
+              className="flex justify-between items-center bg-gray-100 px-3 py-2 rounded"
+            >
+              <span className="text-sm">{research.title}</span>
+
+              <button
+                onClick={() => removeResearch(research.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <X size={16} />
+              </button>
+            </li>
+          ))}
+        </ol>
+      )}
     </div>
   );
 }

@@ -9,29 +9,31 @@ import ResearchTitle from "../components/ui/ResearchTitle";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeaderAction from "../components/ui/PageHeaderAction";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function ThesesDetails() {
   const { id } = useParams();
   const { t, i18n } = useTranslation("ThesesDetails");
   const isArabic = i18n.language === "ar";
   const bp = useBreakpoint();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const { thesis, loading, error } = useThesisDetails(id);
+  const thesis = location.state?.thesis;
 
-  if (loading) return <LoadingSpinner />;
-
-  if (error) {
-    return (
-      <div className="text-center text-red-500 mt-10">{t("loadError")}</div>
-    );
-  }
+  // 🔥 حماية مهمة جدا
+  useEffect(() => {
+    if (!thesis) {
+      navigate("/theses", { replace: true });
+    }
+  }, [thesis, navigate]);
 
   if (!thesis) return null;
-
-  // 🔥 Transform API data to match your existing design
+  // Transform API data to match your existing design
   const formattedThesis = {
     title: thesis.title,
-    thesisType: thesis.type,
+    thesisType: t(thesis.type?.toLowerCase()),
     degree: isArabic ? thesis.grade?.valueAr : thesis.grade?.valueEn,
     registrationDate: thesis.registrationDate,
     enrollmentDate: thesis.enrollmentDate,
@@ -42,7 +44,16 @@ export default function ThesesDetails() {
     committeeMembers:
       thesis.supervisors?.map((s) => ({
         name: s.name,
-        role: s.role,
+        role: (() => {
+          const roleMap = {
+            Adminstration: "administration",
+            Reviewing: "supervising",
+            3: "administrationAndSupervising",
+          };
+
+          return t(roleMap[s.role] || s.role);
+        })(),
+
         college: isArabic ? s.jobLevel?.valueAr : s.jobLevel?.valueEn,
         highlight: false,
       })) || [],
@@ -54,7 +65,11 @@ export default function ThesesDetails() {
         <PageHeaderAction
           title={t("title")}
           actionLabel={t("edit")}
-          onAction={() => console.log("Edit clicked")}
+          onClick={() =>
+            navigate("/edit-thesis", {
+              state: { thesis },
+            })
+          }
         />
 
         <ResearchTitle title={formattedThesis.title} />

@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-
+import { useTranslation } from "react-i18next";
 function formatDate(dateString, isArabic) {
   if (!dateString) return "";
 
@@ -12,7 +12,9 @@ function formatDate(dateString, isArabic) {
   });
 }
 
-export default function PatentDetailsModal({ item, onClose, isArabic }) {
+export default function PatentDetailsModal({ item, onClose }) {
+  const { t, i18n } = useTranslation("patents");
+  const isArabic = i18n.language === "ar";
   if (!item) return null;
 
   return (
@@ -42,22 +44,30 @@ export default function PatentDetailsModal({ item, onClose, isArabic }) {
 
       <div className="space-y-4 text-[clamp(0.85rem,1.2vw,2rem)]">
         <div className="flex justify-between">
-          <span>Type</span>
-          <span>{item.localOrInternational}</span>
+          <span>{t("type")}</span>
+<span>
+  {item.localOrInternational === "Local"
+    ? t("local")
+    : t("international")}
+</span>
+
         </div>
 
         <div className="flex justify-between">
-          <span>Authority</span>
+         <span>{t("authority")}</span>
+
           <span>{item.accreditingAuthorityOrCountry}</span>
         </div>
 
         <div className="flex justify-between">
-          <span>Applying Date</span>
+         <span>{t("applyingDate")}</span>
+
           <span>{formatDate(item.applyingDate, isArabic)}</span>
         </div>
 
         <div className="flex justify-between">
-          <span>Accreditation Date</span>
+          <span>{t("accreditationDate")}</span>
+
           <span>{formatDate(item.accreditationDate, isArabic)}</span>
         </div>
 

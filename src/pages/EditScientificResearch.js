@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
@@ -14,14 +14,16 @@ import TextareaField from "../components/ui/TextAreaField";
 import AttachmentUploader from "../components/widgets/AddScientificResearch/AttachmentUploader";
 import DOIInput from "../components/widgets/AddScientificResearch/DOIInput";
 
-// ✅ Hook
+// Hook
 import useEditScientificResearch from "../hooks/useEditScientificResearch";
 
 export default function EditScientificResearch() {
+
   const { t, i18n } = useTranslation("AddScientificResearch");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
-  const { id } = useParams();
+const location = useLocation();
+const research = location.state?.research;
 
   const {
     loading,
@@ -37,12 +39,8 @@ export default function EditScientificResearch() {
     setYear,
     issue,
     setIssue,
-    volume,
-    setVolume,
     pages,
     setPages,
-    pubDate,
-    setPubDate,
     researchLink,
     setResearchLink,
     relatedResearchLink,
@@ -58,12 +56,19 @@ export default function EditScientificResearch() {
     participants,
     setParticipants,
     handleSave,
-  } = useEditScientificResearch(id);
+  } = useEditScientificResearch(research);
 
-  const [researchType, setResearchType] = useState("manual");
+  // const [researchType, setResearchType] = useState("manual");
+
+  const researchType = doi ? "doi" : "manual";
 
   const handleCancel = () => {
     navigate("/scientific-researches");
+  };
+  const handleNumberOnly = (value, setter) => {
+    if (/^\d*$/.test(value)) {
+      setter(value);
+    }
   };
 
   if (loading) return <LoadingSpinner />;
@@ -84,7 +89,8 @@ export default function EditScientificResearch() {
             {/* LEFT COLUMN */}
             <div className="space-y-8 order-2 md:-mt-10">
               <div className="grid grid-cols-1 md:grid-cols-2 md:gap-72">
-                {/* ✅ Numbers not strings */}
+
+                {/* Numbers not strings */}
                 <RadioGroup
                   label={t("publisherType")}
                   options={[
@@ -118,13 +124,13 @@ export default function EditScientificResearch() {
                 <InputFieldArea
                   label={t("issue")}
                   value={issue}
-                  setValue={setIssue}
+                  setValue={(val) => handleNumberOnly(val, setIssue)}
                 />
 
                 <InputFieldArea
-                  label={t("volume")}
-                  value={volume}
-                  setValue={setVolume}
+                  label={t("pages")}
+                  value={pages}
+                  setValue={(val) => handleNumberOnly(val, setPages)}
                 />
               </div>
 
@@ -137,7 +143,7 @@ export default function EditScientificResearch() {
               <InputFieldArea
                 label={t("year")}
                 value={year}
-                setValue={setYear}
+                setValue={(val) => handleNumberOnly(val, setYear)}
               />
 
               <ParticipantList
@@ -164,10 +170,15 @@ export default function EditScientificResearch() {
                 ]}
                 name="researchType"
                 value={researchType}
-                onChange={setResearchType}
+                onChange={() => {}}
+                disabled // disabled
               />
 
-              <DOIInput value={doi} setValue={setDoi} />
+              <DOIInput
+                value={doi}
+                setValue={setDoi}
+                disabled // disabled
+              />
 
               <TextareaField
                 label={t("researchTitle")}

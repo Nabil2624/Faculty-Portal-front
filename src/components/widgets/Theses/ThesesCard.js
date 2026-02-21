@@ -1,12 +1,23 @@
 import { Trash2, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function ThesesCard({ item, isArabic, onDelete, onEdit }) {
   const navigate = useNavigate();
+  const { t } = useTranslation("Theses");
 
   const handleCardClick = () => {
-    navigate(`/theses-details/${item.id}`);
+    navigate("/theses-details", {
+      state: { thesis: item },
+    });
   };
+
+  const translatedType =
+    item.type === "PHD"
+      ? t("phd")
+      : item.type === "Master"
+        ? t("master")
+        : item.type;
 
   return (
     <div
@@ -20,7 +31,7 @@ export default function ThesesCard({ item, isArabic, onDelete, onEdit }) {
         className={`absolute top-4 flex gap-[14px] ${
           isArabic ? "left-4" : "right-4"
         }`}
-        onClick={(e) => e.stopPropagation()} // prevent card navigation
+        onClick={(e) => e.stopPropagation()}
       >
         <Pencil
           className="w-5 h-5 cursor-pointer"
@@ -46,10 +57,11 @@ export default function ThesesCard({ item, isArabic, onDelete, onEdit }) {
         {item.title}
       </h3>
 
-      <p className="text-sm text-gray-700">{item.type}</p>
+      {/* translation*/}
+      <p className="text-sm text-gray-700">{translatedType}</p>
 
       <p className="text-xs text-gray-500 mt-1">
-        تاريخ التسجيل: {item.registrationDate}
+        {t("registrationDate")} : {item.registrationDate}
       </p>
     </div>
   );

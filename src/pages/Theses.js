@@ -73,7 +73,11 @@ export default function Theses() {
                       setSelectedItem(item);
                       setShowDelete(true);
                     }}
-                    onEdit={(item) => console.log("Edit clicked", item)}
+                    onEdit={(item) =>
+                      navigate("/edit-thesis", {
+                        state: { thesis: item },
+                      })
+                    }
                   />
                 ))}
               </div>

@@ -64,16 +64,18 @@ export default function AddScientificResearch() {
 
   const [errors, setErrors] = useState({});
   const [researchType, setResearchType] = useState("manual");
-  // const [researchLink, setResearchLink] = useState(""); // left column
-  // const [basedOn, setBasedOn] = useState(""); // empty initially
-
-  // const [publisherType, setPublisherType] = useState(""); // جهة النشر
-  // const [publicationType, setPublicationType] = useState(""); // نوع النشر
 
   const navigate = useNavigate();
 
   const handleCancel = () => {
     navigate("/scientific-researches");
+  };
+
+  const handleNumberOnly = (value, setter, fieldName) => {
+    if (/^\d*$/.test(value)) {
+      setter(value);
+      clearError(fieldName); // 👈 يمسح الخطأ أول ما يكتب صح
+    }
   };
 
   if (loading) return <LoadingSpinner />;
@@ -176,14 +178,15 @@ export default function AddScientificResearch() {
                   label={t("issue")}
                   placeholder={t("issuePlaceholder")}
                   value={issue}
-                  setValue={setIssue}
+                  setValue={(val) => handleNumberOnly(val, setIssue, "issue")}
                 />
-
                 <InputFieldArea
                   label={t("pages")}
                   placeholder={t("pagesPlaceholder")}
                   value={noOfPages}
-                  setValue={setNoOfPages}
+                  setValue={(val) =>
+                    handleNumberOnly(val, setNoOfPages, "noOfPages")
+                  }
                 />
               </div>
 
@@ -198,7 +201,7 @@ export default function AddScientificResearch() {
                 label={t("year")}
                 placeholder={t("yearPlaceholder")}
                 value={year}
-                setValue={setYear}
+                setValue={(val) => handleNumberOnly(val, setYear, "year")}
               />
 
               <ParticipantList

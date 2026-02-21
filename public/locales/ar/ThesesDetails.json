@@ -1,13 +1,16 @@
 {
   "title": "تفاصيل الرسالة",
   "edit": "تعديل",
-
+  "phd": "دكتوراه",
+  "master": "ماجستير",
   "thesisType": "نوع الرسالة",
   "degree": "الدرجة",
   "registrationDate": "تاريخ القيد",
   "internalGrantDate": "تاريخ منح الدرجة الداخلية",
   "jointSupervisionGrantDate": "تاريخ منح درجة إشراف مشترك",
-
+  "administration": "مشرف",
+  "supervising": "محكم",
+  "administrationAndSupervising": "مشرف و محكم",
   "attachments": "المرفقات",
   "derivedResearches": "الأبحاث المستمدة من الرسالة",
   "committeeMembers": "أعضاء اللجنة",

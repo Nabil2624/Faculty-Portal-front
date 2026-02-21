@@ -27,9 +27,9 @@ export default function ThesesDetailsDesktop({ thesis, t }) {
       </div>
 
       {/* Cards section */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-16">
         <SectionCardLongTitle title={t("committeeMembers")}>
-          <ol className="list-decimal space-y-4 -mt-7 marker:text-[#B38E19] marker:font-extrabold">
+          <ol className="list-decimal space-y-4 marker:text-[#B38E19] marker:font-extrabold mt-2">
             {thesis.committeeMembers.map((m, i) => (
               <li key={i}>
                 <p

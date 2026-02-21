@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { updateThesis } from "../services/theses.services";
 
-export function useEditThesisForm(t, thesisData) {
+export function useEditThesisForm(t, thesisData, thesisId) {
   const registrationDateRef = useRef(null);
   const enrollmentDateRef = useRef(null);
   const internalDegreeDateRef = useRef(null);
@@ -14,51 +15,59 @@ export function useEditThesisForm(t, thesisData) {
 
   const [researches, setResearches] = useState([]);
   const [members, setMembers] = useState([]);
-  const [thesisType, setThesisType] = useState("");
+  const [degreeId, setDegreeId] = useState("");
+  const [thesisType, setThesisType] = useState("PHD");
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+const [searchTerm, setSearchTerm] = useState("");
+const [searchResults, setSearchResults] = useState([]);
 
+  // Initialize from backend data
   useEffect(() => {
-    // Initialize with existing thesis data
-    if (thesisData) {
-      setRegistrationDate(thesisData.registrationDate || "");
-      setEnrollmentDate(thesisData.enrollmentDate || "");
-      setInternalDegreeDate(thesisData.internalDegreeDate || "");
-      setJointSupervisionDate(thesisData.jointSupervisionDate || "");
-      setThesisTitle(thesisData.thesisTitle || "");
-      setResearches(thesisData.researches || []);
-      setMembers(thesisData.members || []);
-      setThesisType(thesisData.thesisType || "");
-    }
+    if (!thesisData) return;
+
+    setRegistrationDate(thesisData.registrationDate || "");
+    setEnrollmentDate(thesisData.enrollmentDate || "");
+    setInternalDegreeDate(thesisData.internalGradeDate || "");
+    setJointSupervisionDate(thesisData.supervisionConfirmationDate || "");
+    setThesisTitle(thesisData.title || "");
+    setDegreeId(thesisData.gradeId || "");
+    setThesisType(thesisData.type || "PHD");
+
+    // map researches
+    setResearches(thesisData.researches || []);
+
+    // map supervisors
+    setMembers(
+      thesisData.supervisors?.map((s) => ({
+        role: s.role,
+        name: s.name,
+        jobTitle: s.jobLevelId,
+        organization: s.authority,
+      })) || []
+    );
   }, [thesisData]);
 
   const openDatePicker = (ref) => {
     if (ref.current?.showPicker) ref.current.showPicker();
   };
 
-  const addResearch = () => setResearches([...researches, ""]);
-
-  const updateResearch = (index, value) => {
-    const copy = [...researches];
-    copy[index] = value;
-    setResearches(copy);
-  };
-
   const addMember = () =>
     setMembers([
       ...members,
-      { role: "", name: "", jobTitle: "", organization: "" },
+      { role: 1, name: "", jobTitle: null, organization: null },
     ]);
 
   const updateMember = (index, field, value) => {
+    if (index === -1 && field === "replace") return setMembers(value);
     const copy = [...members];
     copy[index][field] = value;
     setMembers(copy);
   };
 
-  const handleSave = () => {
+  const validate = () => {
     const newErrors = {};
-
     if (!registrationDate)
       newErrors.registrationDate = `${t("registrationDate")} ${t("required")}`;
     if (!enrollmentDate)
@@ -67,20 +76,56 @@ export function useEditThesisForm(t, thesisData) {
       newErrors.thesisTitle = `${t("thesisTitle")} ${t("required")}`;
 
     setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    if (!Object.keys(newErrors).length) {
-      console.log("Updated thesis data", {
-        registrationDate,
+  const handleSave = async () => {
+    if (!validate()) return;
+
+    setLoading(true);
+
+    try {
+      const payload = {
+        id: thesisId,
+        type: thesisType,
+        title: thesisTitle,
+        gradeId: degreeId,
         enrollmentDate,
-        internalDegreeDate,
-        jointSupervisionDate,
-        thesisTitle,
-        researches,
-        members,
-        thesisType,
-      });
+        registrationDate,
+        internalGradeDate: internalDegreeDate || null,
+        supervisionConfirmationDate: jointSupervisionDate || null,
+
+        supervisors: members
+          .filter((m) => m.name && m.jobTitle)
+          .map((m) => ({
+            role: m.role,
+            name: m.name,
+            jobLevelId: m.jobTitle,
+            authority: m.organization || "",
+          })),
+
+        researches: researches || [],
+      };
+
+      await updateThesis(thesisId, payload);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const addSelectedResearch = (research) => {
+  if (!researches.find((r) => r.id === research.id)) {
+    setResearches([...researches, research]);
+  }
+  setSearchTerm("");
+  setSearchResults([]);
+};
+
+const removeResearch = (id) => {
+  setResearches(researches.filter((r) => r.id !== id));
+};
 
   return {
     refs: {
@@ -98,6 +143,11 @@ export function useEditThesisForm(t, thesisData) {
       researches,
       members,
       thesisType,
+      degreeId,
+      loading,
+      researches,
+  searchTerm,
+  searchResults,
     },
     setters: {
       setRegistrationDate,
@@ -106,14 +156,18 @@ export function useEditThesisForm(t, thesisData) {
       setJointSupervisionDate,
       setThesisTitle,
       setThesisType,
+      setDegreeId,
+      setSearchTerm,
+
     },
     helpers: {
       openDatePicker,
-      addResearch,
-      updateResearch,
       addMember,
       updateMember,
       handleSave,
+      addSelectedResearch,
+removeResearch,
+
     },
     errors,
   };

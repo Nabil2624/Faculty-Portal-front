@@ -34,19 +34,23 @@ export default function PrizesAndRewardsForm({
 
         <form className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(20px,20vw,600px)]">
           <div className="space-y-[clamp(18px,2.2vw,60px)]">
-            {/* Prize dropdown */}
-            <CustomDropdown
-              label={t("fields.prize")}
-              value={prizeId}
-              onChange={setPrizeId}
-              options={prizesOptions.map((p) => ({
-                id: p.id,
-                label: isArabic ? p.valueAr : p.valueEn,
-              }))}
-              placeholder={t("placeholders.prize")}
-              error={error.prizeId}
-              isArabic={isArabic}
-            />
+            <div className="flex flex-col w-full">
+              <label className="mb-2 font-semibold text-[clamp(15px,1.3vw,34px)] text-start">
+                {t("fields.prize")}
+              </label>
+
+              <CustomDropdown
+                value={prizeId}
+                onChange={setPrizeId}
+                options={prizesOptions.map((p) => ({
+                  id: p.id,
+                  label: isArabic ? p.valueAr : p.valueEn,
+                }))}
+                placeholder={t("placeholders.prize")}
+                error={error.prizeId}
+                isArabic={isArabic}
+              />
+            </div>
 
             <InputField
               label={t("fields.awardingAuthority")}

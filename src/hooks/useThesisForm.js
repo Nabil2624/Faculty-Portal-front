@@ -2,20 +2,24 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   addThesis,
+  updateThesis,
   getAcademicGrades,
   getAcademicQualifications,
+  getEmploymentDegrees,
+  getUniversities,
+  searchResearchByTitle,
 } from "../services/theses.services";
-import { searchResearchByTitle } from "../services/theses.services";
-import { getEmploymentDegrees } from "../services/theses.services";
-import { getUniversities } from "../services/theses.services";
-export function useAddThesisForm(t) {
+
+export function useThesisForm({ mode = "add", thesisData = null, thesisId = null, t }) {
   const navigate = useNavigate();
 
+  // ================= REFS =================
   const registrationDateRef = useRef(null);
   const enrollmentDateRef = useRef(null);
   const internalDegreeDateRef = useRef(null);
   const jointSupervisionDateRef = useRef(null);
 
+  // ================= STATE =================
   const [registrationDate, setRegistrationDate] = useState("");
   const [enrollmentDate, setEnrollmentDate] = useState("");
   const [internalDegreeDate, setInternalDegreeDate] = useState("");
@@ -24,30 +28,28 @@ export function useAddThesisForm(t) {
 
   const [researches, setResearches] = useState([]);
   const [members, setMembers] = useState([
-    { role: 1, name: "", jobTitle: "", organization: "" },
+    { role: 1, name: "", jobTitle: null, organization: null },
   ]);
 
-  const [grades, setGrades] = useState([]);
-  const [qualifications, setQualifications] = useState([]);
-  const [degreeId, setDegreeId] = useState(""); // for dropdown
-  const [qualificationId, setQualificationId] = useState(""); // optional, only if needed
+  const [degreeId, setDegreeId] = useState("");
   const [thesisType, setThesisType] = useState("PHD");
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [loadingSearch, setLoadingSearch] = useState(false);
+
+  const [grades, setGrades] = useState([]);
   const [employmentDegrees, setEmploymentDegrees] = useState([]);
   const [universities, setUniversities] = useState([]);
-  // Fetch grades and qualifications
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  // ================= LOAD LOOKUPS =================
   useEffect(() => {
     const fetchLookups = async () => {
       try {
         const { data: gradeData } = await getAcademicGrades();
         setGrades(gradeData || []);
-
-        const { data: qualData } = await getAcademicQualifications();
-        setQualifications(qualData || []);
 
         const { data: empData } = await getEmploymentDegrees();
         setEmploymentDegrees(empData || []);
@@ -58,13 +60,46 @@ export function useAddThesisForm(t) {
         console.error(err);
       }
     };
+
     fetchLookups();
   }, []);
 
-  const openDatePicker = (ref) => {
-    if (ref.current?.showPicker) ref.current.showPicker();
-  };
+  // ================= INIT EDIT =================
+// ================= INIT EDIT =================
+useEffect(() => {
+  if (mode !== "edit" || !thesisData) return;
 
+  setRegistrationDate(thesisData.registrationDate || "");
+  setEnrollmentDate(thesisData.enrollmentDate || "");
+  setInternalDegreeDate(thesisData.internalGradeDate || "");
+  setJointSupervisionDate(thesisData.supervisionConfirmationDate || "");
+  setThesisTitle(thesisData.title || "");
+  setDegreeId(thesisData.gradeId || "");
+  setThesisType(thesisData.type || "PHD");
+
+  setResearches(thesisData.researches || []);
+
+  setMembers(
+    thesisData.supervisors?.map((s) => {
+      let roleValue;
+      if (typeof s.role === "string") {
+        const r = s.role.toLowerCase();
+        if (r === "administration") roleValue = 1;
+        else if (r === "reviewing") roleValue = 2;
+        else roleValue = 3; // both
+      } else roleValue = s.role; // number already
+      return {
+        role: roleValue,
+        name: s.name,
+        jobTitle: s.jobLevelId,
+        organization: s.authority || null,
+      };
+    }) || []
+  );
+}, [mode, thesisData]);
+;
+
+  // ================= SEARCH =================
   useEffect(() => {
     if (!searchTerm || searchTerm.length < 2) {
       setSearchResults([]);
@@ -73,37 +108,18 @@ export function useAddThesisForm(t) {
 
     const delay = setTimeout(async () => {
       try {
-        setLoadingSearch(true);
         const { data } = await searchResearchByTitle(searchTerm);
-
-        if (Array.isArray(data)) {
-          setSearchResults(data);
-        } else if (data) {
-          setSearchResults([data]);
-        } else {
-          setSearchResults([]);
-        }
+        setSearchResults(Array.isArray(data) ? data : data ? [data] : []);
       } catch (err) {
         console.error(err);
-      } finally {
-        setLoadingSearch(false);
       }
     }, 400);
 
     return () => clearTimeout(delay);
   }, [searchTerm]);
 
-  const addResearch = () => setResearches([...researches, {}]);
-  const updateResearch = (index, value) => {
-    const copy = [...researches];
-    copy[index] = value;
-    setResearches(copy);
-  };
-
   const addSelectedResearch = (research) => {
-    // prevent repitition
     if (researches.some((r) => r.id === research.id)) return;
-
     setResearches([...researches, research]);
     setSearchTerm("");
     setSearchResults([]);
@@ -113,11 +129,13 @@ export function useAddThesisForm(t) {
     setResearches(researches.filter((r) => r.id !== id));
   };
 
- const addMember = () =>
-  setMembers([
-    ...members,
-    { role: 1, name: "", jobTitle: null, organization: null },
-  ]);
+  // ================= MEMBERS =================
+  const addMember = () =>
+    setMembers([
+      ...members,
+      { role: 1, name: "", jobTitle: null, organization: null },
+    ]);
+
   const updateMember = (index, field, value) => {
     if (index === -1 && field === "replace") return setMembers(value);
     const copy = [...members];
@@ -125,6 +143,7 @@ export function useAddThesisForm(t) {
     setMembers(copy);
   };
 
+  // ================= VALIDATION =================
   const validate = () => {
     const newErrors = {};
     if (!registrationDate)
@@ -133,51 +152,58 @@ export function useAddThesisForm(t) {
       newErrors.enrollmentDate = `${t("enrollmentDate")} ${t("required")}`;
     if (!thesisTitle)
       newErrors.thesisTitle = `${t("thesisTitle")} ${t("required")}`;
-    if (!degreeId) newErrors.degreeId = `${t("degree")} ${t("required")}`;
+    if (!degreeId)
+      newErrors.degreeId = `${t("degree")} ${t("required")}`;
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // ================= SAVE =================
   const handleSave = async () => {
-  if (!validate()) return;
+    if (!validate()) return;
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
     const payload = {
       type: thesisType,
-      link: "",
       title: thesisTitle,
       gradeId: degreeId,
       enrollmentDate,
       registrationDate,
       internalGradeDate: internalDegreeDate || null,
       supervisionConfirmationDate: jointSupervisionDate || null,
-      facultyMemberId: null,
 
       supervisors: members
-        .filter(m => m.name && m.jobTitle) // يمنع إرسال عضو فاضي
+        .filter((m) => m.name && m.jobTitle)
         .map((m) => ({
-          role: m.role, // رقم 
+          role: m.role,
           name: m.name,
-          jobLevelId: m.jobTitle, // GUID 
-          authority: m.organization || "", //
-          thesesId: 0,
+          jobLevelId: m.jobTitle,
+          authority: m.organization || "",
         })),
 
-      researches: researches || [],
+      researches,
     };
 
-    await addThesis(payload);
-    navigate("/theses");
+    try {
+      if (mode === "edit") {
+        await updateThesis(thesisId, { ...payload, id: thesisId });
+      } else {
+        await addThesis(payload);
+      }
 
-  } catch (err) {
-    console.error(err);
-  } finally {
-    setLoading(false);
-  }
-};
+      navigate("/theses");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const openDatePicker = (ref) => {
+    if (ref.current?.showPicker) ref.current.showPicker();
+  };
 
   return {
     refs: {
@@ -195,17 +221,13 @@ export function useAddThesisForm(t) {
       researches,
       members,
       grades,
-      qualifications,
       employmentDegrees,
       universities,
       degreeId,
-      qualificationId,
       thesisType,
-      loading,
-      researches,
       searchTerm,
       searchResults,
-      loadingSearch,
+      loading,
     },
     setters: {
       setRegistrationDate,
@@ -214,14 +236,11 @@ export function useAddThesisForm(t) {
       setJointSupervisionDate,
       setThesisTitle,
       setDegreeId,
-      setQualificationId,
       setThesisType,
       setSearchTerm,
     },
     helpers: {
       openDatePicker,
-      addResearch,
-      updateResearch,
       addMember,
       updateMember,
       handleSave,
@@ -229,6 +248,5 @@ export function useAddThesisForm(t) {
       removeResearch,
     },
     errors,
-    setErrors,
   };
 }

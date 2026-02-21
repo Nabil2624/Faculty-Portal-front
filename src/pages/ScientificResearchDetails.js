@@ -19,28 +19,20 @@ export default function ScientificResearchDetails() {
   const { t, i18n } = useTranslation("ScientificResearchDetails");
   const isArabic = i18n.language === "ar";
   const bp = useBreakpoint();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { id } = useParams();
 
-  // State for research
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [research, setResearch] = useState(location.state?.research || null);
+
   const [loading, setLoading] = useState(!research); // only loading if we need to fetch
 
   //  Fetch research details only if we don't already have it
   useEffect(() => {
-    if (!research && id) {
-      setLoading(true);
-      getResearchDetails(id)
-        .then((res) => setResearch(res))
-        .catch((err) => {
-          console.error(err);
-          // alert("Research details not found or unavailable");
-          navigate(-1); // go back if not found
-        })
-        .finally(() => setLoading(false));
+    if (!research) {
+      navigate(-1); // لو دخل الصفحة مباشرة يرجع
     }
-  }, [id, research, navigate]);
+  }, [research, navigate]);
 
   if (loading || !research) return <LoadingSpinner />;
 

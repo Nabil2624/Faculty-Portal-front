@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
 import useBreakpoint from "../hooks/useBreakpoint";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeaderAction from "../components/ui/PageHeaderAction";
@@ -19,32 +19,19 @@ export default function ScientificResearchFullDetails() {
   const { t, i18n } = useTranslation("ScientificResearchFullDetails");
   const isArabic = i18n.language === "ar";
   const bp = useBreakpoint();
-  const { id } = useParams();
-  const navigate = useNavigate();
 
   const [showSummary, setShowSummary] = useState(false);
-  const [research, setResearch] = useState(null);
-  const [loading, setLoading] = useState(true);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [research, setResearch] = useState(location.state?.research || null);
   useEffect(() => {
-    if (!id) return;
+    if (!research) {
+      navigate(-1);
+    }
+  }, [research, navigate]);
 
-    setLoading(true);
-
-    getResearchDetails(id)
-      .then((res) => {
-        setResearch(res);
-      })
-      .catch((err) => {
-        console.error(err);
-        navigate(-1);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [id, navigate]);
-
-  if (loading) return <LoadingSpinner />;
   if (!research) return null;
 
   return (
@@ -53,7 +40,11 @@ export default function ScientificResearchFullDetails() {
         <PageHeaderAction
           title={t("title")}
           actionLabel={t("edit")}
-          onClick={() => navigate(`/edit-scientific-research/${research.id}`)}
+          onClick={() =>
+            navigate("/edit-scientific-research", {
+              state: { research },
+            })
+          }
         />
 
         <ResearchTitle title={research.title} />

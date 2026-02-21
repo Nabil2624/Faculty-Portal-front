@@ -48,7 +48,7 @@ export default function AbstractWidget({ abstract, title, isArabic }) {
             className={`
               fixed z-10 max-w-[90vw] w-[500px] bg-white/90 backdrop-blur-md
               text-[#19355a] p-4 rounded-2xl shadow-2xl border border-gray-100
-              top-[60%] left-[51%] transform -translate-x-1/2
+              top-[42%] left-[51%] transform -translate-x-1/2
               pointer-events-none
               transition-all duration-300 ease-out
               scale-95 animate-fadeIn

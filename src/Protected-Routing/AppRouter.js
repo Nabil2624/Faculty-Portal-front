@@ -96,6 +96,8 @@ import ProfileDashboard from "../pages/ProfileDashboard";
 import ScientificWriting from "../pages/ScientificWriting";
 import AddScientificWriting from "../pages/AddScientificWriting";
 import EditScientificWriting from "../pages/EditScientificWriting";
+import RecommendedSupervisionCard from "../components/widgets/RecommendedSupervision/RecommendedSupervisionCard ";
+import RecommendedSupervisions from "../pages/RecommendedSupervisions";
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -124,7 +126,8 @@ function AppRouterInner() {
       <Route path="/scientific-researches" element={<ScientificResearches />} />
       <Route path="/supervision-thesis" element={<SupervisionThesis />} />
       <Route path="/supervision-info" element={<SupervisionInfo />} />
-      <Route path="/theses-details/:id" element={<ThesesDetails />} />
+      {/* <Route path="/theses-details/:id" element={<ThesesDetails />} /> */}
+      <Route path="/theses-details" element={<ThesesDetails />} />
 
       <Route path="/researcher-profile" element={<ResearcherProfile />} />
       <Route path="/add-thesis" element={<AddThesis />} />
@@ -133,6 +136,10 @@ function AppRouterInner() {
       <Route path="/missing-scholar-card" element={<MissingScholarCard />} />
       <Route path="/prizes-and-rewards" element={<PrizesAndRewards />} />
       <Route path="/add-prizes-and-rewards" element={<AddPrizesAndRewards />} />
+      <Route
+        path="/recommended-supervisions"
+        element={<RecommendedSupervisions />}
+      />
 
       <Route
         path="/manifestations-of-scientific-appreciation"
@@ -158,7 +165,7 @@ function AppRouterInner() {
         element={<EditSupervisionOrJudgement />}
       />
       <Route
-        path="edit-scientific-research/:id"
+        path="/edit-scientific-research"
         element={<EditScientificResearch />}
       />
       <Route
@@ -166,7 +173,7 @@ function AppRouterInner() {
         element={<AddScientificResearch />}
       />
       <Route
-        path="/scientific-research-full-details/:id"
+        path="/scientific-research-full-details"
         element={<ScientificResearchFullDetails />}
       />
       <Route
@@ -174,7 +181,7 @@ function AppRouterInner() {
         element={<NominatedScientificResearch />}
       />
       <Route
-        path="/scientific-research-details/:id"
+        path="/scientific-research-details"
         element={<ScientificResearchDetails />}
       />
       <Route path="/" element={<ScientificResearchDetails />} />

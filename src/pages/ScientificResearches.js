@@ -30,14 +30,18 @@ export default function ScientificResearches() {
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
+
   const handleDelete = async () => {
     if (!selectedItem) return;
 
     try {
       await deleteScientificResearch(selectedItem.id);
 
-      // refresh list after deletion
-      await fetchResearches(currentPage);
+      if (researches.length === 1 && currentPage > 1) {
+        setCurrentPage((prev) => prev - 1);
+      } else {
+        await fetchResearches(currentPage);
+      }
 
       setShowDelete(false);
       setSelectedItem(null);
@@ -71,46 +75,50 @@ export default function ScientificResearches() {
           </div>
         )}
 
+        {/* Cards */}
         {researches.length > 0 && (
-          <>
-            <div className="grid grid-cols-1 gap-6 max-w-5xl">
-              {researches.map((item) => (
-                <ScientificResearchCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onClick={() =>
-                    item.source === "Internal"
-                      ? navigate(`/scientific-research-full-details/${item.id}`)
-                      : navigate(`/scientific-research-details/${item.id}`)
-                  }
-                  onDelete={(item) => {
-                    setSelectedItem(item);
-                    setShowDelete(true);
-                  }}
-                  onEdit={(item) =>
-                    item.source === "Internal"
-                      ? navigate(`/edit-scientific-research/${item.id}`)
-                      : null
-                  }
-                />
-              ))}
-            </div>
-
-            <div className="fixed bottom-10 left-0 w-full flex justify-center z-50">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                onNext={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-                t={t}
+          <div className="grid grid-cols-1 gap-6 max-w-5xl">
+            {researches.map((item) => (
+              <ScientificResearchCard
+                key={item.id}
+                item={item}
                 isArabic={isArabic}
+                onClick={() =>
+                  item.source === "Internal"
+                    ? navigate("/scientific-research-full-details", {
+                        state: { research: item },
+                      })
+                    : navigate("/scientific-research-details", {
+                        state: { research: item },
+                      })
+                }
+                onDelete={(item) => {
+                  setSelectedItem(item);
+                  setShowDelete(true);
+                }}
+                onEdit={(item) => {
+                  if (item.source === "Internal") {
+                    navigate("/edit-scientific-research", {
+                      state: { research: item },
+                    });
+                  }
+                }}
               />
-            </div>
-          </>
+            ))}
+          </div>
         )}
+
+        {/* Pagination – ALWAYS visible */}
+        <div className="fixed bottom-10 left-0 w-full flex justify-center z-50">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            t={t}
+            isArabic={isArabic}
+          />
+        </div>
 
         {showDelete && (
           <DeleteResearchModal
