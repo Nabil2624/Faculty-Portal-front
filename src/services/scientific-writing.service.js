@@ -1,8 +1,8 @@
 import axiosInstance from "../utils/axiosInstance";
 
-export const getScientificWriting = (pageIndex, pageSize) => {
+export const getScientificWriting = (pageIndex, pageSize, search) => {
   return axiosInstance.get("/WritingsAndPatents/ScientificWritings", {
-    params: { pageIndex, pageSize },
+    params: { pageIndex, pageSize, search },
     skipGlobalErrorHandler: true,
   });
 };

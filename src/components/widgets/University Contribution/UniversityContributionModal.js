@@ -2,6 +2,7 @@ import ModalWrapper from "../../ui/ModalWrapper";
 import UniversityContributionForm from "./UniversityContributionForm";
 import UniversityContributionDeleteModal from "./UniversityContributionDeleteModal";
 import UniversityContributionDetailsModal from "./UniversityContributionDetailsModal";
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
 export default function UniversityContributionModal({
   mode,
@@ -9,9 +10,11 @@ export default function UniversityContributionModal({
   showDelete,
   showDetails,
   selectedItem,
-
+  currentSort,
+  currentFilters,
+  handleResetFilters,
   formData,
-  errors = {},
+  errors,
   types = [],
   loadingTypes,
   loading,
@@ -25,6 +28,12 @@ export default function UniversityContributionModal({
   setShowForm,
   setShowDelete,
   setShowDetails,
+
+  // Props جديدة للفلتر
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
 }) {
   const formTitle =
     mode === "add"
@@ -32,8 +41,8 @@ export default function UniversityContributionModal({
         ? "إضافة مساهمة جامعية"
         : "Add University Contribution"
       : isArabic
-      ? "تعديل المساهمة الجامعية"
-      : "Edit University Contribution";
+        ? "تعديل المساهمة الجامعية"
+        : "Edit University Contribution";
 
   return (
     <>
@@ -41,6 +50,7 @@ export default function UniversityContributionModal({
       {showForm && (
         <ModalWrapper onClose={() => setShowForm(false)}>
           <UniversityContributionForm
+            key={mode} // مهم للـReact unmount/mount عند تغير الوضع
             title={formTitle}
             types={types}
             loadingTypes={loadingTypes}
@@ -72,6 +82,22 @@ export default function UniversityContributionModal({
           <UniversityContributionDetailsModal
             item={selectedItem}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+
+      {/* ================= FILTER MODAL ================= */}
+      {/* ================= FILTER MODAL ================= */}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="university-contribution"
           />
         </ModalWrapper>
       )}

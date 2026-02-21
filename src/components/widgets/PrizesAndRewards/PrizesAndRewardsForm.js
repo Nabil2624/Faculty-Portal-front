@@ -35,8 +35,10 @@ export default function PrizesAndRewardsForm({
         <form className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(20px,20vw,600px)]">
           <div className="space-y-[clamp(18px,2.2vw,60px)]">
             {/* Prize dropdown */}
+            <label className="block mb-2 font-medium text-[clamp(14px,1.2vw,32px)]">
+              {t("fields.prize")} <span className="text-[#b38e19]">*</span>
+            </label>
             <CustomDropdown
-              label={t("fields.prize")}
               value={prizeId}
               onChange={setPrizeId}
               options={prizesOptions.map((p) => ({
@@ -66,7 +68,10 @@ export default function PrizesAndRewardsForm({
               placeholder={t("placeholders.dateReceived")}
               isArabic={isArabic}
             />
+          </div>
 
+          {/* Right column for attachments */}
+          <div className="space-y-[clamp(18px,2.2vw,60px)]">
             <InputField
               label={t("fields.description")}
               value={description}
@@ -75,10 +80,6 @@ export default function PrizesAndRewardsForm({
               textarea
               error={error.description}
             />
-          </div>
-
-          {/* Right column for attachments */}
-          <div className="space-y-[clamp(18px,2.2vw,60px)]">
             <AttachmentUploader
               label={t("fields.attachments")}
               buttonLabel={t("buttons.addAttachment")}

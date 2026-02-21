@@ -25,13 +25,12 @@ import EditIdentificationCard from "../components/EditIdentificationCard";
 import ErrorPage from "../components/ErrorPage";
 import OtpPage from "../components/OtpPage";
 import UnderDevelopment from "../components/UnderDevelopment";
-import LoadingSpinner from "../components/LoadingSpinner";
 import ResetPasswordPage from "../components/ResetPasswordPage";
 
-import JobGradeForm from "../components/JobGradeForm";
-import EditJobGrade from "../components/EditJobGrade";
-import EditAdminPosition from "../components/EditAdminPosition";
-import AddAdministrativePosition from "../components/AddAdministrativePosition";
+import JobGradeForm from "../components/widgets/JobGrade/JobGradeForm";
+import EditJobGrade from "../components/widgets/JobGrade/EditJobGrade";
+import EditAdminPosition from "../components/widgets/AdminPosition/EditAdminPosition";
+import AddAdministrativePosition from "../components/widgets/AdminPosition/AddAdministrativePosition";
 import AddScientificTask from "../components/AddScientificTask";
 import EditScientificTask from "../components/EditScientificTask";
 import AddAcademicQualification from "../components/AddAcademicQualification";
@@ -41,12 +40,10 @@ import EditConference from "../components/EditConference";
 import AddTrainingProgram from "../components/AddTrainingProgram";
 import EditTrainingProgram from "../components/EditTrainingProgram";
 
-import AcademicQualifications from "../components/AcademicQualifications";
-import JobRanks from "../components/JobRanks";
-import AdministrativePositions from "../components/AdministrativePositions";
-import ScientificMissions from "../components/ScientificMissions";
-import SeminarsAndConferences from "../components/SeminarsAndConferences";
-import TrainingPrograms from "../components/TrainingPrograms";
+import AcademicQualifications from "../pages/AcademicQualifications";
+import ScientificMissions from "../pages/ScientificMissions";
+import SeminarsAndConferences from "../pages/SeminarsAndConferences";
+import TrainingPrograms from "../pages/TrainingPrograms";
 import CommitteesAndAssociationsPage from "../pages/CommitteeAndAssociationPage";
 import AddCommitteeAssociation from "../pages/AddCommitteeAssociation";
 import EditCommitteeAssociation from "../pages/EditCommitteeAssociation";
@@ -96,6 +93,8 @@ import ProfileDashboard from "../pages/ProfileDashboard";
 import ScientificWriting from "../pages/ScientificWriting";
 import AddScientificWriting from "../pages/AddScientificWriting";
 import EditScientificWriting from "../pages/EditScientificWriting";
+import JobGrade from "../pages/JobGrade";
+import AdminstrativePosition from "../pages/AdminstrativePosition";
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -194,10 +193,10 @@ function AppRouterInner() {
         path="/academic-qualifications"
         element={<AcademicQualifications />}
       />
-      <Route path="/job-rankings" element={<JobRanks />} />
+      <Route path="/job-rankings" element={<JobGrade />} />
       <Route
         path="/administrative-positions"
-        element={<AdministrativePositions />}
+        element={<AdminstrativePosition />}
       />
       <Route path="/scientific-missions" element={<ScientificMissions />} />
       <Route

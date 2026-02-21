@@ -23,14 +23,23 @@ export default function Patents() {
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
   const {
     items: patents = [],
     totalPages = 1,
     loading,
     error,
     loadData,
-  } = usePatents(currentPage, 9);
+  } = usePatents(currentPage, 9, debouncedSearch);
 
   useEffect(() => {
     if (currentPage > totalPages) {

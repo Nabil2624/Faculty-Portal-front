@@ -1,8 +1,8 @@
 import axiosInstance from "../utils/axiosInstance";
 
-export const getPrizesAndRewards = (pageIndex, pageSize) => {
+export const getPrizesAndRewards = (pageIndex, pageSize, search) => {
   return axiosInstance.get("/Prizes/PrizesAndRewards", {
-    params: { pageIndex, pageSize },
+    params: { pageIndex, pageSize ,search},
     skipGlobalErrorHandler: true,
   });
 };

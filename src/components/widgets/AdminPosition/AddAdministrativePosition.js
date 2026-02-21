@@ -1,8 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Calendar, Plus } from "lucide-react";
-import axiosInstance from "../utils/axiosInstance";
-import LoadingSpinner from "../components/LoadingSpinner";
+import axiosInstance from "../../../utils/axiosInstance";
 
 export default function AddAdministrativePosition({ onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("form");
@@ -46,7 +45,7 @@ export default function AddAdministrativePosition({ onCancel, onSuccess }) {
       await axiosInstance.post(
         "/ScientificProgression/CreateAdministrativePosition",
         formData,
-        { skipGlobalErrorHandler: true }
+        { skipGlobalErrorHandler: true },
       );
       if (onSuccess) onSuccess();
     } catch (err) {
@@ -62,14 +61,17 @@ export default function AddAdministrativePosition({ onCancel, onSuccess }) {
   const focusClasses =
     "focus:outline-none focus:ring-2 focus:ring-[#B38E19] transition duration-150 shadow";
 
-
-
   return (
     <form
       key={i18n.language}
       dir={dir}
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto mt-6 bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
+      style={{
+        width: "clamp(320px, 32vw, 600px)",
+        padding: "clamp(1rem, 2.5vw, 2rem)",
+        borderRadius: "clamp(12px, 1.8vw, 22px)",
+      }}
+      className="bg-[#EDEDED] border-2 border-[#b38e19] shadow-sm mx-auto"
     >
       {/* Header */}
       <div className="flex items-center justify-center mb-6">

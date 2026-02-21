@@ -1,8 +1,8 @@
 import axiosInstance from "../utils/axiosInstance";
 
-export const getPatents = (pageIndex, pageSize) => {
+export const getPatents = (pageIndex, pageSize, search) => {
   return axiosInstance.get("/WritingsAndPatents/Patents", {
-    params: { pageIndex, pageSize },
+    params: { pageIndex, pageSize, search },
     skipGlobalErrorHandler: true,
   });
 };

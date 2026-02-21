@@ -1,16 +1,16 @@
 // ScientificMissions.jsx
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
-import PageHeader from "./ui/PageHeader";
-import Pagination from "./ui/Pagination";
+import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
+import PageHeader from "../components/ui/PageHeader";
+import Pagination from "../components/ui/Pagination";
 
 import useScientificMissions from "../hooks/useScientificMissions";
 import { deleteScientificMission } from "../services/scientificMission.service";
-import ScientificMissionsCard from "./widgets/ScientificMissions/ScientificMissionsCard";
+import ScientificMissionsCard from "../components/widgets/ScientificMissions/ScientificMissionsCard";
+import ScientificMissionsModal from "../components/widgets/ScientificMissions/ScientificMissionsModal";
 
 export default function ScientificMissions() {
   const { t, i18n } = useTranslation("ScientificMissions");
@@ -24,6 +24,7 @@ export default function ScientificMissions() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -45,7 +46,7 @@ export default function ScientificMissions() {
       loadData();
     } catch (err) {
       console.error(err);
-      alert(t("deleteError"));
+      setDeleteError(t("deleteError"));
     }
   };
 
@@ -111,53 +112,16 @@ export default function ScientificMissions() {
           />
         </div>
 
-        {/* Delete Modal */}
-        {showDelete && selectedItem && (
-          <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-            <div className="bg-white rounded-lg p-6 w-[360px] text-center">
-              <h3 className="text-lg font-semibold mb-3">
-                {t("areYouSureDelete")}
-              </h3>
-              <p className="text-sm text-gray-600 mb-5">
-                {selectedItem.missionName}
-              </p>
-              <div className="flex justify-center gap-4">
-                <button
-                  onClick={() => handleDelete(selectedItem.id)}
-                  className="bg-[#E53935] text-white px-5 py-2 rounded-md"
-                >
-                  {t("delete")}
-                </button>
-                <button
-                  onClick={() => setShowDelete(false)}
-                  className="bg-gray-300 px-5 py-2 rounded-md"
-                >
-                  {t("cancel")}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Details Modal */}
-        {showDetails && selectedItem && (
-          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-            <div className="bg-white rounded-2xl w-[520px] max-w-[90%] p-8 relative">
-              <button
-                onClick={() => setShowDetails(false)}
-                className="absolute top-4 right-4"
-              >
-                <X size={22} />
-              </button>
-
-              <h2 className="text-2xl font-bold mb-4">
-                {selectedItem.missionName}
-              </h2>
-
-              <p>{selectedItem.notes}</p>
-            </div>
-          </div>
-        )}
+       
+        <ScientificMissionsModal
+          showDelete={showDelete}
+          showDetails={showDetails}
+          selectedItem={selectedItem}
+          setShowDelete={setShowDelete}
+          setShowDetails={setShowDetails}
+          onDelete={() => handleDelete(selectedItem.id)}
+          deleteError={deleteError}
+        />
       </div>
     </ResponsiveLayoutProvider>
   );

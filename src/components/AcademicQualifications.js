@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import Layout from "../components/Layout";
-import { Pencil, Trash2, X,Filter } from "lucide-react";
+import { Pencil, Trash2, X, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosInstance";
@@ -34,7 +34,7 @@ export default function AcademicQualificationsPage() {
         {
           params: { pageIndex: page, pageSize },
           skipGlobalErrorHandler: true,
-        }
+        },
       );
 
       const { data, totalCount } = response.data;
@@ -72,7 +72,7 @@ export default function AcademicQualificationsPage() {
 
       await axiosInstance.delete(
         `/ScientificProgression/DeleteAcademicQualification/${selectedItem.id}`,
-        { skipGlobalErrorHandler: true }
+        { skipGlobalErrorHandler: true },
       );
 
       setQualifications((prev) => prev.filter((q) => q.id !== selectedItem.id));
@@ -323,21 +323,21 @@ export default function AcademicQualificationsPage() {
                   <span className="font-medium">{t("date")}</span>
                   <span>{selectedItem.dateOfObtainingTheQualification}</span>
                 </div>
-                {selectedItem.attachments && selectedItem.attachments.length > 0 && (
-  <div className="flex justify-between items-center mt-3">
-    <span className="font-medium">{t("attachments")}</span>
+                {selectedItem.attachments &&
+                  selectedItem.attachments.length > 0 && (
+                    <div className="flex justify-between items-center mt-3">
+                      <span className="font-medium">{t("attachments")}</span>
 
-    <a
-      href={selectedItem.attachments[0].fileUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-[#19355a] underline hover:text-[#b38e19]"
-    >
-      {selectedItem.attachments[0].fileName}
-    </a>
-  </div>
-)}
-
+                      <a
+                        href={selectedItem.attachments[0].fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#19355a] underline hover:text-[#b38e19]"
+                      >
+                        {selectedItem.attachments[0].fileName}
+                      </a>
+                    </div>
+                  )}
               </div>
             </div>
           </div>

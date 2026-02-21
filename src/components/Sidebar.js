@@ -97,7 +97,10 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
     {
       key: "Publications&Patents",
       icon: <BookMarkedIcon />,
-      sub: [{ key: "patents", link: "/patents" }],
+      sub: [
+        { key: "patents", link: "/patents" },
+        { key: "scientific-writing", link: "/scientific-writing" },
+      ],
     },
     {
       key: "projectsAndCommittee",

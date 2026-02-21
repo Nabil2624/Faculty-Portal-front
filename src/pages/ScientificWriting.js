@@ -16,20 +16,29 @@ export default function ScientificWriting() {
   const { t, i18n } = useTranslation("scientific-writing");
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
-
+  const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
   const {
     items = [],
     totalPages = 1,
     loading,
     error,
     loadData,
-  } = useScientificWriting(currentPage, 9);
+  } = useScientificWriting(currentPage, 9, debouncedSearch);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -66,6 +75,9 @@ export default function ScientificWriting() {
           title={t("title")}
           addLabel={t("add")}
           onAdd={() => navigate("/add-scientific-writing")}
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={t("search")}
           isArabic={isArabic}
         />
 

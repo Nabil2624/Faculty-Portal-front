@@ -1,4 +1,4 @@
-import { Trash2, Edit } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 
 function formatDate(dateString, isArabic) {
   if (!dateString) return "";
@@ -43,7 +43,7 @@ export default function PrizeCard({
         } flex gap-2`}
         onClick={(e) => e.stopPropagation()}
       >
-        <Edit
+        <Pencil
           className="text-[#B38E19] w-[clamp(1.1rem,1.6vw,3.5rem)] h-[clamp(1.1rem,1.6vw,3.5rem)] hover:scale-110 transition"
           onClick={() => onEdit?.(item)}
         />

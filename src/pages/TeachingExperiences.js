@@ -39,7 +39,7 @@ export default function TeachingExperiences() {
     loading,
     error,
     loadData,
-  } = useTeachingExperiences(currentPage, 9, debouncedSearch); // 👈 تحت
+  } = useTeachingExperiences(currentPage, 9, debouncedSearch); 
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -79,6 +79,7 @@ export default function TeachingExperiences() {
           showSearch
           searchValue={search}
           onSearchChange={setSearch}
+          onFilterClick
           searchPlaceholder={t("search")}
           isArabic={isArabic}
         />

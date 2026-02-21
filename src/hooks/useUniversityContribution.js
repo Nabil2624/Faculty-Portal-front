@@ -6,6 +6,8 @@ export default function useUniversityContribution(
   page = 1,
   pageSize = 9,
   search,
+  sortValue = 0,
+  filters,
 ) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -17,7 +19,13 @@ export default function useUniversityContribution(
     setError(null);
 
     try {
-      const res = await getUniversityContribution(page, pageSize, search);
+      const res = await getUniversityContribution(
+        page,
+        pageSize,
+        search,
+        sortValue,
+        filters,
+      );
       const { data, totalCount } = res.data; // زي Journals
       setItems(data || []);
       setTotalPages(Math.ceil(totalCount / pageSize) || 1);
@@ -30,7 +38,7 @@ export default function useUniversityContribution(
 
   useEffect(() => {
     loadData();
-  }, [page, search]);
+  }, [page, search, sortValue, filters]);
 
   return { items, totalPages, loading, error, loadData };
 }

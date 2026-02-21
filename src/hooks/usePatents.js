@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getPatents } from "../services/patents.service";
 
-export default function usePatents(page = 1, pageSize = 9) {
+export default function usePatents(page = 1, pageSize = 9, search) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -12,7 +12,7 @@ export default function usePatents(page = 1, pageSize = 9) {
     setError(null);
 
     try {
-      const res = await getPatents(page, pageSize);
+      const res = await getPatents(page, pageSize, search);
       const { data, totalCount } = res.data;
 
       setItems(data || []);
@@ -26,7 +26,7 @@ export default function usePatents(page = 1, pageSize = 9) {
 
   useEffect(() => {
     loadData();
-  }, [page]);
+  }, [page,search]);
 
   return { items, totalPages, loading, error, loadData };
 }

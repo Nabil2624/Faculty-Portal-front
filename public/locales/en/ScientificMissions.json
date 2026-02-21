@@ -2,12 +2,16 @@
   "scientificMissions": "Scientific Missions",
   "add": "Add",
   "back": "Back",
-  "location" : "Country/City",
-  "startDate" : "Start Date",
-  "endDate" : "End Date",
+  "location": "Country/City",
+  "startDate": "Start Date",
+  "endDate": "End Date",
   "areYouSureDelete": "Are you sure you want to delete",
-  "institution" : "University/College",
+  "institution": "University/College",
   "delete": "Delete",
   "cancel": "Cancel",
-  "deleteError" : "Delete Failed"
+  "deleteError": "Delete Failed",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of"
 }

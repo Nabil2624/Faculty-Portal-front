@@ -6,5 +6,9 @@
   "delete": "Delete",
   "cancel": "Cancel",
   "deleteError": "An error occurred while trying to delete",
-  "organizingAuthority": "Organizing Authority"
+  "organizingAuthority": "Organizing Authority",
+  "previous": "Previous",
+  "next": "Next",
+  "page": "Page",
+  "of": "of"
 }

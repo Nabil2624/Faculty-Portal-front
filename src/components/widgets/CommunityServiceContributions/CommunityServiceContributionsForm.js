@@ -13,7 +13,7 @@ export default function CommunityServiceContributionsForm({
   submitForm,
   loading,
 }) {
-  const { t } = useTranslation("participation-quality-work-form");
+  const { t } = useTranslation("university-contribution-form");
   const dir = isArabic ? "rtl" : "ltr";
   
 

@@ -1,8 +1,8 @@
 import axiosInstance from "../utils/axiosInstance";
 
-export const getManifestations = (pageIndex, pageSize) => {
+export const getManifestations = (pageIndex, pageSize, search) => {
   return axiosInstance.get("/Prizes/ManifestationsOfScientificAppreciation", {
-    params: { pageIndex, pageSize },
+    params: { pageIndex, pageSize, search },
     skipGlobalErrorHandler: true,
   });
 };

@@ -1,8 +1,24 @@
 import axiosInstance from "../utils/axiosInstance";
+import qs from "qs";
 
-export const getUniversityContribution = (pageIndex, pageSize, search) => {
+
+export const getUniversityContribution = (
+  pageIndex,
+  pageSize,
+  search,
+  sort,
+  TypeOfContributionIds,
+) => {
   return axiosInstance.get("/Contributions/ContributionsToUniversity", {
-    params: { pageIndex, pageSize, search },
+    params: {
+      pageIndex,
+      pageSize,
+      search,
+      ...(sort && { sort }),
+      ...(TypeOfContributionIds?.length && { TypeOfContributionIds }),
+    },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };

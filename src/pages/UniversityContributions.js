@@ -7,6 +7,7 @@ import Pagination from "../components/ui/Pagination";
 
 import useUniversityContribution from "../hooks/useUniversityContribution";
 import useUniversityContributionForm from "../hooks/useUniversityContributionForm";
+import useAddUniversityContributionForm from "../hooks/useAddUniversityContributionForm";
 import useContributionTypeLookups from "../hooks/useContributionTypeLookups";
 
 import UniversityContributionCard from "../components/widgets/University Contribution/UniversityContributionCard";
@@ -28,9 +29,13 @@ export default function UniversityContributions() {
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
+  const [typeOfContributionIds, setTypeOfContributionIds] = useState([]);
+
   const [deleteError, setDeleteError] = useState(false);
   const [debouncedSearch, setDebouncedSearch] = useState("");
-
+  const [filtersState, setFiltersState] = useState({});
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -39,6 +44,7 @@ export default function UniversityContributions() {
 
     return () => clearTimeout(timeout);
   }, [search]);
+
   /* ================= DATA ================= */
   const {
     items: contributions = [],
@@ -46,7 +52,13 @@ export default function UniversityContributions() {
     loading,
     error,
     loadData,
-  } = useUniversityContribution(currentPage, 9, debouncedSearch);
+  } = useUniversityContribution(
+    currentPage,
+    9,
+    debouncedSearch,
+    sortValue,
+    typeOfContributionIds,
+  );
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -57,15 +69,47 @@ export default function UniversityContributions() {
   /* ================= LOOKUPS ================= */
   const { types, loadingTypes } = useContributionTypeLookups();
 
-  /* ================= FORM HOOK ================= */
-  const {
-    formData,
-    errors,
-    loading: formLoading,
-    handleChange,
-    submitForm,
-  } = useUniversityContributionForm({
-    mode,
+  const mappedTypes =
+    types?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "contributionTypeIds",
+          title: "dependOnContributionType",
+          options: mappedTypes,
+        },
+      ]
+    : [];
+
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+
+    const ids = filters?.contributionTypeIds || [];
+    setTypeOfContributionIds(ids);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setTypeOfContributionIds([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
+
+  /* ================= FORM HOOKS ================= */
+  const addForm = useAddUniversityContributionForm({
+    onSuccess: () => {
+      setShowForm(false);
+      loadData();
+    },
+  });
+
+  const editForm = useUniversityContributionForm({
     selectedItem,
     onSuccess: () => {
       setShowForm(false);
@@ -116,8 +160,8 @@ export default function UniversityContributions() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
-
         {/* Error / Empty */}
         {!loading && error && (
           <div
@@ -136,13 +180,9 @@ export default function UniversityContributions() {
             {t("empty")}
           </div>
         )}
-
         {/* Grid */}
         {!loading && !error && contributions.length > 0 && (
-          <div
-            className="overflow-y-auto pr-2 mb-4 flex-1"
-            style={{ maxHeight: "calc(90vh - 200px)" }}
-          >
+          <div className="overflow-y-auto pr-2 mb-4 flex-1">
             <div
               className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${
                 isArabic ? "text-right" : "text-left"
@@ -189,11 +229,13 @@ export default function UniversityContributions() {
           showDelete={showDelete}
           showDetails={showDetails}
           selectedItem={selectedItem}
-          formData={formData}
-          errors={errors}
-          handleChange={handleChange}
-          submitForm={submitForm}
-          loading={formLoading}
+          formData={mode === "add" ? addForm.formData : editForm.formData}
+          errors={mode === "add" ? addForm.errors : editForm.errors}
+          handleChange={
+            mode === "add" ? addForm.handleChange : editForm.handleChange
+          }
+          submitForm={mode === "add" ? addForm.submitForm : editForm.submitForm}
+          loading={mode === "add" ? addForm.loading : editForm.loading}
           types={types}
           loadingTypes={loadingTypes}
           deleteError={deleteError}
@@ -202,6 +244,13 @@ export default function UniversityContributions() {
           setShowDelete={setShowDelete}
           setShowDetails={setShowDetails}
           isArabic={isArabic}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          currentFilters={filtersState}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={filtersConfig}
         />
       </div>
     </ResponsiveLayoutProvider>

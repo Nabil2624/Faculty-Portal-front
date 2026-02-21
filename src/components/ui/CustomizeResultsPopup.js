@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 function clampIcon(min, mid, max) {
@@ -7,44 +7,75 @@ function clampIcon(min, mid, max) {
 }
 
 const sortOptions = [
-  { id: 1, label: "newestFirst" },
-  { id: 2, label: "oldestFirst" },
+  { value: 4, label: "newestFirst" },
+  { value: 3, label: "oldestFirst" },
+  { value: 1, label: "nameAsc" },
+  { value: 2, label: "nameDec" },
 ];
 
-const filterOptions = [
-  { id: 1, label: "internalJournal" },
-  { id: 2, label: "externalJournal" },
-  { id: 3, label: "sharedGrant" },
-  { id: 4, label: "personalGrant" },
-];
-
-export default function CustomizeResultsModal({ onClose, onApply }) {
-  const { t, i18n } = useTranslation("researches");
+export default function CustomizeResultsModal({
+  onClose,
+  onApply,
+  onReset,
+  currentSort = null,
+  currentFilters = {},
+  filtersConfig = [],
+  translationNamespace = "researches",
+}) {
+  const { t, i18n } = useTranslation(translationNamespace);
   const isArabic = i18n.language === "ar";
 
-  const [selectedSort, setSelectedSort] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState([]);
+  const hasFilters = Array.isArray(filtersConfig) && filtersConfig.length > 0;
 
-  const toggleFilter = (id) => {
-    if (selectedFilters.includes(id)) {
-      setSelectedFilters(selectedFilters.filter((f) => f !== id));
-    } else {
-      setSelectedFilters([...selectedFilters, id]);
-    }
+  const [selectedSort, setSelectedSort] = useState(currentSort);
+  const [selectedFilters, setSelectedFilters] = useState(currentFilters);
+
+  /* sync when modal reopens */
+  useEffect(() => {
+    setSelectedSort(currentSort ?? null);
+    setSelectedFilters(currentFilters ?? {});
+  }, [currentSort, currentFilters]);
+
+  const toggleOption = (groupKey, value) => {
+    setSelectedFilters((prev) => {
+      const currentValues = prev[groupKey] || [];
+      if (currentValues.includes(value)) {
+        return {
+          ...prev,
+          [groupKey]: currentValues.filter((v) => v !== value),
+        };
+      }
+      return {
+        ...prev,
+        [groupKey]: [...currentValues, value],
+      };
+    });
   };
 
   const handleApply = () => {
     onApply({
       sortValue: selectedSort,
-      filtersList: selectedFilters,
+      filters: selectedFilters,
     });
     onClose();
   };
+
+  const handleReset = () => {
+    setSelectedSort(null);
+    setSelectedFilters({});
+    onReset?.();
+  };
+
+  const hasActiveFilters =
+    selectedSort !== null ||
+    Object.values(selectedFilters).some((arr) => arr?.length > 0);
 
   return (
     <div
       dir={isArabic ? "rtl" : "ltr"}
       onClick={(e) => e.stopPropagation()}
+      role="dialog"
+      aria-modal="true"
       className="
         relative
         bg-white
@@ -57,17 +88,13 @@ export default function CustomizeResultsModal({ onClose, onApply }) {
         p-[clamp(1rem,2.5vw,2rem)]
       "
     >
-      {/* Close Button */}
+      {/* Close */}
       <button
         onClick={onClose}
         className={`
           absolute
           top-[clamp(0.75rem,1.2vw,1.2rem)]
-          ${
-            isArabic
-              ? "left-[clamp(0.75rem,1.2vw,1.2rem)]"
-              : "right-[clamp(0.75rem,1.2vw,1.2rem)]"
-          }
+          ${isArabic ? "left-[clamp(0.75rem,1.2vw,1.2rem)]" : "right-[clamp(0.75rem,1.2vw,1.2rem)]"}
           text-gray-500
           hover:scale-110
           transition
@@ -85,20 +112,21 @@ export default function CustomizeResultsModal({ onClose, onApply }) {
       </div>
 
       {/* Sorting */}
-      <div className="mb-10">
+      <div className={hasFilters ? "mb-10" : "mb-6"}>
         <h3 className="font-semibold text-[clamp(1rem,1.5vw,1.3rem)] mb-4">
           {t("sortOptions")}
+          <div className="w-24 h-[clamp(2px,0.3vw,4px)] bg-[#b38e19] mt-3 rounded-full"></div>
         </h3>
 
         <div className="flex flex-wrap gap-3">
           {sortOptions.map((option) => (
             <button
-              key={option.id}
-              onClick={() => setSelectedSort(option.id)}
+              key={option.value}
+              onClick={() => setSelectedSort(option.value)}
               className={`
                 px-4 py-2 rounded-full border transition text-sm
                 ${
-                  selectedSort === option.id
+                  selectedSort === option.value
                     ? "bg-[#b38e19] text-white border-[#b38e19]"
                     : "bg-[#b38e19]/10 text-[#b38e19] border-[#b38e19] hover:bg-[#b38e19]/20"
                 }
@@ -109,41 +137,63 @@ export default function CustomizeResultsModal({ onClose, onApply }) {
           ))}
         </div>
       </div>
+      <h3 className="font-semibold text-[clamp(1rem,1.5vw,1.3rem)] mb-4">
+        {t("filterOptions")}
+        <div className="w-24 h-[clamp(2px,0.3vw,4px)] bg-[#b38e19] mt-3 rounded-full"></div>
+      </h3>
+      {/* Filters */}
+      {hasFilters && (
+        <div
+          className="overflow-y-auto"
+          style={{ maxHeight: "25vh" }} // أو أي ارتفاع مناسب
+        >
+          {filtersConfig.map((group) => (
+            <div key={group.key} className="mb-10">
+              <h3 className="font-semibold text-[clamp(1rem,1.2vw,1.3rem)] mb-4 text-[#b38e19]">
+                {t(group.title)}
+              </h3>
 
-      {/* Filtering */}
-      <div>
-        <h3 className="font-semibold text-[clamp(1rem,1.5vw,1.3rem)] mb-4">
-          {t("filterOptions")}
-        </h3>
+              <div className="flex flex-wrap gap-3">
+                {group.options?.map((option) => {
+                  const isSelected = selectedFilters[group.key]?.includes(
+                    option.value,
+                  );
 
-        <div className="flex flex-wrap gap-3">
-          {filterOptions.map((option) => (
-            <button
-              key={option.id}
-              onClick={() => toggleFilter(option.id)}
-              className={`
-                px-4 py-2 rounded-full border transition text-sm
-                ${
-                  selectedFilters.includes(option.id)
-                    ? "bg-[#b38e19] text-white border-[#b38e19]"
-                    : "bg-[#b38e19]/10 text-[#b38e19] border-[#b38e19] hover:bg-[#b38e19]/20"
-                }
-              `}
-            >
-              {t(option.label)}
-            </button>
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => toggleOption(group.key, option.value)}
+                      className={`
+                  px-4 py-2 rounded-full border transition text-sm
+                  ${
+                    isSelected
+                      ? "bg-[#b38e19] text-white border-[#b38e19]"
+                      : "bg-[#b38e19]/10 text-[#b38e19] border-[#b38e19] hover:bg-[#b38e19]/20"
+                  }
+                `}
+                    >
+                      {typeof option.label === "string"
+                        ? t(option.label)
+                        : option.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           ))}
         </div>
-      </div>
+      )}
 
       {/* Buttons */}
-      <div className="flex justify-between mt-12">
-        <button
-          onClick={onClose}
-          className="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
-        >
-          {t("cancel")}
-        </button>
+      <div className="flex justify-center gap-4 mt-8">
+        {hasActiveFilters && (
+          <button
+            onClick={handleReset}
+            className="px-6 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
+          >
+            {t("reset")}
+          </button>
+        )}
 
         <button
           onClick={handleApply}

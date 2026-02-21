@@ -13,16 +13,17 @@ export default function useCommunityServiceContributionForm({
   const { t } = useTranslation("university-contribution-form");
   const isEdit = mode === "edit";
 
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     contributionName: "",
     contributionDate: "",
     description: "",
-  });
+  };
 
+  const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // لو في تعديل، نحط البيانات القديمة
+  // كل مرة يتغير فيها mode أو selectedItem، نعمل reset للفورم
   useEffect(() => {
     if (isEdit && selectedItem) {
       setFormData({
@@ -30,17 +31,17 @@ export default function useCommunityServiceContributionForm({
         contributionDate: selectedItem.dateOfContribution || "",
         description: selectedItem.description || "",
       });
+    } else {
+      setFormData(initialFormData); // Add mode يبقى فاضي
     }
-  }, [isEdit, selectedItem]);
+    setErrors({});
+  }, [mode, selectedItem]);
 
-  // تحديث قيمة الفورم
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // لما المستخدم يكتب، نمسح ال error للفيلد
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: null }));
   };
 
-  // التحقق من صحة البيانات محلياً
   const validate = () => {
     const newErrors = {};
     if (!formData.contributionName?.trim())
@@ -50,7 +51,6 @@ export default function useCommunityServiceContributionForm({
     return newErrors;
   };
 
-  // تجهيز البيانات للإرسال
   const preparePayload = () => ({
     contributionTitle: formData.contributionName?.trim(),
     dateOfContribution: formData.contributionDate || null,
@@ -58,7 +58,6 @@ export default function useCommunityServiceContributionForm({
       formData.description?.trim() === "" ? null : formData.description?.trim(),
   });
 
-  // إرسال الفورم
   const submitForm = async (e) => {
     e.preventDefault();
 
@@ -81,11 +80,8 @@ export default function useCommunityServiceContributionForm({
 
       onSuccess?.();
     } catch (err) {
-      // هنا متعرضش اي رسالة raw لل user
-      console.error(err); // بس نسجل الخطأ console
-      setErrors({
-        submit: t("general_error"), // رسالة عامة للمستخدم
-      });
+      console.error(err);
+      setErrors({ submit: t("general_error") });
     } finally {
       setLoading(false);
     }

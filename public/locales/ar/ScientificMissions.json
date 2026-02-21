@@ -6,8 +6,12 @@
   "location": "الدولة/المدينة",
   "startDate": "تاريخ البداية",
   "endDate": "تاريخ النهاية",
+  "previous": "السابق",
+  "next": "التالي",
+  "page": "الصفحة",
+  "of": "من",
   "institution": "الجامعة/الكلية",
   "cancel": "إلغاء",
   "areYouSureDelete": "هل أنت متأكد أنك تريد حذف",
-  "deleteError" : "فشل الحذف"
+  "deleteError": "فشل الحذف"
 }
