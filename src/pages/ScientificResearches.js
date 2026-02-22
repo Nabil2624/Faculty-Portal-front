@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +17,16 @@ export default function ScientificResearches() {
   const { t, i18n } = useTranslation("ScientificResearches");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [search, setSearch] = useState("");
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
 
+    return () => clearTimeout(timeout);
+  }, [search]);
   const {
     researches,
     loading,
@@ -25,8 +34,8 @@ export default function ScientificResearches() {
     currentPage,
     totalPages,
     setCurrentPage,
-    fetchResearches, // fetch researches
-  } = useScientificResearches(4);
+    fetchResearches,
+  } = useScientificResearches(4, debouncedSearch);
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
@@ -64,6 +73,10 @@ export default function ScientificResearches() {
           title={t("title")}
           addLabel={t("add")}
           onAdd={() => navigate("/add-scientific-research")}
+          showSearch
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={t("search")}
           isArabic
         />
 

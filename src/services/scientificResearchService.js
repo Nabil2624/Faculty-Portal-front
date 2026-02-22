@@ -14,6 +14,21 @@ export const getResearchDetails = async (id) => {
   }
 };
 
+export const getResearches = async ({ page, pageSize, search }) => {
+  const response = await axiosInstance.get("/ResearchesAndTheses/Researches", {
+    params: {
+      pageIndex: page,
+      pageSize,
+      search,
+    },
+    skipGlobalErrorHandler: true,
+  });
+
+  return response.data;
+};
+
+
+
 // Save research
 export const saveScientificResearch = async (data) => {
   try {

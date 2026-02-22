@@ -1,26 +1,21 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 
-export default function SearchBar({
-  value,
-  onChange,
-  placeholder = "",
-  isArabic = false,
-}) {
+export default function SearchBar({ value, onChange, placeholder = "", isArabic = false }) {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
     <div
-      className="relative flex flex-1 items-center"
+      className="relative flex items-center flex-1"
       style={{
         borderBottom: `2px solid ${isFocused ? "#b38e19" : "#d1d5db"}`,
         paddingBottom: "2px",
         transition: "border-color 0.4s ease",
         paddingLeft: isArabic ? "clamp(0.5rem, 6vw, 15rem)" : 0,
         paddingRight: isArabic ? 0 : "clamp(0.5rem, 6vw, 15rem)",
+        minWidth: 0,
       }}
     >
-      {/* Icon */}
       <Search
         className="shrink-0 text-[#b38e19]"
         style={{
@@ -30,8 +25,6 @@ export default function SearchBar({
           marginRight: isArabic ? 0 : "clamp(6px,1vw,12px)",
         }}
       />
-
-      {/* Input */}
       <input
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
@@ -44,8 +37,6 @@ export default function SearchBar({
           fontSize: "clamp(12px, 1.2vw, 50px)",
         }}
       />
-
-      {/* underline */}
       <span
         className="absolute bottom-0 h-[2px] bg-[#b38e19]"
         style={{
