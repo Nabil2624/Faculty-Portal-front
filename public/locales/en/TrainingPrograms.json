@@ -20,5 +20,9 @@
   "previous": "Previous",
   "next": "Next",
   "page": "Page",
-  "of": "of"
+  "of": "of",
+    "InTheSpecialty": "In the specialty",
+  "OutTheSpecialty": "Out of the specialty",
+  "lecturer": "Lecturer",
+  "listener": "Listener"
 }

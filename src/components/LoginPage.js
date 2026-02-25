@@ -56,8 +56,6 @@ export default function LoginPage() {
 
   const isArabic = i18n.language === "ar";
 
-
-  
   // const handleLogin = async (e) => {
   //   e.preventDefault();
   //   setError(null);
@@ -101,32 +99,30 @@ export default function LoginPage() {
   // };
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setError(null);
-  setLoading(true);
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-  try {
-    const loginResponse = await axiosInstance.post(
-      "/Authentication/Login",
-      { username, password },
-      {
-        skipGlobalErrorHandler: true,
-        withCredentials: true,
+    try {
+      const loginResponse = await axiosInstance.post(
+        "/Authentication/Login",
+        { username, password },
+        {
+          skipGlobalErrorHandler: true,
+          withCredentials: true,
+        },
+      );
+
+      const userType = loginResponse?.data?.role;
+  
+
+      if (userType === "Faculty Member") {
+        navigate("/personal");
+      } else {
+        navigate(redirectTo);
       }
-    );
-
-    const userType = loginResponse?.data?.role;
-    const nationalNumber = loginResponse?.data?.nationalNumber;
-
-    if (userType === "Faculty Member") {
-      navigate("/personal", {
-        state: { nationalNumber }
-      });
-    } else {
-      navigate(redirectTo);
-    }
-  } catch (err) {
-    if (err.response) {
+    } catch (err) {
+      if (err.response) {
         const { status } = err.response;
 
         if (status === 400 || status === 401) {
@@ -137,10 +133,10 @@ export default function LoginPage() {
       } else {
         setError(t("networkError"));
       }
-  } finally {
-    setLoading(false);
-  }
-};
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden p-5 relative">
@@ -266,7 +262,9 @@ export default function LoginPage() {
             {t("loginButton")}
           </button>
 
-          <div className={`mt-3 text-sm ${isArabic ? "text-right" : "text-left"}`}>
+          <div
+            className={`mt-3 text-sm ${isArabic ? "text-right" : "text-left"}`}
+          >
             <button
               onClick={() => navigate("/forgot-password")}
               type="button"
@@ -316,9 +314,7 @@ export default function LoginPage() {
             {t("welcome")}
           </h3>
 
-          <p className="text-lg mt-3 text-gray-200 max-w-[80%]">
-            {t("sub")}
-          </p>
+          <p className="text-lg mt-3 text-gray-200 max-w-[80%]">{t("sub")}</p>
         </div>
       </div>
     </div>

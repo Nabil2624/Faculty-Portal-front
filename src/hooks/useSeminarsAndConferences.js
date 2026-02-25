@@ -3,7 +3,7 @@ import {
   getSeminarsAndConferences,
   deleteSeminarOrConference,
 } from "../services/seminarsAndConferences.service";
-
+import { useTranslation } from "react-i18next";
 export default function useSeminarsAndConferences(
   page = 1,
   pageSize = 9,
@@ -13,8 +13,9 @@ export default function useSeminarsAndConferences(
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-console.log(search);
+  const { i18n } = useTranslation();
+  const isArabic = i18n.language === "ar";
+  console.log(search);
 
   const loadData = useCallback(
     async (pageToLoad = page) => {
@@ -28,7 +29,6 @@ console.log(search);
           search,
         });
 
-
         const data = res?.data?.data || [];
         const totalCount = res?.data?.totalCount || 0;
 
@@ -38,8 +38,11 @@ console.log(search);
             missionName: item.name || "",
             type: item.type || "",
             localOrInternational: item.localOrInternational || "",
-            participationRole: item.roleOfParticipation?.valueEn || "",
+
+            roleOfParticipation: item.roleOfParticipation || null,
+
             organizingAuthority: item.organizingAuthority || "",
+            website: item.website || "",
             venue: item.venue || "",
             startDate: item.startDate || "",
             endDate: item.endDate || "",
@@ -47,7 +50,6 @@ console.log(search);
             attachments: item.attachments || null,
           })),
         );
-
         setTotalPages(Math.max(1, Math.ceil(totalCount / pageSize)));
       } catch (err) {
         console.error("Failed to load seminars:", err);

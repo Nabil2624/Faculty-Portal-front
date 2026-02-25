@@ -30,7 +30,8 @@
     "typeRequired": "يرجى اختيار نوع براءة الاختراع",
     "nameRequired": "اسم براءة الاختراع مطلوب",
     "authorityRequired": "جهة الاعتماد أو الدولة مطلوبة",
-    "applyingDateRequired": "تاريخ التقديم مطلوب"
+    "applyingDateRequired": "تاريخ التقديم مطلوب",
+    "accreditationBeforeApplying": "يجب أن يكون تاريخ التقديم قبل تاريخ الاعتماد"
   },
   "validation": {}
 }

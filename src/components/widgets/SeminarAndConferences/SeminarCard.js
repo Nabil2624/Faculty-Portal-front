@@ -1,4 +1,5 @@
 import { Pencil, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 /* helper */
 function formatDate(dateString, isArabic) {
@@ -20,6 +21,9 @@ export default function ScientificMissionsCard({
   onDelete,
   onDetails,
 }) {
+
+
+  const { t } = useTranslation("SeminarsAndConferences");
   return (
     <div
       onClick={() => onDetails?.(item)}
@@ -109,7 +113,7 @@ export default function ScientificMissionsCard({
           mb-[clamp(0.3rem,0.3vw,1rem)]
           text-[clamp(0.75rem,1vw,2rem)]"
       >
-        {item.localOrInternational}
+        {t(item.localOrInternational?.toLowerCase())}
       </p>
     </div>
   );

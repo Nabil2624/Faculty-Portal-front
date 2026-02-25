@@ -35,9 +35,18 @@ export default function EditTrainingProgram() {
     if (existingData) {
       setFormData({
         id: existingData.id,
-        programType: existingData.type?.toLowerCase() === "specialist" ? 1 : 2,
+        programType:
+          existingData.type === "InTheSpecialty"
+            ? 1 // داخل التخصص → specialist
+            : existingData.type === "OutTheSpecialty"
+              ? 2 // خارج التخصص → general
+              : null,
         participationType:
-          existingData.participationType?.toLowerCase() === "internal" ? 1 : 2,
+          existingData.participationType === "listener"
+            ? 1
+            : existingData.participationType === "lecturer"
+              ? 2
+              : null,
         programName: existingData.trainingProgramName || "",
         organizingAuthority: existingData.organizingAuthority || "",
         venue: existingData.venue || "",
@@ -107,7 +116,7 @@ export default function EditTrainingProgram() {
           startDate: formData.startDate,
           endDate: formData.endDate,
           description: formData.description,
-        }
+        },
       );
       navigate("/training-programs");
     } catch (err) {
@@ -155,6 +164,7 @@ export default function EditTrainingProgram() {
                         value={1}
                         checked={formData.programType === 1}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
                       {t("specialist")}
                     </label>
@@ -165,6 +175,7 @@ export default function EditTrainingProgram() {
                         value={2}
                         checked={formData.programType === 2}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
                       {t("general")}
                     </label>
@@ -190,6 +201,7 @@ export default function EditTrainingProgram() {
                         value={1}
                         checked={formData.participationType === 1}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
                       {t("internal")}
                     </label>
@@ -200,6 +212,7 @@ export default function EditTrainingProgram() {
                         value={2}
                         checked={formData.participationType === 2}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
                       {t("external")}
                     </label>

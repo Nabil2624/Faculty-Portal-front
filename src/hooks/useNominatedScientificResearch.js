@@ -87,5 +87,6 @@ export default function useNominatedScientificResearch() {
     setCurrentPage,
     handleApprove,
     handleReject,
+    reload: loadData,
   };
 }

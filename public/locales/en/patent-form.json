@@ -32,6 +32,7 @@
     "typeRequired": "Please select patent type",
     "nameRequired": "Patent name is required",
     "authorityRequired": "Accrediting authority or country is required",
-    "applyingDateRequired": "Application date is required"
+    "applyingDateRequired": "Application date is required",
+    "accreditationBeforeApplying" : "The submission date must be before the approval date"
   }
 }

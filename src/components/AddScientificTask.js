@@ -5,7 +5,7 @@ import Layout from "../components/Layout";
 import { FiCalendar } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
-import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider"
+import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 
 export default function AddScientificTask() {
   const { t, i18n } = useTranslation("add-scientific-task");
@@ -18,10 +18,10 @@ export default function AddScientificTask() {
   const [formData, setFormData] = useState({
     name: "",
     CountryOrCity: "",
-    UniversityOrFaculty: "",
+    UniversityOrFaculty: null,
     startDate: "",
-    endDate: "",
-    Description: "",
+    endDate: null,
+    Description: null,
   });
 
   const [errors, setErrors] = useState({});
@@ -44,6 +44,14 @@ export default function AddScientificTask() {
       newErrors.CountryOrCity = t("required_country_city");
     if (!formData.startDate.trim())
       newErrors.startDate = t("required_start_date");
+
+    if (
+      formData.startDate &&
+      formData.endDate &&
+      new Date(formData.endDate) < new Date(formData.startDate)
+    ) {
+      newErrors.endDate = t("end_date_before_start");
+    }
     return newErrors;
   };
 
@@ -60,7 +68,7 @@ export default function AddScientificTask() {
       const response = await axiosInstance.post(
         "/Missions/CreateScientificMission",
         formData,
-        { skipGlobalErrorHandler: true }
+        { skipGlobalErrorHandler: true },
       );
 
       if (response.status === 200 && response.data?.id) {
@@ -83,10 +91,14 @@ export default function AddScientificTask() {
 
   return (
     <ResponsiveLayoutProvider>
-      <div dir={isArabic ? "rtl" : "ltr"} className="p-4 sm:p-6 bg-white min-h-[calc(100vh-72px)]">
-
+      <div
+        dir={isArabic ? "rtl" : "ltr"}
+        className="p-4 sm:p-6 bg-white]"
+      >
         {/* العنوان خارج الفورم، على اليسار/اليمين */}
-        <h2 className={`text-2xl sm:text-3xl font-bold mb-8 inline-block text-start`}>
+        <h2
+          className={`text-2xl sm:text-3xl font-bold mb-8 inline-block text-start`}
+        >
           {t("addTask.title")}
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
@@ -157,7 +169,8 @@ export default function AddScientificTask() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block mb-2 text-lg font-medium">
-                      {t("fields.startDate")} <span className="text-[#b38e19]">*</span>
+                      {t("fields.startDate")}{" "}
+                      <span className="text-[#b38e19]">*</span>
                     </label>
                     <div className="relative">
                       <input
@@ -181,12 +194,17 @@ export default function AddScientificTask() {
                         ref={startDateRef}
                         className="absolute opacity-0"
                         onChange={(e) =>
-                          setFormData({ ...formData, startDate: e.target.value })
+                          setFormData({
+                            ...formData,
+                            startDate: e.target.value,
+                          })
                         }
                       />
                     </div>
                     {errors.startDate && (
-                      <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.startDate}
+                      </p>
                     )}
                   </div>
 
@@ -219,6 +237,11 @@ export default function AddScientificTask() {
                           setFormData({ ...formData, endDate: e.target.value })
                         }
                       />
+                      {errors.endDate && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.endDate}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>

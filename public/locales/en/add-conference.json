@@ -49,7 +49,7 @@
     "participationRequired": "Please select a participation role",
     "organizingRequired": "Please enter the organizer",
     "startDateRequired": "Please select a start date",
-    "startBeforeEnd": "Start date must be before end date",
+    "startBeforeEnd": "End date must be after the start date",
     "failedAdd": "Failed to add the conference, please try again",
     "loadLookups": "Failed to load lookup values"
   }

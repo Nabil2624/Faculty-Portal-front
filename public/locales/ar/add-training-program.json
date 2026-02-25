@@ -25,8 +25,8 @@
   "locationPlaceholder": "أدخل مكان الانعقاد",
   "save": "حفظ",
   "cancel": "إلغاء",
-  "external": "خارجية",
-  "internal": "داخلية",
+  "external": "محاضر",
+  "internal": "مستمع",
   "errors": {
     "programTypeRequired": "نوع البرنامج مطلوب",
     "participationTypeRequired": "نوع المشاركة مطلوب",

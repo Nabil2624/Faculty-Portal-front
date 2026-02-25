@@ -24,49 +24,50 @@ export default function TrainingPrograms() {
   // ============================
   // Fetch TRAINING PROGRAMS
   // ============================
-  const fetchPrograms = async (page = currentPage) => {
-    setLoading(true);
-    setError(null);
+ const fetchPrograms = async (page = currentPage) => {
+  setLoading(true);
+  setError(null);
 
-    try {
-      const response = await axiosInstance.get("/Missions/TrainingPrograms", {
-        params: { pageIndex: page, pageSize: requestedPageSize },
-        skipGlobalErrorHandler: true,
-      });
+  try {
+    const response = await axiosInstance.get("/Missions/TrainingPrograms", {
+      params: { pageIndex: page, pageSize: requestedPageSize },
+      skipGlobalErrorHandler: true,
+    });
 
-      const { data, totalCount } = response.data;
+    const { data, totalCount } = response.data;
 
-      const pages = Math.ceil(totalCount / requestedPageSize);
-      setTotalPages(pages);
+    const pages = Math.ceil(totalCount / requestedPageSize);
+    setTotalPages(pages);
 
-      if (page > pages && pages > 0) {
-        setCurrentPage(pages);
-      } else {
-        setPrograms(
-          (data || []).map((item) => ({
-            id: item.id,
-            type: item.type || "",
-            participationType: item.participationType || "",
-            trainingProgramName: item.trainingProgramName || "",
-            organizingAuthority: item.organizingAuthority || "",
-            venue: item.venue || "",
-            startDate: item.startDate || "",
-            endDate: item.endDate || "",
-            description: item.description || "",
-          }))
-        );
-      }
-    } catch (err) {
-      console.error("Failed to fetch training programs:", err);
-      setError(t("fetchError") || "Failed to fetch training programs");
-    } finally {
-      setLoading(false);
+    // لو الصفحة الحالية أكبر من آخر صفحة موجودة، نرجع للصفحة الأخيرة
+    const newPage = page > pages ? pages : page;
+    if (newPage !== page) {
+      setCurrentPage(newPage);
     }
-  };
 
-  useEffect(() => {
-    fetchPrograms(currentPage);
-  }, [currentPage, t]);
+    setPrograms(
+      (data || []).map((item) => ({
+        id: item.id,
+        type: item.type || "",
+        participationType: item.participationType || "",
+        trainingProgramName: item.trainingProgramName || "",
+        organizingAuthority: item.organizingAuthority || "",
+        venue: item.venue || "",
+        startDate: item.startDate || "",
+        endDate: item.endDate || "",
+        description: item.description || "",
+      }))
+    );
+  } catch (err) {
+    console.error("Failed to fetch training programs:", err);
+    setError(t("fetchError") || "Failed to fetch training programs");
+  } finally {
+    setLoading(false);
+  }
+};
+useEffect(() => {
+  if (currentPage > 0) fetchPrograms(currentPage);
+}, [currentPage, t]);
 
   // ============================
   // Delete Program
@@ -78,32 +79,34 @@ export default function TrainingPrograms() {
 
   
 
-  const confirmDelete = async () => {
-    if (!selectedItem?.id) return;
+const confirmDelete = async () => {
+  if (!selectedItem?.id) return;
 
-    try {
-      setLoading(true);
-      await axiosInstance.delete(
-        `/Missions/DeleteTrainingProgram/${selectedItem.id}`,
-        { skipGlobalErrorHandler: true }
-      );
+  try {
+    setLoading(true);
+    await axiosInstance.delete(
+      `/Missions/DeleteTrainingProgram/${selectedItem.id}`,
+      { skipGlobalErrorHandler: true }
+    );
 
-      setPrograms((prev) => prev.filter((p) => p.id !== selectedItem.id));
-      setShowModal(false);
+  
+    const newPrograms = programs.filter((p) => p.id !== selectedItem.id);
+    setPrograms(newPrograms);
+    setShowModal(false);
 
-      if (programs.length === 1 && currentPage > 1) {
-        setCurrentPage((prev) => prev - 1);
-      } else {
-        fetchPrograms(currentPage);
-      }
-    } catch (err) {
-      console.error("Delete failed:", err);
-      setError(t("deleteError") || "Failed to delete program");
-    } finally {
-      setLoading(false);
+  
+    if (newPrograms.length === 0 && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    } else {
+      fetchPrograms(currentPage);
     }
-  };
-
+  } catch (err) {
+    console.error("Delete failed:", err);
+    setError(t("deleteError") || "Failed to delete program");
+  } finally {
+    setLoading(false);
+  }
+};
   if (loading) return <LoadingSpinner />;
 
   return (

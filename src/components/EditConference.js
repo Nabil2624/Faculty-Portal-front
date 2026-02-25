@@ -29,12 +29,12 @@ export default function EditConference() {
     conferenceName: "",
     participationRole: "",
     organizingBody: "",
-    website: "",
-    venue: "",
-    description: "",
+    website: null,
+    venue: null,
+    description: null,
     attachments: null,
-    startDate: "",
-    endDate: "",
+    startDate: null,
+    endDate: null,
   });
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function EditConference() {
       try {
         const rolesResp = await axiosInstance.get(
           "/LookUpItems/SeminarParticipationTypes",
-          { skipGlobalErrorHandler: true }
+          { skipGlobalErrorHandler: true },
         );
 
         setParticipationRoles(rolesResp.data ?? []);
@@ -62,17 +62,30 @@ export default function EditConference() {
   useEffect(() => {
     if (existingData) {
       setFormData({
-        type: existingData.type || "",
-        localOrInternational: existingData.localOrInternational || "",
-        conferenceName: existingData.conferenceName || "",
-        participationRole: existingData.participationRole || "",
-        organizingBody: existingData.organizingBody || "",
-        website: existingData.website || "",
-       venue: existingData.venue || "",
+        type: existingData.type?.toLowerCase() || "",
 
-        description: existingData.description || "",
+        localOrInternational:
+          existingData.localOrInternational?.toLowerCase() || "",
+
+        conferenceName: existingData.missionName || "",
+
+        participationRole:
+          existingData.roleOfParticipation?.id ||
+          existingData.participationRole ||
+          "",
+
+        organizingBody: existingData.organizingAuthority || "",
+
+        website: existingData.website || "",
+
+        venue: existingData.venue || "",
+
+        description: existingData.notes || "",
+
         attachments: existingData.attachments || null,
+
         startDate: existingData.startDate || "",
+
         endDate: existingData.endDate || "",
       });
     }
@@ -93,43 +106,49 @@ export default function EditConference() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!existingData?.id) return;
+    e.preventDefault();
+    if (!existingData?.id) return;
 
-  setLoading(true);
-  setError("");
+    if (formData.startDate && formData.endDate) {
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);
 
-  try {
-    const payload = {
-      type: formData.type === "conference" ? "Conference" : "Seminar",
-      localOrInternational:
-        formData.localOrInternational === "local"
-          ? "Local"
-          : "International",
-      name: formData.conferenceName,
-      roleOfParticipationId: formData.participationRole,
-      organizingAuthority: formData.organizingBody,
-      website: formData.website,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      venue: formData.venue,
-      notes: formData.description,
-    };
+      if (end < start) {
+        setError(t("errors.startBeforeEnd"));
+        return; // prevents end date before start date
+      }
+    }
+    setLoading(true);
+    setError("");
 
-    await axiosInstance.put(
-      `/Missions/UpdateConferncesOrSeminars/${existingData.id}`,
-      payload,
-      { skipGlobalErrorHandler: true }
-    );
+    try {
+      const payload = {
+        type: formData.type === "conference" ? 2 : 1,
+        localOrInternational: formData.localOrInternational === "local" ? 1 : 2,
+        name: formData.conferenceName,
+        roleOfParticipationId: formData.participationRole,
+        organizingAuthority: formData.organizingBody,
+        website: formData.website,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        venue: formData.venue,
+        notes: formData.description,
+      };
 
-    navigate("/seminars-and-conferences");
-  } catch (err) {
-    console.error("Update failed:", err);
-    setError("Failed to update conference");
-  } finally {
-    setLoading(false);
-  }
-};
+      await axiosInstance.put(
+        `/Missions/UpdateConferncesOrSeminars/${existingData.id}`,
+        payload,
+        { skipGlobalErrorHandler: true },
+      );
+
+      navigate("/seminars-and-conferences");
+    } catch (err) {
+      console.error("Update failed:", err);
+      setError("Failed to update conference");
+    } finally {
+      setLoading(false);
+    }
+  };
   const inputBase =
     "w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 bg-[#E2E2E2] outline-none transition-all duration-150 ease-linear text-[12px]";
   const focusStyle =
@@ -157,7 +176,7 @@ export default function EditConference() {
               <div className="flex gap-8">
                 <div>
                   <label className="block mb-2 text-lg font-medium">
-                    {t("type")}
+                    {t("fields.type")}
                   </label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2">
@@ -167,8 +186,9 @@ export default function EditConference() {
                         value="seminar"
                         checked={formData.type === "seminar"}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
-                      {t("seminar")}
+                      {t("fields.seminar")}
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -177,15 +197,16 @@ export default function EditConference() {
                         value="conference"
                         checked={formData.type === "conference"}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
-                      {t("conference")}
+                      {t("fields.conference")}
                     </label>
                   </div>
                 </div>
 
                 <div>
                   <label className="block mb-2 text-lg font-medium">
-                    {t("localOrInternational")}
+                    {t("fields.localOrInternational")}
                   </label>
                   <div className="flex gap-4">
                     <label className="flex items-center gap-2">
@@ -195,8 +216,9 @@ export default function EditConference() {
                         value="local"
                         checked={formData.localOrInternational === "local"}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
-                      {t("local")}
+                      {t("fields.local")}
                     </label>
                     <label className="flex items-center gap-2">
                       <input
@@ -207,8 +229,9 @@ export default function EditConference() {
                           formData.localOrInternational === "international"
                         }
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
-                      {t("international")}
+                      {t("fields.international")}
                     </label>
                   </div>
                 </div>
@@ -217,13 +240,13 @@ export default function EditConference() {
               {/* Conference Name */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("conferenceName")}{" "}
+                  {t("fields.conferenceName")}
                   <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
                   name="conferenceName"
-                  placeholder={t("conferenceNamePlaceholder")}
+                  placeholder={t("placeholders.conferenceName")}
                   className={`${inputBase} ${focusStyle}`}
                   value={formData.conferenceName}
                   onChange={handleChange}
@@ -233,7 +256,7 @@ export default function EditConference() {
               {/* Participation Role */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("participationRole")}{" "}
+                  {t("fields.participationRole")}
                   <span className="text-[#b38e19]">*</span>
                 </label>
                 <div className="relative flex items-center">
@@ -243,7 +266,7 @@ export default function EditConference() {
                     value={formData.participationRole}
                     onChange={handleChange}
                   >
-                    <option value="">{t("selectRole")}</option>
+                    <option value="">{t("fields.selectRole")}</option>
                     {participationRoles.map((role) => (
                       <option key={role.id} value={role.id}>
                         {isArabic ? role.valueAr : role.valueEn}
@@ -262,13 +285,13 @@ export default function EditConference() {
               {/* Organizing Body */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("organizingBody")}{" "}
+                  {t("fields.organizingBody")}
                   <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
                   name="organizingBody"
-                  placeholder={t("organizingBodyPlaceholder")}
+                  placeholder={t("placeholders.organizingBody")}
                   className={`${inputBase} ${focusStyle}`}
                   value={formData.organizingBody}
                   onChange={handleChange}
@@ -278,12 +301,12 @@ export default function EditConference() {
               {/* Website */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("website")}
+                  {t("fields.website")}
                 </label>
                 <input
                   type="text"
                   name="website"
-                  placeholder={t("websitePlaceholder")}
+                  placeholder={t("placeholders.website")}
                   className={`${inputBase} ${focusStyle}`}
                   value={formData.website}
                   onChange={handleChange}
@@ -297,13 +320,13 @@ export default function EditConference() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-2 text-lg font-medium">
-                    {t("startDate")}
+                    {t("fields.startDate")}
                   </label>
                   <div className="relative">
                     <input
                       type="text"
                       value={formData.startDate}
-                      placeholder={t("startDate")}
+                      placeholder={t("placeholders.startDate")}
                       readOnly
                       className={`${inputBase} ${focusStyle}`}
                       onFocus={() => openDatePicker(startDateRef)}
@@ -329,13 +352,13 @@ export default function EditConference() {
 
                 <div>
                   <label className="block mb-2 text-lg font-medium">
-                    {t("endDate")}
+                    {t("fields.endDate")}
                   </label>
                   <div className="relative">
                     <input
                       type="text"
                       value={formData.endDate}
-                      placeholder={t("endDate")}
+                      placeholder={t("placeholders.endDate")}
                       readOnly
                       className={`${inputBase} ${focusStyle}`}
                       onFocus={() => openDatePicker(endDateRef)}
@@ -356,35 +379,39 @@ export default function EditConference() {
                         setFormData({ ...formData, endDate: e.target.value })
                       }
                     />
+                   
                   </div>
+                   {error && (
+                      <div className="text-red-600 mb-4 text-sm">{error}</div>
+                    )}
                 </div>
               </div>
 
               {/* Country + City */}
-             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-  <div>
-    <label className="block mb-2 text-lg font-medium">
-      {t("venue")}
-    </label>
-    <input
-      type="text"
-      name="venue"
-      placeholder={t("venuePlaceholder")}
-      className={`${inputBase} ${focusStyle}`}
-      value={formData.venue}
-      onChange={handleChange}
-    />
-  </div>
-</div>
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block mb-2 text-lg font-medium">
+                    {t("fields.city")}
+                  </label>
+                  <input
+                    type="text"
+                    name="venue"
+                    placeholder={t("placeholders.city")}
+                    className={`${inputBase} ${focusStyle}`}
+                    value={formData.venue}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
 
               {/* Description */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("description")}
+                  {t("fields.description")}
                 </label>
                 <textarea
                   name="description"
-                  placeholder={t("descriptionPlaceholder")}
+                  placeholder={t("placeholders.description")}
                   className={`${inputBase} ${focusStyle} h-32 resize-none`}
                   value={formData.description}
                   onChange={handleChange}
@@ -394,7 +421,7 @@ export default function EditConference() {
               {/* Attachments */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("attachments")}
+                  {t("fields.attachments")}
                 </label>
                 <div className="flex items-start gap-2 mb-2">
                   <Info size={17} className="text-gray-600 mt-1" />
@@ -420,7 +447,7 @@ export default function EditConference() {
                     }
                     className="bg-[#19355A] text-white px-9 py-1 rounded-md hover:bg-[#162d4a] transition-colors"
                   >
-                    {t("chooseFile")}
+                    {t("fields.chooseFile")}
                   </button>
 
                   {formData.attachments && (
@@ -431,36 +458,36 @@ export default function EditConference() {
                 </div>
               </div>
             </div>
-
-            {/* Buttons */}
-            <div
-              className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
-                isArabic ? "left-[53px]" : "right-[53px]"
-              } bottom-[28px]`}
-            >
-              {/* Save Button */}
-              <button
-                type="submit"
-                onClick={() => navigate("/seminars-and-conferences")}
-                className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("save")}
-              </button>
-
-              {/* Cancel Button */}
-              <button
-                type="button"
-                onClick={() => navigate("/seminars-and-conferences")}
-                className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
-                  isArabic ? "cairo" : "roboto"
-                } text-sm`}
-              >
-                {t("cancel")}
-              </button>
-            </div>
           </form>
+
+          {/* Buttons */}
+          <div
+            className={`flex flex-col sm:flex-row gap-3 mt-6 sm:mt-10 justify-end max-w-6xl absolute ${
+              isArabic ? "left-[53px]" : "right-[53px]"
+            } bottom-[28px]`}
+          >
+            {/* Save Button */}
+            <button
+              type="submit"
+              onClick={handleSubmit}
+              className={`bg-[#b38e19] text-white sm:w-24 h-10 rounded-md cursor-pointer font-${
+                isArabic ? "cairo" : "roboto"
+              } text-sm`}
+            >
+              {t("save")}
+            </button>
+
+            {/* Cancel Button */}
+            <button
+              type="button"
+              onClick={() => navigate("/seminars-and-conferences")}
+              className={`bg-gray-300 text-black sm:w-24 h-10 rounded-md cursor-pointer font-${
+                isArabic ? "cairo" : "roboto"
+              } text-sm`}
+            >
+              {t("cancel")}
+            </button>
+          </div>
         </div>
       </div>
     </Layout>
