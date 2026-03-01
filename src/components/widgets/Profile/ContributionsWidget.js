@@ -27,7 +27,7 @@ export default function ContributionsWidget({ count = 12, isArabic }) {
 
       {/* Link */}
       <a
-        href="/dummy-page"
+        href="/university-contribution"
         className="text-gray-500 text-[clamp(12px,1vw,35px)] hover:underline"
       >
         {t("View Details")}

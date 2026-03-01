@@ -117,7 +117,7 @@ export default function LoginPage() {
   
 
       if (userType === "Faculty Member") {
-        navigate("/personal");
+        navigate("/profile");
       } else {
         navigate(redirectTo);
       }

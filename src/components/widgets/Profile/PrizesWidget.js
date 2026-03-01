@@ -1,7 +1,7 @@
 import { Award } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-export default function PrizesWidget({ count = 8, isArabic }) {
+export default function PrizesWidget({ count = 0, isArabic }) {
   const { t } = useTranslation("dashboard");
 
   return (
@@ -27,7 +27,7 @@ export default function PrizesWidget({ count = 8, isArabic }) {
 
       {/* Link */}
       <a
-        href="/dummy-projects"
+        href="/prizes-and-rewards"
         className="text-gray-500 text-[clamp(12px,1vw,35px)] hover:underline"
       >
         {t("View Details")}

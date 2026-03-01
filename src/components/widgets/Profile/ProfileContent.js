@@ -1,11 +1,15 @@
-import { FaFacebookF, FaGithub, FaLinkedinIn } from "react-icons/fa";
+import { FaFacebookF, FaGithub, FaLinkedinIn, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+
+
 const iconMap = {
   linkedin: FaLinkedinIn,
   github: FaGithub,
   facebook: FaFacebookF,
+  instagram: FaInstagram,
+  x: FaTwitter, // هنا اختار أيقونة مناسبة لـ X (Twitter سابقًا)
+  youtube: FaYoutube,
 };
-
 export default function ProfileContent({
   fullName,
   college,

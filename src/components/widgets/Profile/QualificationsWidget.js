@@ -4,6 +4,9 @@ export default function QualificationsWidget({ data = [] }) {
   const { t, i18n } = useTranslation("dashboard");
   const isArabic = i18n.language === "ar";
 
+  const hasData = Array.isArray(data) && data.length > 0;
+  const maxItems = 3;
+
   function formatDate(dateString) {
     if (!dateString) return isArabic ? "الآن" : "Present";
 
@@ -32,62 +35,87 @@ export default function QualificationsWidget({ data = [] }) {
         </a>
       </div>
 
-      {/* Cards */}
-      <div className="flex flex-col gap-[clamp(8px,0.5vw,25px)] overflow-auto">
-        {data.slice(0, 2).map((item, index) => (
-          <div
-            key={index}
-            className={`relative
-      bg-gray-200
-      rounded-[clamp(12px,1.4vw,18px)]
-      shadow-sm
-      px-[clamp(0.75rem,0.5vw,1.25rem)]
-      py-[clamp(0.75rem,0.8vw,1.25rem)]
-      border-[clamp(2px,0.35vw,4px)]
-      border-[#19355A]
-      ${
-        isArabic
-          ? "border-r-[clamp(12px,2vw,20px)]"
-          : "border-l-[clamp(12px,2vw,20px)]"
-      }
-    `}
+      {/* Content */}
+      {!hasData ? (
+        <div className="flex flex-col items-center justify-center flex-1 text-center">
+          <p
+            className="
+              text-[#19355A]
+              font-bold
+              text-[clamp(14px,1.2vw,20px)]
+              mb-[clamp(6px,0.6vw,12px)]
+            "
           >
-            {/* Title */}
-            <h4
-              className="text-[#19355A] font-bold
-      text-[clamp(13px,1.1vw,20px)]
-      mb-[clamp(4px,0.2vw,8px)]
-      whitespace-nowrap
-      overflow-hidden
-      text-ellipsis"
-            >
-              {item.title}
-            </h4>
+            {t("noQualificationsLine1")}
+          </p>
 
-            {/* Organization */}
-            <p
-              className="text-black
-      text-[clamp(12px,1vw,18px)]
-      whitespace-nowrap
-      overflow-hidden
-      text-ellipsis"
+          <p
+            className="
+              text-[#b38e19]
+              font-semibold
+              text-[clamp(13px,1.1vw,18px)]
+            "
+          >
+            {t("noQualificationsLine2")}
+          </p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-[clamp(8px,0.5vw,25px)] overflow-auto">
+          {data.slice(0, maxItems).map((item, index) => (
+            <div
+              key={index}
+              className={`relative
+                bg-gray-200
+                rounded-[clamp(12px,1.4vw,18px)]
+                shadow-sm
+                px-[clamp(0.75rem,0.5vw,1.25rem)]
+                py-[clamp(0.75rem,0.8vw,1.25rem)]
+                border-[clamp(2px,0.35vw,4px)]
+                border-[#19355A]
+                ${
+                  isArabic
+                    ? "border-r-[clamp(12px,2vw,20px)]"
+                    : "border-l-[clamp(12px,2vw,20px)]"
+                }
+              `}
             >
-              {item.organization}
-            </p>
+              {/* Title */}
+              <h4
+                className="text-[#19355A] font-bold
+                  text-[clamp(13px,1.1vw,20px)]
+                  mb-[clamp(4px,0.2vw,8px)]
+                  whitespace-nowrap
+                  overflow-hidden
+                  text-ellipsis"
+              >
+                {item.title}
+              </h4>
 
-            {/* Date */}
-            <p
-              className="text-gray-500
-      text-[clamp(11px,0.9vw,16px)]
-      mt-[clamp(4px,0.4vw,8px)]"
-            >
+              {/* Organization */}
+              <p
+                className="text-black
+                  text-[clamp(12px,1vw,18px)]
+                  whitespace-nowrap
+                  overflow-hidden
+                  text-ellipsis"
+              >
+                {item.organization}
+              </p>
+
+              {/* Date */}
+              <p
+                className="text-gray-500
+                  text-[clamp(11px,0.9vw,16px)]
+                  mt-[clamp(4px,0.4vw,8px)]"
+              >
                 {formatDate(item.startDate)}{" "}
-  {isArabic ? "حتى" : "to"}{" "}
-  {formatDate(item.endDate)}
-            </p>
-          </div>
-        ))}
-      </div>
+                {isArabic ? "حتى" : "to"}{" "}
+                {formatDate(item.endDate)}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

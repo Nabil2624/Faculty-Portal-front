@@ -16,5 +16,13 @@
   "add": "Add",
   "save": "Save",
   "close": "Close",
-  "WriteyourIntro":"Write your introduction"
+  "WriteyourIntro": "Write your introduction",
+  "addSkillsHint": "Please add the skills that highlight your academic and technical expertise",
+  "noExperiencesLine1": "No experience data is registered in the system",
+  "noExperiencesLine2": "Please add experience details",
+  "noQualificationsLine1": "No academic qualifications are registered in the system",
+  "noQualificationsLine2": "Please add academic qualification details",
+  "errors": {
+    "general": "Something went wrong. Please try again."
+  }
 }

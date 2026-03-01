@@ -27,7 +27,7 @@ export default function PublicationsAndPatentsWidget({ count = 6, isArabic }) {
 
       {/* Link */}
       <a
-        href="/dummy-projects"
+        href="/scientific-writing"
         className="text-gray-500 text-[clamp(12px,1vw,35px)] hover:underline"
       >
         {t("View Details")}

@@ -27,7 +27,7 @@ export default function ProjectsWidget({ count = 8, isArabic }) {
 
       {/* Link */}
       <a
-        href="/dummy-projects"
+        href="/projects"
         className="text-gray-500 text-[clamp(12px,1vw,35px)] hover:underline"
       >
         {t("View Details")}
