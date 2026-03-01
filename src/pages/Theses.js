@@ -52,13 +52,7 @@ export default function Theses() {
   };
 
 
-  if (error) {
-    return (
-      <div className="text-center text-red-500 mt-10">
-        {t("errors.loadFailed")}
-      </div>
-    );
-  }
+
 
   return (
     <ResponsiveLayoutProvider>
@@ -74,46 +68,54 @@ export default function Theses() {
           isArabic
         />
 
+{/* رسالة الخطأ */}
+  {/* {error && (
+    <div className="text-center text-red-500 mt-4">
+      {t("fetchError")}
+    </div>
+  )} */}
         <div className="flex-1">
-          {items.length ? (
-            <>
-              <div className="grid grid-cols-1 gap-6 max-w-5xl">
-                {items.map((item) => (
-                  <ThesesCard
-                    key={item.id}
-                    item={item}
-                    isArabic={isArabic}
-                    onClick={(item) => navigate(`/theses-details/${item.id}`)}
-                    onDelete={(item) => {
-                      setSelectedItem(item);
-                      setShowDelete(true);
-                    }}
-                    onEdit={(item) =>
-                      navigate("/edit-thesis", {
-                        state: { thesis: item },
-                      })
-                    }
-                  />
-                ))}
-              </div>
+  {error ? (
+    <div className="text-center text-red-500 mt-4 text-lg">
+      {t("fetchError")}
+    </div>
+  ) : items.length ? (
+    <div className="grid grid-cols-1 gap-6 max-w-5xl">
+      {items.map((item) => (
+        <ThesesCard
+          key={item.id}
+          item={item}
+          isArabic={isArabic}
+          onClick={(item) => navigate(`/theses-details/${item.id}`)}
+          onDelete={(item) => {
+            setSelectedItem(item);
+            setShowDelete(true);
+          }}
+          onEdit={(item) =>
+            navigate("/edit-thesis", {
+              state: { thesis: item },
+            })
+          }
+        />
+      ))}
+    </div>
+  ) : (
+    <div className="p-10 text-center text-gray-500 text-xl">
+      {t("empty")}
+    </div>
+  )}
 
-              <div className="fixed bottom-12 left-0 w-full flex justify-center z-50">
-                <Pagination
-                  currentPage={page}
-                  totalPages={totalPages}
-                  onPrev={() => setPage((p) => Math.max(1, p - 1))}
-                  onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  t={t}
-                  isArabic={isArabic}
-                />
-              </div>
-            </>
-          ) : (
-            <div className="p-10 text-center text-gray-500 text-xl">
-              {t("empty")}
-            </div>
-          )}
-        </div>
+  <div className="fixed bottom-12 left-0 w-full flex justify-center z-50">
+    <Pagination
+      currentPage={page}
+      totalPages={totalPages}
+      onPrev={() => setPage((p) => Math.max(1, p - 1))}
+      onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
+      t={t}
+      isArabic={isArabic}
+    />
+  </div>
+</div>
 
         {showDelete && (
           <DeleteThesisModal

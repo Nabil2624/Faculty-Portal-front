@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import useThesisDetails from "../hooks/useThesisDetails";
+
 import useBreakpoint from "../hooks/useBreakpoint";
 import ThesesDetailsMobile from "../components/widgets/ThesesDetails/ThesesDetailsMobile";
 import ThesesDetailsTablet from "../components/widgets/ThesesDetails/ThesesDetailsTablet";
@@ -42,7 +42,7 @@ export default function ThesesDetails() {
     attachments: thesis.attachments?.map((a) => a.fileName) || [],
     derivedResearches: thesis.researches?.map((r) => r.title) || [],
     committeeMembers:
-      thesis.supervisors?.map((s) => ({
+      thesis.comitteeMembers?.map((s) => ({
         name: s.name,
         role: (() => {
           const roleMap = {

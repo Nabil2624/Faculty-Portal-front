@@ -9,6 +9,7 @@ import SeminarModal from "../components/widgets/SeminarAndConferences/SeminarMod
 import { useNavigate } from "react-router-dom";
 import useSeminarParticipationType from "../hooks/useSeminarParticipationType";
 
+
 export default function SeminarsAndConferences() {
   const { t, i18n } = useTranslation("SeminarsAndConferences");
   const isArabic = i18n.language === "ar";
@@ -149,7 +150,11 @@ export default function SeminarsAndConferences() {
                   key={item.id}
                   item={item}
                   isArabic={isArabic}
-                  onEdit={() => navigate("/edit-conference")}
+                  onEdit={() =>
+                    navigate("/edit-conference", {
+                      state: { existingData: item },
+                    })
+                  }
                   onDelete={() => {
                     setSelectedItem(item);
                     setShowDelete(true);

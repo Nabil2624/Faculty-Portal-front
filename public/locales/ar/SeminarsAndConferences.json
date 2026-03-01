@@ -10,5 +10,20 @@
   "of": "من",
   "areYouSureDelete": "هل أنت متأكد أنك تريد حذف",
   "deleteError": "حدث خطأ في محاولة حذف ",
-  "organizingAuthority": "الجهة المنظمة"
+  "organizingAuthority": "الجهة المنظمة",
+  "local": "محلي",
+  "international": "دولي",
+  "location": "المكان",
+  "startDate": "تاريخ البداية",
+  "endDate": "تاريخ النهاية",
+  "present": "حتى الآن",
+  "type": "النوع",
+    "Seminar": "ندوة",
+  "Conference": "مؤتمر",
+  "scope": "دولي/محلي",
+  "participationRole": "دور المشاركة",
+  "website": "الموقع الإلكتروني",
+  "attachments": "المرفقات"
+
+  
 }

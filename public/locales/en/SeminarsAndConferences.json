@@ -10,5 +10,19 @@
   "previous": "Previous",
   "next": "Next",
   "page": "Page",
-  "of": "of"
+  "of": "of",
+  "local": "Local",
+  "international": "International",
+  "location": "Location",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "present": "Present",
+  "type": "Type",
+  "Seminar": "Seminar",
+  "Conference": "Conference",
+  "scope": "Scope",
+  "participationRole": "Participation Role",
+  "website": "Website",
+  "attachments": "Attachments"
+  
 }

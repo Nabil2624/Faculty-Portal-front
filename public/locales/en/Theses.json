@@ -1,6 +1,6 @@
 {
   "title": "Master's and PhD Theses",
-  "add": "Add Thesis",
+  "add": "Add",
   "empty": "No theses available",
   "fetchError": "Failed to load theses",
   "areYouSureDelete": "Are you sure you want to delete this thesis?",
@@ -12,5 +12,5 @@
   "next": "Next",
   "page": "page",
   "of": "of",
-  "registrationDate": "Registrstion Date"
+  "registrationDate": "Registration Date"
 }

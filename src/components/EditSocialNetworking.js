@@ -18,7 +18,7 @@ export default function EditSocialNetworking() {
   // ----------------------------------------------------------
   const simplifyURL = (url) => {
     if (!url || url.trim() === "")
-      return isArabic ? "لا يوجد" : "none";
+       return "";
 
     const lower = url.toLowerCase();
 
@@ -157,7 +157,7 @@ export default function EditSocialNetworking() {
 
                   {/* INPUT (shows nice domain only) */}
                   <input
-                    value={simplifyURL(value)}
+                    value={value || ""}
                     onChange={(e) => handleChange(item.key, e.target.value)}
                     className="bg-gray-200 text-black flex-1 px-2 outline-none border-0 text-center"
                   />

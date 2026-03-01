@@ -90,17 +90,48 @@ export default function SeminarDetailsModal({ item, onClose }) {
         "
       >
         <div className="flex justify-between gap-3">
-          <span className="font-medium">{t("location")}</span>
+          <span className="font-medium">{t("type")}</span>
+          <span>{t(item.type)}</span>
+        </div>
+
+        <div className="flex justify-between gap-3">
+          <span className="font-medium">{t("scope")}</span>
+          <span>{t(item.localOrInternational?.toLowerCase())}</span>
+        </div>
+
+        <div className="flex justify-between gap-3">
+          <span className="font-medium">{t("participationRole")}</span>
           <span>
-            {item.venue}
+            {item.roleOfParticipation
+              ? isArabic
+                ? item.roleOfParticipation.valueAr
+                : item.roleOfParticipation.valueEn
+              : "-"}
           </span>
+        </div>
+
+        <div className="flex justify-between gap-3">
+          <span className="font-medium">{t("location")}</span>
+          <span>{item.venue}</span>
+        </div>
+
+        <div className="flex justify-between gap-3">
+          <span className="font-medium">{t("website")}</span>
+          <a href={item.website} target="_blank" rel="noreferrer">
+            {item.website}
+          </a>
         </div>
         <div className="flex justify-between gap-3">
           <span className="font-medium">{t("organizingAuthority")}</span>
-          <span>
-            {item.organizingAuthority}
-          </span>
+          <span>{item.organizingAuthority}</span>
         </div>
+
+        {item.attachments && (
+          <div className="flex justify-between gap-3">
+            <span className="font-medium">{t("attachments")}</span>
+            <span>{item.attachments}</span>
+          </div>
+        )}
         {/*  Date */}
         <div className="flex justify-between gap-3">
           <span className="font-medium">{t("startDate")}</span>

@@ -137,12 +137,6 @@ export default function SupervisionThesis() {
     }
   };
 
-  if (error) {
-    return (
-      <div className="text-center text-red-500 mt-10">{t("fetchError")}</div>
-    );
-  }
-
   return (
     <ResponsiveLayoutProvider>
       <div
@@ -159,7 +153,10 @@ export default function SupervisionThesis() {
           isArabic={isArabic}
           onFilterClick={() => setShowFilterModal(true)}
         />
-
+        {/* Error Massage*/}
+        {error && (
+          <div className="text-center text-red-500 mt-4">{t("fetchError")}</div>
+        )}
         <div className="flex-1">
           {items.length ? (
             <div className="grid grid-cols-1 gap-6 max-w-5xl">
@@ -214,27 +211,14 @@ export default function SupervisionThesis() {
           )}
         </div>
 
-        {/* doesnt hide prev and next*/}
-
-        {/* <Pagination
+        <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPrev={() => setCurrentPage((p) => p - 1)}
           onNext={() => setCurrentPage((p) => p + 1)}
           t={t}
           isArabic={isArabic}
-        /> */}
-
-        {items.length > 0 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => p - 1)}
-            onNext={() => setCurrentPage((p) => p + 1)}
-            t={t}
-            isArabic={isArabic}
-          />
-        )}
+        />
 
         {showDelete && (
           <DeleteSupervisionModal

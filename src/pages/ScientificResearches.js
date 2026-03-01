@@ -165,7 +165,9 @@ export default function ScientificResearches() {
           onFilterClick={() => setShowFilterModal(true)}
         />
 
-        {error && <div className="text-red-500 text-center mb-6">{error}</div>}
+        {error && (
+          <div className="text-black-500 text-center mb-6">{error}</div>
+        )}
 
         {!loading && researches.length === 0 && !error && (
           <div className="p-10 text-center text-gray-500 text-xl">
@@ -175,7 +177,14 @@ export default function ScientificResearches() {
 
         {/* Cards */}
         {researches.length > 0 && (
-          <div className="grid grid-cols-1 gap-6 max-w-5xl">
+          <div
+            className=" grid 
+    grid-cols-1 
+    gap-[clamp(1rem,2vw,2rem)] 
+   
+    max-w-[clamp(700px,60vw,3200px)]
+    "
+          >
             {researches.map((item) => (
               <ScientificResearchCard
                 key={item.id}

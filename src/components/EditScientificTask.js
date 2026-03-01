@@ -57,7 +57,7 @@ export default function EditScientificTask() {
     if (!countryOrCity) newErrors.countryCity = t("errors.countryCityRequired");
     if (!startDate) newErrors.startDate = t("errors.startDateRequired");
     if (startDate && endDate && new Date(startDate) > new Date(endDate))
-      newErrors.endDate = t("errors.startBeforeEnd");
+      newErrors.endDate = t("end_date_before_start");
 
     setError(newErrors);
     return Object.keys(newErrors).length === 0;

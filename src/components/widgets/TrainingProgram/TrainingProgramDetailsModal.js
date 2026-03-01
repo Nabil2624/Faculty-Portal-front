@@ -92,14 +92,14 @@ export default function TrainingProgramDetailsModal({ item, onClose }) {
         {/* Type Of Contribution */}
         <div className="flex justify-between gap-3">
           <span className="font-medium">{t("type")}</span>
-          <span className="text-right break-words">{item.type}</span>
+          <span className="text-right break-words">{t(item.type)}</span>
         </div>
 
 
         {/*  Date Of Contribution */}
         <div className="flex justify-between gap-3">
           <span className="font-medium">{t("participationType")}</span>
-          <span>{item.participationType}</span>
+          <span>{t(item.participationType)}</span>
         </div>
         <div className="flex justify-between gap-3">
           <span className="font-medium">{t("organizer")}</span>

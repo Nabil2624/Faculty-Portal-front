@@ -20,8 +20,8 @@ export default function AddConference() {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [typeValue, setTypeValue] = useState("");
-  const [localityValue, setLocalityValue] = useState("");
+  const [typeValue, setTypeValue] = useState("Conference");
+  const [localityValue, setLocalityValue] = useState("Local");
   const [conferenceName, setConferenceName] = useState("");
   const [participationRole, setParticipationRole] = useState("");
   const [organizingBody, setOrganizingBody] = useState("");
@@ -58,7 +58,7 @@ export default function AddConference() {
         setLoading(true);
         const rolesRes = await axiosInstance.get(
           "/LookUpItems/SeminarParticipationTypes",
-          { skipGlobalErrorHandler: true }
+          { skipGlobalErrorHandler: true },
         );
         setRoles(rolesRes.data || []);
       } catch (error) {
@@ -84,11 +84,14 @@ export default function AddConference() {
       newErrors.participationRole = t("errors.participationRequired");
     if (!organizingBody)
       newErrors.organizingBody = t("errors.organizingRequired");
-    if (!startDate) newErrors.startDate = t("errors.startDateRequired");
+
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-      if (start > end) newErrors.endDate = t("errors.startBeforeEnd");
+
+      if (end < start) {
+        newErrors.endDate = t("errors.startBeforeEnd");
+      }
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -113,7 +116,7 @@ export default function AddConference() {
         endDate,
         venue: city,
         notes: description,
-       // facultyMemberId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // replace with actual member id
+        // facultyMemberId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // replace with actual member id
       };
 
       await axiosInstance.post("/Missions/CreateConfernceOrSeminar", payload, {

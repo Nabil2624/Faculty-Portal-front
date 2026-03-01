@@ -5,13 +5,10 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
 
-
 export default function EditContactInfo() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation("contactinfo");
   const isArabic = i18n.language === "ar";
-
-  const EMPTY_TEXT = isArabic ? "لا يوجد" : "none";
 
   const [contactData, setContactData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,7 +22,7 @@ export default function EditContactInfo() {
     try {
       const response = await axiosInstance.get(
         "/FacultyMemberData/ContactData",
-        { skipGlobalErrorHandler: true }
+        { skipGlobalErrorHandler: true },
       );
 
       setContactData(response.data || {});
@@ -47,7 +44,7 @@ export default function EditContactInfo() {
     fetchContactData();
   }, []);
 
-    if (loading) return <LoadingSpinner />;
+  if (loading) return <LoadingSpinner />;
 
   // ----------------------------------------------------------
   // Handle input changes
@@ -62,30 +59,23 @@ export default function EditContactInfo() {
   // ----------------------------------------------------------
   // Save (PUT)
   // ----------------------------------------------------------
-  const handleSave = async () => {
-    try {
-      // convert placeholders → empty string
-      const clean = {};
-      Object.keys(contactData).forEach((key) => {
-        clean[key] =
-          contactData[key] === EMPTY_TEXT ? "" : contactData[key];
-      });
+const handleSave = async () => {
+  try {
+    await axiosInstance.put(
+      "/FacultyMemberData/UpdateContactData",
+      contactData,
+      { skipGlobalErrorHandler: true }
+    );
 
-      await axiosInstance.put(
-        "/FacultyMemberData/UpdateContactData",
-        clean,
-        { skipGlobalErrorHandler: true }
-      );
+    navigate("/contact-info");
+  } catch (err) {
+    console.error("Error updating contact info:", err);
 
-      navigate("/contact-info");
-    } catch (err) {
-      console.error("Error updating contact info:", err);
-
-      if (err.response?.status === 401) {
-        navigate("/login");
-      }
+    if (err.response?.status === 401) {
+      navigate("/login");
     }
-  };
+  }
+};
 
   // ----------------------------------------------------------
   // Info structure (UNCHANGED)
@@ -136,11 +126,6 @@ export default function EditContactInfo() {
         <div className="flex justify-center items-center w-full">
           <div className="grid grid-cols-3 gap-7 max-w-[1250px] w-full">
             {contactInfo.map((item, index) => {
-              const displayValue =
-                contactData[item.key] && contactData[item.key] !== ""
-                  ? contactData[item.key]
-                  : EMPTY_TEXT;
-
               return (
                 <div
                   key={index}
@@ -152,7 +137,7 @@ export default function EditContactInfo() {
                   </div>
 
                   <input
-                    value={displayValue}
+                    value={contactData[item.key] || ""}
                     onChange={(e) =>
                       item.editable && handleChange(item.key, e.target.value)
                     }

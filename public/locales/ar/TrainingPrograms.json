@@ -19,5 +19,9 @@
   "organizer": "الجهة المنظمة",
   "venue": "المكان",
   "startDate": "تاريخ البدء",
-  "endDate": "تاريخ الانتهاء"
+  "endDate": "تاريخ الانتهاء",
+   "InTheSpecialty": "في التخصص",
+  "OutTheSpecialty": "خارج التخصص",
+  "lecturer": "محاضر",
+  "listener": "مستمع"
 }

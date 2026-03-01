@@ -3,7 +3,7 @@ import {
   getSeminarsAndConferences,
   deleteSeminarOrConference,
 } from "../services/seminarsAndConferences.service";
-
+import { useTranslation } from "react-i18next";
 export default function useSeminarsAndConferences(
   page = 1,
   pageSize = 9,
@@ -18,7 +18,9 @@ export default function useSeminarsAndConferences(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  console.log(search);
+  const { i18n } = useTranslation();
+  const isArabic = i18n.language === "ar";
+
 
   const loadData = useCallback(
     async (pageToLoad = page) => {
@@ -45,8 +47,11 @@ export default function useSeminarsAndConferences(
             missionName: item.name || "",
             type: item.type || "",
             localOrInternational: item.localOrInternational || "",
-            participationRole: item.roleOfParticipation?.valueEn || "",
+
+            roleOfParticipation: item.roleOfParticipation || null,
+
             organizingAuthority: item.organizingAuthority || "",
+            website: item.website || "",
             venue: item.venue || "",
             startDate: item.startDate || "",
             endDate: item.endDate || "",
@@ -54,7 +59,6 @@ export default function useSeminarsAndConferences(
             attachments: item.attachments || null,
           })),
         );
-
         setTotalPages(Math.max(1, Math.ceil(totalCount / pageSize)));
       } catch (err) {
         console.error("Failed to load seminars:", err);

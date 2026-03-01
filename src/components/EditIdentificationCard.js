@@ -37,8 +37,6 @@ export default function EditIdentificationCard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const noData = isArabic ? "لا يوجد" : "none";
-
   // ------------------------------------------------------
   // FETCH IDENTIFICATION CARDS
   // ------------------------------------------------------
@@ -48,7 +46,7 @@ export default function EditIdentificationCard() {
     try {
       const res = await axiosInstance.get(
         "/FacultyMemberData/IdentificationCard",
-        { skipGlobalErrorHandler: true }
+        { skipGlobalErrorHandler: true },
       );
 
       setData(res.data || {});
@@ -76,7 +74,7 @@ export default function EditIdentificationCard() {
     try {
       await axiosInstance.put(
         "/FacultyMemberData/UpdateIdentificationCard",
-        data
+        data,
       );
       navigate("/identification-card");
     } catch (err) {
@@ -96,19 +94,6 @@ export default function EditIdentificationCard() {
   };
 
   // ------------------------------------------------------
-  // SHOW NONE / لا يوجد in inputs
-  // ------------------------------------------------------
-  const showValue = (value) => {
-    if (!value || value.trim() === "") return noData;
-    return value;
-  };
-
-  const cleanValue = (value) => {
-    if (value === noData) return "";
-    return value;
-  };
-
-  // ------------------------------------------------------
   // Loading
   // ------------------------------------------------------
   if (loading || data === null) {
@@ -117,16 +102,19 @@ export default function EditIdentificationCard() {
 
   const identificationCard = [
     { label: t("ORCID-ID"), key: "orcid" },
+     { label: t("ResearchGateProfile"), key: "researcherGate" },
+       { label: t("Academia.Eduprofile"), key: "academiaEdu" },
+     { label: t("ResearcherID"), key: "researcherId" },
     { label: t("EBK"), key: "ekb" },
-    { label: t("ResearcherID"), key: "researcherId" },
-    { label: t("ResearchGateProfile"), key: "researcherGate" },
-    { label: t("Academia.Eduprofile"), key: "academiaEdu" }
+    
+  
   ];
 
   return (
     <Layout>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col w-full box-border`}>
-
+      <div
+        className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col w-full box-border`}
+      >
         {/* Title */}
         <h2
           className={`text-3xl font-bold mb-[90px] inline-block relative text-${
@@ -144,7 +132,6 @@ export default function EditIdentificationCard() {
         {/* Grid */}
         <div className="flex justify-center items-center w-full">
           <div className="grid grid-cols-3 gap-7 max-w-[1250px] w-full">
-
             {identificationCard.map((item, index) => (
               <div
                 key={index}
@@ -152,7 +139,6 @@ export default function EditIdentificationCard() {
                 focus-within:border-[#B38E19] focus-within:ring-2 focus-within:ring-[#B38E19]
                 transition"
               >
-
                 {/* Label */}
                 <div className="bg-[#19355a] text-white w-[150px] flex items-center justify-center px-2 text-center">
                   {item.label}
@@ -160,16 +146,12 @@ export default function EditIdentificationCard() {
 
                 {/* Input */}
                 <input
-                  value={showValue(data[item.key])}
-                  onChange={(e) =>
-                    handleChange(item.key, cleanValue(e.target.value))
-                  }
+                  value={data[item.key] || ""}
+                  onChange={(e) => handleChange(item.key, e.target.value)}
                   className="bg-gray-200 text-black flex-1 px-2 outline-none border-0 text-center"
                 />
-
               </div>
             ))}
-
           </div>
         </div>
 
@@ -193,7 +175,6 @@ export default function EditIdentificationCard() {
             {t("back")}
           </button>
         </div>
-
       </div>
     </Layout>
   );

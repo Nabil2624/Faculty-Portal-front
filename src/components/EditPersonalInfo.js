@@ -51,10 +51,9 @@ export default function EditPersonalInfo() {
       setLoading(true);
 
       try {
-        const res = await axiosInstance.get(
-          "/FacultyMemberData/PersonalData",
-          { skipGlobalErrorHandler: true }
-        );
+        const res = await axiosInstance.get("/FacultyMemberData/PersonalData", {
+          skipGlobalErrorHandler: true,
+        });
 
         setPersonalInfo(res.data || {});
       } catch (err) {
@@ -99,7 +98,7 @@ export default function EditPersonalInfo() {
       await axiosInstance.put(
         "/FacultyMemberData/UpdatePersonalData",
         personalInfo,
-        { skipGlobalErrorHandler: true }
+        { skipGlobalErrorHandler: true },
       );
 
       navigate("/personal");
@@ -190,11 +189,7 @@ export default function EditPersonalInfo() {
             <div className="grid grid-cols-3 gap-5">
               {[
                 "name",
-                "birthPlace",
-                "birthDate",
-                "nameInComposition",
-                "generalSpecialization",
-                "accurateSpecialization",
+                "nationalNumber",
                 "title",
                 "gender",
                 "maritalStatus",
@@ -202,6 +197,11 @@ export default function EditPersonalInfo() {
                 "department",
                 "authority",
                 "field",
+                "generalSpecialization",
+                "accurateSpecialization",
+                "birthDate",
+                "birthPlace",
+                "nameInComposition",
               ].map((key) => (
                 <div
                   key={key}
@@ -215,7 +215,8 @@ export default function EditPersonalInfo() {
                     <div className="relative flex-1 flex items-center bg-gray-200">
                       <FiCalendar
                         onClick={openDatePicker}
-                        className={`cursor-pointer absolute ${
+                        size={18}
+                        className={`cursor-pointer absolute text-[#B38E19] ${
                           isArabic ? "left-3" : "right-3"
                         }`}
                       />
@@ -232,11 +233,18 @@ export default function EditPersonalInfo() {
                       type="text"
                       value={
                         objectFields.includes(key)
-                          ? getTranslated(personalInfo[key])
-                          : showValue(personalInfo[key])
+                          ? isArabic
+                            ? personalInfo[key]?.valueAr || ""
+                            : personalInfo[key]?.valueEn || ""
+                          : personalInfo[key] || ""
                       }
                       onChange={(e) => handleChange(key, e.target.value)}
-                      className="flex-1 bg-gray-200 px-2 text-center outline-none"
+                      disabled={key === "nationalNumber" || key === "gender"}
+                      className={`flex-1 px-2 text-center outline-none ${
+                        key === "nationalNumber" || key === "gender"
+                          ? "bg-gray-100 cursor-not-allowed text-gray-500"
+                          : "bg-gray-200"
+                      }`}
                     />
                   )}
                 </div>
@@ -251,7 +259,7 @@ export default function EditPersonalInfo() {
                 </h3>
 
                 <textarea
-                  value={showValue(personalInfo.compositionTopics)}
+                  value={personalInfo.compositionTopics || ""}
                   onChange={(e) =>
                     handleChange("compositionTopics", e.target.value)
                   }

@@ -18,8 +18,8 @@ export default function AddTrainingProgram() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    programType: null,
-    participationType: null,
+    programType: 1,
+    participationType: 1,
     programName: "",
     organizingBody: "",
     location: "",
@@ -108,7 +108,7 @@ export default function AddTrainingProgram() {
     <ResponsiveLayoutProvider>
       <div
         dir={isArabic ? "rtl" : "ltr"}
-        className="p-4 sm:p-6 bg-white min-h-[calc(100vh-72px)] flex flex-col items-center"
+        className="p-4 sm:p-6 bg-white flex flex-col items-center"
       >
         {/* Header */}
         <h2
@@ -140,6 +140,7 @@ export default function AddTrainingProgram() {
                         value="1"
                         checked={formData.programType === 1}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
                       {t("specialist")}
                     </label>
@@ -150,6 +151,7 @@ export default function AddTrainingProgram() {
                         value="2"
                         checked={formData.programType === 2}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
                       {t("general")}
                     </label>
@@ -175,6 +177,7 @@ export default function AddTrainingProgram() {
                         value="1"
                         checked={formData.participationType === 1}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
                       {t("internal")}
                     </label>
@@ -185,6 +188,7 @@ export default function AddTrainingProgram() {
                         value="2"
                         checked={formData.participationType === 2}
                         onChange={handleChange}
+                        className="accent-[#B38E19]"
                       />
                       {t("external")}
                     </label>
@@ -211,14 +215,17 @@ export default function AddTrainingProgram() {
                   className={`${inputBase} ${focusStyle}`}
                 />
                 {errors.programName && (
-                  <p className="text-red-500 text-xs mt-1">{errors.programName}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.programName}
+                  </p>
                 )}
               </div>
 
               {/* Organizing Body */}
               <div>
                 <label className="block mb-2 text-lg font-medium">
-                  {t("organizingBody")} <span className="text-[#b38e19]">*</span>
+                  {t("organizingBody")}{" "}
+                  <span className="text-[#b38e19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -229,7 +236,9 @@ export default function AddTrainingProgram() {
                   className={`${inputBase} ${focusStyle}`}
                 />
                 {errors.organizingBody && (
-                  <p className="text-red-500 text-xs mt-1">{errors.organizingBody}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.organizingBody}
+                  </p>
                 )}
               </div>
 
@@ -286,7 +295,9 @@ export default function AddTrainingProgram() {
                     />
                   </div>
                   {errors.startDate && (
-                    <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.startDate}
+                    </p>
                   )}
                 </div>
 
@@ -320,7 +331,9 @@ export default function AddTrainingProgram() {
                     />
                   </div>
                   {errors.endDate && (
-                    <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.endDate}
+                    </p>
                   )}
                 </div>
               </div>

@@ -30,6 +30,7 @@
     "required_country_city": "Please enter the country or city",
     "required_start_date": "Please select the start date",
     "submit_error": "An error occurred while saving the mission, please try again",
+    "end_date_before_start": "End date cannot be before start date",
  
   "loading": "Saving..."
   

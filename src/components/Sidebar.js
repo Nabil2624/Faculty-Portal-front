@@ -75,6 +75,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         { key: "theses", link: "/theses" },
         { key: "researcherProfile", link: "/researcher-profile" },
         { key: "nominatedResearches", link: "/nominated-research" },
+        { key: "recommendedSupervisions", link: "/recommended-supervisions" }
       ],
     },
     {

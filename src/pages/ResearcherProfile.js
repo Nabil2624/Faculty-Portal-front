@@ -12,11 +12,15 @@ export default function ResearcherProfile() {
   const { t, i18n } = useTranslation("ResearcherProfile");
   const isArabic = i18n.language === "ar";
 
-  const location = useLocation();
-  const nationalNumber = location.state?.nationalNumber;
 
-  const { researcher, loading, error, waiting, missingScholar } =
-    useResearcherProfile(nationalNumber);
+  const {
+    researcher,
+    loading,
+    error,
+    waiting,
+    missingScholar,
+    nationalNumber,
+  } = useResearcherProfile();
   if (loading) return <LoadingSpinner />;
 
   if (waiting) {
@@ -30,19 +34,6 @@ export default function ResearcherProfile() {
       </ResponsiveLayoutProvider>
     );
   }
-
-  if (error)
-    return <div className="text-red-500 text-center mt-6">{error}</div>;
-  if (!researcher && !waiting)
-    return (
-      <ResponsiveLayoutProvider>
-        <div className="text-center mt-20 text-xl font-semibold">
-          {isArabic
-            ? "لم يتم العثور على ملف للباحث"
-            : "No Researcher Profile Was Found"}
-        </div>
-      </ResponsiveLayoutProvider>
-    );
 
   if (missingScholar) {
     return (
@@ -66,6 +57,18 @@ export default function ResearcherProfile() {
       </ResponsiveLayoutProvider>
     );
   }
+  if (error)
+    return <div className="text-red-500 text-center mt-6">{error}</div>;
+  if (!researcher && !waiting)
+    return (
+      <ResponsiveLayoutProvider>
+        <div className="text-center mt-20 text-xl font-semibold">
+          {isArabic
+            ? "لم يتم العثور على ملف للباحث"
+            : "No Researcher Profile Was Found"}
+        </div>
+      </ResponsiveLayoutProvider>
+    );
 
   return (
     <ResponsiveLayoutProvider>
