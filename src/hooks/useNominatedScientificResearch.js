@@ -6,7 +6,13 @@ import {
   rejectNominatedResearch,
 } from "../services/nominatedResearchService";
 
-export default function useNominatedScientificResearch() {
+export default function useNominatedScientificResearch(
+  sortValue = 0,
+  publisherType,
+  PublicationType,
+  source,
+  derivedFrom,
+) {
   const { t, i18n } = useTranslation("NominatedResearch");
   const isArabic = i18n.language === "ar";
 
@@ -24,7 +30,15 @@ export default function useNominatedScientificResearch() {
     setError("");
 
     try {
-      const response = await fetchNominatedResearches(currentPage, pageSize);
+      const response = await fetchNominatedResearches({
+        currentPage,
+        pageSize,
+        sort: sortValue,
+        PublisherType: publisherType,
+        PublicationType: PublicationType,
+        Source: source,
+        DerivedFrom: derivedFrom,
+      });
 
       const result = response.data;
 
@@ -56,7 +70,14 @@ export default function useNominatedScientificResearch() {
   //  reload when page changes
   useEffect(() => {
     loadData();
-  }, [currentPage]);
+  }, [
+    currentPage,
+    sortValue,
+    publisherType,
+    PublicationType,
+    source,
+    derivedFrom,
+  ]);
 
   const handleApprove = async (item) => {
     try {

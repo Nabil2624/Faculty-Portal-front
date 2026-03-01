@@ -7,6 +7,8 @@
   "localInternational": "Local/International",
   "fundingAuthority": "Funding Authority",
   "participationRole": "Participation Role",
+  "local": "Local",
+  "international": "International",
   "add": "Add",
   "back": "Back",
   "delete": "Delete",

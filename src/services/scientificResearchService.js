@@ -37,8 +37,6 @@ export const getResearches = async ({
     },
     paramsSerializer: (params) =>
       qs.stringify(params, { arrayFormat: "repeat" }),
-    paramsSerializer: (params) =>
-      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 

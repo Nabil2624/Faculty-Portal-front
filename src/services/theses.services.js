@@ -1,4 +1,5 @@
 import axiosInstance from "../utils/axiosInstance";
+import qs from "qs";
 
 export const addThesis = (data) => {
   return axiosInstance.post("/ResearchesAndTheses/AddTheses", data, {
@@ -17,9 +18,26 @@ export const getAcademicQualifications = () => {
     skipGlobalErrorHandler: true,
   });
 };
-export const getTheses = (pageIndex, pageSize, search) => {
+export const getTheses = ({
+  pageIndex,
+  pageSize,
+  search,
+  sort,
+  GradesID,
+  Types,
+}) => {
   return axiosInstance.get("/ResearchesAndTheses/Theses", {
-    params: { pageIndex, pageSize, search },
+    params: {
+      pageIndex,
+      pageSize,
+      search,
+      ...(sort && { sort }),
+
+      ...(GradesID?.length && { GradesID }),
+      ...(Types?.length && { Types }),
+    },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };

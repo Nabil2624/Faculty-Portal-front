@@ -70,5 +70,9 @@
   "Reviewer": "Reviewer",
   "AdministratorAndReviewer": "Administrator and Reviewer",
   "dependOnType":"Depend On Type",
-  "dependOnRole":"Depend On Role"
+  "dependOnRole":"Depend On Role",
+  "EnrollmentDateASC": "Enrollment Date Ascending",
+  "EnrollmentDateDESC": "Enrollment Date Descending",
+  "RegisterationDateASC": "Registeration Date Ascending",
+  "RegisterationDateDESC": "Registeration Date Descending"
 }

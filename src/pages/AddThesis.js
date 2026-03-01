@@ -27,20 +27,18 @@ export default function AddThesis() {
   const input =
     "w-full h-[40px] bg-[#E2E2E2] rounded-md px-3 text-[12px] outline-none text-gray-800 placeholder:text-gray-600";
 
-  useEffect(() => {
-    const fetchAcademicQualifications = async () => {
-      try {
-        const { data } = await axiosInstance.get(
-          "/LookUpItems/AcademicQualifications",
-        );
-        setJobLevelOptions(data || []);
-      } catch (err) {}
-    };
+  // useEffect(() => {
+  //   const fetchAcademicQualifications = async () => {
+  //     try {
+  //       const { data } = await axiosInstance.get(
+  //         "/LookUpItems/AcademicQualifications",
+  //       );
+  //       setJobLevelOptions(data || []);
+  //     } catch (err) {}
+  //   };
 
-    fetchAcademicQualifications();
-  }, []);
-
-  if (loading) return <LoadingSpinner />;
+  //   fetchAcademicQualifications();
+  // }, []);
 
   return (
     <ResponsiveLayoutProvider>

@@ -6,6 +6,12 @@ export default function ProjectDetailsModal({
   isArabic,
   onClose,
 }) {
+
+  const localOrInternational = item.localOrInternational === "Local" ? t("local") : t("international");
+
+
+
+
   return (
     <div
       dir={isArabic ? "rtl" : "ltr"}
@@ -39,7 +45,7 @@ export default function ProjectDetailsModal({
       <div className="space-y-3 text-gray-700 text-[clamp(0.85rem,1.5vw,1rem)]">
         <div className="flex justify-between">
           <span className="font-medium">{t("localInternational")}</span>
-          <span>{item.localOrInternational}</span>
+          <span>{localOrInternational}</span>
         </div>
 
         <div className="flex justify-between">

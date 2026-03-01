@@ -7,6 +7,8 @@
   "localInternational": "محلي/دولي",
   "fundingAuthority": "جهة التمويل",
   "participationRole": "دور المشاركة",
+  "local": "محلي",
+  "international": "دولي",
   "add": "إضافة",
   "back": "عودة",
   "delete": "حذف",

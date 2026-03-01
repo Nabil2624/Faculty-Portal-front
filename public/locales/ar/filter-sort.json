@@ -66,9 +66,14 @@
   "GrantingDateASC": "تاريخ المنح تصاعدياً",
   "GrantingDateDESC": "تاريخ المنح تنازلياً",
   "dependAcademicGrade": "حسب الدرجه",
-  "dependOnType": "حسب الدور",
-  "dependOnRole": "حسب النوع",
+  "dependOnType": "حسب النوع",
+  "dependOnRole": "حسب الدور",
   "Administrator": "مسؤول",
   "Reviewer": "مراجع",
-  "AdministratorAndReviewer": "مسؤول ومراجع"
+  "AdministratorAndReviewer": "مسؤول ومراجع",
+  "EnrollmentDateASC": "تاريخ القيد تصاعدي",
+  "EnrollmentDateDESC": "تاريخ القيد تنازلي",
+  "RegisterationDateASC": "تاريخ التسجيل تصاعدي",
+  "RegisterationDateDESC": "تاريخ التسجيل تنازلي"
+
 }
