@@ -1,7 +1,7 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import DeleteProjectModal from "./DeleteProjectModal";
 import ProjectDetailsModal from "./ProjectDetailsModal";
-
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function ProjectsModals({
   showDelete,
   showDetails,
@@ -12,6 +12,14 @@ export default function ProjectsModals({
   deleteError,
   t,
   isArabic,
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  sortOptions = [],
+  currentSort,
+  currentFilters,
+  handleResetFilters,
 }) {
   return (
     <>
@@ -36,6 +44,21 @@ export default function ProjectsModals({
             t={t}
             isArabic={isArabic}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {/* ================= FILTER MODAL ================= */}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeader from "../components/ui/PageHeader";
@@ -22,8 +21,21 @@ export default function Theses() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 400);
 
-  const { items, totalPages, loading, error, loadData } = useTheses(page, 4);
+    return () => clearTimeout(timeout);
+  }, [search]);
+  const { items, totalPages, loading, error, loadData } = useTheses(
+    page,
+    4,
+    debouncedSearch,
+  );
 
   const handleDelete = async () => {
     if (!selectedItem) return;
@@ -39,7 +51,6 @@ export default function Theses() {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
 
   if (error) {
     return (
@@ -56,6 +67,10 @@ export default function Theses() {
           title={t("title")}
           addLabel={t("add")}
           onAdd={() => navigate("/add-thesis")}
+          showSearch
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={t("search")}
           isArabic
         />
 

@@ -3,7 +3,7 @@ import DeleteArticleModal from "./DeleteArticleModal";
 import ArticleDetailsModal from "./ArticleDetailsModal";
 import AddArticleForm from "./AddArticleForm";
 import EditArticleForm from "./EditArticleForm";
-
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function ArticlesModals({
   showAdd,
   showEdit,
@@ -20,6 +20,15 @@ export default function ArticlesModals({
   deleteError,
   t,
   isArabic,
+
+  currentSort,
+  handleResetFilters,
+  sortOptions = [],
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  currentFilters,
 }) {
   return (
     <>
@@ -71,6 +80,20 @@ export default function ArticlesModals({
             t={t}
             isArabic={isArabic}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

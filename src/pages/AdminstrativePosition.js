@@ -23,6 +23,9 @@ export default function AdminstrativePosition() {
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [filtersState, setFiltersState] = useState({});
+  const [sortValue, setSortValue] = useState(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const [search, setSearch] = useState("");
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -35,8 +38,25 @@ export default function AdminstrativePosition() {
     currentPage,
     9,
     debouncedSearch,
+    sortValue,
   );
+  const sortOptions = [
+    { value: 2, label: "newestFirst" },
+    { value: 1, label: "oldestFirst" },
+    { value: 3, label: "nameAsc" },
+    { value: 4, label: "nameDec" },
+  ];
+  const handleApplyFilters = ({ sortValue }) => {
+    setSortValue(sortValue);
 
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   // ======================
   // Delete
   // ======================
@@ -65,6 +85,7 @@ export default function AdminstrativePosition() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {!loading && error && (
@@ -131,6 +152,14 @@ export default function AdminstrativePosition() {
           onDelete={() => handleDelete(selectedItem.id)}
           t={t}
           isArabic={isArabic}
+          currentFilters={{}}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={{}}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

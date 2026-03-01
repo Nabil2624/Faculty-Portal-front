@@ -1,17 +1,20 @@
 import { X } from "lucide-react";
 
-export default function CommitteeDetailsModal({
-  item,
-  t,
-  isArabic,
-  onClose,
-}) {
+export default function CommitteeDetailsModal({ item, t, isArabic, onClose }) {
   return (
     <div
       dir={isArabic ? "rtl" : "ltr"}
-      className="bg-white rounded-2xl shadow-2xl border-2 border-[#b38e19]
-                 w-full max-w-[520px] max-h-[90vh] overflow-auto
-                 p-6 sm:p-8 relative flex flex-col"
+      className="
+        relative
+        bg-white
+        border-[clamp(1.5px,0.3vw,3px)]
+        border-[#b38e19]
+        rounded-[clamp(14px,2vw,22px)]
+        shadow-2xl
+        w-[clamp(320px,35vw,1000px)]
+        max-w-[92%]
+        p-[clamp(1rem,2.5vw,2rem)]
+      "
     >
       <button
         onClick={onClose}

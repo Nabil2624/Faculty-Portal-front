@@ -10,12 +10,20 @@ import AcademicQualificationsModal from "../components/widgets/AcademicQualifica
 
 import useAcademicQualifications from "../hooks/useAcademicQualifications";
 import { deleteAcademicQualification } from "../services/academicQualifications.service";
+import useDelegation from "../hooks/useDelegation";
+import useAcademicGrade from "../hooks/useAcademicGrade";
+import useDegreeLookup from "../hooks/useDegreeLookup";
 
 export default function AcademicQualificationsPage() {
   const { t, i18n } = useTranslation("AcademicQualifications");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
-
+  const [filtersState, setFiltersState] = useState({});
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
+  const [qualificationIds, setQualificationIds] = useState([]);
+  const [gradeIds, setGradeIds] = useState([]);
+  const [dispatchIds, setDispatchIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
@@ -28,11 +36,85 @@ export default function AcademicQualificationsPage() {
       setDebouncedSearch(search);
       setCurrentPage(1);
     }, 400);
-
     return () => clearTimeout(timeout);
   }, [search]);
+
   const { qualifications, totalPages, loading, error, loadData } =
-    useAcademicQualifications(currentPage, 9, debouncedSearch);
+    useAcademicQualifications(
+      currentPage,
+      9,
+      debouncedSearch,
+      sortValue,
+      qualificationIds,
+      gradeIds,
+      dispatchIds,
+    );
+
+  const { types, loadingTypes } = useDelegation();
+  const { items, loadings } = useAcademicGrade();
+  const { lookups, isLoading } = useDegreeLookup();
+
+  const mappedTypes =
+    types?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+  const mapTypes =
+    items?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+  const mappedLookups =
+    lookups?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+
+
+
+    
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "QualificationIds",
+          title: "dependOnQualificationIds",
+          options: mappedTypes,
+        },
+        {
+          key: "GradeIds",
+          title: "dependOnGradeIds",
+          options: mapTypes,
+        },
+        {
+          key: "DispatchIds",
+          title: "dependOnDispatchIds",
+          options: mappedLookups,
+        },
+      ]
+    : [];
+
+  const sortOptions = [
+    { value: 2, label: "newestFirst" },
+    { value: 1, label: "oldestFirst" },
+  ];
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+
+    setQualificationIds(filters?.QualificationIds || []);
+    setGradeIds(filters?.GradeIds || []);
+    setDispatchIds(filters?.DispatchIds || []);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setQualificationIds([]);
+    setGradeIds([]);
+    setDispatchIds([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -60,6 +142,7 @@ export default function AcademicQualificationsPage() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {!loading && error && (
@@ -114,6 +197,15 @@ export default function AcademicQualificationsPage() {
           setShowDetails={setShowDetails}
           onDelete={() => handleDelete(selectedItem.id)}
           deleteError={deleteError}
+          isArabic={isArabic}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          currentFilters={filtersState}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={filtersConfig}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

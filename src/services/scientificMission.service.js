@@ -1,12 +1,20 @@
 import axiosInstance from "../utils/axiosInstance";
-
-export const getScientificMissions = async ({ page = 1, pageSize = 9, search }) => {
+import qs from "qs";
+export const getScientificMissions = async ({
+  page = 1,
+  pageSize = 9,
+  search,
+  sort,
+}) => {
   const response = await axiosInstance.get("/Missions/ScientificMissions", {
     params: {
       pageIndex: page,
       pageSize,
-      search
+      search,
+      ...(sort && { sort }),
     },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
   return response.data;

@@ -24,6 +24,10 @@ export default function Patents() {
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [filtersState, setFiltersState] = useState({});
+  const [localOrInternational, setLocalOrInternational] = useState([]);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -39,8 +43,51 @@ export default function Patents() {
     loading,
     error,
     loadData,
-  } = usePatents(currentPage, 9, debouncedSearch);
+  } = usePatents(
+    currentPage,
+    9,
+    debouncedSearch,
+    localOrInternational,
+    sortValue,
+  );
 
+  const mappedTypes = [
+    { value: 1, label: "local" },
+    { value: 2, label: "international" },
+  ];
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "LocalOrInternational",
+          title: "dependLocalOrInternational",
+          options: mappedTypes,
+        },
+      ]
+    : [];
+  const sortOptions = [
+    { value: 1, label: "nameAsc" },
+    { value: 2, label: "nameDec" },
+    { value: 3, label: "applyDateAsc" },
+    { value: 4, label: "applyDateDesc" },
+    { value: 5, label: "accreditationDateAsc" },
+    { value: 6, label: "accreditationDateDesc" },
+  ];
+
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+
+    const ids = filters?.LocalOrInternational || [];
+    setLocalOrInternational(ids);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setLocalOrInternational([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages || 1);
@@ -98,6 +145,7 @@ export default function Patents() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {/* Error */}
@@ -166,6 +214,14 @@ export default function Patents() {
           setShowDetails={setShowDetails}
           onDelete={handleDelete}
           deleteError={deleteError}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          currentFilters={filtersState}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={filtersConfig}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

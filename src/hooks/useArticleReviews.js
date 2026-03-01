@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getArticleReviews } from "../services/articleReviews.service";
 
-export default function useArticleReviews(page, pageSize, search) {
+export default function useArticleReviews(page, pageSize, search, sortValue) {
   const { t } = useTranslation();
 
   const [items, setItems] = useState([]);
@@ -18,7 +18,8 @@ export default function useArticleReviews(page, pageSize, search) {
       const resp = await getArticleReviews(
         requestedPage,
         pageSize,
-        search
+        search,
+        sortValue,
       );
 
       const data = resp?.data ?? [];
@@ -43,7 +44,7 @@ export default function useArticleReviews(page, pageSize, search) {
   // تحميل عادي لما الصفحة تتغير
   useEffect(() => {
     loadData(page);
-  }, [page]);
+  }, [page,sortValue]);
 
   return { items, totalPages, loading, error, loadData };
 }

@@ -14,7 +14,6 @@ export default function useContributionTypeLookups() {
       const res = await getContributionTypeLookups();
       setTypes(res?.data || []);
     } catch (err) {
-      console.error("Contribution types error:", err);
       setErrorTypes(true);
     } finally {
       setLoadingTypes(false);

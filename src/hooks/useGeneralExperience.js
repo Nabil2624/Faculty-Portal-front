@@ -2,7 +2,12 @@
 import { useState, useEffect } from "react";
 import { getGeneralExperience } from "../services/generalExperience.service";
 
-export default function useGeneralExperience(page = 1, pageSize = 9,search) {
+export default function useGeneralExperience(
+  page = 1,
+  pageSize = 9,
+  search,
+  sortValue = 0,
+) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -13,7 +18,7 @@ export default function useGeneralExperience(page = 1, pageSize = 9,search) {
     setError(null);
 
     try {
-      const res = await getGeneralExperience(page, pageSize,search);
+      const res = await getGeneralExperience(page, pageSize, search, sortValue);
       const { data, totalCount } = res.data; // زي Journals
       setItems(data || []);
       setTotalPages(Math.ceil(totalCount / pageSize) || 1);
@@ -26,7 +31,7 @@ export default function useGeneralExperience(page = 1, pageSize = 9,search) {
 
   useEffect(() => {
     loadData();
-  }, [page, search]);
+  }, [page, search, sortValue]);
 
   return { items, totalPages, loading, error, loadData };
 }

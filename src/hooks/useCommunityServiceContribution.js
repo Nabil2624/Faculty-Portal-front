@@ -2,7 +2,12 @@
 import { useState, useEffect } from "react";
 import { getCommunityServiceContribution } from "../services/communityServiceContribution.service";
 
-export default function useCommunityServiceContribution(page = 1, pageSize = 9) {
+export default function useCommunityServiceContribution(
+  page = 1,
+  pageSize = 9,
+  sortValue = 0,
+  search,
+) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -13,7 +18,12 @@ export default function useCommunityServiceContribution(page = 1, pageSize = 9) 
     setError(null);
 
     try {
-      const res = await getCommunityServiceContribution(page, pageSize);
+      const res = await getCommunityServiceContribution(
+        page,
+        pageSize,
+        search,
+        sortValue,
+      );
       const { data, totalCount } = res.data; // زي Journals
       setItems(data || []);
       setTotalPages(Math.ceil(totalCount / pageSize) || 1);
@@ -26,7 +36,7 @@ export default function useCommunityServiceContribution(page = 1, pageSize = 9) 
 
   useEffect(() => {
     loadData();
-  }, [page]);
+  }, [page, search]);
 
   return { items, totalPages, loading, error, loadData };
 }

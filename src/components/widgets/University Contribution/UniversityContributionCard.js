@@ -52,11 +52,11 @@ export default function UniversityContributionCard({
         onClick={(e) => e.stopPropagation()}
       >
         <Pencil
-          className="text-[#b38e19] w-[clamp(1.1rem,1.6vw,3.5rem)] h-[clamp(1.1rem,1.6vw,3.5rem)] hover:scale-110 transition"
+          className="text-[#b38e19] w-[clamp(1.1rem,1.6vw,3.5rem)] h-[clamp(1.1rem,1.6vw,3.5rem)] hover:text-[#d1a82c] hover:scale-110 transition"
           onClick={() => onEdit?.(item)}
         />
         <Trash2
-          className="text-[#E53935] w-[clamp(1.1rem,1.6vw,3.5rem)] h-[clamp(1.1rem,1.6vw,3.5rem)] hover:scale-110 transition"
+          className="text-[#E53935] w-[clamp(1.1rem,1.6vw,3.5rem)] h-[clamp(1.1rem,1.6vw,3.5rem)] hover:text-[#e45552] hover:scale-110 transition"
           onClick={() => onDelete?.(item)}
         />
       </div>

@@ -10,6 +10,7 @@ import JournalsModals from "../components/widgets/ParticipationJournals/Journals
 
 import useJournals from "../hooks/useJournals";
 import { deleteParticipationJournal } from "../services/participationJournals.service";
+import useMagazineParticipationTypes from "../hooks/useMagazineParticipationTypes";
 
 export default function ParticipationInJournals() {
   const { t, i18n } = useTranslation("ParticipationJournals");
@@ -23,6 +24,11 @@ export default function ParticipationInJournals() {
   const [deleteError, setDeleteError] = useState(null);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [filtersState, setFiltersState] = useState({});
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
+  const [typeOfParticipationIds, setTypeOfParticipationIds] = useState([]);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -35,7 +41,46 @@ export default function ParticipationInJournals() {
     currentPage,
     9,
     debouncedSearch,
+    sortValue,
+    typeOfParticipationIds,
   );
+  const { types, loading: loadingTypes } = useMagazineParticipationTypes();
+
+  const mappedTypes =
+    types?.map((item) => ({
+      value: item.id,
+      label: item.label,
+    })) || [];
+
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "TypeOfParticipationIds",
+          title: "dependOnTypeOfParticipationIds",
+          options: mappedTypes,
+        },
+      ]
+    : [];
+  const sortOptions = [
+    { value: 1, label: "nameAsc" },
+    { value: 2, label: "nameDec" },
+  ];
+
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+
+    const ids = filters?.TypeOfParticipationIds || [];
+    setTypeOfParticipationIds(ids);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setTypeOfParticipationIds([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
 
   const handleDelete = async () => {
     if (!selectedItem) return;
@@ -51,7 +96,7 @@ export default function ParticipationInJournals() {
       setDeleteError(t("errors.deleteFailed"));
     }
   };
-
+console.log(types)
   return (
     <ResponsiveLayoutProvider>
       <div
@@ -70,6 +115,7 @@ export default function ParticipationInJournals() {
           onAdd={() => setShowAdd(true)}
           onFilter={() => console.log("Filter clicked")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
         <div className="items-center justify-center">
           {!loading && error && (
@@ -142,6 +188,14 @@ export default function ParticipationInJournals() {
           onDelete={handleDelete}
           t={t}
           isArabic={isArabic}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          currentFilters={filtersState}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={filtersConfig}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

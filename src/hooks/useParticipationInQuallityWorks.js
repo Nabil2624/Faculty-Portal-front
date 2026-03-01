@@ -6,6 +6,7 @@ import { getParticipation } from "../services/participationInQualityWork.service
 export default function useParticipationInQuallityWorks(
   page = 1,
   pageSize = 9,
+  sortValue = 0,
   search,
 ) {
   const { t } = useTranslation("participation-quality-work-form");
@@ -20,7 +21,7 @@ export default function useParticipationInQuallityWorks(
     setError(null);
 
     try {
-      const res = await getParticipation(page, pageSize, search);
+      const res = await getParticipation(page, pageSize, search, sortValue);
       const { data, totalCount } = res.data;
 
       setItems(data || []);

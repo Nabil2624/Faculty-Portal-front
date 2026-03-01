@@ -1,9 +1,27 @@
 import axiosInstance from "../utils/axiosInstance";
-
+import qs from "qs";
 // GET paginated supervision theses
-export const getSupervisionTheses = (pageIndex, pageSize) => {
+export const getSupervisionTheses = (
+  pageIndex,
+  pageSize,
+  search,
+  sort,
+  GradeIds,
+  Role,
+  Type
+) => {
   return axiosInstance.get("/ResearchesAndTheses/ThesesSupervising", {
-    params: { pageIndex, pageSize },
+    params: {
+      pageIndex,
+      pageSize,
+      search,
+      ...(sort && { sort }),
+      ...(GradeIds?.length && { GradeIds }),
+      ...(Role?.length && { Role }),
+      ...(Type?.length && { Type }),
+    },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };

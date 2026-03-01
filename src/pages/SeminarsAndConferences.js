@@ -7,6 +7,8 @@ import useSeminarsAndConferences from "../hooks/useSeminarsAndConferences";
 import SeminarCard from "../components/widgets/SeminarAndConferences/SeminarCard";
 import SeminarModal from "../components/widgets/SeminarAndConferences/SeminarModal";
 import { useNavigate } from "react-router-dom";
+import useSeminarParticipationType from "../hooks/useSeminarParticipationType";
+
 export default function SeminarsAndConferences() {
   const { t, i18n } = useTranslation("SeminarsAndConferences");
   const isArabic = i18n.language === "ar";
@@ -14,6 +16,12 @@ export default function SeminarsAndConferences() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedItem, setSelectedItem] = useState(null);
   const [mode, setMode] = useState("add");
+  const [filtersState, setFiltersState] = useState({});
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
+  const [roleOfParticipationIds, setRoleOfParticipationIds] = useState([]);
+  const [localOrInternational, setLocalOrInternational] = useState([]);
+  const [conferenceOrSeminar, setConferenceOrSeminar] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
@@ -33,10 +41,74 @@ export default function SeminarsAndConferences() {
     error,
     loadData,
     handleDelete,
-  } = useSeminarsAndConferences(currentPage, 9, debouncedSearch);
+  } = useSeminarsAndConferences(
+    currentPage,
+    9,
+    debouncedSearch,
+    sortValue,
+    roleOfParticipationIds,
+    localOrInternational,
+    conferenceOrSeminar,
+  );
 
   // debounce search
+  const { items, isLoading } = useSeminarParticipationType();
 
+  const mappedTypes =
+    items?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+  const sortOptions = [
+    { value: 2, label: "newestFirst" },
+    { value: 1, label: "oldestFirst" },
+  ];
+  const mapTypes = [
+    { value: 1, label: "local" },
+    { value: 2, label: "international" },
+  ];
+  const mappedRadio = [
+    { value: 1, label: "Conference" },
+    { value: 2, label: "Seminar" },
+  ];
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "RoleOfParticipationIds",
+          title: "dependOnRoleOfParticipationIds",
+          options: mappedTypes,
+        },
+        {
+          key: "LocalOrInternational",
+          title: "dependLocalOrInternational",
+          options: mapTypes,
+        },
+        {
+          key: "ConferenceOrSeminar",
+          title: "dependOnConferenceOrSeminar",
+          options: mappedRadio,
+        },
+      ]
+    : [];
+
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+
+    setRoleOfParticipationIds(filters?.RoleOfParticipationIds || []);
+    setLocalOrInternational(filters?.LocalOrInternational || []);
+    setConferenceOrSeminar(filters?.ConferenceOrSeminar || []);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setRoleOfParticipationIds([]);
+    setLocalOrInternational([]);
+    setConferenceOrSeminar([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   return (
     <ResponsiveLayoutProvider>
       <div
@@ -51,6 +123,7 @@ export default function SeminarsAndConferences() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {/* Error / Empty */}
@@ -119,6 +192,14 @@ export default function SeminarsAndConferences() {
           mode={mode}
           isArabic={isArabic}
           reloadData={loadData}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          currentFilters={filtersState}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={filtersConfig}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

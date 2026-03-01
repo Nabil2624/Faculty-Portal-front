@@ -58,7 +58,10 @@ export default function ManifestationForm({
               placeholder={t("placeholders.dateOfAppreciation")}
               isArabic={isArabic}
             />
+          </div>
 
+          {/* RIGHT COLUMN */}
+          <div className="space-y-[clamp(18px,2.2vw,60px)]">
             <InputField
               label={t("fields.description")}
               value={description}
@@ -66,10 +69,6 @@ export default function ManifestationForm({
               placeholder={t("placeholders.description")}
               textarea
             />
-          </div>
-
-          {/* RIGHT COLUMN */}
-          <div className="space-y-[clamp(18px,2.2vw,60px)]">
             <AttachmentUploader
               label={t("fields.attachments")}
               note={t("messages.pdfOnly")}

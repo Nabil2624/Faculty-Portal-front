@@ -1,8 +1,22 @@
 import axiosInstance from "../utils/axiosInstance";
-
-export const getPatents = (pageIndex, pageSize, search) => {
+import qs from "qs";
+export const getPatents = (
+  pageIndex,
+  pageSize,
+  search,
+  sort,
+  LocalOrInternational,
+) => {
   return axiosInstance.get("/WritingsAndPatents/Patents", {
-    params: { pageIndex, pageSize, search },
+    params: {
+      pageIndex,
+      pageSize,
+      search,
+      ...(sort && { sort }),
+      ...(LocalOrInternational?.length && { LocalOrInternational }),
+    },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };

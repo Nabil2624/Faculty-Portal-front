@@ -1,8 +1,10 @@
 import axiosInstance from "../utils/axiosInstance";
-
-export const getParticipation = (pageIndex, pageSize, search) => {
+import qs from "qs";
+export const getParticipation = (pageIndex, pageSize, sort, search) => {
   return axiosInstance.get("/Contributions/ParticipationsInQualityWorks", {
-    params: { pageIndex, pageSize, search },
+    params: { pageIndex, pageSize, search, ...(sort && { sort }) },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };

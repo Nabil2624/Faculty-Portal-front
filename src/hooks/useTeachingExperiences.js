@@ -2,7 +2,12 @@
 import { useState, useEffect } from "react";
 import { getTeachingExperience } from "../services/teachingExperiences.service";
 
-export default function useTeachingExperiences(page = 1, pageSize = 9, search) {
+export default function useTeachingExperiences(
+  page = 1,
+  pageSize = 9,
+  search,
+  sortValue,
+) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -13,8 +18,13 @@ export default function useTeachingExperiences(page = 1, pageSize = 9, search) {
     setError(null);
 
     try {
-      const res = await getTeachingExperience(page, pageSize ,search);
-      const { data, totalCount } = res.data; 
+      const res = await getTeachingExperience(
+        page,
+        pageSize,
+        search,
+        sortValue,
+      );
+      const { data, totalCount } = res.data;
       setItems(data || []);
       setTotalPages(Math.ceil(totalCount / pageSize) || 1);
     } catch (err) {
@@ -26,7 +36,7 @@ export default function useTeachingExperiences(page = 1, pageSize = 9, search) {
 
   useEffect(() => {
     loadData();
-  }, [page,search]);
+  }, [page, search, sortValue]);
 
   return { items, totalPages, loading, error, loadData };
 }

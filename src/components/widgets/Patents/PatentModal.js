@@ -1,7 +1,7 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import PatentDeleteModal from "./PatentDeleteModal";
 import PatentDetailsModal from "./PatentDetailsModal";
-
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function PatentModal({
   showDelete,
   showDetails,
@@ -10,6 +10,15 @@ export default function PatentModal({
   setShowDetails,
   onDelete,
   deleteError,
+
+  handleResetFilters,
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  sortOptions = [],
+  currentSort,
+  currentFilters,
 }) {
   return (
     <>
@@ -31,6 +40,21 @@ export default function PatentModal({
           <PatentDetailsModal
             item={selectedItem}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {/* ================= FILTER MODAL ================= */}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

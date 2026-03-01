@@ -8,6 +8,9 @@ export default function useCommitteesAndAssociations({
   t,
   pageSize = 9,
   search,
+  sortValue,
+  typeOfCommitteeOrAssociationIds,
+  degreeOfSubscriptionIds,
 }) {
   const [committees, setCommittees] = useState([]);
 
@@ -32,6 +35,9 @@ export default function useCommitteesAndAssociations({
           pageIndex: page,
           pageSize,
           search,
+          sort: sortValue,
+          TypeOfCommitteeOrAssociationIds: typeOfCommitteeOrAssociationIds,
+          DegreeOfSubscriptionIds: degreeOfSubscriptionIds,
         });
 
         const data = resp?.data ?? [];
@@ -49,7 +55,14 @@ export default function useCommitteesAndAssociations({
         setLoading(false);
       }
     },
-    [pageSize, t, search],
+    [
+      pageSize,
+      t,
+      search,
+      sortValue,
+      typeOfCommitteeOrAssociationIds,
+      degreeOfSubscriptionIds,
+    ],
   );
 
   // Refetch when page changes

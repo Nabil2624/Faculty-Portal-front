@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getAuthorRole } from "../services/scientific-writing.service";
 
 export default function useAuthorRoles() {
-  const [roles, setRoles] = useState([]);
+  const [types, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -23,5 +23,5 @@ export default function useAuthorRoles() {
     fetchRoles();
   }, []);
 
-  return { roles, loading, error }; // ✅ مهم جداً
+  return { types, loading, error }; // ✅ مهم جداً
 }

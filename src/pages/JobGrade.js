@@ -4,7 +4,7 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
 import LoadingSpinner from "../components/LoadingSpinner";
-
+import useJobGradeLookups from "../hooks/useJobGradeLookups";
 import useJobGrades from "../hooks/useJobGrades";
 import { deleteJobRank } from "../services/jobGrade.service";
 import JobGradeCard from "../components/widgets/JobGrade/JobGradeCard";
@@ -24,6 +24,10 @@ export default function JobGrade() {
   const [deleteError, setDeleteError] = useState(null);
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [search, setSearch] = useState("");
+  const [filtersState, setFiltersState] = useState({});
+  const [jobGrade, setJobGrade] = useState([]);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -35,8 +39,46 @@ export default function JobGrade() {
     currentPage,
     9,
     debouncedSearch,
+    sortValue,
+    jobGrade,
   );
+  const { items, loadingTypes } = useJobGradeLookups();
 
+  const mappedTypes =
+    items?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "JobRankIds",
+          title: "dependOnJobRank",
+          options: mappedTypes,
+        },
+      ]
+    : [];
+  const sortOptions = [
+    { value: 2, label: "newestFirst" },
+    { value: 1, label: "oldestFirst" },
+
+  ];
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+
+    const ids = filters?.JobRankIds || [];
+    setJobGrade(ids);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setJobGrade([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   // ======================
   // Delete
   // ======================
@@ -65,6 +107,7 @@ export default function JobGrade() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {!loading && error && (
@@ -74,8 +117,6 @@ export default function JobGrade() {
         {!loading && !error && jobRanks.length === 0 && (
           <div className="text-center text-gray-500 mb-4">{t("empty")}</div>
         )}
-
-
 
         {!loading && jobRanks.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -133,6 +174,14 @@ export default function JobGrade() {
           onDelete={() => handleDelete(selectedItem.id)}
           t={t}
           isArabic={isArabic}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          currentFilters={filtersState}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={filtersConfig}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

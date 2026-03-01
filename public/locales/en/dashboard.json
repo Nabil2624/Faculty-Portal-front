@@ -1,22 +1,20 @@
 {
-  "bio": {
-    "title": "Biography",
-    "placeholder": "Write a short academic biography highlighting your specialization and research interests"
-  },
-  "stats": {
-    "research": "Research",
-    "awards": "Awards",
-    "contributions": "Publications",
-    "projects": "Projects",
-    "services": "Community Services"
-  },
-  "empty": {
-    "noExperience": "No experience data available",
-    "addExperience": "Add experience",
-    "noEducation": "No education data available",
-    "addEducation": "Add education",
-    "noCv": "No CV uploaded",
-    "startNow": "Start building your academic profile",
-    "addSkills": "Add your academic and technical skills"
-  }
+  "PublicationsAndPatentsWidget": "Publications & Patents",
+  "Projects": "Projects",
+  "Contributions": "Contributions",
+  "Prize": "Prizes",
+  "Research": "Researches",
+  "Intro": "Introduction",
+  "View Details": "View details",
+  "ViewMore": "View more",
+  "Qualifications": "Scientific Qualifications",
+  "Experiences": "Experiences",
+  "skills": "Skills",
+  "edit_skills": "Edit Skills",
+  "enter_skill": "Enter skill here",
+  "delete": "Delete",
+  "add": "Add",
+  "save": "Save",
+  "close": "Close",
+  "WriteyourIntro":"Write your introduction"
 }

@@ -1,7 +1,7 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import ScientificWritingDeleteModal from "./ScientificWritingDeleteModal";
 import ScientificWritingDetailsModal from "./ScientificWritingDetailsModal";
-
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function ScientificWritingModal({
   showDelete,
   showDetails,
@@ -10,6 +10,16 @@ export default function ScientificWritingModal({
   setShowDetails,
   onDelete,
   deleteError,
+  isArabic,
+
+  sortOptions = [],
+  currentSort,
+  currentFilters,
+  handleResetFilters,
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
 }) {
   return (
     <>
@@ -31,6 +41,20 @@ export default function ScientificWritingModal({
           <ScientificWritingDetailsModal
             item={selectedItem}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getScientificWriting } from "../services/scientific-writing.service";
 
-export default function useScientificWriting(page = 1, pageSize = 9,search) {
+export default function useScientificWriting(
+  page = 1,
+  pageSize = 9,
+  search,
+  sortValue = 0,
+  filters,
+) {
   const { t } = useTranslation("participation-quality-work-form");
 
   const [items, setItems] = useState([]);
@@ -15,7 +21,13 @@ export default function useScientificWriting(page = 1, pageSize = 9,search) {
     setError(null);
 
     try {
-      const res = await getScientificWriting(page, pageSize,search);
+      const res = await getScientificWriting(
+        page,
+        pageSize,
+        search,
+        sortValue,
+        filters,
+      );
       const { data, totalCount } = res.data;
 
       setItems(data || []);
@@ -31,7 +43,7 @@ export default function useScientificWriting(page = 1, pageSize = 9,search) {
 
   useEffect(() => {
     loadData();
-  }, [page,search]);
+  }, [page, search, sortValue, filters]);
 
   return { items, totalPages, loading, error, loadData };
 }

@@ -24,6 +24,9 @@ export default function GeneralExperiencesPage() {
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
   const [search, setSearch] = useState("");
+  const [filtersState, setFiltersState] = useState({});
+  const [sortValue, setSortValue] = useState(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const [debouncedSearch, setDebouncedSearch] = useState("");
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -39,14 +42,30 @@ export default function GeneralExperiencesPage() {
     loading,
     error,
     loadData,
-  } = useGeneralExperience(currentPage, 9, debouncedSearch);
+  } = useGeneralExperience(currentPage, 9, debouncedSearch, sortValue);
 
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages || 1);
     }
   }, [totalPages]);
+  const sortOptions = [
+    { value: 4, label: "newestFirst" },
+    { value: 3, label: "oldestFirst" },
+    { value: 1, label: "nameAsc" },
+    { value: 2, label: "nameDec" },
+  ];
+  const handleApplyFilters = ({ sortValue }) => {
+    setSortValue(sortValue);
 
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   const handleDelete = async () => {
     if (!selectedItem) return;
 
@@ -81,6 +100,7 @@ export default function GeneralExperiencesPage() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {/* Error / Empty */}
@@ -158,6 +178,14 @@ export default function GeneralExperiencesPage() {
           deleteError={deleteError}
           t={t}
           isArabic={isArabic}
+          currentFilters={{}}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={{}}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

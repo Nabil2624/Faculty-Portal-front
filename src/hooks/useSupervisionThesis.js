@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react";
 import { getSupervisionTheses } from "../services/supervisionThesis.service";
 
-export default function useSupervisionThesis(page, pageSize = 4) {
+export default function useSupervisionThesis(
+  page,
+  pageSize = 4,
+  search,
+  sortValue,
+  gradeIds,
+  role,
+  type,
+) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -12,7 +20,15 @@ export default function useSupervisionThesis(page, pageSize = 4) {
     setError(null);
 
     try {
-      const res = await getSupervisionTheses(page, pageSize);
+      const res = await getSupervisionTheses(
+        page,
+        pageSize,
+        search,
+        sortValue,
+        gradeIds,
+        role,
+        type,
+      );
       const { data, totalCount } = res.data;
 
       setItems(data || []);
@@ -27,7 +43,7 @@ export default function useSupervisionThesis(page, pageSize = 4) {
 
   useEffect(() => {
     loadData();
-  }, [page]);
+  }, [page, search, sortValue, gradeIds, role, type]);
 
   return {
     items,

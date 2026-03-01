@@ -1,5 +1,5 @@
 import axiosInstance from "../utils/axiosInstance";
-
+import qs from "qs";
 export const getResearchDetails = async (id) => {
   if (!id) throw new Error("Research ID is required");
 
@@ -14,20 +14,36 @@ export const getResearchDetails = async (id) => {
   }
 };
 
-export const getResearches = async ({ page, pageSize, search }) => {
+export const getResearches = async ({
+  page,
+  pageSize,
+  search,
+  sort,
+  PublisherType,
+  PublicationType,
+  Source,
+  DerivedFrom,
+}) => {
   const response = await axiosInstance.get("/ResearchesAndTheses/Researches", {
     params: {
       pageIndex: page,
       pageSize,
       search,
+      ...(sort && { sort }),
+      ...(PublisherType?.length && { PublisherType }),
+      ...(Source?.length && { Source }),
+      ...(DerivedFrom?.length && { DerivedFrom }),
+      ...(PublicationType?.length && { PublicationType }),
     },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 
   return response.data;
 };
-
-
 
 // Save research
 export const saveScientificResearch = async (data) => {
@@ -35,6 +51,7 @@ export const saveScientificResearch = async (data) => {
     const response = await axiosInstance.post(
       "/ResearchesAndTheses/AddResearch",
       data,
+      { skipGlobalErrorHandler: true },
     );
     return response.data;
   } catch (error) {
@@ -43,13 +60,13 @@ export const saveScientificResearch = async (data) => {
   }
 };
 
-// Fetch DOI data (GET)
 export const fetchDOIData = async (doi) => {
   if (!doi) throw new Error("DOI is required");
 
   try {
     const response = await axiosInstance.get(
       `/ResearchesAndTheses/ResearchSearchDOI?doi=${encodeURIComponent(doi)}`,
+      { skipGlobalErrorHandler: true },
     );
     return response.data;
   } catch (error) {
@@ -66,6 +83,7 @@ export const fetchContributorByORCID = async (orcid) => {
   try {
     const response = await axiosInstance.get(
       `/ResearchesAndTheses/ContributorDataWithORCID?orcid=${encodeURIComponent(orcid)}`,
+      { skipGlobalErrorHandler: true },
     );
     return response.data;
   } catch (error) {
@@ -81,6 +99,7 @@ export const updateScientificResearch = async (id, data) => {
     const response = await axiosInstance.put(
       `/ResearchesAndTheses/UpdateResearch/${id}`,
       data,
+      { skipGlobalErrorHandler: true },
     );
     return response.data;
   } catch (error) {
@@ -96,6 +115,7 @@ export const deleteScientificResearch = async (researchId) => {
   try {
     const response = await axiosInstance.delete(
       `/ResearchesAndTheses/RemoveResearch/${researchId}`,
+      { skipGlobalErrorHandler: true },
     );
 
     return response.data;

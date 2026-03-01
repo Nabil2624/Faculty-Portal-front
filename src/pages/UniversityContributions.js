@@ -34,8 +34,9 @@ export default function UniversityContributions() {
   const [typeOfContributionIds, setTypeOfContributionIds] = useState([]);
 
   const [deleteError, setDeleteError] = useState(false);
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+
   const [filtersState, setFiltersState] = useState({});
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -84,6 +85,12 @@ export default function UniversityContributions() {
         },
       ]
     : [];
+  const sortOptions = [
+    { value: 4, label: "newestFirst" },
+    { value: 3, label: "oldestFirst" },
+    { value: 1, label: "nameAsc" },
+    { value: 2, label: "nameDec" },
+  ];
 
   const handleApplyFilters = ({ sortValue, filters }) => {
     setSortValue(sortValue);
@@ -251,6 +258,7 @@ export default function UniversityContributions() {
           showFilterModal={showFilterModal}
           setShowFilterModal={setShowFilterModal}
           filtersConfig={filtersConfig}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

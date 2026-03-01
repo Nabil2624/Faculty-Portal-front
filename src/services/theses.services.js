@@ -17,9 +17,9 @@ export const getAcademicQualifications = () => {
     skipGlobalErrorHandler: true,
   });
 };
-export const getTheses = (pageIndex, pageSize) => {
+export const getTheses = (pageIndex, pageSize, search) => {
   return axiosInstance.get("/ResearchesAndTheses/Theses", {
-    params: { pageIndex, pageSize },
+    params: { pageIndex, pageSize, search },
     skipGlobalErrorHandler: true,
   });
 };
@@ -36,15 +36,11 @@ export const getThesisById = (id) => {
   });
 };
 
-
 export const searchResearchByTitle = (title) => {
-  return axiosInstance.get(
-    "/ResearchesAndTheses/ResearchFindByTitle",
-    {
-      params: { title },
-      skipGlobalErrorHandler: true,
-    }
-  );
+  return axiosInstance.get("/ResearchesAndTheses/ResearchFindByTitle", {
+    params: { title },
+    skipGlobalErrorHandler: true,
+  });
 };
 
 export const getEmploymentDegrees = () => {
@@ -53,19 +49,19 @@ export const getEmploymentDegrees = () => {
   });
 };
 
-
 export const getUniversities = () => {
   return axiosInstance.get("/LookUpItems/Universities", {
     skipGlobalErrorHandler: true,
   });
 };
 
-
 export const updateThesis = (id, data) => {
-  return axiosInstance.put(
-    `/ResearchesAndTheses/UpdateTheses/${id}`,
-    data,
-    { skipGlobalErrorHandler: true }
-  );
+  return axiosInstance.put(`/ResearchesAndTheses/UpdateTheses/${id}`, data, {
+    skipGlobalErrorHandler: true,
+  });
 };
-
+export const getAuthorRole = () => {
+  return axiosInstance.get("/LookUpItems/AcademicQualifications", {
+    skipGlobalErrorHandler: true,
+  });
+};

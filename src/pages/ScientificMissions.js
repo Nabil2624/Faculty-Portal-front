@@ -25,7 +25,9 @@ export default function ScientificMissions() {
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
-
+  const [filtersState, setFiltersState] = useState({});
+  const [sortValue, setSortValue] = useState(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -36,7 +38,25 @@ export default function ScientificMissions() {
   }, [search]);
 
   const { missions, totalPages, loading, error, loadData } =
-    useScientificMissions(currentPage, 9, debouncedSearch);
+    useScientificMissions(currentPage, 9, debouncedSearch, sortValue);
+
+  const sortOptions = [
+    { value: 2, label: "newestFirst" },
+    { value: 1, label: "oldestFirst" },
+    { value: 3, label: "nameAsc" },
+    { value: 4, label: "nameDec" },
+  ];
+  const handleApplyFilters = ({ sortValue }) => {
+    setSortValue(sortValue);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+
+    setFiltersState({});
+    setCurrentPage(1);
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -52,7 +72,9 @@ export default function ScientificMissions() {
 
   return (
     <ResponsiveLayoutProvider>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-4 flex flex-col min-h-[90vh]`}>
+      <div
+        className={`${isArabic ? "rtl" : "ltr"} p-4 flex flex-col min-h-[90vh]`}
+      >
         <PageHeader
           title={t("scientificMissions")}
           addLabel={t("add")}
@@ -62,6 +84,7 @@ export default function ScientificMissions() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {!loading && error && (
@@ -112,7 +135,6 @@ export default function ScientificMissions() {
           />
         </div>
 
-       
         <ScientificMissionsModal
           showDelete={showDelete}
           showDetails={showDetails}
@@ -121,6 +143,14 @@ export default function ScientificMissions() {
           setShowDetails={setShowDetails}
           onDelete={() => handleDelete(selectedItem.id)}
           deleteError={deleteError}
+          currentFilters={{}}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={{}}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

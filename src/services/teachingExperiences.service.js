@@ -1,12 +1,15 @@
 import axiosInstance from "../utils/axiosInstance";
-
-export const getTeachingExperience = (pageIndex, pageSize, search) => {
+import qs from "qs";
+export const getTeachingExperience = (pageIndex, pageSize, search, sort) => {
   return axiosInstance.get("/Experiences/TeachingExperiences", {
-    params: { 
-      pageIndex, 
+    params: {
+      pageIndex,
       pageSize,
-      search 
+      search,
+      ...(sort && { sort }),
     },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };
@@ -16,14 +19,17 @@ export const createTeachingExperience = (data) => {
     skipGlobalErrorHandler: true,
   });
 };
-export const updateTeachingExperience = (id , data) => {
-  return axiosInstance.put(`/Experiences/UpdateTeachingExperience/${id}`, data, {
-    skipGlobalErrorHandler: true,
-  });
-}
-export const deleteTeachingExperience = (id ) => {
-  return axiosInstance.delete(`/Experiences/DeleteTeachingExperience/${id}`,
-     {
+export const updateTeachingExperience = (id, data) => {
+  return axiosInstance.put(
+    `/Experiences/UpdateTeachingExperience/${id}`,
+    data,
+    {
+      skipGlobalErrorHandler: true,
+    },
+  );
+};
+export const deleteTeachingExperience = (id) => {
+  return axiosInstance.delete(`/Experiences/DeleteTeachingExperience/${id}`, {
     skipGlobalErrorHandler: true,
   });
 };

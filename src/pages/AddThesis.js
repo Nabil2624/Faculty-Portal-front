@@ -27,7 +27,6 @@ export default function AddThesis() {
   const input =
     "w-full h-[40px] bg-[#E2E2E2] rounded-md px-3 text-[12px] outline-none text-gray-800 placeholder:text-gray-600";
 
-  // Fetch dropdowns for academic qualifications
   useEffect(() => {
     const fetchAcademicQualifications = async () => {
       try {
@@ -35,9 +34,7 @@ export default function AddThesis() {
           "/LookUpItems/AcademicQualifications",
         );
         setJobLevelOptions(data || []);
-      } catch (err) {
-        console.error("Failed to load Academic Qualifications", err);
-      }
+      } catch (err) {}
     };
 
     fetchAcademicQualifications();

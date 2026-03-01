@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -9,9 +9,9 @@ import Pagination from "../components/ui/Pagination";
 
 import ScientificResearchCard from "../components/widgets/ScientificResearches/ScientificResearchCard";
 import DeleteResearchModal from "../components/widgets/ScientificResearches/DeleteResearchModal";
-
+import ModalWrapper from "../components/ui/ModalWrapper";
 import useScientificResearches from "../hooks/useScientificResearches";
-
+import CustomizeResultsModal from "../components/ui/CustomizeResultsPopup";
 import { deleteScientificResearch } from "../services/scientificResearchService";
 export default function ScientificResearches() {
   const { t, i18n } = useTranslation("ScientificResearches");
@@ -19,6 +19,14 @@ export default function ScientificResearches() {
   const navigate = useNavigate();
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [search, setSearch] = useState("");
+  const [filtersState, setFiltersState] = useState({});
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
+  const [source, setSource] = useState([]);
+  const [derivedFrom, setDerivedFrom] = useState([]);
+  const [publisherType, setPublisherType] = useState([]);
+  const [PublicationType, setPublicationType] = useState([]);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -35,11 +43,89 @@ export default function ScientificResearches() {
     totalPages,
     setCurrentPage,
     fetchResearches,
-  } = useScientificResearches(4, debouncedSearch);
+  } = useScientificResearches(
+    4,
+    debouncedSearch,
+    sortValue,
+    publisherType,
+    PublicationType,
+    source,
+    derivedFrom,
+  );
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
+  const sortOptions = [
+    { value: 1, label: "titleAsc" },
+    { value: 2, label: "titleDesc" },
+    { value: 3, label: "journalAsc" },
+    { value: 4, label: "journalDesc" },
+    { value: 5, label: "pubYearAsc" },
+    { value: 6, label: "pubYearDesc" },
+  ];
+  const mapTypes = [
+    { value: 1, label: "Internal" },
+    { value: 2, label: "External" },
+  ];
+  const mappedTypes = [
+    { value: 1, label: "Master" },
+    { value: 2, label: "PhD" },
+    { value: 3, label: "Other" },
+  ];
+  const mappedRadio = [
+    { value: 1, label: "Journal" },
+    { value: 2, label: "Conference" },
+    { value: 3, label: "Unspecified" },
+  ];
+  const mappingTypes = [
+    { value: 1, label: "local" },
+    { value: 2, label: "international" },
+    { value: 3, label: "Unspecified" },
+  ];
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "Source",
+          title: "dependOnSource",
+          options: mappedTypes,
+        },
+        {
+          key: "DerivedFrom",
+          title: "dependOnDerivedFrom",
+          options: mapTypes,
+        },
+        {
+          key: "PublisherType",
+          title: "dependOnPublisherType",
+          options: mappedRadio,
+        },
+        {
+          key: "PublicationType",
+          title: "dependLocalOrInternational",
+          options: mappingTypes,
+        },
+      ]
+    : [];
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
 
+    setSource(filters?.Source || []);
+    setDerivedFrom(filters?.DerivedFrom || []);
+    setPublisherType(filters?.PublisherType || []);
+    setPublicationType(filters?.PublicationType || []);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setSource([]);
+    setDerivedFrom([]);
+    setPublisherType([]);
+    setPublicationType([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   const handleDelete = async () => {
     if (!selectedItem) return;
 
@@ -64,8 +150,6 @@ export default function ScientificResearches() {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
-
   return (
     <ResponsiveLayoutProvider>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
@@ -77,7 +161,8 @@ export default function ScientificResearches() {
           searchValue={search}
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
-          isArabic
+          isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {error && <div className="text-red-500 text-center mb-6">{error}</div>}
@@ -140,6 +225,20 @@ export default function ScientificResearches() {
             onConfirm={handleDelete}
             onCancel={() => setShowDelete(false)}
           />
+        )}
+        {showFilterModal && (
+          <ModalWrapper onClose={() => setShowFilterModal(false)}>
+            <CustomizeResultsModal
+              onClose={() => setShowFilterModal(false)}
+              onApply={handleApplyFilters}
+              onReset={handleResetFilters}
+              currentSort={sortValue}
+              currentFilters={filtersState}
+              filtersConfig={filtersConfig}
+              translationNamespace="filter-sort"
+              sortOptions={sortOptions}
+            />
+          </ModalWrapper>
         )}
       </div>
     </ResponsiveLayoutProvider>

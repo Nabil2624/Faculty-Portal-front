@@ -5,7 +5,11 @@ import { getAcademicQualifications } from "../services/academicQualifications.se
 export default function useAcademicQualifications(
   page = 1,
   pageSize = 9,
-  search = ""
+  search = "",
+  sortValue,
+  qualificationIds,
+  gradeIds,
+  dispatchIds,
 ) {
   const [qualifications, setQualifications] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -20,7 +24,11 @@ export default function useAcademicQualifications(
         const { data, totalCount } = await getAcademicQualifications({
           page: pageToLoad,
           pageSize,
-          search, // استخدام آخر قيمة للبحث
+          search,
+          sort: sortValue,
+          QualificationIds: qualificationIds,
+          GradeIds: gradeIds,
+          DispatchIds: dispatchIds,
         });
 
         setQualifications(data);
@@ -32,7 +40,15 @@ export default function useAcademicQualifications(
         setLoading(false);
       }
     },
-    [page, pageSize, search] // مهم جدًا: إضافة search كـ dependency
+    [
+      page,
+      pageSize,
+      search,
+      sortValue,
+      qualificationIds,
+      gradeIds,
+      dispatchIds,
+    ], // مهم جدًا: إضافة search كـ dependency
   );
 
   // تحميل البيانات عند تغيّر الصفحة أو البحث

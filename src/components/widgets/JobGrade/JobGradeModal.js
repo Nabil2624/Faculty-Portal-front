@@ -3,7 +3,7 @@ import JobGradeForm from "./JobGradeForm";
 import EditJobGrade from "./EditJobGrade";
 import JobGradeDeleteModal from "./JobGradeDeleteModal";
 import JobGradeDetailsModal from "./JobGradeDetailsModal";
-
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function JobGradeModal({
   showAdd,
   showEdit,
@@ -19,6 +19,15 @@ export default function JobGradeModal({
   onDelete,
   t,
   isArabic,
+
+  sortOptions = [],
+  currentSort,
+  currentFilters,
+  handleResetFilters,
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
 }) {
   return (
     <>
@@ -59,6 +68,20 @@ export default function JobGradeModal({
             isArabic={isArabic}
             t={t}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

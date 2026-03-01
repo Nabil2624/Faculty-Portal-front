@@ -1,10 +1,9 @@
 import ModalWrapper from "../../ui/ModalWrapper";
-import AddAdminstrativePosition from "./AddAdministrativePosition"
+import AddAdminstrativePosition from "./AddAdministrativePosition";
 import AdminPositionDeleteModal from "./AdminPositionDeleteModal";
 import AdminPositionDetailsModal from "./AdminPositionDetailsModal";
-import EditAdminPosition from "./EditAdminPosition"
-
-
+import EditAdminPosition from "./EditAdminPosition";
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function AdminPositionModal({
   showAdd,
   showEdit,
@@ -20,6 +19,14 @@ export default function AdminPositionModal({
   onDelete,
   t,
   isArabic,
+  currentSort,
+  handleResetFilters,
+  sortOptions = [],
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  currentFilters,
 }) {
   return (
     <>
@@ -60,6 +67,20 @@ export default function AdminPositionModal({
             isArabic={isArabic}
             t={t}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

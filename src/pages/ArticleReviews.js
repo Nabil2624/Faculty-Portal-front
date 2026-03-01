@@ -24,8 +24,11 @@ export default function ArticleReviewsPage() {
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+  const [filtersState, setFiltersState] = useState({});
+  const [sortValue, setSortValue] = useState(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
-  // debounce
+  // debounce search
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -35,8 +38,30 @@ export default function ArticleReviewsPage() {
     return () => clearTimeout(timeout);
   }, [search]);
 
-  const { items, totalPages, loading, error, loadData } =
-    useArticleReviews(page, 9, debouncedSearch);
+  const { items, totalPages, loading, error, loadData } = useArticleReviews(
+    page,
+    9,
+    debouncedSearch,
+    sortValue,
+  );
+
+  const sortOptions = [
+    { value: 1, label: "oldestFirst" },
+    { value: 2, label: "newestFirst" },
+    { value: 3, label: "nameAsc" },
+    { value: 4, label: "nameDec" },
+  ];
+
+  const handleApplyFilters = ({ sortValue }) => {
+    setSortValue(sortValue);
+    setPage(1);
+  };
+
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setFiltersState({});
+    setPage(1);
+  };
 
   const handleDelete = async () => {
     if (!selectedItem) return;
@@ -47,6 +72,8 @@ export default function ArticleReviewsPage() {
       await deleteArticleReview(selectedItem.id);
       setShowDelete(false);
       setSelectedItem(null);
+
+      // إعادة تحميل البيانات بعد الحذف
       loadData(page);
     } catch (err) {
       setDeleteError(t("errors.deleteFailed"));
@@ -67,6 +94,7 @@ export default function ArticleReviewsPage() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {!loading && error && (
@@ -131,6 +159,7 @@ export default function ArticleReviewsPage() {
           onSuccessAdd={() => {
             setShowAdd(false);
             setPage(1);
+            loadData(1); 
           }}
           onSuccessEdit={() => {
             setShowEdit(false);
@@ -138,6 +167,14 @@ export default function ArticleReviewsPage() {
           }}
           t={t}
           isArabic={isArabic}
+          currentFilters={{}}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={{}}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

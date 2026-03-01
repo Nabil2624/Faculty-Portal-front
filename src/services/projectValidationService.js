@@ -21,5 +21,5 @@ export const projectValidationService = (payload, t) => {
     errors.fundingSource = t("errors.fundingRequired");
   }
 
-  return errors; // لو فاضي => لا أخطاء
+  return errors;
 };

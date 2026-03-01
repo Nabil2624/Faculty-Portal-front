@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { getPatents } from "../services/patents.service";
 
-export default function usePatents(page = 1, pageSize = 9, search) {
+export default function usePatents(
+  page = 1,
+  pageSize = 9,
+  search,
+  filters,
+  sortValue = 0,
+) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -12,7 +18,7 @@ export default function usePatents(page = 1, pageSize = 9, search) {
     setError(null);
 
     try {
-      const res = await getPatents(page, pageSize, search);
+      const res = await getPatents(page, pageSize, search, sortValue, filters);
       const { data, totalCount } = res.data;
 
       setItems(data || []);
@@ -26,7 +32,7 @@ export default function usePatents(page = 1, pageSize = 9, search) {
 
   useEffect(() => {
     loadData();
-  }, [page,search]);
+  }, [page, search, sortValue, filters]);
 
   return { items, totalPages, loading, error, loadData };
 }

@@ -28,7 +28,9 @@ export default function ParticipationInQualityWorks() {
   const [showDetails, setShowDetails] = useState(false);
 
   const [deleteError, setDeleteError] = useState(false);
-
+  const [filtersState, setFiltersState] = useState({});
+  const [sortValue, setSortValue] = useState(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
   /* ================= DATA ================= */
   const [debouncedSearch, setDebouncedSearch] = useState("");
   useEffect(() => {
@@ -46,7 +48,12 @@ export default function ParticipationInQualityWorks() {
     loading,
     error,
     loadData,
-  } = useParticipationInQuallityWorks(currentPage, 9, debouncedSearch);
+  } = useParticipationInQuallityWorks(
+    currentPage,
+    9,
+    debouncedSearch,
+    sortValue,
+  );
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -69,7 +76,23 @@ export default function ParticipationInQualityWorks() {
       loadData();
     },
   });
+  const sortOptions = [
+    { value: 4, label: "newestFirst" },
+    { value: 3, label: "oldestFirst" },
+    { value: 1, label: "nameAsc" },
+    { value: 2, label: "nameDec" },
+  ];
+  const handleApplyFilters = ({ sortValue }) => {
+    setSortValue(sortValue);
 
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   /* ================= DELETE ================= */
   const handleDelete = async (id) => {
     try {
@@ -113,6 +136,7 @@ export default function ParticipationInQualityWorks() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {/* Error / Empty */}
@@ -197,6 +221,14 @@ export default function ParticipationInQualityWorks() {
           setShowDelete={setShowDelete}
           setShowDetails={setShowDetails}
           isArabic={isArabic}
+          currentFilters={{}}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={{}}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

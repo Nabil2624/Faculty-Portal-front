@@ -30,7 +30,9 @@ export default function ManifestationsOfScientificAppreciation() {
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
   const [debouncedSearch, setDebouncedSearch] = useState("");
-
+  const [filtersState, setFiltersState] = useState({});
+  const [sortValue, setSortValue] = useState(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -45,7 +47,7 @@ export default function ManifestationsOfScientificAppreciation() {
     loading,
     error,
     loadData,
-  } = useManifestations(currentPage, 9,debouncedSearch);
+  } = useManifestations(currentPage, 9, debouncedSearch, sortValue);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -69,7 +71,23 @@ export default function ManifestationsOfScientificAppreciation() {
     });
   }, [search, items]);
 
-  /* 🗑 Delete */
+  const sortOptions = [
+    { value: 4, label: "newestFirst" },
+    { value: 3, label: "oldestFirst" },
+    { value: 1, label: "nameAsc" },
+    { value: 2, label: "nameDec" },
+  ];
+  const handleApplyFilters = ({ sortValue }) => {
+    setSortValue(sortValue);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   const handleDelete = async () => {
     if (!selectedItem) return;
 
@@ -109,6 +127,7 @@ export default function ManifestationsOfScientificAppreciation() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {/* Error */}
@@ -185,6 +204,15 @@ export default function ManifestationsOfScientificAppreciation() {
           setShowDetails={setShowDetails}
           onDelete={handleDelete}
           deleteError={deleteError}
+          isArabic={isArabic}
+          currentFilters={{}}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={{}}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

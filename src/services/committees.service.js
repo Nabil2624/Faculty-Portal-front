@@ -1,16 +1,29 @@
 import axiosInstance from "../utils/axiosInstance";
-
+import qs from "qs";
 const BASE_URL = "/ProjectsAndCommittees";
 
 export const getCommitteesAndAssociations = async ({
   pageIndex,
   pageSize,
   search,
+  DegreeOfSubscriptionIds,
+  TypeOfCommitteeOrAssociationIds,
+  sort,
 }) => {
   const response = await axiosInstance.get(
     `${BASE_URL}/CommitteesAndAssociations`,
     {
-      params: { pageIndex, pageSize, search },
+      params: {
+        pageIndex,
+        pageSize,
+        search,
+        ...(sort && { sort }),
+        ...(DegreeOfSubscriptionIds?.length && { DegreeOfSubscriptionIds }),
+        ...(TypeOfCommitteeOrAssociationIds?.length && { TypeOfCommitteeOrAssociationIds }),
+      },
+      paramsSerializer: (params) =>
+        qs.stringify(params, { arrayFormat: "repeat" }),
+      skipGlobalErrorHandler: true,
       skipGlobalErrorHandler: true,
     },
   );

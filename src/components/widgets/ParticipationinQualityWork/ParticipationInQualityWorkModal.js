@@ -2,6 +2,7 @@ import ModalWrapper from "../../ui/ModalWrapper";
 import ParticipationInQualityWorkDeleteModal from "./ParticipationInQualityWorkDeleteModal";
 import ParticipationInQualityWorkDetailsModal from "./ParticipationInQualityWorkDetailsModal";
 import ParticipationInQualityWorkForm from "./ParticipationInQualityWorkForm";
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
 export default function ParticipationInQualityWorkModal({
   mode,
@@ -16,6 +17,15 @@ export default function ParticipationInQualityWorkModal({
   loadingTypes,
   loading,
   isArabic,
+
+  currentSort,
+  handleResetFilters,
+  sortOptions = [],
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  currentFilters,
 
   handleChange,
   submitForm,
@@ -72,6 +82,20 @@ export default function ParticipationInQualityWorkModal({
           <ParticipationInQualityWorkDetailsModal
             item={selectedItem}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

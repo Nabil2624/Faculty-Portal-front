@@ -1,6 +1,12 @@
 import { Pencil, Trash2 } from "lucide-react";
 
-export default function ArticleCard({ item, isArabic, onEdit, onDelete, onDetails }) {
+export default function ArticleCard({
+  item,
+  isArabic,
+  onEdit,
+  onDelete,
+  onDetails,
+}) {
   return (
     <div
       onClick={() => onDetails(item)}

@@ -32,7 +32,6 @@ export default function JobGradeForm({ onCancel, onSuccess }) {
       );
       setDegrees(response.data || []);
     } catch (err) {
-      console.error("Failed to fetch degrees:", err);
       setErrors((prev) => ({ ...prev, degrees: t("fetchDegreesError") }));
     } finally {
       setLoadingDegrees(false);

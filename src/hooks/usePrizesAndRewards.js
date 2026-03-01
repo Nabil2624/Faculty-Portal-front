@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { getPrizesAndRewards } from "../services/prizesAndRewards.service";
 
-export default function usePrizesAndRewards(pageIndex, pageSize, search) {
+export default function usePrizesAndRewards(
+  pageIndex,
+  pageSize,
+  search,
+  sortValue = 0,
+  filters,
+) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -12,7 +18,13 @@ export default function usePrizesAndRewards(pageIndex, pageSize, search) {
       setLoading(true);
       setError(false);
 
-      const res = await getPrizesAndRewards(pageIndex, pageSize, search);
+      const res = await getPrizesAndRewards(
+        pageIndex,
+        pageSize,
+        search,
+        sortValue,
+        filters,
+      );
 
       const data = res.data;
 
@@ -28,7 +40,7 @@ export default function usePrizesAndRewards(pageIndex, pageSize, search) {
 
   useEffect(() => {
     loadData();
-  }, [pageIndex, search]);
+  }, [pageIndex, search, sortValue, filters]);
 
   return { items, totalPages, loading, error, loadData };
 }

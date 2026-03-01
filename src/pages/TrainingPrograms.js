@@ -24,7 +24,14 @@ export default function TrainingPrograms() {
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
-
+  const [filtersState, setFiltersState] = useState({});
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
+  const [trainingProgramTypes, setTrainingProgramTypes] = useState([]);
+  const [
+    trainingProgramParticipationTypes,
+    setTrainingProgramParticipationTypes,
+  ] = useState([]);
   // =========================
   // Debounce
   // =========================
@@ -36,12 +43,65 @@ export default function TrainingPrograms() {
 
     return () => clearTimeout(timeout);
   }, [search]);
+  const mapTypes = [
+    { value: 1, label: "InTheSpecialty" },
+    { value: 2, label: "OutTheSpecialty" },
+  ];
+  const mappedRadio = [
+    { value: 1, label: "Listener" },
+    { value: 2, label: "Lecturer" },
+  ];
+  const filtersConfig = mapTypes.length
+    ? [
+        {
+          key: "TrainingProgramTypes",
+          title: "dependOnTrainingProgramTypes",
+          options: mapTypes,
+        },
+        {
+          key: "TrainingProgramParticipationTypes",
+          title: "dependOnTrainingProgramParticipationTypes",
+          options: mappedRadio,
+        },
+      ]
+    : [];
+  const sortOptions = [
+    { value: 2, label: "newestFirst" },
+    { value: 1, label: "oldestFirst" },
+    { value: 3, label: "nameAsc" },
+    { value: 4, label: "nameDec" },
+  ];
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
 
+    setTrainingProgramTypes(filters?.TrainingProgramTypes || []);
+    setTrainingProgramParticipationTypes(
+      filters?.TrainingProgramParticipationTypes || [],
+    );
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setTrainingProgramTypes([]);
+    setTrainingProgramParticipationTypes([]);
+
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   // =========================
   // Hook
   // =========================
   const { programs, totalPages, loading, error, loadData } =
-    useTrainingPrograms(currentPage, 9, debouncedSearch);
+    useTrainingPrograms(
+      currentPage,
+      9,
+      debouncedSearch,
+      sortValue,
+      trainingProgramParticipationTypes,
+      trainingProgramTypes,
+    );
 
   // =========================
   // Delete
@@ -60,8 +120,9 @@ export default function TrainingPrograms() {
 
   return (
     <ResponsiveLayoutProvider>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-4 flex flex-col min-h-[90vh]`}>
-
+      <div
+        className={`${isArabic ? "rtl" : "ltr"} p-4 flex flex-col min-h-[90vh]`}
+      >
         <PageHeader
           title={t("trainingPrograms")}
           addLabel={t("add")}
@@ -71,6 +132,7 @@ export default function TrainingPrograms() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {!loading && error && (
@@ -129,6 +191,14 @@ export default function TrainingPrograms() {
           setShowDetails={setShowDetails}
           onDelete={() => handleDelete(selectedItem.id)}
           deleteError={deleteError}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          currentFilters={filtersState}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={filtersConfig}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

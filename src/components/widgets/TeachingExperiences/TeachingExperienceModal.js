@@ -14,6 +14,15 @@ export default function TeachingExperienceModal({
   onDelete,
   onApplyFilters, // 👈 جديد
   deleteError,
+  isArabic,
+  currentSort,
+  handleResetFilters,
+  sortOptions = [],
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  currentFilters,
 }) {
   return (
     <>
@@ -45,6 +54,20 @@ export default function TeachingExperienceModal({
           <CustomizeResultsModal
             onClose={() => setShowCustomize(false)}
             onApply={onApplyFilters}
+          />
+        </ModalWrapper>
+      )}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

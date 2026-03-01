@@ -6,13 +6,6 @@ function clampIcon(min, mid, max) {
   return `clamp(${min}px, ${mid}px, ${max}px)`;
 }
 
-const sortOptions = [
-  { value: 4, label: "newestFirst" },
-  { value: 3, label: "oldestFirst" },
-  { value: 1, label: "nameAsc" },
-  { value: 2, label: "nameDec" },
-];
-
 export default function CustomizeResultsModal({
   onClose,
   onApply,
@@ -20,17 +13,22 @@ export default function CustomizeResultsModal({
   currentSort = null,
   currentFilters = {},
   filtersConfig = [],
+  sortOptions = [],
   translationNamespace = "researches",
 }) {
   const { t, i18n } = useTranslation(translationNamespace);
   const isArabic = i18n.language === "ar";
 
-  const hasFilters = Array.isArray(filtersConfig) && filtersConfig.length > 0;
+  const hasFilters =
+    Array.isArray(filtersConfig) && filtersConfig.length > 0;
+
+  const hasSorting =
+    Array.isArray(sortOptions) && sortOptions.length > 0;
 
   const [selectedSort, setSelectedSort] = useState(currentSort);
-  const [selectedFilters, setSelectedFilters] = useState(currentFilters);
+  const [selectedFilters, setSelectedFilters] =
+    useState(currentFilters);
 
-  /* sync when modal reopens */
   useEffect(() => {
     setSelectedSort(currentSort ?? null);
     setSelectedFilters(currentFilters ?? {});
@@ -39,12 +37,14 @@ export default function CustomizeResultsModal({
   const toggleOption = (groupKey, value) => {
     setSelectedFilters((prev) => {
       const currentValues = prev[groupKey] || [];
+
       if (currentValues.includes(value)) {
         return {
           ...prev,
           [groupKey]: currentValues.filter((v) => v !== value),
         };
       }
+
       return {
         ...prev,
         [groupKey]: [...currentValues, value],
@@ -77,115 +77,109 @@ export default function CustomizeResultsModal({
       role="dialog"
       aria-modal="true"
       className="
-        relative
-        bg-white
-        border-[clamp(1.5px,0.3vw,3px)]
-        border-[#b38e19]
-        rounded-[clamp(14px,2vw,22px)]
-        shadow-2xl
-        w-[clamp(320px,35vw,900px)]
-        max-w-[95%]
+        relative bg-white 
+        border-[clamp(1.5px,0.3vw,3px)] border-[#b38e19] 
+        rounded-[clamp(14px,2vw,22px)] shadow-2xl 
+        w-[clamp(320px,35vw,900px)] max-w-[95%]
+        max-h-[85vh] flex flex-col
         p-[clamp(1rem,2.5vw,2rem)]
       "
     >
       {/* Close */}
       <button
         onClick={onClose}
-        className={`
-          absolute
-          top-[clamp(0.75rem,1.2vw,1.2rem)]
-          ${isArabic ? "left-[clamp(0.75rem,1.2vw,1.2rem)]" : "right-[clamp(0.75rem,1.2vw,1.2rem)]"}
-          text-gray-500
-          hover:scale-110
-          transition
-        `}
+        className={`absolute top-[clamp(0.75rem,1.2vw,1.2rem)] ${
+          isArabic
+            ? "left-[clamp(0.75rem,1.2vw,1.2rem)]"
+            : "right-[clamp(0.75rem,1.2vw,1.2rem)]"
+        } text-gray-500 hover:scale-110 transition`}
       >
         <X size={clampIcon(18, 26, 35)} />
       </button>
 
       {/* Title */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-6">
         <h2 className="font-semibold text-[clamp(1.3rem,2vw,2rem)]">
           {t("customizeResults")}
         </h2>
         <div className="w-24 h-[clamp(2px,0.3vw,4px)] bg-[#b38e19] mx-auto mt-3 rounded-full"></div>
       </div>
 
-      {/* Sorting */}
-      <div className={hasFilters ? "mb-10" : "mb-6"}>
-        <h3 className="font-semibold text-[clamp(1rem,1.5vw,1.3rem)] mb-4">
-          {t("sortOptions")}
-          <div className="w-24 h-[clamp(2px,0.3vw,4px)] bg-[#b38e19] mt-3 rounded-full"></div>
-        </h3>
+      {/* ================= Scrollable Content ================= */}
+      <div className="flex-1 overflow-y-auto pr-2">
 
-        <div className="flex flex-wrap gap-3">
-          {sortOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setSelectedSort(option.value)}
-              className={`
-                px-4 py-2 rounded-full border transition text-sm
-                ${
-                  selectedSort === option.value
-                    ? "bg-[#b38e19] text-white border-[#b38e19]"
-                    : "bg-[#b38e19]/10 text-[#b38e19] border-[#b38e19] hover:bg-[#b38e19]/20"
-                }
-              `}
-            >
-              {t(option.label)}
-            </button>
-          ))}
-        </div>
-      </div>
-      <h3 className="font-semibold text-[clamp(1rem,1.5vw,1.3rem)] mb-4">
-        {t("filterOptions")}
-        <div className="w-24 h-[clamp(2px,0.3vw,4px)] bg-[#b38e19] mt-3 rounded-full"></div>
-      </h3>
-      {/* Filters */}
-      {hasFilters && (
-        <div
-          className="overflow-y-auto"
-          style={{ maxHeight: "25vh" }} // أو أي ارتفاع مناسب
-        >
-          {filtersConfig.map((group) => (
-            <div key={group.key} className="mb-10">
-              <h3 className="font-semibold text-[clamp(1rem,1.2vw,1.3rem)] mb-4 text-[#b38e19]">
-                {t(group.title)}
-              </h3>
+        {/* ================= Sorting ================= */}
+        {hasSorting && (
+          <div className={hasFilters ? "mb-8" : "mb-4"}>
+            <h3 className="font-semibold text-[clamp(1rem,1.5vw,1.3rem)] mb-4">
+              {t("sortOptions")}
+              <div className="w-24 h-[clamp(2px,0.3vw,4px)] bg-[#b38e19] mt-3 rounded-full"></div>
+            </h3>
 
-              <div className="flex flex-wrap gap-3">
-                {group.options?.map((option) => {
-                  const isSelected = selectedFilters[group.key]?.includes(
-                    option.value,
-                  );
-
-                  return (
-                    <button
-                      key={option.value}
-                      onClick={() => toggleOption(group.key, option.value)}
-                      className={`
-                  px-4 py-2 rounded-full border transition text-sm
-                  ${
-                    isSelected
+            <div className="flex flex-wrap gap-3">
+              {sortOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => setSelectedSort(option.value)}
+                  className={`px-4 py-2 rounded-full border transition text-sm ${
+                    selectedSort === option.value
                       ? "bg-[#b38e19] text-white border-[#b38e19]"
                       : "bg-[#b38e19]/10 text-[#b38e19] border-[#b38e19] hover:bg-[#b38e19]/20"
-                  }
-                `}
-                    >
-                      {typeof option.label === "string"
-                        ? t(option.label)
-                        : option.label}
-                    </button>
-                  );
-                })}
-              </div>
+                  }`}
+                >
+                  {t(option.label)}
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
 
-      {/* Buttons */}
-      <div className="flex justify-center gap-4 mt-8">
+        {/* ================= Filters ================= */}
+        {hasFilters && (
+          <>
+            <h3 className="font-semibold text-[clamp(1rem,1.5vw,1.3rem)] mb-4">
+              {t("filterOptions")}
+              <div className="w-24 h-[clamp(2px,0.3vw,4px)] bg-[#b38e19] mt-3 rounded-full"></div>
+            </h3>
+
+            {filtersConfig.map((group) => (
+              <div key={group.key} className="mb-8">
+                <h3 className="font-semibold text-[clamp(1rem,1.2vw,1.3rem)] mb-4 text-[#b38e19]">
+                  {t(group.title)}
+                </h3>
+
+                <div className="flex flex-wrap gap-3">
+                  {group.options?.map((option) => {
+                    const isSelected =
+                      selectedFilters[group.key]?.includes(option.value);
+
+                    return (
+                      <button
+                        key={option.value}
+                        onClick={() =>
+                          toggleOption(group.key, option.value)
+                        }
+                        className={`px-4 py-2 rounded-full border transition text-sm ${
+                          isSelected
+                            ? "bg-[#b38e19] text-white border-[#b38e19]"
+                            : "bg-[#b38e19]/10 text-[#b38e19] border-[#b38e19] hover:bg-[#b38e19]/20"
+                        }`}
+                      >
+                        {typeof option.label === "string"
+                          ? t(option.label)
+                          : option.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+
+      {/* ================= Buttons (Fixed Bottom) ================= */}
+      <div className="pt-6 border-t flex justify-center gap-4 bg-white">
         {hasActiveFilters && (
           <button
             onClick={handleReset}

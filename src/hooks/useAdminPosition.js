@@ -1,7 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { getAdminPosition } from "../services/adminstrativePosition.service";
 
-export default function useAdminPosition(page = 1, pageSize = 9, search) {
+export default function useAdminPosition(
+  page = 1,
+  pageSize = 9,
+  search,
+  sortValue,
+) {
   const [jobRanks, setJobRanks] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -17,6 +22,7 @@ export default function useAdminPosition(page = 1, pageSize = 9, search) {
           page: pageToLoad,
           pageSize,
           search,
+          sort: sortValue,
         });
 
         const { data = [], totalCount = 0 } = res || {};
@@ -30,7 +36,7 @@ export default function useAdminPosition(page = 1, pageSize = 9, search) {
         setLoading(false);
       }
     },
-    [page, pageSize, search],
+    [page, pageSize, search, sortValue],
   );
 
   useEffect(() => {

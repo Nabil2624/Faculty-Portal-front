@@ -1,7 +1,7 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import PrizeDeleteModal from "./PrizeDeleteModal";
 import PrizeDetailsModal from "./PrizesDetailsModal";
-
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function PrizesAndRewardsModal({
   showDelete,
   showDetails,
@@ -12,6 +12,15 @@ export default function PrizesAndRewardsModal({
   deleteError,
   t, // added
   isArabic, // added
+
+  sortOptions = [],
+  currentSort,
+  currentFilters,
+  handleResetFilters,
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
 }) {
   return (
     <>
@@ -35,6 +44,21 @@ export default function PrizesAndRewardsModal({
             onClose={() => setShowDetails(false)}
             t={t}
             isArabic={isArabic}
+          />
+        </ModalWrapper>
+      )}
+      {/* ================= FILTER MODAL ================= */}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

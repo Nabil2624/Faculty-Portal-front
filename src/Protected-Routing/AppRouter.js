@@ -120,14 +120,12 @@ function AppRouterInner() {
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/add-scientific-task" element={<AddScientificTask />} />
       <Route path="/edit-scientific-task" element={<EditScientificTask />} />
-
       <Route path="/theses" element={<Theses />} />
       <Route path="/scientific-researches" element={<ScientificResearches />} />
       <Route path="/supervision-thesis" element={<SupervisionThesis />} />
       <Route path="/supervision-info" element={<SupervisionInfo />} />
       {/* <Route path="/theses-details/:id" element={<ThesesDetails />} /> */}
       <Route path="/theses-details" element={<ThesesDetails />} />
-
       <Route path="/researcher-profile" element={<ResearcherProfile />} />
       <Route path="/add-thesis" element={<AddThesis />} />
       <Route path="/edit-thesis" element={<EditThesis />} />
@@ -139,7 +137,6 @@ function AppRouterInner() {
         path="/recommended-supervisions"
         element={<RecommendedSupervisions />}
       />
-
       <Route
         path="/manifestations-of-scientific-appreciation"
         element={<ManifestationsOfScientificAppreciation />}
@@ -210,7 +207,6 @@ function AppRouterInner() {
         path="/seminars-and-conferences"
         element={<SeminarsAndConferences />}
       />
-
       <Route path="/personal" element={<PersonalDataPage />} />
       <Route
         path="/committee-associations"
@@ -242,7 +238,6 @@ function AppRouterInner() {
         element={<EditIdentificationCard />}
       />
       <Route path="/training-programs" element={<TrainingPrograms />} />
-
       <Route path="/job-grade-form" element={<JobGradeForm />} />
       <Route path="/edit-job-grade" element={<EditJobGrade />} />
       <Route path="/edit-admin-pos" element={<EditAdminPosition />} />
@@ -256,7 +251,6 @@ function AppRouterInner() {
         path="/add-teaching-experiences"
         element={<AddTeachingExperience />}
       />
-
       <Route
         path="/edit-teaching-experiences"
         element={<EditTeachingExperience />}
@@ -289,11 +283,11 @@ function AppRouterInner() {
         path="/edit-scientific-writing"
         element={<EditScientificWriting />}
       />
+
       <Route path="/scientific-writing" element={<ScientificWriting />} />
       <Route path="/profile" element={<ProfileDashboard />} />
       {/* ✅ Protected Routes */}
       <Route element={<ProtectedRoute />}></Route>
-
       {/* Catch-all */}
       <Route path="*" element={<ErrorPage code="404" />} />
     </Routes>

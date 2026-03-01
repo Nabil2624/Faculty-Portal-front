@@ -2,7 +2,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { getScientificMissions } from "../services/scientificMission.service";
 
-export default function useScientificMissions(page = 1, pageSize = 9, search) {
+export default function useScientificMissions(
+  page = 1,
+  pageSize = 9,
+  search,
+  sortValue,
+) {
   const [missions, setMissions] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -18,8 +23,8 @@ export default function useScientificMissions(page = 1, pageSize = 9, search) {
           page: pageToLoad,
           pageSize,
           search,
+          sort: sortValue,
         });
-
 
         const { data = [], totalCount = 0 } = res || {};
 
@@ -27,12 +32,12 @@ export default function useScientificMissions(page = 1, pageSize = 9, search) {
         setTotalPages(Math.ceil(totalCount / pageSize) || 1);
       } catch (err) {
         console.error(err);
-        setError( "Failed to load missions");
+        setError("Failed to load missions");
       } finally {
         setLoading(false);
       }
     },
-    [page, pageSize, search]
+    [page, pageSize, search, sortValue],
   );
 
   useEffect(() => {

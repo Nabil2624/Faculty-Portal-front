@@ -1,8 +1,22 @@
 import axiosInstance from "../utils/axiosInstance";
-
-export const getParticipationJournals = (pageIndex, pageSize, search) => {
+import qs from "qs";
+export const getParticipationJournals = (
+  pageIndex,
+  pageSize,
+  search,
+  TypeOfParticipationIds,
+  sort,
+) => {
   return axiosInstance.get("/ProjectsAndCommittees/ParticipationInMagazines", {
-    params: { pageIndex, pageSize, search },
+    params: {
+      pageIndex,
+      pageSize,
+      search,
+      ...(sort && { sort }),
+      ...(TypeOfParticipationIds?.length && { TypeOfParticipationIds }),
+    },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };

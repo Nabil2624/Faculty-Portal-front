@@ -1,8 +1,22 @@
 import axiosInstance from "../utils/axiosInstance";
-
-export const getPrizesAndRewards = (pageIndex, pageSize, search) => {
+import qs from "qs";
+export const getPrizesAndRewards = (
+  pageIndex,
+  pageSize,
+  search,
+  sort,
+  PrizeIds,
+) => {
   return axiosInstance.get("/Prizes/PrizesAndRewards", {
-    params: { pageIndex, pageSize ,search},
+    params: {
+      pageIndex,
+      pageSize,
+      search,
+      ...(sort && { sort }),
+      ...(PrizeIds?.length && { PrizeIds }),
+    },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };

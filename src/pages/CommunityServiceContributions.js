@@ -28,7 +28,18 @@ export default function CommunityServiceContributions() {
   const [showDetails, setShowDetails] = useState(false);
 
   const [deleteError, setDeleteError] = useState(false);
+  const [filtersState, setFiltersState] = useState({});
+  const [sortValue, setSortValue] = useState(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
 
+    return () => clearTimeout(timeout);
+  }, [search]);
   /* ================= DATA ================= */
   const {
     items: contributions = [],
@@ -36,7 +47,7 @@ export default function CommunityServiceContributions() {
     loading,
     error,
     loadData,
-  } = useCommunityServiceContribution(currentPage, 9);
+  } = useCommunityServiceContribution(currentPage, 9, debouncedSearch,sortValue);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -75,7 +86,23 @@ export default function CommunityServiceContributions() {
       );
     });
   }, [search, contributions]);
+  const sortOptions = [
+    { value: 4, label: "newestFirst" },
+    { value: 3, label: "oldestFirst" },
+    { value: 1, label: "nameAsc" },
+    { value: 2, label: "nameDec" },
+  ];
+  const handleApplyFilters = ({ sortValue }) => {
+    setSortValue(sortValue);
 
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   /* ================= DELETE ================= */
   const handleDelete = async (id) => {
     try {
@@ -106,7 +133,9 @@ export default function CommunityServiceContributions() {
 
   return (
     <ResponsiveLayoutProvider>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}>
+      <div
+        className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
+      >
         {/* Header */}
         <PageHeader
           title={t("contributionTitle")}
@@ -117,25 +146,38 @@ export default function CommunityServiceContributions() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {/* Error / Empty */}
         {!loading && error && (
-          <div className="text-center text-red-500" style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}>
+          <div
+            className="text-center text-red-500"
+            style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
+          >
             {t("errors.loadFailed")}
           </div>
         )}
 
         {!loading && !error && filtered.length === 0 && (
-          <div className="text-center text-gray-500" style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}>
+          <div
+            className="text-center text-gray-500"
+            style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
+          >
             {t("empty")}
           </div>
         )}
 
         {/* Grid */}
         {!loading && !error && filtered.length > 0 && (
-          <div className="overflow-y-auto pr-2 mb-4 flex-1" style={{ maxHeight: "calc(90vh - 200px)" }}>
-            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${isArabic ? "text-right" : "text-left"}`} style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}>
+          <div
+            className="overflow-y-auto pr-2 mb-4 flex-1"
+            style={{ maxHeight: "calc(90vh - 200px)" }}
+          >
+            <div
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${isArabic ? "text-right" : "text-left"}`}
+              style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
+            >
               {filtered.map((item) => (
                 <CommunityServiceContributionsCard
                   key={item.id}
@@ -176,19 +218,25 @@ export default function CommunityServiceContributions() {
           showDelete={showDelete}
           showDetails={showDetails}
           selectedItem={selectedItem}
-
           formData={formData}
           errors={errors}
           handleChange={handleChange}
           submitForm={submitForm}
           loading={formLoading}
-
           deleteError={deleteError}
           onDelete={handleDelete}
           setShowForm={setShowForm}
           setShowDelete={setShowDelete}
           setShowDetails={setShowDetails}
           isArabic={isArabic}
+          currentFilters={{}}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={{}}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

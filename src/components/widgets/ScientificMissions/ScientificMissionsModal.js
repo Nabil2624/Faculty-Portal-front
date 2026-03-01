@@ -1,7 +1,7 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import ScientificMissionsDeleteModal from "./ScientificMissionsDeleteModal";
 import ScientificMissionsDetailsModal from "./ScientificMissionsDetailsModal";
-
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
 export default function ScientificMissionsModal({
   showDelete,
@@ -11,6 +11,14 @@ export default function ScientificMissionsModal({
   setShowDetails,
   onDelete,
   deleteError,
+  currentSort,
+  handleResetFilters,
+  sortOptions = [],
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  currentFilters,
 }) {
   return (
     <>
@@ -32,6 +40,20 @@ export default function ScientificMissionsModal({
           <ScientificMissionsDetailsModal
             item={selectedItem}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

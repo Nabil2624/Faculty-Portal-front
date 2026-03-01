@@ -1,8 +1,10 @@
 import axiosInstance from "../utils/axiosInstance";
-
-export const getGeneralExperience = (pageIndex, pageSize, search) => {
+import qs from "qs";
+export const getGeneralExperience = (pageIndex, pageSize, search, sort) => {
   return axiosInstance.get("/Experiences/GeneralExperiences", {
-    params: { pageIndex, pageSize, search },
+    params: { pageIndex, pageSize, search, ...(sort && { sort }) },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };

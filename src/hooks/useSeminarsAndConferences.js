@@ -8,13 +8,17 @@ export default function useSeminarsAndConferences(
   page = 1,
   pageSize = 9,
   search,
+  sortValue,
+  roleOfParticipationIds,
+  localOrInternational,
+  conferenceOrSeminar,
 ) {
   const [seminars, setSeminars] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-console.log(search);
+  console.log(search);
 
   const loadData = useCallback(
     async (pageToLoad = page) => {
@@ -26,8 +30,11 @@ console.log(search);
           pageIndex: pageToLoad,
           pageSize,
           search,
+          sort: sortValue,
+          RoleOfParticipationIds: roleOfParticipationIds,
+          LocalOrInternational: localOrInternational,
+          ConferenceOrSeminar: conferenceOrSeminar,
         });
-
 
         const data = res?.data?.data || [];
         const totalCount = res?.data?.totalCount || 0;
@@ -56,7 +63,15 @@ console.log(search);
         setLoading(false);
       }
     },
-    [page, pageSize, search],
+    [
+      page,
+      pageSize,
+      search,
+      sortValue,
+      roleOfParticipationIds,
+      localOrInternational,
+      conferenceOrSeminar,
+    ],
   );
 
   const handleDelete = async (id) => {

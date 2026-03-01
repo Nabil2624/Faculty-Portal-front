@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getTheses } from "../services/theses.services";
 
-export default function useTheses(page, pageSize = 4) {
+export default function useTheses(page, pageSize = 4, search) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -13,7 +13,7 @@ export default function useTheses(page, pageSize = 4) {
     setError(null);
 
     try {
-      const res = await getTheses(page, pageSize);
+      const res = await getTheses(page, pageSize, search);
 
       const { data, totalCount } = res.data;
 
@@ -27,14 +27,14 @@ export default function useTheses(page, pageSize = 4) {
     } catch (err) {
       setError(err);
     } finally {
-      setInitialLoadDone(true); 
+      setInitialLoadDone(true);
       setLoading(false);
     }
   };
 
   useEffect(() => {
     loadData();
-  }, [page]);
+  }, [page, search]);
 
   return {
     items,

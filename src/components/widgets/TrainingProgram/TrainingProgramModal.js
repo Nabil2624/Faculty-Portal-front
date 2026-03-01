@@ -1,5 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
-
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 import TrainingProgramDeleteModal from "./TrainingProgramDeleteModal";
 import TrainingProgramDetailsModal from "./TrainingProgramDetailsModal";
 
@@ -10,9 +10,7 @@ export default function UniversityContributionModal({
   showDetails,
   selectedItem,
 
-
   isArabic,
-
 
   onDelete,
 
@@ -20,6 +18,15 @@ export default function UniversityContributionModal({
   setShowForm,
   setShowDelete,
   setShowDetails,
+
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  sortOptions = [],
+  currentSort,
+  currentFilters,
+  handleResetFilters,
 }) {
   const formTitle =
     mode === "add"
@@ -32,8 +39,6 @@ export default function UniversityContributionModal({
 
   return (
     <>
-
-
       {/* ================= DELETE MODAL ================= */}
       {showDelete && selectedItem && (
         <ModalWrapper onClose={() => setShowDelete(false)}>
@@ -52,6 +57,21 @@ export default function UniversityContributionModal({
           <TrainingProgramDetailsModal
             item={selectedItem}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {/* ================= FILTER MODAL ================= */}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

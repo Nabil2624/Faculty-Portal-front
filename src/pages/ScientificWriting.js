@@ -8,7 +8,7 @@ import Pagination from "../components/ui/Pagination";
 
 import useScientificWriting from "../hooks/useScientificWriting";
 import { deleteScientificWriting } from "../services/scientific-writing.service";
-
+import useAuthorRoles from "../hooks/useAuthorRoles";
 import ScientificWritingCard from "../components/widgets/ScientificWriting/ScientificWritingCard";
 import ScientificWritingModal from "../components/widgets/ScientificWriting/ScientificWritingModal";
 
@@ -23,7 +23,10 @@ export default function ScientificWriting() {
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
   const [debouncedSearch, setDebouncedSearch] = useState("");
-
+  const [filtersState, setFiltersState] = useState({});
+  const [authorRoleIds, setAuthorRoleIds] = useState([]);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -38,8 +41,52 @@ export default function ScientificWriting() {
     loading,
     error,
     loadData,
-  } = useScientificWriting(currentPage, 9, debouncedSearch);
+  } = useScientificWriting(
+    currentPage,
+    9,
+    debouncedSearch,
+    authorRoleIds,
+    sortValue,
+  );
+  const { types, loadingTypes } = useAuthorRoles();
 
+  const mappedTypes =
+    types?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+
+
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "AuthorRoleIds",
+          title: "dependOnAuthorRoles",
+          options: mappedTypes,
+        },
+      ]
+    : [];
+  const sortOptions = [
+    { value: 4, label: "newestFirst" },
+    { value: 3, label: "oldestFirst" },
+    { value: 1, label: "nameAsc" },
+    { value: 2, label: "nameDec" },
+  ];
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+
+    const ids = filters?.AuthorRoleIds || [];
+    setAuthorRoleIds(ids);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setAuthorRoleIds([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages || 1);
@@ -79,6 +126,7 @@ export default function ScientificWriting() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {/* Error */}
@@ -147,6 +195,15 @@ export default function ScientificWriting() {
           setShowDetails={setShowDetails}
           onDelete={handleDelete}
           deleteError={deleteError}
+          isArabic={isArabic}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          currentFilters={filtersState}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={filtersConfig}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

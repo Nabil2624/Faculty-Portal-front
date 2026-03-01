@@ -3,7 +3,15 @@ import { useTranslation } from "react-i18next";
 import axiosInstance from "../utils/axiosInstance";
 import { getResearches } from "../services/scientificResearchService";
 
-export default function useScientificResearches(pageSize = 4, search) {
+export default function useScientificResearches(
+  pageSize = 4,
+  search,
+  sortValue = 0,
+  publisherType,
+  PublicationType,
+  source,
+  derivedFrom,
+) {
   const { t } = useTranslation("ScientificResearches");
 
   const [researches, setResearches] = useState([]);
@@ -21,8 +29,16 @@ export default function useScientificResearches(pageSize = 4, search) {
     setError(null);
 
     try {
-      const result = await getResearches({ page, pageSize, search });
-      console.log(result);
+      const result = await getResearches({
+        page,
+        pageSize,
+        search,
+        sort: sortValue,
+        PublisherType: publisherType,
+        PublicationType: PublicationType,
+        Source: source,
+        DerivedFrom: derivedFrom,
+      });
       if (!result?.data?.length) {
         setResearches([]);
         setTotalPages(1);
@@ -43,7 +59,15 @@ export default function useScientificResearches(pageSize = 4, search) {
 
   useEffect(() => {
     fetchResearches(currentPage);
-  }, [currentPage,search]);
+  }, [
+    currentPage,
+    search,
+    sortValue,
+    publisherType,
+    PublicationType,
+    source,
+    derivedFrom,
+  ]);
 
   return {
     researches,

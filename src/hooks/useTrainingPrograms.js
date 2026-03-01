@@ -5,7 +5,10 @@ import { getTrainingPrograms } from "../services/trainingPrograms.service";
 export default function useTrainingPrograms(
   page = 1,
   pageSize = 9,
-  search
+  search,
+  sortValue,
+  trainingProgramParticipationTypes,
+  trainingProgramTypes,
 ) {
   const [programs, setPrograms] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -22,6 +25,9 @@ export default function useTrainingPrograms(
           page: pageToLoad,
           pageSize,
           search,
+          sort: sortValue,
+          TrainingProgramParticipationTypes: trainingProgramParticipationTypes,
+          TrainingProgramTypes: trainingProgramTypes,
         });
 
         const { data = [], totalCount = 0 } = res || {};
@@ -34,7 +40,14 @@ export default function useTrainingPrograms(
         setLoading(false);
       }
     },
-    [page, pageSize, search]
+    [
+      page,
+      pageSize,
+      search,
+      sortValue,
+      trainingProgramParticipationTypes,
+      trainingProgramTypes,
+    ],
   );
 
   useEffect(() => {

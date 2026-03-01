@@ -8,7 +8,7 @@ import Pagination from "../components/ui/Pagination";
 
 import usePrizesAndRewards from "../hooks/usePrizesAndRewards";
 import { deletePrizeOrReward } from "../services/prizesAndRewards.service";
-
+import usePrizesAndRewardsLookups from "../hooks/usePrizesAndRewardsLookups";
 import PrizeCard from "../components/widgets/PrizesAndRewards/PrizesCard";
 import PrizesAndRewardsModal from "../components/widgets/PrizesAndRewards/PrizesAndRewardsModal";
 
@@ -16,7 +16,10 @@ export default function PrizesAndRewards() {
   const { t, i18n } = useTranslation("prizes-and-rewards");
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
-
+  const [filtersState, setFiltersState] = useState({});
+  const [prizeIds, setPrizeIds] = useState([]);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
@@ -39,8 +42,44 @@ export default function PrizesAndRewards() {
     loading,
     error,
     loadData,
-  } = usePrizesAndRewards(currentPage, 9, debouncedSearch);
+  } = usePrizesAndRewards(currentPage, 9, debouncedSearch, sortValue, prizeIds);
+  const { types, loadingTypes } = usePrizesAndRewardsLookups();
 
+  const mappedTypes =
+    types?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "prizeIds",
+          title: "dependprizeType",
+          options: mappedTypes,
+        },
+      ]
+    : [];
+  const sortOptions = [
+    { value: 2, label: "newestFirst" },
+    { value: 1, label: "oldestFirst" },
+  ];
+
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+
+    const ids = filters?.prizeIds || [];
+    setPrizeIds(ids);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setPrizeIds([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages || 1);
@@ -91,6 +130,7 @@ export default function PrizesAndRewards() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {!loading && error && (
@@ -146,8 +186,16 @@ export default function PrizesAndRewards() {
           setShowDetails={setShowDetails}
           onDelete={handleDelete}
           deleteError={deleteError}
-          t={t} // pass translation function
-          isArabic={isArabic} // pass current language
+          t={t}
+          isArabic={isArabic}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          currentFilters={filtersState}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={filtersConfig}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

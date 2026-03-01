@@ -19,7 +19,7 @@ export default function UniversityContributionModal({
   loadingTypes,
   loading,
   isArabic,
-
+  sortOptions = [],
   handleChange,
   submitForm,
   onDelete,
@@ -87,7 +87,6 @@ export default function UniversityContributionModal({
       )}
 
       {/* ================= FILTER MODAL ================= */}
-      {/* ================= FILTER MODAL ================= */}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
           <CustomizeResultsModal
@@ -97,7 +96,8 @@ export default function UniversityContributionModal({
             currentSort={currentSort}
             currentFilters={currentFilters}
             filtersConfig={filtersConfig}
-            translationNamespace="university-contribution"
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

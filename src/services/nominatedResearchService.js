@@ -15,6 +15,7 @@ export const approveNominatedResearch = async (researchId) => {
   try {
     const response = await axiosInstance.put(
       `/ResearchesAndTheses/ApproveRecommendedResearch/${researchId}`,
+      { skipGlobalErrorHandler: true },
     );
     return response.data;
   } catch (err) {
@@ -28,6 +29,7 @@ export const rejectNominatedResearch = async (researchId) => {
   try {
     const response = await axiosInstance.delete(
       `/ResearchesAndTheses/RejectRecommendedResearch/${researchId}`,
+      { skipGlobalErrorHandler: true },
     );
     return response.data;
   } catch (err) {

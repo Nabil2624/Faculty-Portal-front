@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react";
 import { getProjects } from "../services/projects.service";
 
-export default function useProjects(page, pageSize = 9, search) {
+export default function useProjects(
+  page,
+  pageSize = 9,
+  search,
+  sortValue,
+  localOrInternational,
+  participationRoleIds,
+  typeOfProjectIds,
+) {
   const [projects, setProjects] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -12,20 +20,21 @@ export default function useProjects(page, pageSize = 9, search) {
     setError(null);
 
     try {
-      const res = await getProjects(
-        requestedPage,
-        pageSize,
-        search
-      );
+      const res = await getProjects({
+        pageIndex: requestedPage,
+        pageSize: pageSize,
+        search: search,
+        sort: sortValue,
+        LocalOrInternationals: localOrInternational,
+        TypeOfProjectIds: typeOfProjectIds,
+        ParticipationRoleIds: participationRoleIds,
+      });
 
       const { data, totalCount } = res.data || {};
 
       setProjects(data || []);
 
-      const pages = Math.max(
-        1,
-        Math.ceil((totalCount || 0) / pageSize)
-      );
+      const pages = Math.max(1, Math.ceil((totalCount || 0) / pageSize));
 
       setTotalPages(pages);
     } catch (err) {
@@ -38,10 +47,16 @@ export default function useProjects(page, pageSize = 9, search) {
     }
   };
 
-  // لما الصفحة تتغير
   useEffect(() => {
     loadData(page);
-  }, [page, search]);
+  }, [
+    page,
+    search,
+    sortValue,
+    localOrInternational,
+    participationRoleIds,
+    typeOfProjectIds,
+  ]);
 
   return {
     projects,

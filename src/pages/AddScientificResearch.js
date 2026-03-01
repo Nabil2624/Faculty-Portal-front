@@ -78,7 +78,7 @@ export default function AddScientificResearch() {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+
 
   // Validation function
   const validate = () => {

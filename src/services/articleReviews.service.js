@@ -1,15 +1,28 @@
 import axiosInstance from "../utils/axiosInstance";
-
-export const getArticleReviews = async (page, pageSize ,search) => {
-  const response = await axiosInstance.get("/ProjectsAndCommittees/ReviewingArticles", {
-    params: { pageIndex: page, pageSize ,search },
-    skipGlobalErrorHandler: true,
-  });
+import qs from "qs";
+export const getArticleReviews = async (page, pageSize, search, sort) => {
+  const response = await axiosInstance.get(
+    "/ProjectsAndCommittees/ReviewingArticles",
+    {
+      params: {
+        pageIndex:page,
+        pageSize,
+        search,
+        ...(sort && { sort }),
+      },
+      paramsSerializer: (params) =>
+        qs.stringify(params, { arrayFormat: "repeat" }),
+      skipGlobalErrorHandler: true,
+    },
+  );
   return response.data; // { data, totalCount }
 };
 
 export const deleteArticleReview = async (id) => {
-  await axiosInstance.delete(`/ProjectsAndCommittees/DeleteReviewingArticle/${id}`, {
-    skipGlobalErrorHandler: true,
-  });
+  await axiosInstance.delete(
+    `/ProjectsAndCommittees/DeleteReviewingArticle/${id}`,
+    {
+      skipGlobalErrorHandler: true,
+    },
+  );
 };

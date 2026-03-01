@@ -1,8 +1,22 @@
 import axiosInstance from "../utils/axiosInstance";
-
-export const getScientificWriting = (pageIndex, pageSize, search) => {
+import qs from "qs";
+export const getScientificWriting = (
+  pageIndex,
+  pageSize,
+  search,
+  AuthorRoleIds,
+  sort,
+) => {
   return axiosInstance.get("/WritingsAndPatents/ScientificWritings", {
-    params: { pageIndex, pageSize, search },
+    params: {
+      pageIndex,
+      pageSize,
+      search,
+      ...(sort && { sort }),
+      ...(AuthorRoleIds?.length && { AuthorRoleIds }),
+    },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };

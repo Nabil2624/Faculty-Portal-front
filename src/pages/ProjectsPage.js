@@ -10,6 +10,7 @@ import useProjects from "../hooks/useProjects";
 import Pagination from "../components/ui/Pagination";
 import { deleteProject } from "../services/projects.service";
 import PageHeader from "../components/ui/PageHeader";
+import { useProjectLookups } from "../hooks/useProjectLookups";
 
 export default function ProjectsPage() {
   const { t, i18n } = useTranslation("Projects");
@@ -19,13 +20,17 @@ export default function ProjectsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-
+  const [filtersState, setFiltersState] = useState({});
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
+  const [typeOfProjectIds, setTypeOfProjectIds] = useState([]);
+  const [participationRoleIds, setParticipationRoleIds] = useState([]);
+  const [localOrInternational, setLocalOrInternational] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
 
-  // 🔥 debounce search
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -35,10 +40,79 @@ export default function ProjectsPage() {
     return () => clearTimeout(timeout);
   }, [search]);
 
-  const { projects, totalPages, loading, error, loadData } =
-    useProjects(currentPage, 9, debouncedSearch);
+  const { projects, totalPages, loading, error, loadData } = useProjects(
+    currentPage,
+    9,
+    debouncedSearch,
+    sortValue,
+    localOrInternational,
+    participationRoleIds,
+    typeOfProjectIds,
+  );
+  const {
+    projectTypes,
+    projectRoles,
+    loading: lookupsLoading,
+  } = useProjectLookups();
+  const mappedTypes =
+    projectTypes?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+  const mappedRoles =
+    projectRoles?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+  const mapTypes = [
+    { value: 1, label: "local" },
+    { value: 2, label: "international" },
+  ];
+  const sortOptions = [
+    { value: 4, label: "newestFirst" },
+    { value: 3, label: "oldestFirst" },
+    { value: 1, label: "nameAsc" },
+    { value: 2, label: "nameDec" },
+  ];
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "TypeOfProjectIds",
+          title: "dependOnTypeOfProject",
+          options: mappedTypes,
+        },
+        {
+          key: "ParticipationRoleIds",
+          title: "dependOnParticipationRole",
+          options: mappedRoles,
+        },
+        {
+          key: "LocalOrInternational",
+          title: "dependLocalOrInternational",
+          options: mapTypes,
+        },
+      ]
+    : [];
 
-  // حماية لو الصفحة خرجت بره الرينج
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+
+    setTypeOfProjectIds(filters?.TypeOfProjectIds || []);
+    setParticipationRoleIds(filters?.ParticipationRoleIds || []);
+    setLocalOrInternational(filters?.LocalOrInternational || []);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setTypeOfProjectIds([]);
+    setParticipationRoleIds([]);
+    setLocalOrInternational([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
+
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages || 1);
@@ -79,11 +153,11 @@ export default function ProjectsPage() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         {/* Content wrapper flex-1 عشان الباجينيشن ثابت تحت */}
         <div className="flex-1 overflow-y-auto pr-2 mb-4">
-
           {!loading && error && (
             <div className="text-red-500 text-lg text-center">
               {t("errors.loadFailed")}
@@ -144,6 +218,14 @@ export default function ProjectsPage() {
           deleteError={deleteError}
           t={t}
           isArabic={isArabic}
+          handleApplyFilters={handleApplyFilters}
+          currentSort={sortValue}
+          currentFilters={filtersState}
+          handleResetFilters={handleResetFilters}
+          showFilterModal={showFilterModal}
+          setShowFilterModal={setShowFilterModal}
+          filtersConfig={filtersConfig}
+          sortOptions={sortOptions}
         />
       </div>
     </ResponsiveLayoutProvider>

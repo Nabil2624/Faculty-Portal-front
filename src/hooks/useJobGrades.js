@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { getJobRanks } from "../services/jobGrade.service";
 
-export default function useJobGrades(page = 1, pageSize = 9, search) {
+export default function useJobGrades(
+  page = 1,
+  pageSize = 9,
+  search,
+  sortValue = 0,
+  filters,
+) {
   const [jobRanks, setJobRanks] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -17,6 +23,8 @@ export default function useJobGrades(page = 1, pageSize = 9, search) {
           page: pageToLoad,
           pageSize,
           search,
+          sort: sortValue,
+          JobRankIds: filters,
         });
 
         const { data = [], totalCount = 0 } = res || {};
@@ -30,7 +38,7 @@ export default function useJobGrades(page = 1, pageSize = 9, search) {
         setLoading(false);
       }
     },
-    [page, pageSize, search],
+    [page, pageSize, search, sortValue, filters],
   );
 
   useEffect(() => {

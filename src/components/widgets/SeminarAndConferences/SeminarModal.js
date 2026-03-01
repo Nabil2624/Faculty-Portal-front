@@ -1,6 +1,7 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import SeminarDeleteModal from "./SeminarDeleteModal";
 import SeminarDetailsModal from "./SeminarDetailsModal";
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
 export default function SeminarModal({
   showDelete,
@@ -10,6 +11,14 @@ export default function SeminarModal({
   setShowDetails,
   onDelete,
   deleteError,
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  sortOptions = [],
+  currentSort,
+  currentFilters,
+  handleResetFilters,
 }) {
   return (
     <>
@@ -31,6 +40,21 @@ export default function SeminarModal({
           <SeminarDetailsModal
             item={selectedItem}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {/* ================= FILTER MODAL ================= */}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

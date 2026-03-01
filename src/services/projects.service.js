@@ -1,9 +1,27 @@
 import axiosInstance from "../utils/axiosInstance";
-
+import qs from "qs";
 /* ================== LIST ================== */
-export const getProjects = (pageIndex, pageSize, search) => {
+export const getProjects = (
+{  pageIndex,
+  pageSize,
+  search,
+  LocalOrInternationals,
+  sort,
+  TypeOfProjectIds,
+  ParticipationRoleIds,}
+) => {
   return axiosInstance.get("/ProjectsAndCommittees/Projects", {
-    params: { pageIndex, pageSize, search },
+    params: {
+      pageIndex,
+      pageSize,
+      search,
+      ...(sort && { sort }),
+      ...(LocalOrInternationals?.length && { LocalOrInternationals }),
+      ...(TypeOfProjectIds?.length && { TypeOfProjectIds }),
+      ...(ParticipationRoleIds?.length && { ParticipationRoleIds }),
+    },
+    paramsSerializer: (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" }),
     skipGlobalErrorHandler: true,
   });
 };

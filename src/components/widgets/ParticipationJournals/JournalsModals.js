@@ -3,6 +3,7 @@ import AddJournalForm from "../ParticipationJournals/AddJournalForm";
 import EditJournalForm from "./EditJournalForm";
 import DeleteJournalModal from "./DeleteJournalModal";
 import JournalDetailsModal from "./JournalDetailsModal";
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
 export default function JournalsModals({
   showAdd,
@@ -19,6 +20,15 @@ export default function JournalsModals({
   onDelete,
   t,
   isArabic,
+
+  currentSort,
+  currentFilters,
+  handleResetFilters,
+  sortOptions = [],
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
 }) {
   return (
     <>
@@ -59,6 +69,21 @@ export default function JournalsModals({
             isArabic={isArabic}
             t={t}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {/* ================= FILTER MODAL ================= */}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}

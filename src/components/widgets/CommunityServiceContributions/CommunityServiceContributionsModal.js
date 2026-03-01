@@ -2,6 +2,7 @@ import ModalWrapper from "../../ui/ModalWrapper";
 import CommunityServiceContributionsDeleleModal from "./CommunityServiceContributionsDeleleModal";
 import CommunityServiceContributionsDetailsModal from "./CommunityServiceContributionsDetailsModal";
 import CommunityServiceContributionsForm from "./CommunityServiceContributionsForm";
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
 export default function CommunityServiceContributionsModal({
   mode,
@@ -9,6 +10,15 @@ export default function CommunityServiceContributionsModal({
   showDelete,
   showDetails,
   selectedItem,
+
+  currentSort,
+  handleResetFilters,
+  sortOptions = [],
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  currentFilters,
 
   formData,
   errors = {},
@@ -72,6 +82,20 @@ export default function CommunityServiceContributionsModal({
           <CommunityServiceContributionsDetailsModal
             item={selectedItem}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions} 
           />
         </ModalWrapper>
       )}

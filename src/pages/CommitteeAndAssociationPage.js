@@ -7,7 +7,7 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import CommitteeCard from "../components/widgets/CommitteeAndAssociation/CommitteeCard";
 import Pagination from "../components/ui/Pagination";
 import PageHeader from "../components/ui/PageHeader";
-
+import useCommitteeLookups from "../hooks/useCommitteeLookups";
 import CommitteesModals from "../components/widgets/CommitteeAndAssociation/CommitteesModals";
 import useCommitteesAndAssociations from "../hooks/useCommitteesAndAssociations";
 
@@ -20,7 +20,12 @@ export default function CommitteesAndAssociationsPage() {
   const [showDelete, setShowDelete] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-
+  const [filtersState, setFiltersState] = useState({});
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortValue, setSortValue] = useState(null);
+  const [typeOfCommitteeOrAssociationIds, setTypeOfCommitteeOrAssociationIds] =
+    useState([]);
+  const [degreeOfSubscriptionIds, setDegreeOfSubscriptionIds] = useState([]);
   const {
     committees,
     currentPage,
@@ -32,6 +37,9 @@ export default function CommitteesAndAssociationsPage() {
   } = useCommitteesAndAssociations({
     t,
     search: debouncedSearch,
+    sortValue,
+    typeOfCommitteeOrAssociationIds,
+    degreeOfSubscriptionIds,
   });
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -41,7 +49,57 @@ export default function CommitteesAndAssociationsPage() {
 
     return () => clearTimeout(timeout);
   }, [search, setCurrentPage]);
+
+  const { types, degrees, loadings } = useCommitteeLookups();
+  const mappedTypes =
+    types?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+  const mappedDegrees =
+    degrees?.map((item) => ({
+      value: item.id,
+      label: isArabic ? item.valueAr : item.valueEn,
+    })) || [];
+  const filtersConfig = mappedTypes.length
+    ? [
+        {
+          key: "TypeOfCommitteeOrAssociationIds",
+          title: "dependOnTypeOfCommitteeOrAssociation",
+          options: mappedTypes,
+        },
+        {
+          key: "DegreeOfSubscriptionIds",
+          title: "dependOnDegreeOfSubscription",
+          options: mappedDegrees,
+        },
+      ]
+    : [];
+  const sortOptions = [
+    { value: 1, label: "oldestFirst" },
+    { value: 2, label: "newestFirst" },
+    { value: 3, label: "nameAsc" },
+    { value: 4, label: "nameDec" },
+  ];
   /* ================= Handlers ================= */
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+
+    setTypeOfCommitteeOrAssociationIds(
+      filters?.TypeOfCommitteeOrAssociationIds || [],
+    );
+    setDegreeOfSubscriptionIds(filters?.DegreeOfSubscriptionIds || []);
+
+    setCurrentPage(1);
+  };
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setTypeOfCommitteeOrAssociationIds([]);
+    setDegreeOfSubscriptionIds([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
 
   const handleDeleteClick = (item) => {
     setSelectedItem(item);
@@ -79,12 +137,13 @@ export default function CommitteesAndAssociationsPage() {
           onSearchChange={setSearch}
           searchPlaceholder={t("search")}
           isArabic={isArabic}
+          onFilterClick={() => setShowFilterModal(true)}
         />
 
         <div className="items-center justify-center">
           {!loading && error && (
             <div className="text-red-500 text-lg text-center">
-              {t("errors.loadFailed")}
+              {t("fetchError")}
             </div>
           )}
 
@@ -132,6 +191,14 @@ export default function CommitteesAndAssociationsPage() {
         onDelete={confirmDelete}
         t={t}
         isArabic={isArabic}
+        handleApplyFilters={handleApplyFilters}
+        currentSort={sortValue}
+        currentFilters={filtersState}
+        handleResetFilters={handleResetFilters}
+        showFilterModal={showFilterModal}
+        setShowFilterModal={setShowFilterModal}
+        filtersConfig={filtersConfig}
+        sortOptions={sortOptions}
       />
     </ResponsiveLayoutProvider>
   );

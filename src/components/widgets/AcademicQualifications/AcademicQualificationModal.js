@@ -1,7 +1,7 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import AcademicQualificationDeleteModal from "./AcademicQualificationDeleteModal";
 import AcademicQualificationDetailsModal from "./AcademicQualificationDetailsModal";
-
+import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function AcademicQualificationModal({
   showDelete,
   showDetails,
@@ -11,6 +11,14 @@ export default function AcademicQualificationModal({
   onDelete,
   t,
   isArabic,
+  showFilterModal,
+  setShowFilterModal,
+  filtersConfig = [],
+  handleApplyFilters,
+  sortOptions = [],
+  currentSort,
+  currentFilters,
+  handleResetFilters,
 }) {
   return (
     <>
@@ -32,6 +40,21 @@ export default function AcademicQualificationModal({
             isArabic={isArabic}
             t={t}
             onClose={() => setShowDetails(false)}
+          />
+        </ModalWrapper>
+      )}
+      {/* ================= FILTER MODAL ================= */}
+      {showFilterModal && (
+        <ModalWrapper onClose={() => setShowFilterModal(false)}>
+          <CustomizeResultsModal
+            onClose={() => setShowFilterModal(false)}
+            onApply={handleApplyFilters}
+            onReset={handleResetFilters}
+            currentSort={currentSort}
+            currentFilters={currentFilters}
+            filtersConfig={filtersConfig}
+            translationNamespace="filter-sort"
+            sortOptions={sortOptions}
           />
         </ModalWrapper>
       )}
