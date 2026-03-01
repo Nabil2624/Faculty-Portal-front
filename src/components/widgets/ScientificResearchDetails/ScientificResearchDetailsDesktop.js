@@ -4,9 +4,11 @@ import CitationsWidget from "./CitationsWidget";
 import InfoRow from "../../ui/InfoRow";
 import AbstractWidget from "./AbstractWidget";
 export default function ScientificResearchDetailsDesktop({ research, t }) {
-  const mappedContributors = (research.contributions || []).map(
-    (c) => c.memberAcademicName,
-  );
+
+const mappedContributors = (research.contributions || [])
+  .slice()
+  .reverse()
+  .map((c) => c.memberAcademicName);
 
   const mappedJournals = research.journalOrConfernce
     ? [research.journalOrConfernce]

@@ -84,7 +84,6 @@ export default function AddSupervisionOrJudgement() {
             } md:row-start-1`}
           >
             {/* Faculty Role */}
-            {/* Faculty Role */}
             <div>
               <label className="block mb-3 font-medium text-lg">
                 {t("facultyRole")}

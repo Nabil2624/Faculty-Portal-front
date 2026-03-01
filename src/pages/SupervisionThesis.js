@@ -72,7 +72,7 @@ export default function SupervisionThesis() {
           onAdd={() => navigate("/add-supervision")}
           isArabic
         />
-{/* رسالة الخطأ */}
+{/* Error Massage*/}
   {error && (
     <div className="text-center text-red-500 mt-4">
       {t("fetchError")}

@@ -74,7 +74,7 @@ export default function AddScientificResearch() {
   const handleNumberOnly = (value, setter, fieldName) => {
     if (/^\d*$/.test(value)) {
       setter(value);
-      clearError(fieldName); // 👈 يمسح الخطأ أول ما يكتب صح
+      clearError(fieldName);
     }
   };
 
@@ -112,7 +112,7 @@ export default function AddScientificResearch() {
 
   const handleSave = async () => {
     if (!validate()) return;
-    await saveHook(navigate); // <-- pass navigate
+    await saveHook(navigate); // pass navigate
   };
 
   const clearError = (field) => {
@@ -184,9 +184,10 @@ export default function AddScientificResearch() {
                   label={t("pages")}
                   placeholder={t("pagesPlaceholder")}
                   value={noOfPages}
-                  setValue={(val) =>
-                    handleNumberOnly(val, setNoOfPages, "noOfPages")
-                  }
+                  setValue={(val) => {
+                    setNoOfPages(val);
+                    clearError("noOfPages");
+                  }}
                 />
               </div>
 

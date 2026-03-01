@@ -9,6 +9,27 @@ export default function ScientificResearchFullDetailsMobile({ research, t }) {
   const isArabic = i18n.language === "ar";
   const safeLink = research.researchLink;
 
+  
+      const formatContributorMeta = (c) => {
+  // Main / Co
+  const role = c.isTheMajorResearcher
+    ? t("mainResearcher")
+    : t("coResearcher");
+
+  // From University / External
+  let source = "";
+
+  if (
+    c.contributorType === "FromUniverstity" ||
+    c.contributorType === 0
+  ) {
+    source = isArabic ? "من الجامعة" : "From University";
+  } else if (c.contributorType === "ExternalContributor") {
+    source = isArabic ? "خارج الجامعة" : "External";
+  }
+
+  return `${role} - ${source}`;
+};
   const formatValue = (value) => {
     if (!value || typeof value !== "string") return value;
 
@@ -26,10 +47,27 @@ export default function ScientificResearchFullDetailsMobile({ research, t }) {
       return isArabic ? "ماجستير" : "Master’s";
     }
 
+        // Other detection
+        if (lower.includes("other")) {
+  return isArabic ? "أخرى" : "Other";
+}
+
+     // Internal / Local detection
     if (lower.includes("internal") || lower.includes("local")) {
-      return isArabic ? "داخلي" : "Internal";
+      return isArabic ? "محلي" : "Internal";
     }
 
+    if (lower.includes("international")) {
+  return isArabic ? "دولي" : "International";
+}
+
+    if (lower.includes("magazine")) {
+  return isArabic ? "مجلة" : "Magazine";
+}
+
+if (lower.includes("conference")) {
+  return isArabic ? "مؤتمر" : "Conference";
+}
     return value;
   };
 
@@ -46,7 +84,7 @@ export default function ScientificResearchFullDetailsMobile({ research, t }) {
 
         <InfoRow label={t("issue")} value={research.issue || "-"} />
 
-        <InfoRow label={t("volume")} value={research.volume || "-"} />
+        <InfoRow label={t("volume")} value={formatValue(research.publisherType) || "-"} />
 
         <InfoRow label={t("pages")} value={research.noOfPages || "-"} />
 
@@ -97,15 +135,21 @@ export default function ScientificResearchFullDetailsMobile({ research, t }) {
       {/* Internal Contributors */}
       <SectionCardLongTitle title={t("internalContributors")}>
         <ol className="space-y-4 -mt-4">
-          {(research.contributions || []).map((c, i) => (
-            <li key={i} className="flex items-start gap-2">
-              <span className="font-bold text-[#B38E19] w-6">{i + 1}.</span>
-              <p className="text-lg font-semibold text-[#B38E19]">
-                {c.memberAcademicName}
-              </p>
-            </li>
-          ))}
-        </ol>
+            {[...(research.contributions || [])].reverse().map((c, i) => (
+              <li key={i} className="flex items-start gap-2">
+                <span className="font-bold text-[#B38E19] w-6">{i + 1}.</span>
+                <div className="space-y-2">
+                  <p className="text-lg font-semibold text-[#B38E19]">
+                    {c.memberAcademicName}
+                  </p>
+              <p className="text-sm text-gray-700">
+  {formatContributorMeta(c)}
+</p>
+    
+                </div>
+              </li>
+            ))}
+          </ol>
       </SectionCardLongTitle>
 
       {/* Attachments */}

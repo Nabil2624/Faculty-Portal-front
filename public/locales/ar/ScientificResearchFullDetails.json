@@ -10,13 +10,14 @@
   "issueNumber": "العدد",
   "journalOrConference": "المجلة / المؤتمر",
   "link": "الرابط",
-  "volume": "الصفحات",
+  "volume": "جهة النشر",
   "publicationType": "نوع النشر",
   "year": "العام",
   "derivedFrom": "مستمد من",
-  "pages": "المجلد",
+  "pages": "الصفحات",
   "issue": "العدد",
-
+  "mainResearcher": "باحث رئيسي",
+  "coResearcher": "باحث مشارك",
   "publicationTypes": {
     "PHD": "رسالة دكتوراه",
     "MASTERS": "رسالة ماجستير",
@@ -28,6 +29,10 @@
     "EXTERNAL": "خارجي"
   },
 
+  "publisherTypes": {
+    "MAGAZINE": "مجلة",
+    "CONFERENCE": "مؤتمر"
+  },
   "internalContributors": "المشاركون من داخل الجامعة",
   "externalContributors": "المشاركون من خارج الجامعة",
   "contributors": "المشاركون",

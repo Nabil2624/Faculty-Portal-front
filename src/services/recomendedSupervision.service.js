@@ -4,7 +4,7 @@ export const fetchRecommendedSupervisions = (
   pageIndex = 1,
   pageSize = 4
 ) => {
-  return axiosInstance.get("/ResearchesAndTheses/RecommendedSupervisions", {
+  return axiosInstance.get("/ResearchesAndTheses/RecommendedThesesSupervisions", {
     params: { pageIndex, pageSize },
     skipGlobalErrorHandler: true,
   });
@@ -12,12 +12,12 @@ export const fetchRecommendedSupervisions = (
 
 export const approveRecommendedSupervision = (id) => {
   return axiosInstance.put(
-    `/ResearchesAndTheses/ApproveRecommendedSupervision/${id}`
+    `/ResearchesAndTheses/RecommendedThesesSupervisions${id}`
   );
 };
 
 export const rejectRecommendedSupervision = (id) => {
   return axiosInstance.delete(
-    `/ResearchesAndTheses/RejectRecommendedSupervision/${id}`
+    `/ResearchesAndTheses/RejectRecommendedThesesSupervison/${id}`
   );
 };

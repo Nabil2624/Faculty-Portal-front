@@ -16,7 +16,8 @@
   "derivedFrom": "Derived From",
   "volume": "Volume",
   "issue": "Issue",
-
+  "mainResearcher": "Main Researcher",
+  "coResearcher": "Co-Researcher",
   "publicationTypes": {
     "PHD": "PhD Thesis",
     "MASTERS": "Master's Thesis",

@@ -174,7 +174,7 @@ export default function NominatedScientificResearch() {
     reload
   } = useNominatedScientificResearch();
 
-  // 🔵 Researcher profile logic
+  // Researcher profile logic
   const {
     researcher,
     loading: profileLoading,
@@ -222,6 +222,7 @@ useEffect(() => {
                   scholarProfileLink: data.scholarLink,
                 }
               );
+              window.location.reload();
             }}
           />
         </div>

@@ -80,7 +80,7 @@ useEffect(() => {
   setResearches(thesisData.researches || []);
 
   setMembers(
-    thesisData.supervisors?.map((s) => {
+    thesisData.comitteeMembers?.map((s) => {
       let roleValue;
       if (typeof s.role === "string") {
         const r = s.role.toLowerCase();
@@ -174,7 +174,7 @@ useEffect(() => {
       internalGradeDate: internalDegreeDate || null,
       supervisionConfirmationDate: jointSupervisionDate || null,
 
-      supervisors: members
+      comitteeMembers: members
         .filter((m) => m.name && m.jobTitle)
         .map((m) => ({
           role: m.role,
