@@ -26,21 +26,40 @@ export default function useRecommendedSupervisions() {
     try {
       const response = await fetchRecommendedSupervisions(
         currentPage,
-        pageSize
+        pageSize,
       );
 
       const result = response.data;
 
       const mapped =
         result?.data?.map((item) => ({
-          ...item,
-        })) || [];
+          id: item.id,
+          title: item.title,
+          studentName: item.studentName,
 
+          //  translate Master / PHD
+          degreeType: t(item.type) || item.type,
+
+          registrationDate: item.registrationDate,
+          supervisionFormationDate: item.supervisionFormationDate,
+          discussionDate: item.discussionDate,
+          grantingDate: item.grantingDate,
+
+          facultyMemberRole:
+            t(item.facultyMemberRole) || item.facultyMemberRole,
+          specialization: item.specialization,
+          universityOrFaculty: item.universityOrFaculty,
+
+          grade: item.grade,
+
+          discussionDate: item.discussionDate,
+          grantingDate: item.grantingDate,
+        })) || [];
       setItems(mapped);
 
       const calculatedTotalPages = Math.max(
         1,
-        Math.ceil((result?.totalCount || 0) / pageSize)
+        Math.ceil((result?.totalCount || 0) / pageSize),
       );
 
       setTotalPages(calculatedTotalPages);
@@ -58,7 +77,7 @@ export default function useRecommendedSupervisions() {
 
   useEffect(() => {
     loadData();
-  }, [currentPage]);
+  }, [currentPage, i18n.language]);
 
   const handleApprove = async (item) => {
     await approveRecommendedSupervision(item.id);

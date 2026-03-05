@@ -15,27 +15,35 @@ export default function AddPatent() {
   const isArabic = i18n.language === "ar";
   const dir = i18n.dir();
 
-  const { form, setForm, errors, validate, setServerErrors } = usePatentForm(t);
+const {
+  form,
+  setForm,
+  errors,
+  attachments,
+  setAttachments,
+  handleSave,
+  loading, // use this
+} = usePatentForm(t);
 
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
-  const handleSave = async () => {
-    if (!validate()) return;
+  // const handleSave = async () => {
+  //   if (!validate()) return;
 
-    setLoading(true);
+  //   setLoading(true);
 
-    try {
-      await createPatent(form);
+  //   try {
+  //     await createPatent(form);
 
-      navigate("/patents");
-    } catch (error) {
-      setServerErrors(
-        error.response?.data || { message: t("messages.failedSave") },
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     navigate("/patents");
+  //   } catch (error) {
+  //     setServerErrors(
+  //       error.response?.data || { message: t("messages.failedSave") },
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   if (loading) return <LoadingSpinner />;
 
@@ -47,7 +55,9 @@ export default function AddPatent() {
           form={form}
           setForm={setForm}
           errors={errors}
-          onSave={handleSave}
+          attachments={attachments} // pass attachments
+          setAttachments={setAttachments} // pass setter
+          onSave={() => handleSave(navigate)}
           onCancel={() => navigate("/patents")}
           t={t}
           isArabic={isArabic}

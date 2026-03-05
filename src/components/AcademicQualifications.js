@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
-
+import { downloadAcademicQualificationAttachment } from "../services/academicQualifications.service";
 export default function AcademicQualificationsPage() {
   const { t, i18n } = useTranslation("AcademicQualifications");
   const isArabic = i18n.language === "ar";
@@ -94,6 +94,30 @@ export default function AcademicQualificationsPage() {
 
   if (loading) return <LoadingSpinner />;
 
+  const handleDownload = async (attachment) => {
+    try {
+      const response = await downloadAcademicQualificationAttachment(
+        selectedItem.id,
+        attachment.id,
+      );
+
+      const blob = new Blob([response.data], {
+        type: attachment.contentType,
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = attachment.fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
   return (
     <ResponsiveLayoutProvider>
       <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
@@ -325,17 +349,21 @@ export default function AcademicQualificationsPage() {
                 </div>
                 {selectedItem.attachments &&
                   selectedItem.attachments.length > 0 && (
-                    <div className="flex justify-between items-center mt-3">
+                    <div className="flex justify-between gap-3 items-center">
                       <span className="font-medium">{t("attachments")}</span>
 
-                      <a
-                        href={selectedItem.attachments[0].fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#19355a] underline hover:text-[#b38e19]"
-                      >
-                        {selectedItem.attachments[0].fileName}
-                      </a>
+                      <span className="flex flex-wrap gap-2">
+                        {selectedItem.attachments.map((a, i) => (
+                          <button
+                            key={a.id}
+                            className="text-[#b38e19] underline hover:opacity-80 transition"
+                            onClick={() => handleDownload(a)}
+                          >
+                            {a.fileName}
+                            {i < selectedItem.attachments.length - 1 ? "," : ""}
+                          </button>
+                        ))}
+                      </span>
                     </div>
                   )}
               </div>

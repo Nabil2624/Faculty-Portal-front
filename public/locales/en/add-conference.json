@@ -6,6 +6,8 @@
   "loading": "Loading...",
   "submit_error": "An error occurred while saving. Please try again.",
   "attachmentsHint": "Upload your call, research paper, or presentation.",
+  "attachmentsNote" :"Upload your call, research paper, or presentation.",
+  "uploadAttachments": "Upload Attachments",
   "fields": {
     "conferenceName": "Seminar or Conference",
     "type": "Type",

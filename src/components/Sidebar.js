@@ -55,7 +55,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
     "w-[clamp(20px,1.6vw,60px)] h-[clamp(20px,1.6vw,60px)] shrink-0";
 
   const navItems = [
-    { key: "home", icon: <Home />, link: "/under-development" },
+    { key: "home", icon: <Home />, link: "/profile" },
     {
       key: "personalInfo",
       icon: <User />,

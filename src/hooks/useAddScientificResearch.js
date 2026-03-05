@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   saveScientificResearch,
+  uploadResearchAttachments,
   fetchDOIData,
   fetchContributorByORCID,
 } from "../services/scientificResearchService";
@@ -101,47 +102,65 @@ export default function useAddScientificResearch() {
   //   }
   // };
 
-  const handleSave = async (navigate) => {
-    // accept navigate
-    setLoading(true);
-    setSaveError("");
-    try {
-      const data = {
-        doi: doi || "",
-        title: researchTitle || "",
-        relatedResearchLink: relatedResearchLink || null,
-        publisher: publisher || null,
-        researchLink: researchLink || null,
-        journalOrConfernce: JournalOrConference || "",
-        publisherType: Number(publisherType) || 0,
-        publicationType: Number(publicationType) || 0,
-        noOfPages: noOfPages || null,
-        pubYear: year || null,
-        // pubDate: pubDate || null,
-        issue: issue || null,
-        // volume: volume || null,
-        researchDerivedFrom: Number(basedOn) || 0,
-        abstract: abstract || "",
-        noOfCititations: 0,
-        contributions: participants.map((p) => ({
-          memberAcademicName: p.name,
-          contributorType: p.internal ? 1 : 2,
-          isTheMajorResearcher: p.main || false,
-        })),
-      };
+const handleSave = async (navigate, attachments = []) => {
+  setLoading(true);
+  setSaveError("");
 
-      await saveScientificResearch(data);
+  try {
+    // 1️⃣ Save Research First
+    const savedResearch = await saveScientificResearch({
+      doi: doi || "",
+      title: researchTitle || "",
+      relatedResearchLink: relatedResearchLink || null,
+      publisher: publisher || null,
+      researchLink: researchLink || null,
+      journalOrConfernce: JournalOrConference || "",
+      publisherType: Number(publisherType) || 0,
+      publicationType: Number(publicationType) || 0,
+      noOfPages: noOfPages || null,
+      pubYear: year || null,
+      issue: issue || null,
+      pubDate: pubDate || null,
+      researchDerivedFrom: Number(basedOn) || 0,
+      abstract: abstract || "",
+      noOfCititations: 0,
+      contributions: participants.map((p) => ({
+        memberAcademicName: p.name,
+        contributorType: p.internal ? 1 : 2,
+        isTheMajorResearcher: p.main || false,
+      })),
+    });
 
-      // Navigate after successful save
-      if (navigate) navigate("/scientific-researches");
-    } catch (error) {
-      console.error(error);
-      setSaveError(t("saveFailed"));
-    } finally {
-      setLoading(false);
+   
+
+    // 2️⃣ Extract Entity ID safely
+    const entityId =
+      savedResearch?.id ||
+      savedResearch?.data?.id ||
+      savedResearch?.data;
+
+    if (!entityId) {
+      throw new Error("Entity ID not returned from backend");
     }
-  };
 
+    // 3️⃣ Upload Attachments (if any)
+    if (attachments && attachments.length > 0) {
+      console.log("Uploading attachments:", attachments);
+      await uploadResearchAttachments(entityId, attachments);
+    }
+
+    // 4️⃣ Navigate after success
+    if (navigate) {
+      navigate("/scientific-researches");
+    }
+
+  } catch (error) {
+    console.error("Save Error:", error);
+    setSaveError(t("saveFailed"));
+  } finally {
+    setLoading(false);
+  }
+};
   // Fetch DOI data
   const handleFetchDOI = async (doiValue) => {
     if (!doiValue.trim()) {

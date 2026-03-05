@@ -39,7 +39,7 @@ export default function ParticipationInJournals() {
   }, [search]);
   const { items, totalPages, loading, error, loadData } = useJournals(
     currentPage,
-    9,
+    6,
     debouncedSearch,
     sortValue,
     typeOfParticipationIds,

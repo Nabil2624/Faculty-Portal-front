@@ -55,3 +55,33 @@ export const getGradeLookups = () => {
     skipGlobalErrorHandler: true,
   });
 };
+
+export const downloadAcademicQualificationAttachment = async (
+  entityId,
+  attachmentId,
+) => {
+  return axiosInstance.get(
+    `/Attachments/${entityId}/${attachmentId}?context=7`,
+    { responseType: "blob" },
+  );
+};
+
+// Upload Attachment
+export const uploadAcademicQualificationAttachment = async (entityId, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return axiosInstance.post(`/Attachments/${entityId}?context=7`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+// Delete Attachment
+export const deleteAcademicQualificationAttachment = async (
+  entityId,
+  attachmentId,
+) => {
+  return axiosInstance.delete(
+    `/Attachments/${entityId}/${attachmentId}?context=7`,
+  );
+};

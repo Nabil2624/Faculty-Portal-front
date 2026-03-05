@@ -25,7 +25,7 @@ export default function Pagination({
           padding:
             "clamp(0.4rem, 0.7vw, 0.7rem) clamp(0.8rem, 1.7vw, 12rem)",
           fontSize: "clamp(0.75rem, 1.2vw, 3rem)",
-          borderRadius: "clamp(6px, 1.2vw, 18px)", // 👈 هنا التحكم
+          borderRadius: "clamp(6px, 0.5vw, 10px)", 
           border: "1px solid #9ca3af",
         }}
         className={`transition ${
@@ -55,7 +55,7 @@ export default function Pagination({
           padding:
             "clamp(0.4rem, 0.9vw, 0.7rem) clamp(0.8rem, 2vw, 12rem)",
           fontSize: "clamp(0.75rem, 1.2vw, 3rem)",
-          borderRadius: "clamp(6px, 1.2vw, 18px)", // 👈 وهنا
+          borderRadius: "clamp(6px, 0.5vw, 10px)", 
           border: "1px solid #9ca3af",
         }}
         className={`transition ${

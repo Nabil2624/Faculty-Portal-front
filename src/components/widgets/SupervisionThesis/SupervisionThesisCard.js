@@ -59,7 +59,7 @@ export default function SupervisionThesisCard({
 
       {/* Student */}
       <p className="text-xs text-gray-500 mt-1">
-        {t("Student")}: {item.studentName}
+       {item.studentName}
       </p>
     </div>
   );

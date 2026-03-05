@@ -6,13 +6,14 @@ import useAuthorRoles from "../hooks/useAuthorRoles";
 import useScientificWritingForm from "../hooks/useScientificWritingForm";
 import { createScientificWriting } from "../services/scientific-writing.service";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
+import { LucideQuote } from "lucide-react";
 
 export default function AddScientificWriting() {
   const { t, i18n } = useTranslation("scientific-writing-form");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
 
-  // ✅ استخدمنا الهـook بدل useState لكل حقل
+ 
   const { form, setForm, errors, validate } = useScientificWritingForm({}, t);
   const { types } = useAuthorRoles();
 
@@ -39,7 +40,7 @@ export default function AddScientificWriting() {
     }
   };
 
-console.log("Selected role:", form.role);
+
   return (
     <ResponsiveLayoutProvider>
     <ScientificWritingForm

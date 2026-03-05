@@ -43,3 +43,31 @@ export const updatePrizeOrReward = (id, data) => {
     skipGlobalErrorHandler: true,
   });
 };
+
+
+// prizesAndRewards.service.js
+export const uploadPrizeAttachments = async (entityId, files) => {
+  const formData = new FormData();
+  files.forEach((file) => formData.append("files", file));
+
+  // context = 6 (PrizeAndAward)
+  return axiosInstance.post(`/Attachments/${entityId}?context=6`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+
+// Download a prize/award attachment
+export const downloadPrizeAttachment = async (entityId, attachmentId) => {
+  // context = 6 (PrizeAndAward)
+  return axiosInstance.get(
+    `/Attachments/${entityId}/${attachmentId}?context=6`,
+    { responseType: "blob" }
+  );
+};
+
+export const deletePrizeAttachment = (entityId, attachmentId) => {
+  return axiosInstance.delete(
+    `/Attachments/${entityId}/${attachmentId}?context=6`
+  );
+};

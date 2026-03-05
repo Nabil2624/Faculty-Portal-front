@@ -17,29 +17,36 @@ export default function AddManifestation() {
   const isArabic = i18n.language === "ar";
   const dir = i18n.dir();
   const navigate = useNavigate();
-
-  const { form, setForm, errors, validate, setServerErrors } =
-    useManifestationForm(t);
+  const {
+    form,
+    setForm,
+    attachments,
+    setAttachments,
+    errors,
+    validate,
+    setServerErrors,
+    handleSave,
+  } = useManifestationForm(t, navigate);
 
   const [loading, setLoading] = useState(false);
 
-  const handleSave = async () => {
-    if (!validate()) return;
+  // const handleSave = async () => {
+  //   if (!validate()) return;
 
-    setLoading(true);
+  //   setLoading(true);
 
-    try {
-      await createManifestation(form);
+  //   try {
+  //     await createManifestation(form);
 
-      navigate("/manifestations-of-scientific-appreciation");
-    } catch (error) {
-      setServerErrors(
-        error.response?.data || { message: t("messages.failedSave") },
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     navigate("/manifestations-of-scientific-appreciation");
+  //   } catch (error) {
+  //     setServerErrors(
+  //       error.response?.data || { message: t("messages.failedSave") },
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   if (loading) return <LoadingSpinner />;
 
@@ -62,6 +69,8 @@ export default function AddManifestation() {
           }
           description={form.description}
           setDescription={(v) => setForm({ ...form, description: v })}
+          attachments={attachments} // <-- مهم
+          setAttachments={setAttachments} // <-- مهم
           error={errors}
           onSave={handleSave}
           onCancel={() =>

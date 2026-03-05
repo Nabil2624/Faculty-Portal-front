@@ -35,3 +35,38 @@ export const getSeminarParticipationTypes = () => {
     skipGlobalErrorHandler: true,
   });
 };
+
+
+export const downloadSeminarAttachment = async (entityId, attachmentId) => {
+  return axiosInstance.get(`/Attachments/${entityId}/${attachmentId}?context=8`, {
+    responseType: "blob",
+  });
+};
+
+
+// UPLOAD
+export const uploadSeminarAttachments = async (entityId, files) => {
+  const formData = new FormData();
+
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
+
+  return axiosInstance.post(
+    `/Attachments/${entityId}?context=8`,
+    formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
+};
+
+// DELETE
+export const deleteSeminarAttachment = async (
+  entityId,
+  attachmentId
+) => {
+  return axiosInstance.delete(
+    `/Attachments/${entityId}/${attachmentId}?context=8`
+  );
+};

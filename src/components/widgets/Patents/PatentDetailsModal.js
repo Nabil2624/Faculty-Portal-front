@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { downloadPatentAttachment } from "../../../services/patents.service";
 function formatDate(dateString, isArabic) {
   if (!dateString) return "";
 
@@ -16,6 +17,28 @@ export default function PatentDetailsModal({ item, onClose }) {
   const { t, i18n } = useTranslation("patents");
   const isArabic = i18n.language === "ar";
   if (!item) return null;
+
+  const handleDownload = async (attachment) => {
+    try {
+      const response = await downloadPatentAttachment(item.id, attachment.id);
+
+      const blob = new Blob([response.data], {
+        type: attachment.contentType,
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = attachment.fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
 
   return (
     <div
@@ -45,22 +68,21 @@ export default function PatentDetailsModal({ item, onClose }) {
       <div className="space-y-4 text-[clamp(0.85rem,1.2vw,2rem)]">
         <div className="flex justify-between">
           <span>{t("type")}</span>
-<span>
-  {item.localOrInternational === "Local"
-    ? t("local")
-    : t("international")}
-</span>
-
+          <span>
+            {item.localOrInternational === "Local"
+              ? t("local")
+              : t("international")}
+          </span>
         </div>
 
         <div className="flex justify-between">
-         <span>{t("authority")}</span>
+          <span>{t("authority")}</span>
 
           <span>{item.accreditingAuthorityOrCountry}</span>
         </div>
 
         <div className="flex justify-between">
-         <span>{t("applyingDate")}</span>
+          <span>{t("applyingDate")}</span>
 
           <span>{formatDate(item.applyingDate, isArabic)}</span>
         </div>
@@ -70,7 +92,25 @@ export default function PatentDetailsModal({ item, onClose }) {
 
           <span>{formatDate(item.accreditationDate, isArabic)}</span>
         </div>
+        {/* Attachments */}
+        {item.attachments && item.attachments.length > 0 && (
+          <div className="flex justify-between gap-3 items-center">
+            <span>{t("attachments")}</span>
 
+            <span className="flex flex-wrap gap-2">
+              {item.attachments.map((a, i) => (
+                <button
+                  key={a.id}
+                  className="text-[#B38E19] underline hover:opacity-80 transition"
+                  onClick={() => handleDownload(a)}
+                >
+                  {a.fileName}
+                  {i < item.attachments.length - 1 ? "," : ""}
+                </button>
+              ))}
+            </span>
+          </div>
+        )}
         <div className="mt-5 bg-gray-100 p-4 rounded-lg break-words">
           {item.description}
         </div>

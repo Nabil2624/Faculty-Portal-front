@@ -21,7 +21,7 @@
     "issuingAuthorityRequired": "Issuing authority is required",
     "dateRequired": "Date of appreciation is required",
     "failedSave": "Failed to save manifestation. Please try again.",
-    "pdfOnly": "Only PDF files are allowed"
+   "note": "Upload the invitation, research paper, or presentation"
   },
   "buttons": {
     "save": "Save",

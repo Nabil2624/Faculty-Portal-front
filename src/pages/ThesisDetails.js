@@ -32,6 +32,7 @@ export default function ThesesDetails() {
   if (!thesis) return null;
   // Transform API data to match your existing design
   const formattedThesis = {
+     id: thesis.id,
     title: thesis.title,
     thesisType: t(thesis.type?.toLowerCase()),
     degree: isArabic ? thesis.grade?.valueAr : thesis.grade?.valueEn,
@@ -39,7 +40,7 @@ export default function ThesesDetails() {
     enrollmentDate: thesis.enrollmentDate,
     internalGrantDate: thesis.internalGradeDate,
     jointSupervisionGrantDate: thesis.supervisionConfirmationDate,
-    attachments: thesis.attachments?.map((a) => a.fileName) || [],
+    attachments: thesis.attachments || [],
     derivedResearches: thesis.researches?.map((r) => r.title) || [],
     committeeMembers:
       thesis.comitteeMembers?.map((s) => ({

@@ -28,7 +28,7 @@ export default function QualificationsWidget({ data = [] }) {
         </h3>
 
         <a
-          href="/qualifications"
+          href="/academic-qualifications"
           className="text-gray-500 text-[clamp(12px,1vw,18px)] hover:underline"
         >
           {t("ViewMore")}

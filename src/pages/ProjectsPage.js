@@ -42,7 +42,7 @@ export default function ProjectsPage() {
 
   const { projects, totalPages, loading, error, loadData } = useProjects(
     currentPage,
-    9,
+    6,
     debouncedSearch,
     sortValue,
     localOrInternational,

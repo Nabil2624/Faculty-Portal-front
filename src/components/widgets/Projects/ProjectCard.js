@@ -1,39 +1,134 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Eye } from "lucide-react";
 
-export default function ProjectCard({ project, isArabic, onDelete, onDetails, onEditNavigate }) {
+export default function ProjectCard({
+  project,
+  isArabic,
+  onDelete,
+  onDetails,
+  onEditNavigate,
+}) {
   return (
-    <article
-      onClick={() => onDetails(project)}
-      className={`relative bg-gray-100 rounded-[12px] shadow-md p-3 border-[4px] border-[#19355a] cursor-pointer ${
-        isArabic ? "border-r-[19px]" : "border-l-[19px]"
-      }`}
-      role="button"
-      tabIndex={0}
+    <div
+      dir={isArabic ? "rtl" : "ltr"} // handle direction
+      className="
+        relative h-full
+        min-h-[clamp(160px,9vw,240px)]
+        px-[clamp(1.2rem,1vw,1.8rem)]
+        py-[clamp(1.2rem,1.2vw,1.8rem)]
+        bg-white
+        border border-gray-300
+        rounded-sm
+        transition-colors
+        hover:bg-gray-50
+        cursor-pointer
+      "
     >
-      {/* Actions */}
-      <div
-        className={`absolute top-3 ${isArabic ? "left-3" : "right-3"} flex gap-3`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <Pencil
-          className="text-[#b38e19] cursor-pointer w-5 h-5 hover:text-[#d1a82c] hover:scale-110 transition"
-          onClick={() => onEditNavigate(project)}
-        />
-        <Trash2
-          className="text-[#E53935] w-5 h-5 cursor-pointer hover:text-[#e45552] hover:scale-110 transition"
-          onClick={() => onDelete(project)}
-        />
-      </div>
+      {/* Top strong border */}
+      <div className="absolute top-0 left-0 w-full h-[6px] bg-[#19355a]" />
 
-      <h3 className="text-base sm:text-lg md:text-xl font-semibold text-black mb-1 break-words">
+      {/* Title */}
+      <h3
+        className="
+          font-semibold
+          text-gray-800
+          text-[clamp(1rem,1.4vw,1.7rem)]
+          tracking-wide
+          truncate
+        "
+      >
         {project.nameOfProject}
       </h3>
-      <p className="text-xs sm:text-sm md:text-base text-black">
+
+      {/* Website */}
+
+      <p
+        className="
+            mt-[clamp(0.5rem,0.8vw,0.8rem)]
+            text-[clamp(0.85rem,1vw,1.2rem)]
+            text-[#0F2D52]
+            underline
+            truncate
+            cursor-pointer
+          "
+      >
         {project.startDate} - {project.endDate}
       </p>
-      <p className="text-xs sm:text-sm md:text-base text-black">
-        {isArabic ? project.typeOfProject?.valueAr : project.typeOfProject?.valueEn}
+
+      {/* Participation Type */}
+      <p
+        className="
+          mt-[clamp(0.5rem,0.8vw,0.8rem)]
+          text-gray-600
+          text-[clamp(0.8rem,0.95vw,1.1rem)]
+        "
+      >
+        {isArabic
+          ? project.typeOfProject?.valueAr
+          : project.typeOfProject?.valueEn}
       </p>
-    </article>
+
+      {/* Bottom Actions */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="
+          mt-[clamp(1.2rem,1.6vw,2rem)]
+          pt-[clamp(0.8rem,1vw,1.2rem)]
+          border-t border-gray-300
+        "
+      >
+        <div
+          className="
+            grid grid-cols-3 text-center
+            divide-x divide-gray-300
+            rtl:divide-x-reverse
+          "
+        >
+          {/* View */}
+          <div className="flex justify-center">
+            <Eye
+              className="
+                w-[clamp(1.2rem,1.4vw,1.6rem)]
+                h-[clamp(1.2rem,1.4vw,1.6rem)]
+                text-[#19355a]
+                cursor-pointer
+                hover:text-blue-500
+                transition-colors
+              "
+              onClick={() => onDetails(project)}
+            />
+          </div>
+
+          {/* Edit */}
+          <div className="flex justify-center">
+            <Pencil
+              className="
+                w-[clamp(1.2rem,1.4vw,1.6rem)]
+                h-[clamp(1.2rem,1.4vw,1.6rem)]
+                text-[#19355a]
+                cursor-pointer
+                hover:text-[#b38e19]
+                transition-colors
+              "
+              onClick={() => onEditNavigate(project)}
+            />
+          </div>
+
+          {/* Delete */}
+          <div className="flex justify-center">
+            <Trash2
+              className="
+                w-[clamp(1.2rem,1.4vw,1.6rem)]
+                h-[clamp(1.2rem,1.4vw,1.6rem)]
+                text-[#19355a]
+                cursor-pointer
+                hover:text-red-700
+                transition-colors
+              "
+              onClick={() => onDelete(project)}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

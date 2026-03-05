@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { downloadSeminarAttachment } from "../../../services/seminarsAndConferences.service"; // create this helper
 
 /* helpers */
 function clampIcon(min, mid, max) {
@@ -10,7 +11,6 @@ function formatDate(dateString, i18n, t) {
   if (!dateString) return t("present");
 
   const date = new Date(dateString);
-
   return date.toLocaleDateString(i18n.language === "ar" ? "ar-EG" : "en-US", {
     year: "numeric",
     month: "long",
@@ -23,6 +23,26 @@ export default function SeminarDetailsModal({ item, onClose }) {
   const isArabic = i18n.language === "ar";
 
   if (!item) return null;
+
+  // new: download handler
+  const handleDownload = async (attachment) => {
+    try {
+      const response = await downloadSeminarAttachment(item.id, attachment.id);
+
+      const blob = new Blob([response.data], { type: attachment.contentType });
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = attachment.fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
 
   return (
     <div
@@ -46,11 +66,7 @@ export default function SeminarDetailsModal({ item, onClose }) {
         className={`
           absolute
           top-[clamp(0.75rem,1.2vw,1.2rem)]
-          ${
-            isArabic
-              ? "left-[clamp(0.75rem,1.2vw,1.2rem)]"
-              : "right-[clamp(0.75rem,1.2vw,1.2rem)]"
-          }
+          ${isArabic ? "left-[clamp(0.75rem,1.2vw,1.2rem)]" : "right-[clamp(0.75rem,1.2vw,1.2rem)]"}
           text-gray-500
           hover:scale-110
           transition
@@ -60,35 +76,14 @@ export default function SeminarDetailsModal({ item, onClose }) {
       </button>
 
       {/* Title */}
-      <div
-        className="
-          text-center
-          border-b-[clamp(1px,0.25vw,2px)]
-          border-[#b38e19]/40
-          pb-[clamp(0.5rem,1vw,0.8rem)]
-          mb-[clamp(0.75rem,1.5vw,1.2rem)]
-        "
-      >
-        <h2
-          className="
-            font-semibold
-            text-[clamp(1.2rem,2vw,3.2rem)]
-            leading-snug
-            break-words
-          "
-        >
-          {item.missionName}
+      <div className="text-center border-b-[clamp(1px,0.25vw,2px)] border-[#b38e19]/40 pb-[clamp(0.5rem,1vw,0.8rem)] mb-[clamp(0.75rem,1.5vw,1.2rem)]">
+        <h2 className="font-semibold text-[clamp(1.2rem,2vw,3.2rem)] leading-snug break-words">
+          {item.name}
         </h2>
       </div>
 
       {/* Details */}
-      <div
-        className="
-          space-y-[clamp(0.8rem,1.5vw,2rem)]
-          text-black
-          text-[clamp(0.85rem,1.2vw,2.5rem)]
-        "
-      >
+      <div className="space-y-[clamp(0.8rem,1.5vw,2rem)] text-black text-[clamp(0.85rem,1.2vw,2.5rem)]">
         <div className="flex justify-between gap-3">
           <span className="font-medium">{t("type")}</span>
           <span>{t(item.type)}</span>
@@ -121,18 +116,33 @@ export default function SeminarDetailsModal({ item, onClose }) {
             {item.website}
           </a>
         </div>
+
         <div className="flex justify-between gap-3">
           <span className="font-medium">{t("organizingAuthority")}</span>
           <span>{item.organizingAuthority}</span>
         </div>
 
-        {item.attachments && (
-          <div className="flex justify-between gap-3">
+        {/* Attachments */}
+        {/* Attachments */}
+        {item.attachments && item.attachments.length > 0 && (
+          <div className="flex justify-between gap-3 items-center">
             <span className="font-medium">{t("attachments")}</span>
-            <span>{item.attachments}</span>
+            <span className="flex flex-wrap gap-2">
+              {item.attachments.map((a, i) => (
+                <button
+                  key={a.id}
+                  className="text-[#B38E19] underline hover:opacity-80 transition"
+                  onClick={() => handleDownload(a)}
+                >
+                  {a.fileName}
+                  {i < item.attachments.length - 1 ? "," : ""}
+                </button>
+              ))}
+            </span>
           </div>
         )}
-        {/*  Date */}
+
+        {/* Dates */}
         <div className="flex justify-between gap-3">
           <span className="font-medium">{t("startDate")}</span>
           <span>{formatDate(item.startDate, i18n, t)}</span>
@@ -141,6 +151,7 @@ export default function SeminarDetailsModal({ item, onClose }) {
           <span className="font-medium">{t("endDate")}</span>
           <span>{formatDate(item.endDate, i18n, t)}</span>
         </div>
+
         <div className="mt-5 bg-gray-100 p-4 rounded-lg break-words">
           <p className="text-gray-800 leading-relaxed">{item.notes}</p>
         </div>

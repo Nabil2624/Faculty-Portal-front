@@ -1,8 +1,30 @@
 import InfoRow from "../../ui/InfoRow";
 import SectionCard from "../../ui/SectionCard";
 import SectionCardLongTitle from "../../ui/SectionCardLongTitle";
+import { downloadThesisAttachment } from "../../../services/theses.services";
 
 export default function ThesesDetailsDesktop({ thesis, t }) {
+  const handleDownload = async (attachment) => {
+    try {
+      const response = await downloadThesisAttachment(thesis.id, attachment.id);
+
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = attachment.fileName;
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-10 max-w-[1400px] mx-auto">
       {/* InfoRows: 3 per row */}
@@ -74,7 +96,13 @@ export default function ThesesDetailsDesktop({ thesis, t }) {
                 <span className="font-extrabold text-[#B38E19] w-6 flex-shrink-0 ">
                   {i + 1}.
                 </span>
-                <span className="text-[#B38E19] text-xl">{att}</span>
+
+                <button
+                  onClick={() => handleDownload(att)}
+                  className="text-[#B38E19] text-xl underline hover:opacity-80 transition"
+                >
+                  {att.fileName}
+                </button>
               </div>
             ))}
           </div>

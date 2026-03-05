@@ -83,3 +83,39 @@ export const getAuthorRole = () => {
     skipGlobalErrorHandler: true,
   });
 };
+
+
+// Upload attachments for a thesis entity
+export const uploadThesisAttachments = async (entityId, files) => {
+  const formData = new FormData();
+
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
+
+  // context = 2 (Thesis)
+  return axiosInstance.post(
+    `/Attachments/${entityId}?context=2`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+};
+
+
+
+// Download attachment for a thesis entity
+export const downloadThesisAttachment = async (
+  entityId,
+  attachmentId
+) => {
+  return axiosInstance.get(
+    `/Attachments/${entityId}/${attachmentId}?context=2`,
+    {
+      responseType: "blob", // VERY IMPORTANT
+    }
+  );
+};

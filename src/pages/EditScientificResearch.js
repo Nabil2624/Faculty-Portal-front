@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -11,20 +11,19 @@ import InputFieldArea from "../components/ui/InputFieldArea";
 import RadioGroup from "../components/widgets/AddScientificResearch/RadioGroup";
 import ParticipantList from "../components/widgets/AddScientificResearch/ParticipantList";
 import TextareaField from "../components/ui/TextAreaField";
-import AttachmentUploader from "../components/widgets/AddScientificResearch/AttachmentUploader";
+import AttachmentUploader from "../components/ui/AttachmentUploader";
 import DOIInput from "../components/widgets/AddScientificResearch/DOIInput";
 
 // Hook
 import useEditScientificResearch from "../hooks/useEditScientificResearch";
 
 export default function EditScientificResearch() {
-
   const { t, i18n } = useTranslation("AddScientificResearch");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
-const location = useLocation();
-const research = location.state?.research;
-
+  const location = useLocation();
+  const research = location.state?.research;
+  const [attachments, setAttachments] = useState([]);
   const {
     loading,
     doi,
@@ -56,7 +55,7 @@ const research = location.state?.research;
     participants,
     setParticipants,
     handleSave,
-  } = useEditScientificResearch(research);
+  } = useEditScientificResearch(research, attachments);
 
   // const [researchType, setResearchType] = useState("manual");
 
@@ -70,6 +69,20 @@ const research = location.state?.research;
       setter(value);
     }
   };
+
+  useEffect(() => {
+    if (!research) return;
+
+    const mapped = (research.attachments || []).map((att) => ({
+      id: att.id,
+      fileName: att.fileName,
+      contentType: att.contentType,
+      size: att.size,
+      name: att.fileName, // مهم عشان uploader يعرف يعرضه
+    }));
+
+    setAttachments(mapped);
+  }, [research]);
 
   if (loading) return <LoadingSpinner />;
 
@@ -89,7 +102,6 @@ const research = location.state?.research;
             {/* LEFT COLUMN */}
             <div className="space-y-8 order-2 md:-mt-10">
               <div className="grid grid-cols-1 md:grid-cols-2 md:gap-72">
-
                 {/* Numbers not strings */}
                 <RadioGroup
                   label={t("publisherType")}
@@ -151,12 +163,15 @@ const research = location.state?.research;
                 participants={participants}
                 setParticipants={setParticipants}
                 t={t}
+                isArabic={isArabic}
               />
 
               <AttachmentUploader
                 label={t("attachments")}
                 note={t("attachmentsNote")}
                 buttonLabel={t("editAttachments")}
+                files={attachments}
+                setFiles={setAttachments}
               />
             </div>
 

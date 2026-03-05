@@ -7,6 +7,11 @@ import { Info } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
+import AttachmentUploader from "../components/ui/AttachmentUploader";
+import {
+  uploadSeminarAttachments,
+  deleteSeminarAttachment,
+} from "../services/seminarsAndConferences.service";
 
 export default function EditConference() {
   const { t, i18n } = useTranslation("add-conference");
@@ -17,12 +22,12 @@ export default function EditConference() {
   const startDateRef = useRef(null);
   const endDateRef = useRef(null);
   const fileInputRef = useRef(null);
-
+  const [originalAttachments, setOriginalAttachments] = useState([]);
   // api states
   const [participationRoles, setParticipationRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [attachments, setAttachments] = useState([]);
   const [formData, setFormData] = useState({
     type: "",
     localOrInternational: "",
@@ -60,35 +65,37 @@ export default function EditConference() {
 
   // Pre-fill form with existing data
   useEffect(() => {
-    if (existingData) {
-      setFormData({
-        type: existingData.type?.toLowerCase() || "",
+    if (!existingData) return;
 
-        localOrInternational:
-          existingData.localOrInternational?.toLowerCase() || "",
+    setFormData({
+      type: existingData.type?.toLowerCase() || "",
+      localOrInternational:
+        existingData.localOrInternational?.toLowerCase() || "",
+      conferenceName: existingData.name || "",
+      participationRole:
+        existingData.roleOfParticipation?.id ||
+        existingData.participationRole ||
+        "",
+      organizingBody: existingData.organizingAuthority || "",
+      website: existingData.website || "",
+      venue: existingData.venue || "",
+      description: existingData.notes || "",
+      startDate: existingData.startDate || "",
+      endDate: existingData.endDate || "",
+    });
 
-        conferenceName: existingData.missionName || "",
+    // ATTACHMENTS PREFILL
+    const mappedAttachments =
+      existingData.attachments?.map((att) => ({
+        id: att.id,
+        fileName: att.fileName,
+        contentType: att.contentType,
+        size: att.size,
+        name: att.fileName, // مهم للعرض
+      })) || [];
 
-        participationRole:
-          existingData.roleOfParticipation?.id ||
-          existingData.participationRole ||
-          "",
-
-        organizingBody: existingData.organizingAuthority || "",
-
-        website: existingData.website || "",
-
-        venue: existingData.venue || "",
-
-        description: existingData.notes || "",
-
-        attachments: existingData.attachments || null,
-
-        startDate: existingData.startDate || "",
-
-        endDate: existingData.endDate || "",
-      });
-    }
+    setAttachments(mappedAttachments);
+    setOriginalAttachments(mappedAttachments);
   }, [existingData]);
 
   const openDatePicker = (ref) => {
@@ -140,6 +147,26 @@ export default function EditConference() {
         payload,
         { skipGlobalErrorHandler: true },
       );
+
+      // =====================
+      // ATTACHMENTS DIFF
+      // =====================
+
+      // 1️⃣ deleted attachments
+      const deletedAttachments = originalAttachments.filter(
+        (orig) => !attachments.find((a) => a.id === orig.id),
+      );
+
+      for (const att of deletedAttachments) {
+        await deleteSeminarAttachment(existingData.id, att.id);
+      }
+
+      // 2️⃣ new attachments (ملهاش id)
+      const newAttachments = attachments.filter((a) => !a.id);
+
+      if (newAttachments.length > 0) {
+        await uploadSeminarAttachments(existingData.id, newAttachments);
+      }
 
       navigate("/seminars-and-conferences");
     } catch (err) {
@@ -379,11 +406,10 @@ export default function EditConference() {
                         setFormData({ ...formData, endDate: e.target.value })
                       }
                     />
-                   
                   </div>
-                   {error && (
-                      <div className="text-red-600 mb-4 text-sm">{error}</div>
-                    )}
+                  {error && (
+                    <div className="text-red-600 mb-4 text-sm">{error}</div>
+                  )}
                 </div>
               </div>
 
@@ -419,44 +445,13 @@ export default function EditConference() {
               </div>
 
               {/* Attachments */}
-              <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("fields.attachments")}
-                </label>
-                <div className="flex items-start gap-2 mb-2">
-                  <Info size={17} className="text-gray-600 mt-1" />
-                  <p className="text-yellow-600 text-sm">
-                    {t("attachmentsHint")}
-                  </p>
-                </div>
-
-                <input
-                  type="file"
-                  name="attachments"
-                  accept=".pdf,.jpg,.png"
-                  ref={fileInputRef}
-                  onChange={handleChange}
-                  className="hidden"
-                />
-
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      fileInputRef.current && fileInputRef.current.click()
-                    }
-                    className="bg-[#19355A] text-white px-9 py-1 rounded-md hover:bg-[#162d4a] transition-colors"
-                  >
-                    {t("fields.chooseFile")}
-                  </button>
-
-                  {formData.attachments && (
-                    <span className="text-sm text-gray-700 truncate max-w-[200px]">
-                      {formData.attachments.name}
-                    </span>
-                  )}
-                </div>
-              </div>
+              <AttachmentUploader
+                label={t("fields.attachments")}
+                note={t("attachmentsHint")}
+                buttonLabel={t("fields.chooseFile")}
+                files={attachments}
+                setFiles={setAttachments}
+              />
             </div>
           </form>
 

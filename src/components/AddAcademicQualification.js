@@ -6,14 +6,14 @@ import { FiCalendar, FiChevronDown } from "react-icons/fi";
 import { Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance"; // assuming you have axiosInstance
-
+import AttachmentUploader from "../components/ui/AttachmentUploader";
 export default function AddAcademicQualification() {
   const { t, i18n } = useTranslation("add-academic-qualification");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
 
   const graduationDateRef = useRef(null);
-  const fileInputRef = useRef(null);
+  const [attachments, setAttachments] = useState([]);
 
   const [formData, setFormData] = useState({
     degree: "",
@@ -24,7 +24,6 @@ export default function AddAcademicQualification() {
     countryCity: "",
     university: "",
     college: "",
-    attachments: null,
   });
 
   const [errors, setErrors] = useState({});
@@ -62,14 +61,14 @@ export default function AddAcademicQualification() {
     }
   };
 
-const handleChange = (e) => {
-  const { name, value, files } = e.target;
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
 
-  setFormData((prev) => ({
-    ...prev,
-    [name]: files ? files[0] : value,
-  }));
-};
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,
+    }));
+  };
 
   const validate = () => {
     const newErrors = {};
@@ -84,42 +83,52 @@ const handleChange = (e) => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!validate()) return;
+    e.preventDefault();
+    if (!validate()) return;
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const formPayload = new FormData();
+    try {
+      const payload = {
+        qualificationId: formData.degree,
+        specialization: formData.specialization,
+        gradeId: formData.grade,
+        dispatchId: formData.delegation,
+        universityOrFaculty: formData.university,
+        countryOrCity: formData.countryCity,
+        dateOfObtainingTheQualification: formData.graduationDate,
+      };
 
-    formPayload.append("qualificationId", formData.degree);
-    formPayload.append("specialization", formData.specialization);
-    formPayload.append("gradeId", formData.grade);
-    formPayload.append("dispatchId", formData.delegation);
-    formPayload.append("universityOrFaculty", formData.university);
-    formPayload.append("countryOrCity", formData.countryCity);
-    formPayload.append(
-      "dateOfObtainingTheQualification",
-      formData.graduationDate
-    );
+      // 1️⃣ Create qualification first
+      const savedQualification = await axiosInstance.post(
+        "/ScientificProgression/CreateAcademicQualification",
+        payload,
+        { skipGlobalErrorHandler: true },
+      );
 
-    if (formData.attachments) {
-      formPayload.append("attachments", formData.attachments);
+      const entityId = savedQualification?.data?.id || savedQualification?.id;
+
+      // 2️⃣ Upload attachments (context = 7)
+      if (attachments.length > 0 && entityId) {
+        const formDataFiles = new FormData();
+        attachments.forEach((file) => formDataFiles.append("files", file));
+
+        await axiosInstance.post(
+          `/Attachments/${entityId}?context=7`,
+          formDataFiles,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        );
+      }
+
+      navigate("/academic-qualifications");
+    } catch (error) {
+      console.error("Error creating academic qualification:", error);
+    } finally {
+      setLoading(false);
     }
-
-    await axiosInstance.post(
-      "/ScientificProgression/CreateAcademicQualification",
-      formPayload
-    );
-
-    navigate("/academic-qualifications");
-  } catch (error) {
-    console.error("Error creating academic qualification:", error);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const inputBase =
     "w-full border border-gray-300 rounded-md px-4 py-2 placeholder-gray-400 bg-[#E2E2E2] outline-none transition-all duration-150 ease-linear text-[12px]";
@@ -167,7 +176,9 @@ const handleChange = (e) => {
                     }`}
                   />
                 </div>
-                {errors.degree && <p className="text-red-500 text-sm">{errors.degree}</p>}
+                {errors.degree && (
+                  <p className="text-red-500 text-sm">{errors.degree}</p>
+                )}
               </div>
 
               {/* Delegation */}
@@ -196,7 +207,9 @@ const handleChange = (e) => {
                     }`}
                   />
                 </div>
-                {errors.delegation && <p className="text-red-500 text-sm">{errors.delegation}</p>}
+                {errors.delegation && (
+                  <p className="text-red-500 text-sm">{errors.delegation}</p>
+                )}
               </div>
 
               {/* Country / City */}
@@ -212,12 +225,16 @@ const handleChange = (e) => {
                   value={formData.countryCity}
                   onChange={handleChange}
                 />
-                {errors.countryCity && <p className="text-red-500 text-sm">{errors.countryCity}</p>}
+                {errors.countryCity && (
+                  <p className="text-red-500 text-sm">{errors.countryCity}</p>
+                )}
               </div>
 
               {/* University */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("university/college")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("university/college")}
+                </label>
                 <input
                   type="text"
                   name="university"
@@ -234,7 +251,8 @@ const handleChange = (e) => {
               {/* Specialization */}
               <div>
                 <label className="mb-2 text-lg font-medium flex items-center gap-1">
-                  {t("specialization")} <span className="text-[#B38E19]">*</span>
+                  {t("specialization")}{" "}
+                  <span className="text-[#B38E19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -245,13 +263,17 @@ const handleChange = (e) => {
                   onChange={handleChange}
                 />
                 {errors.specialization && (
-                  <p className="text-red-500 text-sm">{errors.specialization}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.specialization}
+                  </p>
                 )}
               </div>
 
               {/* Grade */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("grade")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("grade")}
+                </label>
                 <div className="relative flex items-center">
                   <select
                     name="grade"
@@ -273,13 +295,16 @@ const handleChange = (e) => {
                     }`}
                   />
                 </div>
-                {errors.grade && <p className="text-red-500 text-sm">{errors.grade}</p>}
+                {errors.grade && (
+                  <p className="text-red-500 text-sm">{errors.grade}</p>
+                )}
               </div>
 
               {/* Graduation Date */}
               <div>
                 <label className="block mb-2 text-lg font-medium flex items-center gap-1">
-                  {t("graduationDate")} <span className="text-[#B38E19]">*</span>
+                  {t("graduationDate")}{" "}
+                  <span className="text-[#B38E19]">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -311,44 +336,21 @@ const handleChange = (e) => {
                   />
                 </div>
                 {errors.graduationDate && (
-                  <p className="text-red-500 text-sm">{errors.graduationDate}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.graduationDate}
+                  </p>
                 )}
               </div>
 
-              {/* Attachments (skip API send for now) */}
+              {/* Attachments */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("attachments")}</label>
-                <div className="flex items-start gap-2 mb-2">
-                  <Info size={17} className="text-gray-600 mt-1" />
-                  <p className="text-yellow-600 text-sm">{t("subtitle")}</p>
-                </div>
-
-                <input
-                  type="file"
-                  name="attachments"
-                  accept=".pdf,.jpg,.png"
-                  ref={fileInputRef}
-                  onChange={handleChange}
-                  className="hidden"
+                <AttachmentUploader
+                  label={t("attachments")}
+                  note={t("subtitle")}
+                  buttonLabel={t("chooseFile")}
+                  files={attachments}
+                  setFiles={setAttachments}
                 />
-
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      fileInputRef.current && fileInputRef.current.click()
-                    }
-                    className="bg-[#19355A] text-white px-9 py-1 rounded-md hover:bg-[#162d4a] transition-colors"
-                  >
-                    {t("chooseFile")}
-                  </button>
-
-                  {formData.attachments && (
-                    <span className="text-sm text-gray-700 truncate max-w-[200px]">
-                      {formData.attachments.name}
-                    </span>
-                  )}
-                </div>
               </div>
             </div>
 
