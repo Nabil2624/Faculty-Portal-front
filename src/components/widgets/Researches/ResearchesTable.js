@@ -219,7 +219,7 @@ const ResearchesTable = ({
                       style={{ fontSize: "clamp(0.4rem, 0.8vw, 1.2rem)" }}
                     >
                       {res.journalOrConfernce} {res.volume && `, ${res.volume}`}{" "}
-                      {res.issue && `,(${res.issue})`}
+                      {res.issue && `(${res.issue})`}{" "}{res.noOfPages && `,${res.noOfPages}`}
                     </p>
                   </div>
                 </div>
