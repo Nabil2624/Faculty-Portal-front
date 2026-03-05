@@ -12,7 +12,7 @@ export const fetchRecommendedSupervisions = (
 
 export const approveRecommendedSupervision = (id) => {
   return axiosInstance.put(
-    `/ResearchesAndTheses/RecommendedThesesSupervisions${id}`
+    `/ResearchesAndTheses/AcceptRecommendedThesesSupervision/${id}`
   );
 };
 

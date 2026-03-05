@@ -1,6 +1,5 @@
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useState } from "react";
-
 export default function ParticipantList({
   label,
   participants,
@@ -10,6 +9,7 @@ export default function ParticipantList({
   error,
   setParentError,
   t,
+  isArabic,
 }) {
   const [orcidInput, setOrcidInput] = useState("");
   const [orcidError, setOrcidError] = useState("");
@@ -74,11 +74,25 @@ export default function ParticipantList({
         {participants.map((p, index) => (
           <div
             key={index}
-            className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-2 rounded-md mt-4"
+            className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-2 rounded-md mt-4 border border-gray-200 relative"
           >
+            {/* Delete Button */}
+            <button
+              type="button"
+              onClick={() =>
+                setParticipants((prev) => prev.filter((_, i) => i !== index))
+              }
+              className={`absolute top-2 ${
+                isArabic ? "left-2" : "right-2"
+              } text-red-500 hover:text-red-700`}
+            >
+              <X size={16} />
+            </button>
+
             <span className="truncate sm:w-1/3">
               {index + 1}. {p.name}
             </span>
+
             <label className="flex items-center gap-1 sm:w-[150px]">
               <input
                 type="radio"
@@ -91,13 +105,14 @@ export default function ParticipantList({
                   )
                 }
               />
-              <span className="text-xs sm:text-sm">Main Researcher</span>
+              <span className="text-xs sm:text-sm">{t("mainResearcher")}</span>
             </label>
+
             <label className="flex items-center gap-1 sm:w-[200px]">
               <input
                 type="checkbox"
                 className="accent-[#B38E19]"
-                checked={!!p.internal} // ensures false/undefined is treated as false
+                checked={!!p.internal}
                 onChange={() =>
                   setParticipants(
                     participants.map((pp, i) =>
@@ -106,8 +121,7 @@ export default function ParticipantList({
                   )
                 }
               />
-
-              <span className="text-xs sm:text-sm">Internal Member</span>
+              <span className="text-xs sm:text-sm">{t("internalMember")}</span>
             </label>
           </div>
         ))}

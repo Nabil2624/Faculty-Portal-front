@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
+import {
+  createPatent,
+  uploadPatentAttachments,
+} from "../services/patents.service";
 
 export default function usePatentForm(t, initialData = null) {
   const [form, setForm] = useState({
-    localOrInternational: "", // required (number)
+    localOrInternational: "",
     nameOfPatent: "",
     accreditingAuthorityOrCountry: "",
     applyingDate: "",
@@ -11,68 +15,84 @@ export default function usePatentForm(t, initialData = null) {
   });
 
   const [errors, setErrors] = useState({});
+  const [attachments, setAttachments] = useState([]); // attachments state
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
       setForm({
-        localOrInternational: initialData.localOrInternational ?? "",
+        localOrInternational:
+          initialData.localOrInternational === "Local"
+            ? 1
+            : initialData.localOrInternational === "International"
+              ? 2
+              : "",
         nameOfPatent: initialData.nameOfPatent || "",
         accreditingAuthorityOrCountry:
           initialData.accreditingAuthorityOrCountry || "",
-        applyingDate: initialData.applyingDate?.split("T")[0] || "",
-        accreditationDate: initialData.accreditationDate?.split("T")[0] || null,
-        description: initialData.description || null,
+        applyingDate: initialData.applyingDate || "",
+        accreditationDate: initialData.accreditationDate || null,
+        description: initialData.description || "",
       });
+
+      // attachments prefill
+      setAttachments(
+        (initialData.attachments || []).map((a) => ({
+          id: a.id,
+          name: a.fileName,
+          fileName: a.fileName,
+          contentType: a.contentType,
+          size: a.size,
+          isExisting: true, // مهم جداً 
+        })),
+      );
     }
   }, [initialData]);
 
   const validate = () => {
     const newErrors = {};
-
-    if (form.localOrInternational === "") {
+    if (form.localOrInternational === "")
       newErrors.localOrInternational = t("messages.typeRequired");
-    }
-
-    if (!form.nameOfPatent?.trim()) {
+    if (!form.nameOfPatent?.trim())
       newErrors.nameOfPatent = t("messages.nameRequired");
-    }
-
-    if (!form.accreditingAuthorityOrCountry?.trim()) {
+    if (!form.accreditingAuthorityOrCountry?.trim())
       newErrors.accreditingAuthorityOrCountry = t("messages.authorityRequired");
-    }
-
-    if (!form.applyingDate) {
+    if (!form.applyingDate)
       newErrors.applyingDate = t("messages.applyingDateRequired");
-    }
-
     if (
       form.accreditationDate &&
       form.applyingDate &&
       new Date(form.accreditationDate) < new Date(form.applyingDate)
-    ) {
+    )
       newErrors.accreditationDate = t("messages.accreditationBeforeApplying");
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const setServerErrors = (serverError) => {
-    if (!serverError) return;
+  const handleSave = async (navigate) => {
+    if (!validate()) return;
+    setLoading(true);
 
-    const newErrors = {};
+    try {
+      const savedPatent = await createPatent(form);
 
-    if (serverError.message) {
-      newErrors.server = serverError.message;
+      const entityId =
+        savedPatent?.id || savedPatent?.data?.id || savedPatent?.data;
+      if (!entityId) throw new Error("Patent ID not returned");
+
+      // Upload attachments
+      if (attachments.length > 0) {
+        await uploadPatentAttachments(entityId, attachments);
+      }
+
+      if (navigate) navigate("/patents");
+    } catch (error) {
+      console.error(error);
+      setErrors((prev) => ({ ...prev, server: t("messages.failedSave") }));
+    } finally {
+      setLoading(false);
     }
-
-    if (serverError.fields) {
-      Object.keys(serverError.fields).forEach((key) => {
-        newErrors[key] = serverError.fields[key];
-      });
-    }
-
-    setErrors((prev) => ({ ...prev, ...newErrors }));
   };
 
   return {
@@ -80,6 +100,9 @@ export default function usePatentForm(t, initialData = null) {
     setForm,
     errors,
     validate,
-    setServerErrors,
+    attachments,
+    setAttachments,
+    handleSave,
+    loading,
   };
 }

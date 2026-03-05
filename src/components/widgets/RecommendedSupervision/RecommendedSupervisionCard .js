@@ -32,21 +32,33 @@ export default function RecommendedSupervisionCard({
         />
       </div>
 
+      {/* Title */}
       <h3
-        className={`text-lg font-semibold mb-2 truncate ${
+        className={`text-lg font-semibold mb-1 truncate ${
           isArabic ? "pl-32 text-right" : "pr-28 text-left"
         }`}
-        title={item.studentName}
+        title={item.title}
       >
-        {item.studentName}
+        {item.title || "-"}
       </h3>
 
-      <p className="text-sm text-gray-700 truncate">
-        {item.degreeType || "-"}
+      {/* Type - Role */}
+      <p
+        className={`text-sm text-gray-700 ${
+          isArabic ? "text-right" : "text-left"
+        }`}
+      >
+        {item.degreeType || "-"}{" "}
+        {item.facultyMemberRole ? ` - ${item.facultyMemberRole}` : ""}
       </p>
 
-      <p className="text-xs text-gray-500 mt-1">
-        {item.registrationYear || "-"}
+      {/* Student Name */}
+      <p
+        className={`text-sm text-gray-500 mt-2 ${
+          isArabic ? "text-right" : "text-left"
+        }`}
+      >
+        {item.studentName || "-"}
       </p>
     </div>
   );

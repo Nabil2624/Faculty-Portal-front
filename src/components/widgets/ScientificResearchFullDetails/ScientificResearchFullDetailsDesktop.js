@@ -3,32 +3,30 @@ import SectionCardLongTitle from "../../ui/SectionCardLongTitle";
 import AbstractWidget from "../ScientificResearchDetails/AbstractWidget";
 import JournalsWidget from "../ScientificResearchDetails/JournalsWidget";
 import { useTranslation } from "react-i18next";
+import { downloadResearchAttachment } from "../../../services/scientificResearchService";
 export default function ScientificResearchFullDetailsDesktop({ research, t }) {
   const safeLink = research.researchLink;
 
   const { i18n } = useTranslation();
   const isArabic = i18n.language === "ar";
 
-      const formatContributorMeta = (c) => {
-  // Main / Co
-  const role = c.isTheMajorResearcher
-    ? t("mainResearcher")
-    : t("coResearcher");
+  const formatContributorMeta = (c) => {
+    // Main / Co
+    const role = c.isTheMajorResearcher
+      ? t("mainResearcher")
+      : t("coResearcher");
 
-  // From University / External
-  let source = "";
+    // From University / External
+    let source = "";
 
-  if (
-    c.contributorType === "FromUniverstity" ||
-    c.contributorType === 0
-  ) {
-    source = isArabic ? "من الجامعة" : "From University";
-  } else if (c.contributorType === "ExternalContributor") {
-    source = isArabic ? "خارج الجامعة" : "External";
-  }
+    if (c.contributorType === "FromUniverstity" || c.contributorType === 0) {
+      source = isArabic ? "من الجامعة" : "From University";
+    } else if (c.contributorType === "ExternalContributor") {
+      source = isArabic ? "خارج الجامعة" : "External";
+    }
 
-  return `${role} - ${source}`;
-};
+    return `${role} - ${source}`;
+  };
   const formatValue = (value) => {
     if (!value || typeof value !== "string") return value;
 
@@ -70,10 +68,30 @@ export default function ScientificResearchFullDetailsDesktop({ research, t }) {
       return isArabic ? "مؤتمر" : "Conference";
     }
 
-
-
-
     return value;
+  };
+
+  const handleDownload = async (attachment) => {
+    try {
+      const response = await downloadResearchAttachment(
+        research.id,
+        attachment.id,
+      );
+
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = attachment.fileName; // keeps original filename
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
   };
   return (
     <div className="flex flex-col gap-4 max-w-[1400px] mx-auto">
@@ -139,9 +157,9 @@ export default function ScientificResearchFullDetailsDesktop({ research, t }) {
                   <p className="text-lg font-semibold text-[#B38E19]">
                     {c.memberAcademicName}
                   </p>
-              <p className="text-sm text-gray-700">
-  {formatContributorMeta(c)}
-</p>
+                  <p className="text-sm text-gray-700">
+                    {formatContributorMeta(c)}
+                  </p>
                 </div>
               </li>
             ))}
@@ -163,9 +181,12 @@ export default function ScientificResearchFullDetailsDesktop({ research, t }) {
             {(research.attachments || []).map((a, i) => (
               <li key={i} className="flex items-center gap-0">
                 <span className="text-[#B38E19] font-bold w-6">{i + 1}.</span>
-                <span className="text-[#B38E19] text-lg">
-                  {a.fileName || a}
-                </span>
+                <button
+                  onClick={() => handleDownload(a)}
+                  className="text-[#B38E19] text-lg underline hover:opacity-80 transition"
+                >
+                  {a.fileName}
+                </button>
               </li>
             ))}
           </ol>

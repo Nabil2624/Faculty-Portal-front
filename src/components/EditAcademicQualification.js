@@ -7,6 +7,11 @@ import { Info, ExternalLink } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
+import AttachmentUploader from "../../src/components/ui/AttachmentUploader";
+import {
+  uploadAcademicQualificationAttachment,
+  deleteAcademicQualificationAttachment,
+} from "../services/academicQualifications.service";
 
 export default function EditAcademicQualification() {
   const { t, i18n } = useTranslation("add-academic-qualification");
@@ -17,6 +22,7 @@ export default function EditAcademicQualification() {
 
   const graduationDateRef = useRef(null);
   const fileInputRef = useRef(null);
+  const [attachments, setAttachments] = useState([]);
 
   const [formData, setFormData] = useState({
     degree: "",
@@ -26,7 +32,6 @@ export default function EditAcademicQualification() {
     graduationDate: "",
     countryCity: "",
     universityCollege: "",
-    attachments: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -74,13 +79,14 @@ export default function EditAcademicQualification() {
         graduationDate: existingData.dateOfObtainingTheQualification || "",
         countryCity: existingData.countryOrCity || "",
         universityCollege: existingData.universityOrFaculty || "",
-        attachments: existingData.attachmentUrl
-          ? {
-              name: existingData.attachmentName,
-              url: existingData.attachmentUrl,
-            }
-          : null,
       });
+
+      setAttachments(
+        (existingData.attachments || []).map((att) => ({
+          ...att,
+          name: att.fileName, // مهم جداً
+        })),
+      );
     }
   }, [existingData]);
 
@@ -118,20 +124,48 @@ export default function EditAcademicQualification() {
 
     try {
       setLoading(true);
+
       const payload = {
-        qualificationId: dropdowns.degrees.find(d => d.valueEn === formData.degree)?.id,
+        qualificationId: dropdowns.degrees.find(
+          (d) => d.valueEn === formData.degree,
+        )?.id,
         specialization: formData.specialization,
-        gradeId: dropdowns.grades.find(g => g.valueEn === formData.grade)?.id,
-        dispatchId: dropdowns.dispatchTypes.find(d => d.valueEn === formData.delegation)?.id,
+        gradeId: dropdowns.grades.find((g) => g.valueEn === formData.grade)?.id,
+        dispatchId: dropdowns.dispatchTypes.find(
+          (d) => d.valueEn === formData.delegation,
+        )?.id,
         universityOrFaculty: formData.universityCollege,
         countryOrCity: formData.countryCity,
         dateOfObtainingTheQualification: formData.graduationDate,
       };
 
+      // Update qualification data
       await axiosInstance.put(
         `/ScientificProgression/UpdateAcademicQualification/${existingData.id}`,
-        payload
+        payload,
       );
+
+      // ===============================
+      //  HANDLE ATTACHMENTS
+      // ===============================
+
+      const originalAttachments = existingData.attachments || [];
+
+      // Deleted attachments
+      const deletedAttachments = originalAttachments.filter(
+        (oldFile) => !attachments.some((newFile) => newFile.id === oldFile.id),
+      );
+
+      for (const file of deletedAttachments) {
+        await deleteAcademicQualificationAttachment(existingData.id, file.id);
+      }
+
+      // New attachments (files without id)
+      const newFiles = attachments.filter((file) => !file.id);
+
+      for (const file of newFiles) {
+        await uploadAcademicQualificationAttachment(existingData.id, file);
+      }
 
       navigate("/academic-qualifications");
     } catch (error) {
@@ -160,9 +194,7 @@ export default function EditAcademicQualification() {
           <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
         </h2>
 
-        {errors.submit && (
-          <p className="text-red-600 mb-4">{errors.submit}</p>
-        )}
+        {errors.submit && <p className="text-red-600 mb-4">{errors.submit}</p>}
 
         <div className="flex justify-center">
           <form
@@ -197,7 +229,9 @@ export default function EditAcademicQualification() {
                     }`}
                   />
                 </div>
-                {errors.degree && <p className="text-red-600 text-sm">{errors.degree}</p>}
+                {errors.degree && (
+                  <p className="text-red-600 text-sm">{errors.degree}</p>
+                )}
               </div>
 
               {/* Delegation */}
@@ -270,7 +304,8 @@ export default function EditAcademicQualification() {
               {/* Specialization */}
               <div>
                 <label className="mb-2 text-lg font-medium flex items-center gap-1">
-                  {t("specialization")} <span className="text-[#B38E19]">*</span>
+                  {t("specialization")}{" "}
+                  <span className="text-[#B38E19]">*</span>
                 </label>
                 <input
                   type="text"
@@ -281,13 +316,17 @@ export default function EditAcademicQualification() {
                   onChange={handleChange}
                 />
                 {errors.specialization && (
-                  <p className="text-red-600 text-sm">{errors.specialization}</p>
+                  <p className="text-red-600 text-sm">
+                    {errors.specialization}
+                  </p>
                 )}
               </div>
 
               {/* Grade */}
               <div>
-                <label className="block mb-2 text-lg font-medium">{t("grade")}</label>
+                <label className="block mb-2 text-lg font-medium">
+                  {t("grade")}
+                </label>
                 <div className="relative flex items-center">
                   <select
                     name="grade"
@@ -314,7 +353,8 @@ export default function EditAcademicQualification() {
               {/* Graduation Date */}
               <div>
                 <label className="block mb-2 text-lg font-medium flex items-center gap-1">
-                  {t("graduationDate")} <span className="text-[#B38E19]">*</span>
+                  {t("graduationDate")}{" "}
+                  <span className="text-[#B38E19]">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -338,71 +378,28 @@ export default function EditAcademicQualification() {
                     ref={graduationDateRef}
                     className="absolute opacity-0 pointer-events-none"
                     onChange={(e) =>
-                      setFormData({ ...formData, graduationDate: e.target.value })
+                      setFormData({
+                        ...formData,
+                        graduationDate: e.target.value,
+                      })
                     }
                   />
                 </div>
                 {errors.graduationDate && (
-                  <p className="text-red-600 text-sm">{errors.graduationDate}</p>
+                  <p className="text-red-600 text-sm">
+                    {errors.graduationDate}
+                  </p>
                 )}
               </div>
 
               {/* Attachments */}
-              <div>
-                <label className="block mb-2 text-lg font-medium">{t("attachments")}</label>
-                <div className="flex items-start gap-2 mb-2">
-                  <Info size={17} className="text-gray-600 mt-1" />
-                  <p className="text-yellow-600 text-sm">{t("subtitle")}</p>
-                </div>
-
-                <input
-                  type="file"
-                  name="attachments"
-                  accept=".pdf,.jpg,.png"
-                  ref={fileInputRef}
-                  onChange={handleChange}
-                  className="hidden"
-                />
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      fileInputRef.current && fileInputRef.current.click()
-                    }
-                    className="bg-[#19355A] text-white px-9 py-1 rounded-md hover:bg-[#162d4a] transition-colors"
-                  >
-                    {t("chooseFile")}
-                  </button>
-
-                  {formData.attachments && formData.attachments.url && (
-                    <a
-                      href={formData.attachments.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center text-sm text-black hover:underline"
-                    >
-                      {formData.attachments.name}
-                      <ExternalLink size={16} className={`ml-1`} />
-                    </a>
-                  )}
-
-                  {formData.attachments &&
-                    formData.attachments.name &&
-                    !formData.attachments.url && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          window.open(URL.createObjectURL(formData.attachments))
-                        }
-                        className="flex items-center text-sm text-black hover:underline"
-                      >
-                        {formData.attachments.name}
-                        <ExternalLink size={16} className={`ml-1`} />
-                      </button>
-                    )}
-                </div>
-              </div>
+              <AttachmentUploader
+                label={t("attachments")}
+                note={t("subtitle")}
+                buttonLabel={t("chooseFile")}
+                files={attachments}
+                setFiles={setAttachments}
+              />
             </div>
           </form>
         </div>

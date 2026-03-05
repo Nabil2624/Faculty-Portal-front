@@ -1,6 +1,7 @@
 {
   "titles": {
-    "addPatent": "إضافة براءة اختراع"
+    "addPatent": "إضافة براءة اختراع",
+    "editPatent": "تعديل براءة اختراع"
   },
   "fields": {
     "type": "نوع براءة الاختراع",
@@ -11,7 +12,7 @@
     "applyingDate": "تاريخ التقديم",
     "accreditationDate": "تاريخ الاعتماد",
     "description": "الوصف",
-    "attachment": "المرفق"
+    "attachment": "المرفقات"
   },
   "placeholders": {
     "name": "أدخل اسم براءة الاختراع",
@@ -23,7 +24,7 @@
   "buttons": {
     "save": "حفظ",
     "cancel": "إلغاء",
-    "upload": "رفع ملف"
+    "upload": "رفع المرفقات"
   },
   "messages": {
     "failedSave": "فشل في حفظ براءة الاختراع. يرجى المحاولة مرة أخرى.",

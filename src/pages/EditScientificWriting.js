@@ -16,7 +16,7 @@ export default function EditScientificWriting() {
 
   const { form, setForm, errors, validate } = useEditScientificWritingForm(existingData, t, isArabic);
 
-  const { roles } = useAuthorRoles();
+  const { types } = useAuthorRoles();
 
   const handleSave = async () => {
     if (!validate()) return;
@@ -52,7 +52,7 @@ export default function EditScientificWriting() {
         setTitle={v => setForm(prev => ({ ...prev, title: v }))}
         role={form.role}
         setRole={v => setForm(prev => ({ ...prev, role: v }))}
-        roles={roles}
+        roles={types}
         isbn={form.isbn}
         setIsbn={v => setForm(prev => ({ ...prev, isbn: v }))}
         publishingHouse={form.publishingHouse}

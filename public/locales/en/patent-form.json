@@ -1,6 +1,7 @@
 {
   "titles": {
-    "addPatent": "Add Patent"
+    "addPatent": "Add Patent",
+    "editPatent": "Edit Patent"
   },
   "fields": {
     "type": "Patent Type",

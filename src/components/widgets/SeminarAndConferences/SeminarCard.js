@@ -21,8 +21,6 @@ export default function ScientificMissionsCard({
   onDelete,
   onDetails,
 }) {
-
-
   const { t } = useTranslation("SeminarsAndConferences");
   return (
     <div
@@ -79,7 +77,7 @@ export default function ScientificMissionsCard({
             text-ellipsis
             pointer-events-none"
         >
-          {item.missionName}
+          {item.name}
         </h3>
       </div>
 
@@ -89,8 +87,7 @@ export default function ScientificMissionsCard({
           text-[clamp(0.8rem,1vw,2.1rem)]
           mt-[clamp(0.3rem,0.2vw,3rem)]"
       >
-        {formatDate(item.startDate, isArabic)}{" "}
-        {isArabic ? "حتى" : "to"}{" "}
+        {formatDate(item.startDate, isArabic)} {isArabic ? "حتى" : "to"}{" "}
         {formatDate(item.endDate, isArabic)}
       </p>
 

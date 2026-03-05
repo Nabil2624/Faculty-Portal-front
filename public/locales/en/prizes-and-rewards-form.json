@@ -1,0 +1,32 @@
+{
+  "titles": {
+    "addPrizeOrReward": "Add Prize or Reward",
+    "editPrizeOrReward": "Edit Prize or Reward"
+  },
+  "fields": {
+    "prize": "Prize Name",
+    "awardingAuthority": "Awarding Authority",
+    "dateReceived": "Date Received",
+    "description": "Description",
+    "attachments": "Attachments"
+  },
+  "placeholders": {
+    "prize": "Select a prize from the list",
+    "awardingAuthority": "Enter the awarding authority",
+    "dateReceived": "Select the date received",
+    "description": "Enter description",
+    "attachmentsNote": "Upload the invitation, research paper, or presentation"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "addAttachment": "Add Attachment"
+  },
+  "messages": {
+    "prizeRequired": "Prize field is required",
+    "awardingRequired": "Awarding authority field is required",
+    "dateReceivedRequired": "Date received field is required",
+    "descriptionRequired": "Description field is required",
+    "failedSave": "Save failed. Please try again."
+  }
+}

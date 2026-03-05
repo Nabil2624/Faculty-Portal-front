@@ -31,3 +31,27 @@ export const deleteManifestation = (id) => {
     { skipGlobalErrorHandler: true },
   );
 };
+
+
+// services/manifestationsOfScientificAppreciation.js
+export const uploadManifestationAttachments = async (entityId, files) => {
+  const formData = new FormData();
+  files.forEach((file) => formData.append("files", file));
+
+  // context = 5 for Manifestation
+  return axiosInstance.post(`/Attachments/${entityId}?context=5`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const downloadManifestationAttachment = async (entityId, attachmentId) => {
+  return axiosInstance.get(`/Attachments/${entityId}/${attachmentId}?context=5`, {
+    responseType: "blob",
+  });
+};
+
+export const deleteManifestationAttachment = (entityId, attachmentId) => {
+  return axiosInstance.delete(
+    `/Attachments/${entityId}/${attachmentId}?context=5`
+  );
+};

@@ -23,8 +23,8 @@ export default function GridLayoutFullScreen() {
 
   const [bio, setBio] = useState("");
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  // if (loading) return <div>Loading...</div>;
+  // if (error) return <div>{error}</div>;
   if (!data) return null;
 
   // ================= PROFILE IMAGE =================
@@ -93,7 +93,7 @@ export default function GridLayoutFullScreen() {
       console.error("Failed to update bio:", err);
     }
   };
-  console.log(socials);
+
 
   return (
     <ResponsiveLayoutProvider>

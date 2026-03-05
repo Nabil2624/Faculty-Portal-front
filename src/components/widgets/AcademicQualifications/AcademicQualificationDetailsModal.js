@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
+import { downloadAcademicQualificationAttachment } from "../../../services/academicQualifications.service";
 /* helpers */
 function clampIcon(min, mid, max) {
   return `clamp(${min}px, ${mid}px, ${max}px)`;
@@ -18,15 +18,37 @@ function formatDate(dateString, i18n, t) {
   });
 }
 
-export default function AcademicQualificationDetailsModal({
-  item,
-  onClose,
-}) {
+export default function AcademicQualificationDetailsModal({ item, onClose }) {
   const { t, i18n } = useTranslation("AcademicQualifications");
   const isArabic = i18n.language === "ar";
 
   if (!item) return null;
 
+  const handleDownload = async (attachment) => {
+    try {
+      const response = await downloadAcademicQualificationAttachment(
+        item.id,
+        attachment.id,
+      );
+
+      const blob = new Blob([response.data], {
+        type: attachment.contentType,
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = attachment.fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
   return (
     <div
       dir={isArabic ? "rtl" : "ltr"}
@@ -80,9 +102,7 @@ export default function AcademicQualificationDetailsModal({
             break-words
           "
         >
-          {isArabic
-            ? item.qualification.valueAr
-            : item.qualification.valueEn}
+          {isArabic ? item.qualification.valueAr : item.qualification.valueEn}
         </h2>
       </div>
 
@@ -99,9 +119,7 @@ export default function AcademicQualificationDetailsModal({
           <span className="font-medium">{t("qualification")}</span>
           <span className="text-right break-words">
             {" "}
-            {isArabic
-              ? item.qualification.valueAr
-              : item.qualification.valueEn}
+            {isArabic ? item.qualification.valueAr : item.qualification.valueEn}
           </span>
         </div>
 
@@ -112,18 +130,13 @@ export default function AcademicQualificationDetailsModal({
         </div>
         <div className="flex justify-between gap-3">
           <span className="font-medium">{t("grade")}</span>
-          <span>
-            {" "}
-            {isArabic ? item.grade.valueAr : item.grade.valueEn}
-          </span>
+          <span> {isArabic ? item.grade.valueAr : item.grade.valueEn}</span>
         </div>
         <div className="flex justify-between gap-3">
           <span className="font-medium">{t("scholarship")}</span>
           <span>
             {" "}
-            {isArabic
-              ? item.dispatchType.valueAr
-              : item.dispatchType.valueEn}
+            {isArabic ? item.dispatchType.valueAr : item.dispatchType.valueEn}
           </span>
         </div>
         <div className="flex justify-between gap-3">
@@ -148,17 +161,21 @@ export default function AcademicQualificationDetailsModal({
         </div>
 
         {item.attachments && item.attachments.length > 0 && (
-          <div className="flex justify-between items-center mt-3">
+          <div className="flex justify-between gap-3 items-center">
             <span className="font-medium">{t("attachments")}</span>
 
-            <a
-              href={item.attachments[0].fileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#19355a] underline hover:text-[#b38e19]"
-            >
-              {item.attachments[0].fileName}
-            </a>
+            <span className="flex flex-wrap gap-2">
+              {item.attachments.map((a, i) => (
+                <button
+                  key={a.id}
+                  className="text-[#B38E19] underline hover:opacity-80 transition"
+                  onClick={() => handleDownload(a)}
+                >
+                  {a.fileName}
+                  {i < item.attachments.length - 1 ? "," : ""}
+                </button>
+              ))}
+            </span>
           </div>
         )}
       </div>

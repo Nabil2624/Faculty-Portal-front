@@ -9,5 +9,10 @@
   "previous": "السابق",
   "next": "التالي",
   "page": "صفحة",
-  "of": "من"
+  "of": "من",
+  "Master": "ماجستير",
+  "PHD": "دكتوراه",
+    "Adminstrator": "مشرف",
+  "Reviewer": "مراجع",
+  "AdminstratorAndReviewer": "مشرف ومراجع"
 }

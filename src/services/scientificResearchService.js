@@ -122,3 +122,46 @@ export const deleteScientificResearch = async (researchId) => {
     throw error;
   }
 };
+
+
+
+// Upload attachments for a research entity
+export const uploadResearchAttachments = async (entityId, files) => {
+  const formData = new FormData();
+
+  // IMPORTANT: backend parameter name is "files"
+  files.forEach((file) => {
+    formData.append("files", file);
+  });
+
+  // context = 1 (Research)
+  return axiosInstance.post(
+    `/Attachments/${entityId}?context=1`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+};
+
+
+export const downloadResearchAttachment = async (
+  entityId,
+  attachmentId
+) => {
+  return axiosInstance.get(
+    `/Attachments/${entityId}/${attachmentId}?context=1`,
+    {
+      responseType: "blob", // VERY IMPORTANT
+    }
+  );
+};
+
+
+export const deleteResearchAttachment = async (entityId, attachmentId) => {
+  return axiosInstance.delete(
+    `/Attachments/${entityId}/${attachmentId}?context=1`
+  );
+};

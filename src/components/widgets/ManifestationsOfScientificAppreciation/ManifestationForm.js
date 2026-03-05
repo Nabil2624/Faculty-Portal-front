@@ -2,7 +2,7 @@ import React from "react";
 import InputField from "../../ui/InputField";
 import DateField from "../../ui/DateField";
 import FormButton from "../../ui/FormButton";
-import AttachmentUploader from "../AddScientificResearch/AttachmentUploader";
+import AttachmentUploader from "../../ui/AttachmentUploader";
 
 export default function ManifestationForm({
   title,
@@ -14,6 +14,8 @@ export default function ManifestationForm({
   setDateOfAppreciation,
   description,
   setDescription,
+  attachments, // <-- اضيف ده
+  setAttachments, // <-- اضيف ده
   error = {},
   onSave,
   onCancel,
@@ -71,8 +73,9 @@ export default function ManifestationForm({
             />
             <AttachmentUploader
               label={t("fields.attachments")}
-              note={t("messages.pdfOnly")}
               buttonLabel={t("buttons.upload")}
+              files={attachments}
+              setFiles={setAttachments}
             />
           </div>
         </form>

@@ -7,7 +7,11 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import ManifestationForm from "../components/widgets/ManifestationsOfScientificAppreciation/ManifestationForm";
 
 import useManifestationForm from "../hooks/useManifestationForm";
-import { updateManifestation } from "../services/manifestationsOfScientificAppreciation";
+import {
+  updateManifestation,
+  uploadManifestationAttachments,
+  deleteManifestationAttachment,
+} from "../services/manifestationsOfScientificAppreciation";
 
 export default function EditManifestation() {
   const { t, i18n } = useTranslation(
@@ -28,8 +32,15 @@ export default function EditManifestation() {
     }
   }, [item, navigate]);
 
-  const { form, setForm, errors, validate, setServerErrors } =
-    useManifestationForm(t);
+  const {
+    form,
+    setForm,
+    attachments,
+    setAttachments,
+    errors,
+    validate,
+    setServerErrors,
+  } = useManifestationForm(t);
 
   const [loading, setLoading] = useState(false);
 
@@ -42,8 +53,19 @@ export default function EditManifestation() {
         dateOfAppreciation: item.dateOfAppreciation || "",
         description: item.description || "",
       });
+
+      setAttachments(
+        (item.attachments || []).map((file) => ({
+          id: file.id,
+          name: file.fileName,
+          fileName: file.fileName,
+          contentType: file.contentType,
+          size: file.size,
+          isExisting: true, // مهمة عشان تعرف ده فايل قديم
+        })),
+      );
     }
-  }, [item, setForm]);
+  }, [item, setForm, setAttachments]);
 
   const handleSave = async () => {
     if (!validate()) return;
@@ -57,6 +79,38 @@ export default function EditManifestation() {
       };
 
       await updateManifestation(item.id, payload);
+
+      // =============================
+      // Attachment Diff Logic
+      // =============================
+
+      const originalIds = (item.attachments || []).map((a) => a.id);
+
+      const currentExistingIds = attachments
+        .filter((a) => a.isExisting)
+        .map((a) => a.id);
+
+      // 🗑 Files removed by user
+      const deletedIds = originalIds.filter(
+        (id) => !currentExistingIds.includes(id),
+      );
+
+      // New files (no isExisting flag)
+      const newFiles = attachments.filter((a) => !a.isExisting);
+
+      // =============================
+      // DELETE
+      // =============================
+      for (const id of deletedIds) {
+        await deleteManifestationAttachment(item.id, id);
+      }
+
+      // =============================
+      // UPLOAD
+      // =============================
+      if (newFiles.length > 0) {
+        await uploadManifestationAttachments(item.id, newFiles);
+      }
 
       navigate("/manifestations-of-scientific-appreciation");
     } catch (error) {
@@ -90,6 +144,8 @@ export default function EditManifestation() {
           }
           description={form.description}
           setDescription={(v) => setForm({ ...form, description: v })}
+          attachments={attachments}
+          setAttachments={setAttachments}
           error={errors}
           onSave={handleSave}
           onCancel={() =>

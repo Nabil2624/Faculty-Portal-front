@@ -12,7 +12,7 @@
   "of": "من",
   "issuingAuthority": "جهة الإصدار",
   "dateOfAppreciation": "تاريخ التقدير",
-
+  "attachments": "المرفقات",
   "errors": {
     "loadFailed": "فشل في تحميل البيانات. يرجى المحاولة مرة أخرى."
   }

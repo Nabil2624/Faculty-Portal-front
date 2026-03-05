@@ -9,6 +9,10 @@ import PrizesAndRewardsForm from "../components/widgets/PrizesAndRewards/PrizesA
 import usePrizesAndRewardsForm from "../hooks/usePrizeAndRewardsForm";
 import { updatePrizeOrReward } from "../services/prizesAndRewards.service";
 import { getLookupsRewards } from "../services/prizesAndRewards.service";
+import {
+  uploadPrizeAttachments,
+  deletePrizeAttachment,
+} from "../services/prizesAndRewards.service";
 
 export default function EditPrizesAndRewards() {
   const { t, i18n } = useTranslation("prizes-and-rewards-form");
@@ -28,14 +32,20 @@ export default function EditPrizesAndRewards() {
     }
   }, [item, navigate]);
 
-  const { form, setForm, errors, validate, setServerErrors } =
-    usePrizesAndRewardsForm(t, item);
+  const {
+    form,
+    setForm,
+    errors,
+    validate,
+    setServerErrors,
+    attachments,
+    setAttachments,
+  } = usePrizesAndRewardsForm(t, item);
 
   const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     if (!validate()) return;
-
     setLoading(true);
 
     try {
@@ -47,6 +57,38 @@ export default function EditPrizesAndRewards() {
       };
 
       await updatePrizeOrReward(item.id, payload);
+
+      // =============================
+      // Attachment diff
+      // =============================
+
+      const existingIds = (item.attachments || []).map((a) => a.id);
+      const currentExistingIds = attachments
+        .filter((a) => a.isExisting)
+        .map((a) => a.id);
+
+      // Deleted attachments
+      const deletedIds = existingIds.filter(
+        (id) => !currentExistingIds.includes(id),
+      );
+
+      // New attachments
+      const newFiles = attachments.filter((a) => !a.isExisting);
+
+      // =============================
+      //  DELETE
+      // =============================
+      for (const id of deletedIds) {
+        await deletePrizeAttachment(item.id, id);
+      }
+
+      // =============================
+      //  UPLOAD
+      // =============================
+      if (newFiles.length > 0) {
+        await uploadPrizeAttachments(item.id, newFiles);
+      }
+
       navigate("/prizes-and-rewards");
     } catch (error) {
       setServerErrors(
@@ -56,7 +98,6 @@ export default function EditPrizesAndRewards() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     getLookupsRewards().then((res) => {
       setPrizesOptions(res.data || []);
@@ -84,8 +125,8 @@ export default function EditPrizesAndRewards() {
           setDateReceived={(v) => setForm({ ...form, dateReceived: v })}
           description={form.description}
           setDescription={(v) => setForm({ ...form, description: v })}
-          attachments={form.attachments}
-          setAttachments={(v) => setForm({ ...form, attachments: v })}
+          attachments={attachments}
+          setAttachments={setAttachments}
           error={errors}
           onSave={handleSave}
           onCancel={() => navigate("/prizes-and-rewards")}

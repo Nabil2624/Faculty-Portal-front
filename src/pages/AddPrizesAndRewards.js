@@ -16,10 +16,19 @@ export default function AddPrizesAndRewards() {
   const dir = i18n.dir();
   const navigate = useNavigate();
 
-  const { form, setForm, errors, validate, setServerErrors } =
-    usePrizesAndRewardsForm(t);
+  const {
+    form,
+    setForm,
+    errors,
+    validate,
+    setServerErrors,
+    attachments, // <-- add this
+    setAttachments, // <-- add this
+    handleSave, // <-- add this
+    loading, // <-- optional, if you want loading spinner
+  } = usePrizesAndRewardsForm(t);
 
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [prizesOptions, setPrizesOptions] = useState([]);
 
   // load prize options from lookups
@@ -29,21 +38,21 @@ export default function AddPrizesAndRewards() {
     });
   }, []);
 
-  const handleSave = async () => {
-    if (!validate()) return;
+  // const handleSave = async () => {
+  //   if (!validate()) return;
 
-    setLoading(true);
-    try {
-      await createPrizeOrReward(form);
-      navigate("/prizes-and-rewards");
-    } catch (error) {
-      setServerErrors(
-        error.response?.data || { message: t("messages.failedSave") },
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  //   setLoading(true);
+  //   try {
+  //     await createPrizeOrReward(form);
+  //     navigate("/prizes-and-rewards");
+  //   } catch (error) {
+  //     setServerErrors(
+  //       error.response?.data || { message: t("messages.failedSave") },
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   if (loading) return <LoadingSpinner />;
 
@@ -65,10 +74,10 @@ export default function AddPrizesAndRewards() {
           setDateReceived={(v) => setForm({ ...form, dateReceived: v })}
           description={form.description}
           setDescription={(v) => setForm({ ...form, description: v })}
-          attachments={form.attachments}
-          setAttachments={(v) => setForm({ ...form, attachments: v })}
+          attachments={attachments} // <-- pass attachments
+          setAttachments={setAttachments} // <-- pass setter
           error={errors}
-          onSave={handleSave}
+          onSave={() => handleSave(navigate)}
           onCancel={() => navigate("/prizes-and-rewards")}
         />
       </div>

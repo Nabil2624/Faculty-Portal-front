@@ -3,7 +3,7 @@ import InputField from "../../ui/InputField";
 import DateField from "../../ui/DateField";
 import FormButton from "../../ui/FormButton";
 import CustomDropdown from "../../ui/CustomDropdown";
-import AttachmentUploader from "../AddScientificResearch/AttachmentUploader";
+import AttachmentUploader from "../../ui/AttachmentUploader";
 
 export default function PrizesAndRewardsForm({
   title,
@@ -84,8 +84,8 @@ export default function PrizesAndRewardsForm({
               label={t("fields.attachments")}
               buttonLabel={t("buttons.addAttachment")}
               note={t("placeholders.attachmentsNote")}
-              value={attachments}
-              onChange={setAttachments}
+              files={attachments}
+              setFiles={setAttachments}
             />
           </div>
         </form>

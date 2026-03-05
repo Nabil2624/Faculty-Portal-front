@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosInstance";
 import {
   addThesis,
   updateThesis,
@@ -8,9 +9,18 @@ import {
   getEmploymentDegrees,
   getUniversities,
   searchResearchByTitle,
+  uploadThesisAttachments,
 } from "../services/theses.services";
 
-export function useThesisForm({ mode = "add", thesisData = null, thesisId = null, t }) {
+export function useThesisForm({
+  mode = "add",
+  thesisData = null,
+  thesisId = null,
+  t,
+  setModalMessage,
+  setIsModalOpen,
+  isArabic,
+}) {
   const navigate = useNavigate();
 
   // ================= REFS =================
@@ -44,6 +54,22 @@ export function useThesisForm({ mode = "add", thesisData = null, thesisId = null
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  const [initialMembers, setInitialMembers] = useState([]);
+
+  useEffect(() => {
+    if (mode === "edit" && thesisData) {
+      setInitialMembers(
+        (thesisData.comitteeMembers || []).map((s) => ({
+          id: s.id,
+          memberId: s.memberId,
+          role: s.role,
+          name: s.name,
+          jobLevelId: s.jobLevelId,
+          authority: s.authority,
+        })),
+      );
+    }
+  }, [mode, thesisData]);
   // ================= LOAD LOOKUPS =================
   useEffect(() => {
     const fetchLookups = async () => {
@@ -65,39 +91,43 @@ export function useThesisForm({ mode = "add", thesisData = null, thesisId = null
   }, []);
 
   // ================= INIT EDIT =================
-// ================= INIT EDIT =================
-useEffect(() => {
-  if (mode !== "edit" || !thesisData) return;
+  useEffect(() => {
+    if (mode !== "edit" || !thesisData) return;
 
-  setRegistrationDate(thesisData.registrationDate || "");
-  setEnrollmentDate(thesisData.enrollmentDate || "");
-  setInternalDegreeDate(thesisData.internalGradeDate || "");
-  setJointSupervisionDate(thesisData.supervisionConfirmationDate || "");
-  setThesisTitle(thesisData.title || "");
-  setDegreeId(thesisData.gradeId || "");
-  setThesisType(thesisData.type || "PHD");
+    setRegistrationDate(thesisData.registrationDate || "");
+    setEnrollmentDate(thesisData.enrollmentDate || "");
+    setInternalDegreeDate(thesisData.internalGradeDate || "");
+    setJointSupervisionDate(thesisData.supervisionConfirmationDate || "");
+    setThesisTitle(thesisData.title || "");
+    setDegreeId(thesisData.gradeId || "");
+    setThesisType(thesisData.type || "PHD");
 
-  setResearches(thesisData.researches || []);
+    setResearches(thesisData.researches || []);
 
-  setMembers(
-    thesisData.comitteeMembers?.map((s) => {
-      let roleValue;
-      if (typeof s.role === "string") {
-        const r = s.role.toLowerCase();
-        if (r === "administration") roleValue = 1;
-        else if (r === "reviewing") roleValue = 2;
-        else roleValue = 3; // both
-      } else roleValue = s.role; // number already
-      return {
-        role: roleValue,
-        name: s.name,
-        jobTitle: s.jobLevelId,
-        organization: s.authority || null,
-      };
-    }) || []
-  );
-}, [mode, thesisData]);
-;
+    // FIXED COMMITTEE MEMBERS MAPPING
+    setMembers(
+      (thesisData.comitteeMembers || []).map((s) => {
+        let roleValue = 3;
+
+        if (typeof s.role === "string") {
+          const r = s.role.toLowerCase();
+          if (r === "administration" || r === "adminstration") roleValue = 1;
+          else if (r === "reviewing") roleValue = 2;
+        } else if (typeof s.role === "number") {
+          roleValue = s.role;
+        }
+
+        return {
+          id: s.id, // ✅ VERY IMPORTANT
+          memberId: s.memberId, // ✅ VERY IMPORTANT
+          role: roleValue,
+          name: s.name || "",
+          jobTitle: s.jobLevelId || null,
+          organization: s.authority || null,
+        };
+      }),
+    );
+  }, [mode, thesisData]);
 
   // ================= SEARCH =================
   useEffect(() => {
@@ -152,55 +182,156 @@ useEffect(() => {
       newErrors.enrollmentDate = `${t("enrollmentDate")} ${t("required")}`;
     if (!thesisTitle)
       newErrors.thesisTitle = `${t("thesisTitle")} ${t("required")}`;
-    if (!degreeId)
-      newErrors.degreeId = `${t("degree")} ${t("required")}`;
+    if (!degreeId) newErrors.degreeId = `${t("degree")} ${t("required")}`;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   // ================= SAVE =================
-  const handleSave = async () => {
+  const handleSave = async (attachments = [], initialAttachments = []) => {
     if (!validate()) return;
 
     setLoading(true);
 
-    const payload = {
-      type: thesisType,
-      title: thesisTitle,
-      gradeId: degreeId,
-      enrollmentDate,
-      registrationDate,
-      internalGradeDate: internalDegreeDate || null,
-      supervisionConfirmationDate: jointSupervisionDate || null,
-
-      comitteeMembers: members
+    try {
+      // ================= CURRENT MEMBERS =================
+      const currentMembers = members
         .filter((m) => m.name && m.jobTitle)
         .map((m) => ({
+          id: m.id || 0,
+          memberId: m.memberId || null,
           role: m.role,
           name: m.name,
           jobLevelId: m.jobTitle,
           authority: m.organization || "",
-        })),
+          thesesId: thesisId,
+        }));
 
-      researches,
-    };
+      // ================= RESEARCHES =================
+      const currentResearches = researches.map((r) => ({
+        ...r,
+        contributions: r.contributions || [],
+        attachments: r.attachments || [],
+      }));
 
-    try {
+      let payload;
+
       if (mode === "edit") {
-        await updateThesis(thesisId, { ...payload, id: thesisId });
+        const supervisorsToAdd = currentMembers.filter((cm) => !cm.id);
+        const supervisorsToUpdate = currentMembers
+          .filter((cm) => cm.id)
+          .map((cm) => ({
+            id: cm.id,
+            data: {
+              memberId: cm.memberId,
+              role: cm.role,
+              name: cm.name,
+              jobLevelId: cm.jobLevelId,
+              authority: cm.authority,
+              thesesId: cm.thesesId,
+            },
+          }));
+        const supervisorsToDelete = initialMembers.filter(
+          (im) => !currentMembers.some((cm) => cm.id === im.id),
+        );
+
+        const researchesToAdd = currentResearches.filter((r) => !r.id);
+        const researchesToUpdate = currentResearches
+          .filter((r) => r.id)
+          .map((r) => ({ id: r.id, data: r }));
+        const researchesToDelete = (thesisData?.researches || []).filter(
+          (r) => !currentResearches.some((cr) => cr.id === r.id),
+        );
+
+        payload = {
+          type: thesisType,
+          title: thesisTitle,
+          gradeId: degreeId,
+          enrollmentDate,
+          registrationDate,
+          internalGradeDate: internalDegreeDate || null,
+          supervisionConfirmationDate: jointSupervisionDate || null,
+          supervisorsToAdd,
+          supervisorsToUpdate,
+          supervisorsToDelete,
+          researchesToAdd,
+          researchesToUpdate,
+          researchesToDelete,
+          attachmentsToAdd: [], // handle attachments if needed
+          attachmentsToDelete: [], // handle deletions if needed
+        };
       } else {
-        await addThesis(payload);
+        // Add mode
+        payload = {
+          type: thesisType,
+          title: thesisTitle,
+          gradeId: degreeId,
+          enrollmentDate,
+          registrationDate,
+          internalGradeDate: internalDegreeDate || null,
+          supervisionConfirmationDate: jointSupervisionDate || null,
+          comitteeMembers: currentMembers,
+          researches: currentResearches,
+        };
+      }
+
+      // ================= SEND =================
+      if (mode === "edit") {
+        // ================= ATTACHMENTS LOGIC =================
+
+        // الملفات اللي اتمسحت
+        const attachmentsToDelete = initialAttachments.filter(
+          (initial) =>
+            !attachments.some((current) => current.id === initial.id),
+        );
+
+        //  الملفات الجديدة (ملهاش id)
+        const attachmentsToAdd = attachments.filter((file) => !file.id);
+
+        //  DELETE
+        for (const file of attachmentsToDelete) {
+          await axiosInstance.delete(
+            `/Attachments/${thesisId}/${file.id}?context=2`,
+          );
+        }
+
+        //  ADD
+        if (attachmentsToAdd.length > 0) {
+          await uploadThesisAttachments(thesisId, attachmentsToAdd);
+        }
+      } else {
+        const response = await addThesis(payload);
+
+        // extract entityId
+        const entityId = response?.data?.id || response?.data || response?.id;
+
+        if (!entityId) {
+          throw new Error("Entity ID not returned from backend");
+        }
+
+        // upload attachments if exists
+        if (attachments && attachments.length > 0) {
+          await uploadThesisAttachments(entityId, attachments);
+        }
       }
 
       navigate("/theses");
     } catch (err) {
-      console.error(err);
+      if (err.response?.status === 403) {
+        setModalMessage(
+          isArabic
+            ? "لا يمكنك تعديل أو إزالة بيانات هذا العضو لأنه مؤكد كمشرف على هذه الرسالة."
+            : "You can't edit or remove this committee member data because they are already confirmed supervising this thesis.",
+        );
+        setIsModalOpen(true);
+      } else {
+        console.error(err);
+      }
     } finally {
       setLoading(false);
     }
   };
-
   const openDatePicker = (ref) => {
     if (ref.current?.showPicker) ref.current.showPicker();
   };

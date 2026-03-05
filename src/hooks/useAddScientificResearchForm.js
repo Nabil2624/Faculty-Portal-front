@@ -66,7 +66,7 @@ export function useAddScientificResearchForm(t) {
   // Save
   const handleSave = async () => {
     if (!validate()) return;
-
+    await saveHook(navigate, attachments);
     const payload = {
       doi: researchType === "doi" ? doi : null,
       title: researchType === "manual" ? researchTitle : null,

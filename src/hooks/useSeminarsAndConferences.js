@@ -21,7 +21,6 @@ export default function useSeminarsAndConferences(
   const { i18n } = useTranslation();
   const isArabic = i18n.language === "ar";
 
-
   const loadData = useCallback(
     async (pageToLoad = page) => {
       setLoading(true);
@@ -44,7 +43,7 @@ export default function useSeminarsAndConferences(
         setSeminars(
           data.map((item) => ({
             id: item.id,
-            missionName: item.name || "",
+            name: item.name || "",
             type: item.type || "",
             localOrInternational: item.localOrInternational || "",
 

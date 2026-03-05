@@ -9,5 +9,10 @@
   "previous": "Previous",
   "next": "Next",
   "page": "page",
-  "of": "of"
+  "of": "of",
+  "Master": "Master",
+  "PHD": "PhD",
+  "Adminstrator": "Administrator",
+  "Reviewer": "Reviewer",
+  "AdminstratorAndReviewer": "Administrator & Reviewer"
 }

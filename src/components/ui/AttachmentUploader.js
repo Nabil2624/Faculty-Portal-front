@@ -1,36 +1,61 @@
 import { useRef, useState } from "react";
 import { X } from "lucide-react";
+import { useEffect } from "react";
 
-export default function AttachmentUploader({ label, note, buttonLabel }) {
+export default function AttachmentUploader({
+  label,
+  note,
+  buttonLabel,
+  files = [],
+  setFiles,
+}) {
   const fileInputRef = useRef(null);
-  const [files, setFiles] = useState([]);
+
 
   const handleFilesChange = (e) => {
-    const selectedFiles = Array.from(e.target.files).filter(
-      (file) => file.type === "application/pdf",
-    );
+    const selectedFiles = Array.from(e.target.files).filter((file) => {
+      const extension = file.name.split(".").pop().toLowerCase();
 
-    // Append new files and remove duplicates by name
+      // Block exe files
+      if (extension === "exe") {
+        // alert("Executable (.exe) files are not allowed.");
+        return false;
+      }
+
+      return true;
+    });
+
     setFiles((prevFiles) => {
       const allFiles = [...prevFiles, ...selectedFiles];
       const uniqueFiles = allFiles.filter(
         (file, index, self) =>
           index === self.findIndex((f) => f.name === file.name),
       );
+
+      // SEND FILES TO PARENT
+      // if (onChange) onChange(uniqueFiles);
+
       return uniqueFiles;
     });
 
     e.target.value = "";
   };
 
+  
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
 
   const handleRemoveFile = (name) => {
-    setFiles((prevFiles) => prevFiles.filter((file) => file.name !== name));
-  };
+    setFiles((prevFiles) => {
+      const updated = prevFiles.filter(
+        (file) => (file.fileName || file.name) !== name,
+      );
 
+      // if (onChange) onChange(updated);
+      return updated;
+    });
+  };
   return (
     <div>
       <label className="block font-medium text-gray-700 mb-2 text-2xl">
@@ -42,7 +67,7 @@ export default function AttachmentUploader({ label, note, buttonLabel }) {
       <input
         ref={fileInputRef}
         type="file"
-        accept="application/pdf"
+        accept="*"
         multiple
         onChange={handleFilesChange}
         className="hidden"
@@ -67,7 +92,7 @@ export default function AttachmentUploader({ label, note, buttonLabel }) {
             >
               <div className="flex justify-between items-center">
                 <span className="text-[#B38E19] font-semibold">
-                  {file.name}
+                  {file.fileName || file.name}
                 </span>
 
                 <button

@@ -15,12 +15,12 @@
     "awardingAuthority": "أدخل الجهة المانحة",
     "dateReceived": "اختر تاريخ الاستلام",
     "description": "أدخل الوصف",
-    "attachmentsNote": "يُسمح بملفات PDF فقط"
+    "attachmentsNote": "قم برفع الدعوة أو الورقة البحثية أو العرض التقديمي"
   },
   "buttons": {
     "save": "حفظ",
     "cancel": "إلغاء",
-    "addAttachment": "إضافة مرفق"
+    "addAttachment": "إضافة المرفقات"
   },
   "messages": {
     "prizeRequired": "حقل الجائزة مطلوب",

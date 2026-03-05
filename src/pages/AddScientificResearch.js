@@ -8,7 +8,7 @@ import InputFieldArea from "../components/ui/InputFieldArea";
 import RadioGroup from "../../src/components/widgets/AddScientificResearch/RadioGroup";
 import ParticipantList from "../../src/components/widgets/AddScientificResearch/ParticipantList";
 import TextareaField from "../components/ui/TextAreaField";
-import AttachmentUploader from "../../src/components/widgets/AddScientificResearch/AttachmentUploader";
+import AttachmentUploader from "../components/ui/AttachmentUploader";
 import DOIInput from "../../src/components/widgets/AddScientificResearch/DOIInput";
 
 // Hook
@@ -64,7 +64,7 @@ export default function AddScientificResearch() {
 
   const [errors, setErrors] = useState({});
   const [researchType, setResearchType] = useState("manual");
-
+  const [attachments, setAttachments] = useState([]); // added state
   const navigate = useNavigate();
 
   const handleCancel = () => {
@@ -77,8 +77,6 @@ export default function AddScientificResearch() {
       clearError(fieldName);
     }
   };
-
-
 
   // Validation function
   const validate = () => {
@@ -112,7 +110,7 @@ export default function AddScientificResearch() {
 
   const handleSave = async () => {
     if (!validate()) return;
-    await saveHook(navigate); // pass navigate
+    await saveHook(navigate, attachments);
   };
 
   const clearError = (field) => {
@@ -216,13 +214,15 @@ export default function AddScientificResearch() {
                   setErrors((prev) => ({ ...prev, participants: msg }))
                 }
                 t={t}
+                isArabic={isArabic}
               />
-
               <div className="pt-16 ">
                 <AttachmentUploader
                   label={t("attachments")}
                   note={t("attachmentsNote")}
                   buttonLabel={t("uploadAttachments")}
+                  files={attachments}
+                  setFiles={setAttachments}
                 />
               </div>
             </div>
@@ -343,7 +343,7 @@ export default function AddScientificResearch() {
           {/* BOTTOM BUTTONS */}
           <div className="flex gap-4 mt-16 w-full px-6 justify-center md:justify-end">
             <button
-              onClick={handleSave}
+              onClick={handleSave} // pass attachments
               className="bg-[#B38E19] text-white px-10 py-1.5 rounded-md"
             >
               {t("save")}

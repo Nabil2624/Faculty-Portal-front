@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Eye } from "lucide-react";
 
 /* helper */
 function normalizeUrl(url) {
@@ -25,95 +25,128 @@ export default function JournalCard({
   return (
     <div
       onClick={() => onDetails(item)}
-      className={`relative h-full
-        min-h-[clamp(140px,9vw,260px)]
-        px-[clamp(0.75rem,0.5vw,1.25rem)]
-        rounded-[clamp(12px,1.4vw,18px)]
-        shadow-md
-        bg-gray-100
-        border-[clamp(2px,0.35vw,4px)]
-        border-[#19355a]
+      dir={isArabic ? "rtl" : "ltr"} // handle direction
+      className="
+        relative h-full
+        min-h-[clamp(160px,9vw,240px)]
+        px-[clamp(1.2rem,1vw,1.8rem)]
+        py-[clamp(1.2rem,1.2vw,1.8rem)]
+        bg-white
+        border border-gray-300
+        rounded-sm
+        transition-colors
+        hover:bg-gray-50
         cursor-pointer
-        ${
-          isArabic
-            ? "border-r-[clamp(12px,2vw,20px)]"
-            : "border-l-[clamp(12px,2vw,20px)]"
-        }
-      `}
+      "
     >
-      {/* Actions */}
-      <div
-        className={`absolute top-[clamp(0.75rem,1vw,1.25rem)]
-          ${
-            isArabic
-              ? "left-[clamp(0.75rem,1.2vw,1.25rem)]"
-              : "right-[clamp(0.75rem,1.2vw,1.25rem)]"
-          }
-          flex gap-[clamp(0.5rem,1vw,0.9rem)]
-        `}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <Pencil
-          className="text-[#b38e19] w-[clamp(1.1rem,1.6vw,2.3rem)] h-[clamp(1.1rem,1.6vw,2.3rem)] hover:scale-110 transition"
-          onClick={() => onEdit(item)}
-        />
-        <Trash2
-          className="text-[#E53935] w-[clamp(1.1rem,1.6vw,2.3rem)] h-[clamp(1.1rem,1.6vw,2.3rem)] hover:scale-110 transition"
-          onClick={() => onDelete(item)}
-        />
-      </div>
+      {/* Top strong border */}
+      <div className="absolute top-0 left-0 w-full h-[6px] bg-[#19355a]" />
 
       {/* Title */}
-      <div
-        className="relative mt-[clamp(0.5rem,1vw,0.75rem)]"
-        style={{ maxWidth: "clamp(12rem, 22vw, 48rem)" }}
+      <h3
+        className="
+          font-semibold
+          text-gray-800
+          text-[clamp(1rem,1.4vw,1.7rem)]
+          tracking-wide
+          truncate
+        "
       >
-        <h3
-          className="font-semibold
-            text-[clamp(1rem,1.6vw,2.2rem)]
-            whitespace-nowrap
-            overflow-hidden
-            text-ellipsis
-            pointer-events-none"
-        >
-          {item.nameOfMagazine}
-        </h3>
-      </div>
+        {item.nameOfMagazine}
+      </h3>
 
-      {/* Website – FIXED */}
+      {/* Website */}
       {item.websiteOfMagazine && websiteUrl && (
-        <span
+        <p
           onClick={handleOpenWebsite}
-          title={item.websiteOfMagazine}
           className="
-  inline-flex
-  w-fit
-  max-w-[100%]
-  mt-[clamp(0.4rem,0.8vw,0.6rem)]
-  text-[#b38e19]
-  underline
-  text-[clamp(0.8rem,1.1vw,1.6rem)]
-  cursor-pointer
-  overflow-hidden
-  whitespace-nowrap
-  text-ellipsis
-"
+            mt-[clamp(0.5rem,0.8vw,0.8rem)]
+            text-[clamp(0.85rem,1vw,1.2rem)]
+            text-[#0F2D52]
+            underline
+            truncate
+            cursor-pointer
+          "
         >
           {item.websiteOfMagazine}
-        </span>
+        </p>
       )}
 
       {/* Participation Type */}
       <p
-        className="text-gray-400
-          mt-[clamp(0.4rem,0.8vw,0.6rem)]
-          text-[clamp(0.75rem,1vw,1.4rem)]
+        className="
+          mt-[clamp(0.5rem,0.8vw,0.8rem)]
+          text-gray-600
+          text-[clamp(0.8rem,0.95vw,1.1rem)]
         "
       >
         {isArabic
           ? item.typeOfParticipation?.valueAr
           : item.typeOfParticipation?.valueEn}
       </p>
+
+      {/* Bottom Actions */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="
+          mt-[clamp(1.2rem,1.6vw,2rem)]
+          pt-[clamp(0.8rem,1vw,1.2rem)]
+          border-t border-gray-300
+        "
+      >
+        <div
+          className="
+            grid grid-cols-3 text-center
+            divide-x divide-gray-300
+            rtl:divide-x-reverse
+          "
+        >
+          {/* View */}
+          <div className="flex justify-center">
+            <Eye
+              className="
+                w-[clamp(1.2rem,1.4vw,1.6rem)]
+                h-[clamp(1.2rem,1.4vw,1.6rem)]
+                text-[#19355a]
+                cursor-pointer
+                hover:text-blue-500
+                transition-colors
+              "
+              onClick={() => onDetails(item)}
+            />
+          </div>
+
+          {/* Edit */}
+          <div className="flex justify-center">
+            <Pencil
+              className="
+                w-[clamp(1.2rem,1.4vw,1.6rem)]
+                h-[clamp(1.2rem,1.4vw,1.6rem)]
+                text-[#19355a]
+                cursor-pointer
+                hover:text-[#b38e19]
+                transition-colors
+              "
+              onClick={() => onEdit(item)}
+            />
+          </div>
+
+          {/* Delete */}
+          <div className="flex justify-center">
+            <Trash2
+              className="
+                w-[clamp(1.2rem,1.4vw,1.6rem)]
+                h-[clamp(1.2rem,1.4vw,1.6rem)]
+                text-[#19355a]
+                cursor-pointer
+                hover:text-red-700
+                transition-colors
+              "
+              onClick={() => onDelete(item)}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import InputField from "../../ui/InputField";
 import DateField from "../../ui/DateField";
 import FormButton from "../../ui/FormButton";
-import AttachmentUploader from "../AddScientificResearch/AttachmentUploader";
+import AttachmentUploader from "../../ui/AttachmentUploader";
 
 export default function PatentForm({
   title,
@@ -12,6 +12,8 @@ export default function PatentForm({
   onCancel,
   t,
   isArabic,
+  attachments, // <-- add this
+  setAttachments, // <-- add this
 }) {
   return (
     <div className="flex flex-col bg-white min-h-[90vh]">
@@ -32,7 +34,7 @@ export default function PatentForm({
               </label>
 
               <div className="flex gap-6 mt-2">
-                <label className="flex items-center gap-2">
+                <label className="flex items-center gap-2 accent-[#B38E19]">
                   <input
                     type="radio"
                     checked={form.localOrInternational === 1}
@@ -126,6 +128,8 @@ export default function PatentForm({
             <AttachmentUploader
               label={t("fields.attachment")}
               buttonLabel={t("buttons.upload")}
+              files={attachments}
+              setFiles={setAttachments}
             />
           </div>
         </form>

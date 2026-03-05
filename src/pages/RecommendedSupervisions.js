@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 
 import useRecommendedSupervisions from "../hooks/useRecommendedSupervisions";
 
-
 export default function RecommendedSupervisions() {
   const navigate = useNavigate();
   const [selectedSupervision, setSelectedSupervision] = useState(null);
@@ -27,8 +26,6 @@ export default function RecommendedSupervisions() {
     handleApprove,
     handleReject,
   } = useRecommendedSupervisions();
-
-
 
   return (
     <ResponsiveLayoutProvider>
@@ -56,8 +53,8 @@ export default function RecommendedSupervisions() {
                 setIsRejectModalOpen(true);
               }}
               onView={(item) => {
-                navigate(`/supervision-details/${item.id}`, {
-                  state: { supervision: item },
+                navigate(`/supervision-info`, {
+                  state: { ...item },
                 });
               }}
             />
@@ -69,9 +66,7 @@ export default function RecommendedSupervisions() {
             currentPage={currentPage}
             totalPages={totalPages}
             onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            onNext={() =>
-              setCurrentPage((p) => Math.min(totalPages, p + 1))
-            }
+            onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             t={t}
             isArabic={isArabic}
           />

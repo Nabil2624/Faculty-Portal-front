@@ -10,12 +10,16 @@ import { useThesisForm } from "../hooks/useThesisForm";
 import DateInput from "../components/ui/DateInput";
 import CommitteeMembersCard from "../components/widgets/AddThesis/CommitteeMembersCard";
 import RelatedResearchCard from "../components/widgets/AddThesis/RelatedResearchCard";
-import axiosInstance from "../utils/axiosInstance";
+
+import CustomErrorModal from "../components/widgets/AddThesis/CustomErrorModal";
+import AttachmentUploader from "../components/ui/AttachmentUploader";
 
 export default function AddThesis() {
   const { t, i18n } = useTranslation("AddThesis");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const { refs, values, setters, helpers, errors, loading } = useThesisForm({
     mode: "add",
     t,
@@ -24,6 +28,7 @@ export default function AddThesis() {
   const [academicGradeOptions, setAcademicGradeOptions] = useState([]);
 
   const [jobLevelOptions, setJobLevelOptions] = useState([]);
+  const [attachments, setAttachments] = useState([]);
   const input =
     "w-full h-[40px] bg-[#E2E2E2] rounded-md px-3 text-[12px] outline-none text-gray-800 placeholder:text-gray-600";
 
@@ -67,16 +72,13 @@ export default function AddThesis() {
 
             {/* Attachments */}
             <div>
-              <label className="block mb-2 font-medium text-xl">
-                {t("attachments")}
-              </label>
-              <div className="flex items-center gap-2 text-[11px] text-[#B38E19] mb-4">
-                <Info size={14} style={{ color: "#19355A" }} />
-                <span>{t("attachmentsNote")}</span>
-              </div>
-              <button className="bg-[#19355A] text-white w-[190px] h-[32px] rounded-md mr-9 border-2 border-[#B38E19]/50 text-base">
-                {t("uploadAttachments")}
-              </button>
+              <AttachmentUploader
+                label={t("attachments")}
+                note={t("attachmentsNote")}
+                buttonLabel={t("uploadAttachments")}
+                files={attachments}
+                setFiles={setAttachments}
+              />
             </div>
           </div>
 
@@ -228,7 +230,7 @@ export default function AddThesis() {
         <div className="flex gap-4 mt-16 w-full px-6 justify-center md:justify-end">
           <button
             className="bg-[#B38E19] text-white px-10 py-1.5 rounded-md"
-            onClick={helpers.handleSave}
+            onClick={() => helpers.handleSave(attachments)}
           >
             {t("save")}
           </button>
@@ -240,6 +242,15 @@ export default function AddThesis() {
           </button>
         </div>
       </div>
+
+      <CustomErrorModal
+        message={modalMessage}
+        onClose={() => {
+          setIsModalOpen(false);
+          setModalMessage("");
+        }}
+        isArabic={isArabic}
+      />
     </ResponsiveLayoutProvider>
   );
 }

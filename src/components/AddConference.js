@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CustomDropdown from "../components/ui/CustomDropdown";
+import AttachmentUploader from "../components/ui/AttachmentUploader";
 
 export default function AddConference() {
   const { t, i18n } = useTranslation("add-conference");
@@ -29,7 +30,7 @@ export default function AddConference() {
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
   const [description, setDescription] = useState("");
-  const [attachments, setAttachments] = useState(null);
+  const [attachments, setAttachments] = useState([]);
 
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -116,12 +117,25 @@ export default function AddConference() {
         endDate,
         venue: city,
         notes: description,
-        // facultyMemberId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // replace with actual member id
       };
 
-      await axiosInstance.post("/Missions/CreateConfernceOrSeminar", payload, {
-        skipGlobalErrorHandler: true,
-      });
+      const savedConference = await axiosInstance.post(
+        "/Missions/CreateConfernceOrSeminar",
+        payload,
+        { skipGlobalErrorHandler: true },
+      );
+
+      const entityId = savedConference?.id || savedConference?.data?.id;
+      if (attachments.length > 0 && entityId) {
+        const formData = new FormData();
+        attachments.forEach((file) => formData.append("files", file));
+
+        await axiosInstance.post(
+          `/Attachments/${entityId}?context=${8}`, // 8 = ConferenceOrSeminar
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } },
+        );
+      }
 
       navigate("/seminars-and-conferences");
     } catch (error) {
@@ -402,39 +416,15 @@ export default function AddConference() {
               </div>
 
               {/* Attachments */}
-              <div>
-                <label className="block mb-2 text-lg font-medium">
-                  {t("fields.attachments")}
-                </label>
-                <div className="flex items-start gap-2 mb-2">
-                  <Info size={17} className="text-gray-600 mt-1" />
-                  <p className="text-yellow-600 text-sm">
-                    {t("attachmentsHint")}
-                  </p>
-                </div>
-                <input
-                  type="file"
-                  accept=".pdf,.jpg,.png"
-                  ref={fileInputRef}
-                  onChange={(e) => setAttachments(e.target.files[0])}
-                  className="absolute w-0 h-0 opacity-0"
+              <div className="pt-16">
+                <AttachmentUploader
+                  label={t("fields.attachments")}
+                  note={t("attachmentsNote")}
+                  multiple
+                  buttonLabel={t("uploadAttachments")}
+                  files={attachments}
+                  setFiles={setAttachments}
                 />
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      fileInputRef.current && fileInputRef.current.click()
-                    }
-                    className="bg-[#19355A] text-white px-9 py-1 rounded-md hover:bg-[#162d4a] transition-colors"
-                  >
-                    {t("chooseFile")}
-                  </button>
-                  {attachments && (
-                    <span className="text-sm text-gray-700 truncate max-w-[200px]">
-                      {attachments.name}
-                    </span>
-                  )}
-                </div>
               </div>
             </div>
           </form>

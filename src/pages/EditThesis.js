@@ -10,9 +10,13 @@ import DateInput from "../components/ui/DateInput";
 import CommitteeMembersCard from "../components/widgets/AddThesis/CommitteeMembersCard"; // Same component as add
 import RelatedResearchCard from "../components/widgets/AddThesis/RelatedResearchCard"; // Same component as add
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // import useTheses from "../hooks/useTheses";
 import { useThesisForm } from "../hooks/useThesisForm";
+import CustomErrorModal from "../components/widgets/AddThesis/CustomErrorModal";
+import AttachmentUploader from "../components/ui/AttachmentUploader";
+
+import "antd/dist/reset.css";
 
 export default function EditThesis() {
   const { t, i18n } = useTranslation("EditThesis");
@@ -20,18 +24,35 @@ export default function EditThesis() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const thesisData = location.state?.thesis;
+  const [attachments, setAttachments] = useState([]);
+  const [initialAttachments, setInitialAttachments] = useState([]);
+
   useEffect(() => {
-    if (!thesisData) {
-      navigate("/theses");
-    }
-  }, [thesisData, navigate]);
+    if (!thesisData) return;
+
+    const prefillAttachments = (thesisData.attachments || []).map((att) => ({
+      id: att.id,
+      fileName: att.fileName,
+      contentType: att.contentType,
+      size: att.size,
+      name: att.fileName,
+    }));
+
+    setAttachments(prefillAttachments);
+    setInitialAttachments(prefillAttachments); //  مهم جداً
+  }, [thesisData]);
 
   const { refs, values, setters, helpers, errors, loading } = useThesisForm({
     mode: "edit",
     thesisData,
     thesisId: thesisData?.id,
     t,
+    setModalMessage, // pass these
+    setIsModalOpen,
+    isArabic,
   });
 
   const input =
@@ -67,18 +88,13 @@ export default function EditThesis() {
 
             {/* Attachments */}
             <div>
-              <label className="block mb-2 font-medium text-xl">
-                {t("attachments")}
-              </label>
-
-              <div className="flex items-center gap-2 text-[11px] text-[#B38E19] mb-4">
-                <Info size={14} style={{ color: "#19355A" }} />
-                <span>{t("attachmentsNote")}</span>
-              </div>
-
-              <button className="bg-[#19355A] text-white w-[190px] h-[32px] rounded-md mr-9 border-2 border-[#B38E19]/50 text-base">
-                {t("uploadAttachments")}
-              </button>
+              <AttachmentUploader
+                label={t("attachments")}
+                note={t("attachmentsNote")}
+                buttonLabel={t("uploadAttachments")}
+                files={attachments}
+                setFiles={setAttachments}
+              />
             </div>
           </div>
 
@@ -226,17 +242,26 @@ export default function EditThesis() {
       <div className="flex gap-4 mt-16 w-full px-6 justify-center md:justify-end">
         <button
           className="bg-[#B38E19] text-white px-10 py-1.5 rounded-md"
-          onClick={helpers.handleSave}
+          onClick={() => helpers.handleSave(attachments, initialAttachments)}
         >
           {t("save")}
         </button>
         <button
-            className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md"
-            onClick={() => navigate("/theses")}
-          >
-            {t("back")}
-          </button>
+          className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md"
+          onClick={() => navigate("/theses")}
+        >
+          {t("back")}
+        </button>
       </div>
+
+      <CustomErrorModal
+        message={modalMessage}
+        onClose={() => {
+          setIsModalOpen(false);
+          setModalMessage(""); // <- clear the message
+        }}
+        isArabic={isArabic}
+      />
     </ResponsiveLayoutProvider>
   );
 }

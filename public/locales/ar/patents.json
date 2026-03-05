@@ -12,6 +12,7 @@
   "authority": "جهة الاعتماد / الدولة",
   "applyingDate": "تاريخ التقديم",
   "accreditationDate": "تاريخ الاعتماد",
+  "attachments": "المرفقات",
   "description": "الوصف",
 
   "areYouSureDelete": "هل أنت متأكد أنك تريد حذف براءة الاختراع؟",
@@ -22,6 +23,8 @@
   "next": "التالي",
   "page": "الصفحة",
   "of": "من",
+
+
 
   "errors": {
     "loadFailed": "فشل تحميل براءات الاختراع",
