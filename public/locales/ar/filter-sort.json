@@ -71,9 +71,11 @@
   "Administrator": "مسؤول",
   "Reviewer": "مراجع",
   "AdministratorAndReviewer": "مسؤول ومراجع",
-  "EnrollmentDateASC": "تاريخ القيد تصاعدي",
-  "EnrollmentDateDESC": "تاريخ القيد تنازلي",
-  "RegisterationDateASC": "تاريخ التسجيل تصاعدي",
-  "RegisterationDateDESC": "تاريخ التسجيل تنازلي"
+  "EnrollmentDateASC": "تاريخ القيد تصاعدياً",
+  "EnrollmentDateDESC": "تاريخ القيد تنازلياً",
+  "RegisterationDateASC": "تاريخ التسجيل تصاعدياً",
+  "RegisterationDateDESC": "تاريخ التسجيل تنازلياً",
+  "CitesAsc":"الاقتباسات تصاعدياً",
+  "CitesDesc":"الاقتباسات تنازلياً"
 
 }

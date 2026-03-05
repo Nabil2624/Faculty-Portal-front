@@ -1,7 +1,6 @@
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import ProfileContent from "../components/widgets/Profile/ProfileContent";
 import { useTranslation } from "react-i18next";
-import defaultProfileImg from "../assets/prof.jpg";
 import Intro from "../components/widgets/Profile/Intro";
 import ContributionsWidget from "../components/widgets/Profile/ContributionsWidget";
 import ProjectsWidget from "../components/widgets/Profile/ProjectsWidget";
@@ -15,90 +14,96 @@ import SkillsWidget from "../components/widgets/Profile/SkillsWidget";
 import useProfile from "../hooks/useProfile";
 import { updateBioSummary } from "../services/profile.service";
 import { useState } from "react";
+import LoadingSpinner from "../components/LoadingSpinner";
+import profileImage from "../assets/profileImage.png";
 
 export default function GridLayoutFullScreen() {
   const { i18n } = useTranslation();
-  const { data, loading, error } = useProfile();
+  const { data: rawData, loading } = useProfile();
+
+  const data = rawData ?? {}; // 🔥 حماية كاملة
   const isArabic = i18n.language === "ar";
 
   const [bio, setBio] = useState("");
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-  if (!data) return null;
+  if (loading) return <LoadingSpinner />;
 
-  // ================= PROFILE IMAGE =================
-  const profileImage = data.profilePictureId
-    ? `${import.meta.env.VITE_API_BASE_URL}/Files/${data.profilePictureId}`
-    : defaultProfileImg;
+  // ================= SAFE HELPER =================
+  const safe = (value, fallback = "") => value ?? fallback;
 
   // ================= BASIC INFO =================
-  const fullName = `${isArabic ? data.title?.valueAr : data.title?.valueEn} ${data.name}`;
+  const title = isArabic
+    ? safe(data.title?.valueAr)
+    : safe(data.title?.valueEn);
+
+  const name = safe(data.name);
+
+  const fullName = `${title} ${name}`.trim();
+
   const university = isArabic
-    ? data.university?.valueAr
-    : data.university?.valueEn;
+    ? safe(data.university?.valueAr)
+    : safe(data.university?.valueEn);
+
   const department = isArabic
-    ? data.department?.valueAr
-    : data.department?.valueEn;
+    ? safe(data.department?.valueAr)
+    : safe(data.department?.valueEn);
 
   // ================= SOCIALS =================
   const socials = [
-    { type: "facebook", url: data.facebook },
-    { type: "linkedin", url: data.linkedIn },
-    { type: "github", url: null },
-    // { type: "instagram", url: data.instagram },
-    // { type: "x", url: data.x },
-    // { type: "youtube", url: data.youTube },
-  ];
+    { type: "facebook", url: safe(data.facebook) },
+    { type: "linkedin", url: safe(data.linkedIn) },
+  ].filter((s) => s.url);
 
   // ================= COUNTS =================
-  const contributionsCount = data.contributionsCount;
-  const projectsCount = data.projectsCount;
-  const writingsCount = data.scientificWritingsCount;
-  const prizesCount = data.prizesAndRewardsCount;
-  const researchCount = data.researchCount;
+  const contributionsCount = safe(data.contributionsCount, 0);
+  const projectsCount = safe(data.projectsCount, 0);
+  const writingsCount = safe(data.scientificWritingsCount, 0);
+  const prizesCount = safe(data.prizesAndRewardsCount, 0);
+  const researchCount = safe(data.researchCount, 0);
 
   // ================= EXPERIENCES =================
   const experiences =
     data.topExperiences?.map((exp) => ({
-      jobDegree: exp.title,
+      jobDegree: safe(exp?.title),
       country: "",
-      city: exp.organization,
-      startDate: exp.startDate,
-      endDate: exp.endDate,
-    })) || [];
+      city: safe(exp?.organization),
+      startDate: safe(exp?.startDate, null),
+      endDate: safe(exp?.endDate, null),
+    })) ?? [];
 
   // ================= QUALIFICATIONS =================
   const qualifications =
     data.topAcademicQualifications?.map((q) => ({
-      title: isArabic ? q.qualification?.valueAr : q.qualification?.valueEn,
-      organization: q.universityOrFaculty,
-      startDate: q.dateOfObtainingTheQualification,
+      title: isArabic
+        ? safe(q?.qualification?.valueAr)
+        : safe(q?.qualification?.valueEn),
+      organization: safe(q?.universityOrFaculty),
+      startDate: safe(q?.dateOfObtainingTheQualification, null),
       endDate: null,
-    })) || [];
+    })) ?? [];
 
   // ================= SKILLS =================
   const skills =
     data.skills?.map((skill, index) => ({
       id: index,
-      text: skill,
-    })) || [];
+      text: safe(skill),
+    })) ?? [];
 
   // ================= HANDLE BIO SAVE =================
   const handleBioSave = async (newBio) => {
     try {
-      await updateBioSummary(newBio); // call API
-      setBio(newBio); // update local state
+      await updateBioSummary(newBio);
+      setBio(newBio);
     } catch (err) {
       console.error("Failed to update bio:", err);
     }
   };
-  console.log(socials);
 
   return (
     <ResponsiveLayoutProvider>
-      <div className="rtl w-screen-[90vh] h-[90vh] p-2">
+     <div className="rtl w-screen-[90vh] h-[90vh] p-2">
         <div className="grid grid-rows-4 grid-cols-6 gap-[clamp(4px,0.5vw,16px)] w-full h-full">
+          
           {/* Profile Card */}
           <div className="bg-[#EDEDED] border-[clamp(1.5px,0.3vw,3px)] border-[#b38e19] rounded-[clamp(14px,1vw,20px)] flex items-center justify-center row-span-2 col-span-1">
             <ProfileContent
@@ -114,17 +119,14 @@ export default function GridLayoutFullScreen() {
           {/* Intro */}
           <div className="bg-[#EDEDED] border-[clamp(1.5px,0.3vw,3px)] border-[#19355A] rounded-[clamp(14px,1vw,20px)] flex items-center justify-center col-start-2 col-span-5">
             <Intro
-              content={bio || data.bioSummary || ""}
-              onSave={handleBioSave} // ✅ هنا مربوط بالـ API
+              content={bio || safe(data.bioSummary)}
+              onSave={handleBioSave}
             />
           </div>
 
           {/* Stats */}
           <div className="bg-[#EDEDED] border-[clamp(1.5px,0.3vw,3px)] border-[#19355A] rounded-[clamp(14px,1vw,20px)] flex items-center justify-center row-start-2 col-start-2">
-            <ContributionsWidget
-              count={contributionsCount}
-              isArabic={isArabic}
-            />
+            <ContributionsWidget count={contributionsCount} isArabic={isArabic} />
           </div>
 
           <div className="bg-[#EDEDED] border-[clamp(1.5px,0.3vw,3px)] border-[#19355A] rounded-[clamp(14px,1vw,20px)] flex items-center justify-center row-start-2 col-start-3">
@@ -132,10 +134,7 @@ export default function GridLayoutFullScreen() {
           </div>
 
           <div className="bg-[#EDEDED] border-[clamp(1.5px,0.3vw,3px)] border-[#19355A] rounded-[clamp(14px,1vw,20px)] flex items-center justify-center row-start-2 col-start-4">
-            <PublicationsAndPatentsWidget
-              count={writingsCount}
-              isArabic={isArabic}
-            />
+            <PublicationsAndPatentsWidget count={writingsCount} isArabic={isArabic} />
           </div>
 
           <div className="bg-[#EDEDED] border-[clamp(1.5px,0.3vw,3px)] border-[#19355A] rounded-[clamp(14px,1vw,20px)] flex items-center justify-center row-start-2 col-start-5">
@@ -146,7 +145,7 @@ export default function GridLayoutFullScreen() {
             <ResearchWidget count={researchCount} isArabic={isArabic} />
           </div>
 
-          {/* CV Image with hover overlay */}
+          {/* CV Image */}
           <div
             className="relative row-start-3 row-span-2 col-start-1 overflow-hidden rounded-[clamp(14px,1vw,20px)] border-[clamp(1.5px,0.3vw,3px)] border-[#19355A]"
             style={{
@@ -156,13 +155,12 @@ export default function GridLayoutFullScreen() {
               backgroundRepeat: "no-repeat",
             }}
           >
-            {/* Dark overlay on hover */}
             <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-50 transition-opacity duration-300 flex items-center justify-center">
               <button
                 onClick={() => window.open(cvImage, "_blank")}
                 className="opacity-0 hover:opacity-100 transition-opacity duration-300 px-[clamp(8px,1vw,16px)] py-[clamp(4px,0.5vw,8px)] bg-[#19355A] text-white rounded-[clamp(6px,0.5vw,12px)] text-[clamp(12px,1vw,20px)]"
               >
-                {i18n.language === "ar" ? "عرض السيرة الذاتية" : "View CV"}
+                {isArabic ? "عرض السيرة الذاتية" : "View CV"}
               </button>
             </div>
           </div>

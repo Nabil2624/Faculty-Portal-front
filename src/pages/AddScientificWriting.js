@@ -14,7 +14,7 @@ export default function AddScientificWriting() {
 
   // ✅ استخدمنا الهـook بدل useState لكل حقل
   const { form, setForm, errors, validate } = useScientificWritingForm({}, t);
-  const { roles } = useAuthorRoles();
+  const { types } = useAuthorRoles();
 
   const handleSave = async () => {
     if (!validate()) return;
@@ -50,7 +50,7 @@ console.log("Selected role:", form.role);
       setTitle={(v) => setForm((prev) => ({ ...prev, title: v }))}
       role={form.role}
       setRole={(v) => setForm((prev) => ({ ...prev, role: v }))}
-      roles={roles}
+      roles={types}
       isbn={form.isbn}
       setIsbn={(v) => setForm((prev) => ({ ...prev, isbn: v }))}
       publishingHouse={form.publishingHouse}

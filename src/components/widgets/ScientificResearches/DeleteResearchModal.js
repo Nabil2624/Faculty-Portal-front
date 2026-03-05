@@ -11,11 +11,11 @@ export default function DeleteResearchModal({ item, t, onConfirm, onCancel }) {
         "
       >
         <h3 className="text-[clamp(1rem,2vw,1.25rem)] font-semibold mb-[clamp(0.5rem,1vw,1rem)]">
-          {t("areYouSureDelete")}
+          {t("ScientificResearches:areYouSureDelete")}
         </h3>
 
         <p className="text-[clamp(0.85rem,1.5vw,1rem)] text-gray-600 mb-[clamp(1rem,2vw,1.5rem)] break-words">
-          {item?.researchTitle}
+          {item?.title}
         </p>
 
         <div className="flex justify-center gap-[clamp(0.75rem,2vw,1.5rem)]">
@@ -30,7 +30,7 @@ export default function DeleteResearchModal({ item, t, onConfirm, onCancel }) {
             text-[clamp(0.85rem,1.5vw,1rem)]
             "
           >
-            {t("delete")}
+            {t("ScientificResearches:delete")}
           </button>
 
           <button
@@ -43,7 +43,7 @@ export default function DeleteResearchModal({ item, t, onConfirm, onCancel }) {
             text-[clamp(0.85rem,1.5vw,1rem)]
             "
           >
-            {t("cancel")}
+            {t("ScientificResearches:cancel")}
           </button>
         </div>
       </div>

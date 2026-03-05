@@ -23,5 +23,7 @@
   "uploadPhoto" : "Upload photo",
   "none": "None",
   "authority" : "Authority",
-  "accurateSpecialization": "Exact Specialization"
+  "accurateSpecialization": "Exact Specialization",
+  "personalInfo":"personal Information",
+  "workInfo":"Work Information"
 }

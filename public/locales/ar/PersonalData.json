@@ -23,5 +23,7 @@
   "uploadPhoto": "رفع صورة",
   "none": "لا يوجد",
   "accurateSpecialization": "التخصص الدقيق",
-  "authority": "الجهة"
+  "authority": "الجهة",
+  "personalInfo": "المعلومات الشخصيه",
+  "workInfo": "معلومات العمل"
 }

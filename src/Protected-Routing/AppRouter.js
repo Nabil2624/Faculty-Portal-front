@@ -97,6 +97,10 @@ import RecommendedSupervisionCard from "../components/widgets/RecommendedSupervi
 import RecommendedSupervisions from "../pages/RecommendedSupervisions";
 import JobGrade from "../pages/JobGrade";
 import AdminstrativePosition from "../pages/AdminstrativePosition";
+import PersonalDataV2 from "../components/PersonalDataV2";
+import PersonalData from "../pages/PersonalData";
+import ResearchesPage from "../pages/ResearchesPage"
+import ScientificResearchInternalProfile from "../pages/ScientificResearchInternalProfile";
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -121,7 +125,6 @@ function AppRouterInner() {
       <Route path="/add-scientific-task" element={<AddScientificTask />} />
       <Route path="/edit-scientific-task" element={<EditScientificTask />} />
       <Route path="/theses" element={<Theses />} />
-      <Route path="/scientific-researches" element={<ScientificResearches />} />
       <Route path="/supervision-thesis" element={<SupervisionThesis />} />
       <Route path="/supervision-info" element={<SupervisionInfo />} />
       {/* <Route path="/theses-details/:id" element={<ThesesDetails />} /> */}
@@ -276,6 +279,10 @@ function AppRouterInner() {
         element={<ParticipationInQualityWorks />}
       />
       <Route
+        path="/PersonalV2"
+        element={<PersonalDataV2 />}
+      />
+      <Route
         path="/add-scientific-writing"
         element={<AddScientificWriting />}
       />
@@ -283,6 +290,19 @@ function AppRouterInner() {
         path="/edit-scientific-writing"
         element={<EditScientificWriting />}
       />
+      <Route
+        path="/personal-data"
+        element={<PersonalData />}
+      />
+      <Route
+        path="/ResearchesPage"
+        element={<ResearchesPage />}
+      />
+      <Route
+        path="/InternalProfile"
+        element={<ScientificResearchInternalProfile />}
+      />
+
 
       <Route path="/scientific-writing" element={<ScientificWriting />} />
       <Route path="/profile" element={<ProfileDashboard />} />

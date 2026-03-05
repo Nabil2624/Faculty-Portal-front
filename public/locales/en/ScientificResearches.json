@@ -12,7 +12,12 @@
   "areYouSureDelete": "Are you sure you want to delete this scientific research?",
 
   "deleteError": "Failed to delete research.",
-
+  "edit":"Edit",
+  "select":"Select",
   "delete": "Delete",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "citedBy":"Cited by",
+  "showMore":"Show more",
+  "titleText":"Title",
+  "coAuthors": "Co-authors"
 }

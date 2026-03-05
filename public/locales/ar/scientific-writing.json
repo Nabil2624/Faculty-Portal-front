@@ -8,8 +8,8 @@
   "areYouSureDelete": "هل أنت متأكد أنك تريد الحذف؟",
   "delete": "حذف",
   "cancel": "إلغاء",
-  "add": "إضافة",
-  "empty": "لا توجد بيانات",
+  "addNew": "إضافة",
+  "noDataAvailable": "لا توجد بيانات",
   "previous": "السابق",
   "next": "التالي",
   "page": "الصفحة",
@@ -18,5 +18,14 @@
   "errors": {
     "loadFailed": "فشل تحميل البيانات",
     "deleteFailed": "فشل في عملية الحذف"
-  }
+  },
+  "documentDetails":"تفاصيل المؤلفة العلمية",
+  "Page":"صفحة",
+  "selectItemToPreview":"اختر عنصر لمشاهدة التفاصيل",
+  "BookTitle":"عنوان الكتاب",
+  "description":"الوصف",
+  "summaryDescription":"الوصف",
+  "searchPlaceholder":"ابحث هنا",
+  "actions": "الإجراءات",
+  "backToList":"عد الي القائمة"
 }

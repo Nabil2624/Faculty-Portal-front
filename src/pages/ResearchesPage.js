@@ -1,0 +1,439 @@
+import { useState, useEffect, useRef, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+// Components
+import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
+import LoadingSpinner from "../components/LoadingSpinner";
+import CitationsWidgetMini from "../components/widgets/Researches/CitationsWidgetMini";
+import DeleteResearchModal from "../components/widgets/ScientificResearches/DeleteResearchModal";
+import ModalWrapper from "../components/ui/ModalWrapper";
+import CustomizeResultsModal from "../components/ui/CustomizeResultsPopup";
+import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
+
+// المكونات المنفصلة التي تم إنشاؤها
+import ResearcherHero from "../components/widgets/Researches/ResearcherHero";
+import ResearchesTable from "../components/widgets/Researches/ResearchesTable";
+
+// Hooks & Services
+import useResearcherProfile from "../hooks/useResearcherProfile";
+import useScientificResearches from "../hooks/useScientificResearches";
+import { deleteScientificResearch } from "../services/scientificResearchService";
+
+export default function ResearchesPage() {
+  const { t, i18n } = useTranslation([
+    "ResearcherProfile",
+    "ScientificResearches",
+    "filter-sort",
+  ]);
+  const isArabic = i18n.language === "ar";
+  const navigate = useNavigate();
+
+  // --- States الفلترة والترتيب ---
+  const [sortValue, setSortValue] = useState(null);
+  const [filtersState, setFiltersState] = useState({});
+  const [source, setSource] = useState([]);
+  const [derivedFrom, setDerivedFrom] = useState([]);
+  const [publisherType, setPublisherType] = useState([]);
+  const [publicationType, setPublicationType] = useState([]);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // --- States التحكم في القائمة والاختيار ---
+  const [allResearches, setAllResearches] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const {
+    researcher,
+    loading: profileLoading,
+    error,
+    waiting,
+    missingScholar,
+    nationalNumber,
+  } = useResearcherProfile();
+
+  const lastProcessedDataRef = useRef(null);
+
+  const {
+    researches,
+    loading: researchesLoading,
+    totalPages,
+    fetchResearches,
+  } = useScientificResearches(
+    10,
+    "",
+    sortValue,
+    publisherType,
+    publicationType,
+    source,
+    derivedFrom,
+    page,
+  );
+
+  // دمج البيانات الجديدة مع القديمة عند عمل Pagination
+  useEffect(() => {
+    if (researches) {
+      if (page === 1) {
+        setAllResearches(researches);
+      } else if (researches !== lastProcessedDataRef.current) {
+        setAllResearches((prev) => {
+          const existingIds = new Set(prev.map((item) => item.id));
+          const newUniqueItems = researches.filter(
+            (r) => !existingIds.has(r.id),
+          );
+          return [...prev, ...newUniqueItems];
+        });
+      }
+      lastProcessedDataRef.current = researches;
+    }
+  }, [researches, page]);
+
+  // إعادة ضبط الحالة عند تغيير الفلاتر أو اللغة
+  useEffect(() => {
+    setAllResearches([]);
+    setPage(1);
+    lastProcessedDataRef.current = null;
+    setSelectedId(null);
+    setIsSelectionMode(false);
+  }, [
+    i18n.language,
+    sortValue,
+    source,
+    derivedFrom,
+    publisherType,
+    publicationType,
+  ]);
+
+  const selectedResearch = useMemo(
+    () => allResearches.find((r) => r.id === selectedId),
+    [selectedId, allResearches],
+  );
+
+  // --- Handlers ---
+  
+  // دالة الـ Toggle المحدثة لتصفير الاختيار عند الإغلاق
+  const toggleSelectionMode = () => {
+    if (isSelectionMode) {
+      setSelectedId(null); // تصفير الـ ID المختار فوراً لإزالة الـ Style
+    }
+    setIsSelectionMode((prev) => !prev);
+  };
+
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+    setSource(filters?.Source || []);
+    setDerivedFrom(filters?.DerivedFrom || []);
+    setPublisherType(filters?.PublisherType || []);
+    setPublicationType(filters?.PublicationType || []);
+    setShowFilterModal(false);
+  };
+
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setSource([]);
+    setDerivedFrom([]);
+    setPublisherType([]);
+    setPublicationType([]);
+    setFiltersState({});
+    setShowFilterModal(false);
+  };
+
+  const handleDeleteAction = async () => {
+    if (!selectedId) return;
+    try {
+      await deleteScientificResearch(selectedId);
+      setShowDeleteModal(false);
+      setSelectedId(null);
+      setPage(1);
+      await fetchResearches(1);
+    } catch (err) {
+      alert(t("ScientificResearches:deleteError"));
+    }
+  };
+
+  const handleEditAction = () => {
+    if (selectedResearch && selectedResearch.source === "Internal") {
+      navigate("/edit-scientific-research", {
+        state: { research: selectedResearch },
+      });
+    }
+  };
+
+  const handleAddAction = () => {
+    console.log("Add button clicked!");
+    navigate("/add-scientific-research");
+  };
+
+  const sortOptions = [
+    { value: 1, label: "titleAsc" },
+    { value: 2, label: "titleDesc" },
+    { value: 3, label: "journalAsc" },
+    { value: 4, label: "journalDesc" },
+    { value: 7, label: "CitesAsc" },
+    { value: 8, label: "CitesDesc" },
+  ];
+
+  const filtersConfig = [
+    {
+      key: "Source",
+      title: "dependOnSource",
+      options: [
+        { value: 1, label: "Master" },
+        { value: 2, label: "PhD" },
+        { value: 3, label: "Other" },
+      ],
+    },
+    {
+      key: "DerivedFrom",
+      title: "dependOnDerivedFrom",
+      options: [
+        { value: 1, label: "Internal" },
+        { value: 2, label: "External" },
+      ],
+    },
+    {
+      key: "PublisherType",
+      title: "dependOnPublisherType",
+      options: [
+        { value: 1, label: "Journal" },
+        { value: 2, label: "Conference" },
+        { value: 3, label: "Unspecified" },
+      ],
+    },
+    {
+      key: "PublicationType",
+      title: "dependLocalOrInternational",
+      options: [
+        { value: 1, label: "local" },
+        { value: 2, label: "international" },
+      ],
+    },
+  ];
+
+  const dummyCoAuthors = [
+    { id: 1, name: "Dr. Ahmed Ali", avatar: "https://i.pravatar.cc/150?u=2" },
+    { id: 2, name: "Prof. Sarah Johnson", avatar: "https://i.pravatar.cc/150?u=1" },
+    { id: 3, name: "Dr. Laila Hassan", avatar: "https://i.pravatar.cc/150?u=3" },
+  ];
+
+  // --- Conditional Rendering ---
+  if (profileLoading && page === 1) return <LoadingSpinner />;
+
+  if (waiting) {
+    return (
+      <ResponsiveLayoutProvider>
+        <div className="text-center mt-20 text-xl font-semibold">
+          {isArabic
+            ? "برجاء الانتظار يتم جلب الابحاث"
+            : "Please wait, fetching researches..."}
+        </div>
+      </ResponsiveLayoutProvider>
+    );
+  }
+
+  if (missingScholar) {
+    return (
+      <ResponsiveLayoutProvider>
+        <div className="p-6">
+          <MissingScholarCard
+            onSave={async (data) => {
+              await axios.post(
+                "http://127.0.0.1:8000/api/fetch-research-using-scholar-profile-link/",
+                {
+                  researcherNationalNumber: nationalNumber,
+                  ORCID: data.orcid,
+                  scholarProfileLink: data.scholarLink,
+                },
+              );
+              window.location.reload();
+            }}
+          />
+        </div>
+      </ResponsiveLayoutProvider>
+    );
+  }
+
+  if (error) return <div className="text-red-500 text-center mt-6">{error}</div>;
+
+  if (!researcher && !waiting)
+    return (
+      <ResponsiveLayoutProvider>
+        <div className="text-center mt-20 text-xl font-semibold">
+          {isArabic
+            ? "لم يتم العثور على ملف للباحث"
+            : "No Researcher Profile Was Found"}
+        </div>
+      </ResponsiveLayoutProvider>
+    );
+
+  return (
+    <ResponsiveLayoutProvider>
+      <div
+        className={`mx-auto ${isArabic ? "rtl" : "ltr"}`}
+        style={{ padding: "clamp(0.5rem, 1vw, 1.2rem)", minHeight: "100vh" }}
+      >
+        <div className="flex flex-col lg:flex-row w-full gap-8">
+          <div className="flex flex-col flex-1 w-full">
+            <ResearcherHero researcher={researcher} />
+
+            <div
+              className="w-full flex flex-wrap items-center border-y border-gray-100 py-6 mt-8"
+              style={{ gap: "clamp(1rem, 5vw, 4rem)" }}
+            >
+              {[
+                {
+                  label: t("orcidId"),
+                  value: researcher.orcid,
+                  isLink: true,
+                  url: `https://orcid.org/${researcher.orcid}`,
+                },
+                {
+                  label: t("googleScholar"),
+                  value: "scholar.google.com",
+                  isLink: true,
+                  url: researcher.scholarProfileLink,
+                },
+                {
+                  label: t("orgDomain"),
+                  value: researcher.organisationalDomain,
+                  isLink: false,
+                },
+                {
+                  label: t("orgId"),
+                  value: researcher.organisationId,
+                  isLink: false,
+                },
+              ].map(
+                (item, i) =>
+                  item.value && (
+                    <div key={i} className="flex flex-col items-start gap-1">
+                      <span
+                        className="uppercase tracking-wider text-gray-400 font-bold text-[10px]"
+                        style={{ fontSize: "clamp(0.8rem, 0.9vw, 1.6rem)" }}
+                      >
+                        {item.label}
+                      </span>
+                      {item.isLink ? (
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[#19355A] hover:text-[#B38E19] font-medium transition-colors underline decoration-gray-200 underline-offset-4"
+                          style={{ fontSize: "clamp(0.8rem, 0.7vw, 1.4rem)" }}
+                        >
+                          {item.value}
+                        </a>
+                      ) : (
+                        <span
+                          className="text-[#19355A] font-medium"
+                          style={{ fontSize: "clamp(0.8rem, 0.7vw, 1.4rem)" }}
+                        >
+                          {item.value}
+                        </span>
+                      )}
+                    </div>
+                  ),
+              )}
+            </div>
+
+            <ResearchesTable
+              researches={allResearches}
+              loading={researchesLoading}
+              isArabic={isArabic}
+              t={t}
+              isSelectionMode={isSelectionMode}
+              toggleSelectionMode={toggleSelectionMode} // الدالة المحدثة
+              selectedId={selectedId}
+              setSelectedId={setSelectedId}
+              selectedResearch={selectedResearch}
+              handleEditAction={handleEditAction}
+              setShowDeleteModal={setShowDeleteModal}
+              setShowFilterModal={setShowFilterModal}
+              handleResetFilters={handleResetFilters}
+              sortValue={sortValue}
+              filtersState={filtersState}
+              page={page}
+              totalPages={totalPages}
+              setPage={setPage}
+              handleAddAction={handleAddAction}
+            />
+          </div>
+
+          <div className="hidden lg:block w-[1px] bg-gray-100 self-stretch my-4"></div>
+
+          <div className="w-full lg:w-[350px] flex flex-col">
+            <CitationsWidgetMini
+              data={researcher.researcherCites}
+              stats={{
+                totalCitations: researcher.totalNumberOfCitiations,
+                citations5y: researcher.numberOfCitiationsInLastFiveYears,
+                hIndex: researcher.hindex,
+                hIndex5y: researcher.hindexInLastFiveYears,
+                i10Index: researcher.i10index,
+                i10Index5y: researcher.i10index5y,
+              }}
+            />
+
+            <div className="w-full mt-10 pt-6 border-t border-gray-100">
+              <h3
+                className="text-[#19355A] font-bold uppercase tracking-widest mb-4"
+                style={{ fontSize: "clamp(0.4rem, 0.9vw, 1.4rem)" }}
+              >
+                {t("ScientificResearches:coAuthors") ||
+                  (isArabic ? "المؤلفون المشاركون" : "Co-authors")}
+              </h3>
+              <div className="flex flex-col gap-4 w-full">
+                {dummyCoAuthors.map((author) => (
+                  <div
+                    key={author.id}
+                    className="flex items-center gap-3 group cursor-pointer"
+                  >
+                    <img
+                      src={author.avatar}
+                      alt={author.name}
+                      className="rounded-full w-9 h-9 object-cover border border-gray-100 shadow-sm group-hover:border-[#B38E19] transition-colors"
+                    />
+                    <span
+                      className="text-gray-600 font-medium group-hover:text-[#19355A] transition-colors text-sm"
+                      style={{ fontSize: "clamp(0.4rem, 0.9vw, 1.4rem)" }}
+                    >
+                      {author.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {showDeleteModal && (
+          <DeleteResearchModal
+            item={selectedResearch}
+            t={t}
+            onConfirm={handleDeleteAction}
+            onCancel={() => setShowDeleteModal(false)}
+          />
+        )}
+
+        {showFilterModal && (
+          <ModalWrapper onClose={() => setShowFilterModal(false)}>
+            <CustomizeResultsModal
+              onClose={() => setShowFilterModal(false)}
+              onApply={handleApplyFilters}
+              onReset={handleResetFilters}
+              currentSort={sortValue}
+              currentFilters={filtersState}
+              filtersConfig={filtersConfig}
+              translationNamespace="filter-sort"
+              sortOptions={sortOptions}
+            />
+          </ModalWrapper>
+        )}
+      </div>
+    </ResponsiveLayoutProvider>
+  );
+}

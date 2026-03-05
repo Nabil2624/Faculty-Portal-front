@@ -8,12 +8,19 @@
   "areYouSureDelete": "Are you sure you want to delete?",
   "delete": "Delete",
   "cancel": "Cancel",
-  "add": "Add",
-  "empty": "No data available",
+  "addNew": "Add",
+  "noDataAvailable": "No data available",
   "previous": "Previous",
   "next": "Next",
-  "page": "Page",
+
   "of": "of",
+  "documentDetails": "Scientific Writing Details",
+  "Page": "Page",
+  "selectItemToPreview": "Select ttem to preview",
+  "backToList":"Back to list",
+
+  "summaryDescription": "Description",
+  "searchPlaceholder": "Search here",
   "search": "Search in experiences...",
   "errors": {
     "loadFailed": "Failed to load data",

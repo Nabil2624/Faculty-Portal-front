@@ -97,3 +97,45 @@ html, body {
     overflow-x: hidden;
   }
 }
+/* تخصيص شكل السكرول بار */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px; /* عرض السكرول */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; /* لون الخلفية */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #b38e19; /* اللون الذهبي الخاص بك */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #8e7114; /* لون أغمق قليلاً عند الوقوف عليه */
+}
+/* Custom Global Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2D2D2D; /* الرمادي الغامق اللي اخترناه */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B38E19; /* الجولد */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af37; /* جولد فاتح للهوفر */
+}
+
+/* لمتصفح Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #B38E19 #2D2D2D;
+}

@@ -4,29 +4,33 @@ import { useNavigate } from "react-router-dom";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
 
 import useScientificWriting from "../hooks/useScientificWriting";
 import { deleteScientificWriting } from "../services/scientific-writing.service";
 import useAuthorRoles from "../hooks/useAuthorRoles";
-import ScientificWritingCard from "../components/widgets/ScientificWriting/ScientificWritingCard";
+
+import ScientificWritingTable from "../components/widgets/ScientificWriting/ScientificWritingTable";
 import ScientificWritingModal from "../components/widgets/ScientificWriting/ScientificWritingModal";
 
 export default function ScientificWriting() {
   const { t, i18n } = useTranslation("scientific-writing");
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
+
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [filtersState, setFiltersState] = useState({});
+
   const [authorRoleIds, setAuthorRoleIds] = useState([]);
-  const [showFilterModal, setShowFilterModal] = useState(false);
   const [sortValue, setSortValue] = useState(null);
+  const [filtersState, setFiltersState] = useState({});
+  const [showFilterModal, setShowFilterModal] = useState(false);
+
+  /* debounce search */
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -35,6 +39,7 @@ export default function ScientificWriting() {
 
     return () => clearTimeout(timeout);
   }, [search]);
+
   const {
     items = [],
     totalPages = 1,
@@ -48,14 +53,14 @@ export default function ScientificWriting() {
     authorRoleIds,
     sortValue,
   );
-  const { types, loadingTypes } = useAuthorRoles();
+
+  const { types } = useAuthorRoles();
 
   const mappedTypes =
     types?.map((item) => ({
       value: item.id,
       label: isArabic ? item.valueAr : item.valueEn,
     })) || [];
-
 
   const filtersConfig = mappedTypes.length
     ? [
@@ -66,32 +71,27 @@ export default function ScientificWriting() {
         },
       ]
     : [];
+
   const sortOptions = [
     { value: 4, label: "newestFirst" },
     { value: 3, label: "oldestFirst" },
     { value: 1, label: "nameAsc" },
     { value: 2, label: "nameDec" },
   ];
+
   const handleApplyFilters = ({ sortValue, filters }) => {
     setSortValue(sortValue);
     setFiltersState(filters);
-
-    const ids = filters?.AuthorRoleIds || [];
-    setAuthorRoleIds(ids);
-
+    setAuthorRoleIds(filters?.AuthorRoleIds || []);
     setCurrentPage(1);
   };
+
   const handleResetFilters = () => {
     setSortValue(null);
     setAuthorRoleIds([]);
     setFiltersState({});
     setCurrentPage(1);
   };
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages || 1);
-    }
-  }, [totalPages]);
 
   const handleDelete = async () => {
     if (!selectedItem) return;
@@ -108,16 +108,12 @@ export default function ScientificWriting() {
     }
   };
 
-  const handleEditNavigate = (item) => {
-    navigate("/edit-scientific-writing", { state: { item } });
-  };
-
   return (
     <ResponsiveLayoutProvider>
       <div
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
-        {/* Header */}
+        {/* ✅ Page Header unchanged */}
         <PageHeader
           title={t("title")}
           addLabel={t("add")}
@@ -131,68 +127,44 @@ export default function ScientificWriting() {
 
         {/* Error */}
         {!loading && error && (
-          <div className="text-center text-red-500">
+          <div className="text-center text-red-500 mt-4">
             {t("errors.loadFailed")}
           </div>
         )}
 
-        {/* Empty */}
-        {!loading && !error && items.length === 0 && (
-          <div className="text-center text-gray-500">{t("empty")}</div>
-        )}
 
-        {/* Grid */}
-        {!loading && !error && items.length > 0 && (
-          <div
-            className="overflow-y-auto pr-2 mb-4 flex-1"
-            style={{ maxHeight: "calc(90vh - 200px)" }}
-          >
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${
-                isArabic ? "text-right" : "text-left"
-              }`}
-              style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
-            >
-              {items.map((item) => (
-                <ScientificWritingCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onEdit={() => handleEditNavigate(item)}
-                  onDelete={(p) => {
-                    setSelectedItem(p);
-                    setShowDelete(true);
-                    setDeleteError(false);
-                  }}
-                  onDetails={(p) => {
-                    setSelectedItem(p);
-                    setShowDetails(true);
-                  }}
-                />
-              ))}
-            </div>
+
+        {/* ✅ Table only */}
+        {!loading && !error && (
+          <div className="mt-4 flex-1">
+            <ScientificWritingTable
+              addLabel={t("add")}
+              data={items}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              onEdit={(item) =>
+                navigate("/edit-scientific-writing", { state: { item } })
+              }
+              onDelete={(item) => {
+                setSelectedItem(item);
+                setShowDelete(true);
+                setDeleteError(false);
+              }}
+              searchPlaceholder={t("search")}
+              value={search}
+              onChange={setSearch}
+              onAdd={() => navigate("/add-scientific-writing")}
+              onFilterClick={() => setShowFilterModal(true)}
+            />
           </div>
         )}
 
-        {/* Pagination */}
-        <div className="mt-auto">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            t={t}
-            isArabic={isArabic}
-          />
-        </div>
-
-        {/* Modals */}
+        {/* ✅ Only Delete + Filter modal remain */}
         <ScientificWritingModal
           showDelete={showDelete}
-          showDetails={showDetails}
           selectedItem={selectedItem}
           setShowDelete={setShowDelete}
-          setShowDetails={setShowDetails}
           onDelete={handleDelete}
           deleteError={deleteError}
           isArabic={isArabic}

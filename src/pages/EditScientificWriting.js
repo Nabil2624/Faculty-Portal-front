@@ -16,7 +16,7 @@ export default function EditScientificWriting() {
 
   const { form, setForm, errors, validate } = useEditScientificWritingForm(existingData, t, isArabic);
 
-  const { roles } = useAuthorRoles();
+  const { types } = useAuthorRoles();
 
   const handleSave = async () => {
     if (!validate()) return;
@@ -24,7 +24,7 @@ export default function EditScientificWriting() {
     try {
       await updateScientificWriting(existingData.id, {
         title: form.title,
-        AuthorRoleId: form.role?.id, // ⚡ id فقط
+        AuthorRoleId: form.role, // ⚡ id فقط
         isbn: form.isbn,
         publishingHouse: form.publishingHouse,
         publishingDate: form.publishingDate,
@@ -33,11 +33,11 @@ export default function EditScientificWriting() {
 
       navigate("/scientific-writing");
     } catch (err) {
-      if (process.env.NODE_ENV === "development") console.error(err);
+   
 
       setForm(prev => ({
         ...prev,
-        serverError: t("errors.genericSaveError") || "حدث خطأ أثناء الحفظ",
+        serverError: t("errors.saveFailed") || "حدث خطأ أثناء الحفظ",
       }));
     }
   };
@@ -52,7 +52,7 @@ export default function EditScientificWriting() {
         setTitle={v => setForm(prev => ({ ...prev, title: v }))}
         role={form.role}
         setRole={v => setForm(prev => ({ ...prev, role: v }))}
-        roles={roles}
+        roles={types}
         isbn={form.isbn}
         setIsbn={v => setForm(prev => ({ ...prev, isbn: v }))}
         publishingHouse={form.publishingHouse}

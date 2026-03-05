@@ -27,14 +27,6 @@ export default function ScientificResearches() {
   const [publisherType, setPublisherType] = useState([]);
   const [PublicationType, setPublicationType] = useState([]);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setDebouncedSearch(search);
-      setCurrentPage(1);
-    }, 400);
-
-    return () => clearTimeout(timeout);
-  }, [search]);
   const {
     researches,
     loading,
@@ -52,7 +44,14 @@ export default function ScientificResearches() {
     source,
     derivedFrom,
   );
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1);
+    }, 400);
 
+    return () => clearTimeout(timeout);
+  }, [search]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const sortOptions = [
@@ -152,7 +151,7 @@ export default function ScientificResearches() {
 
   return (
     <ResponsiveLayoutProvider>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
+      <div className={`${isArabic ? "rtl" : "ltr"} p-2`}>
         <PageHeader
           title={t("title")}
           addLabel={t("add")}
@@ -183,6 +182,7 @@ export default function ScientificResearches() {
     gap-[clamp(1rem,2vw,2rem)] 
    
     max-w-[clamp(700px,60vw,3200px)]
+
     "
           >
             {researches.map((item) => (

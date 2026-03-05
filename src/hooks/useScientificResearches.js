@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import axiosInstance from "../utils/axiosInstance";
 import { getResearches } from "../services/scientificResearchService";
 
 export default function useScientificResearches(
@@ -11,26 +10,23 @@ export default function useScientificResearches(
   PublicationType,
   source,
   derivedFrom,
+  page = 1, // استلام الصفحة كباراميتر من الصفحة الرئيسية
 ) {
-  const { t } = useTranslation("ScientificResearches");
+  const { t, i18n } = useTranslation("ScientificResearches");
 
   const [researches, setResearches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchResearches = async (page = 1) => {
-    // شغل loading بس لو مفيش بيانات
-    if (researches.length === 0) {
-      setLoading(true);
-    }
-
+  const fetchResearches = async (currentPage = 1) => {
+    // شغل loading دائماً عند تغيير اللغة أو الصفحة الأولى
+    setLoading(true);
     setError(null);
 
     try {
       const result = await getResearches({
-        page,
+        page: currentPage,
         pageSize,
         search,
         sort: sortValue,
@@ -38,44 +34,45 @@ export default function useScientificResearches(
         PublicationType: PublicationType,
         Source: source,
         DerivedFrom: derivedFrom,
+        // نمرر اللغة هنا إذا كان الـ Backend يتطلبها كـ Query Param
+        lang: i18n.language 
       });
-      if (!result?.data?.length) {
+
+      if (!result?.data || result.data.length === 0) {
         setResearches([]);
         setTotalPages(1);
-        setError(t("empty"));
       } else {
         setResearches(result.data);
-        setTotalPages(Math.ceil(result.totalCount / pageSize));
+        setTotalPages(Math.ceil((result.totalCount || 0) / pageSize));
       }
     } catch (err) {
       console.error(err);
       setError(err?.response?.data?.message || t("fetchError"));
       setResearches([]);
-      setTotalPages(1);
     } finally {
       setLoading(false);
     }
   };
 
+  // المراقبة الأساسية: إعادة الجلب عند تغير أي من هذه القيم بما فيها اللغة
   useEffect(() => {
-    fetchResearches(currentPage);
+    fetchResearches(page);
   }, [
-    currentPage,
+    page,
     search,
     sortValue,
     publisherType,
     PublicationType,
     source,
     derivedFrom,
+    i18n.language, // <-- هذا هو السطر السحري الذي كان ينقصك
   ]);
 
   return {
     researches,
     loading,
     error,
-    currentPage,
     totalPages,
-    setCurrentPage,
     fetchResearches,
   };
 }
