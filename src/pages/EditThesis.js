@@ -16,7 +16,7 @@ import { useThesisForm } from "../hooks/useThesisForm";
 import CustomErrorModal from "../components/widgets/AddThesis/CustomErrorModal";
 import AttachmentUploader from "../components/ui/AttachmentUploader";
 
-import "antd/dist/reset.css";
+//import "antd/dist/reset.css";
 
 export default function EditThesis() {
   const { t, i18n } = useTranslation("EditThesis");
