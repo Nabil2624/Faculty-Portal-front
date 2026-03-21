@@ -31,14 +31,42 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axiosInstance.post(
+      const loginResponse = await axiosInstance.post(
         "/Authentication/Login",
         { username, password },
-        { withCredentials: true },
+        {
+          skipGlobalErrorHandler: true,
+          withCredentials: true,
+        },
       );
-      navigate(response?.data?.role === "Faculty Member" ? "/profile" : "/");
+
+      const userType = loginResponse?.data?.role;
+
+      // Persist role for sidebar/access control
+      if (userType) localStorage.setItem("userRole", userType);
+
+      // Role-based navigation
+      if (userType === "Faculty Member") {
+        navigate("/profile");
+      } else if (userType === "ManagementAdmin") {
+        navigate("/admin/users");
+      } else if (userType === "SupportAdmin") {
+        navigate("/support-admin");
+      } else {
+        navigate(redirectTo);
+      }
     } catch (err) {
-      setError(t("invalidCredentials"));
+      if (err.response) {
+        const { status } = err.response;
+
+        if (status === 400 || status === 401) {
+          setError(t("invalidCredentials"));
+        } else {
+          setError(t("unexpectedError"));
+        }
+      } else {
+        setError(t("networkError"));
+      }
     } finally {
       setLoading(false);
     }
@@ -123,7 +151,7 @@ export default function LoginPage() {
                 </label>
                 <div className="relative">
                   <User
-                   className={`absolute top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
+                    className={`absolute top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
                     size={18}
                   />
                   <input
@@ -143,14 +171,14 @@ export default function LoginPage() {
                 </label>
                 <div className="relative">
                   <Lock
-                   className={`absolute top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
+                    className={`absolute top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
                     size={18}
                   />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                                       className={`w-full bg-white/5 border border-white/10 focus:border-[#b38e19]/50 focus:bg-white/10 text-white py-4 ${isArabic ? "pr-12 pl-4" : "pl-12 pr-4"} rounded-2xl outline-none transition-all font-bold placeholder:text-white/10`}
+                    className={`w-full bg-white/5 border border-white/10 focus:border-[#b38e19]/50 focus:bg-white/10 text-white py-4 ${isArabic ? "pr-12 pl-4" : "pl-12 pr-4"} rounded-2xl outline-none transition-all font-bold placeholder:text-white/10`}
                     placeholder="••••••••"
                   />
                   <button
@@ -165,7 +193,7 @@ export default function LoginPage() {
 
               <div className="flex justify-end">
                 <button
-                onClick={()=>(navigate("/forget-password"))}
+                  onClick={() => navigate("/forget-password")}
                   type="button"
                   className="text-[clamp(0.6rem,0.8vw,0.7rem)] font-black text-[#b38e19] hover:text-white transition-colors uppercase tracking-[2px]"
                 >

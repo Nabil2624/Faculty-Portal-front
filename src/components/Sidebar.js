@@ -237,7 +237,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
       {/* Menu List */}
       <ul className="flex flex-col flex-1 px-[clamp(0.25rem,0.6vw,0.7rem)] gap-1 overflow-y-auto no-scrollbar pb-10">
         {renderMenu(
-          // --- فلترة القائمة الأساسية قبل الرندر ---
+          
           navItems.filter((item) => {
             if (item.roles) return item.roles.includes(userRole);
             if (userRole === "SupportAdmin") return false;
