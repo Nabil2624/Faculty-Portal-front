@@ -3,3 +3,8 @@ import axiosInstance from "../utils/axiosInstance";
 export const getCurrentUser = async () => {
   return await axiosInstance.get("/Authentication/GetCurrentUser");
 };
+
+
+export const logout = async ()=>{
+  return await axiosInstance.post("/Authentication/Logout")
+}

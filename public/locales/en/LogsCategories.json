@@ -1,0 +1,50 @@
+{
+  "title": "Log Categories & Actions",
+  "subtitle": "Manage log categories and their associated actions",
+
+  "categories": {
+    "title": "Categories",
+    "add": "Add Category",
+    "edit": "Edit Category",
+    "delete": "Delete Category",
+    "name": "Category Name",
+    "namePlaceholder": "e.g. Authentication",
+    "empty": "No categories found.",
+    "deleteConfirm": "Are you sure you want to delete this category? This may affect existing logs.",
+    "actionsCount": "action(s)"
+  },
+
+  "actions": {
+    "title": "Actions",
+    "add": "Add Action",
+    "edit": "Edit Action",
+    "delete": "Delete Action",
+    "name": "Action Name",
+    "namePlaceholder": "e.g. Login",
+    "categories": "Linked Categories",
+    "categoriesPlaceholder": "Select categories...",
+    "empty": "No actions found.",
+    "deleteConfirm": "Are you sure you want to delete this action?"
+  },
+
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "loading": "Loading...",
+  "saving": "Saving...",
+  "deleting": "Deleting...",
+
+  "errors": {
+    "loadFailed": "Failed to load data.",
+    "saveFailed": "Failed to save. Please try again.",
+    "deleteFailed": "Failed to delete. Please try again.",
+    "nameRequired": "Name is required.",
+    "categoryRequired": "At least one category must be selected."
+  },
+
+  "success": {
+    "created": "Created successfully.",
+    "updated": "Updated successfully.",
+    "deleted": "Deleted successfully."
+  }
+}

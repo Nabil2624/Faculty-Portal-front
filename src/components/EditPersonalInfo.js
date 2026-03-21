@@ -79,7 +79,7 @@ export default function EditPersonalInfo() {
       setProfileImage(URL.createObjectURL(e.target.files[0]));
     }
   };
-
+ 
   const openDatePicker = () => {
     if (!dateInputRef.current) return;
 

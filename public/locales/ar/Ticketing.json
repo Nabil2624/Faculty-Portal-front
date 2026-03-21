@@ -1,0 +1,161 @@
+{
+  "title": "تذاكر الدعم",
+  "subtitle": "أرسل وتابع تذاكر الدعم الفني لمشكلات النظام",
+  "createTicket": "إنشاء تذكرة",
+  "search": "البحث بالعنوان أو الوصف...",
+  "filter": "تصفية",
+  "filterTitle": "تصفية التذاكر",
+  "apply": "تطبيق",
+  "reset": "إعادة تعيين",
+  "close": "إغلاق",
+  "refresh": "تحديث",
+  "noTickets": "لا توجد تذاكر.",
+  "noTicketsHint": "حاول تعديل البحث أو الفلاتر، أو قم بإنشاء تذكرة جديدة.",
+  "loading": "جاري تحميل التذاكر...",
+  "results": "تذكرة/تذاكر",
+
+  "table": {
+    "no": "#",
+    "title": "العنوان",
+    "type": "النوع",
+    "priority": "الأولوية",
+    "status": "الحالة",
+    "assignee": "المسؤول",
+    "actions": "الإجراءات"
+  },
+
+  "filterSections": {
+    "sort": "الترتيب",
+    "type": "نوع المشكلة",
+    "status": "الحالة",
+    "priority": "الأولوية"
+  },
+
+  "types": {
+    "AccountIssue": "مشكلة في الحساب",
+    "FacultyMemberPersonalDataIssue": "مشكلة في البيانات الشخصية",
+    "FacultyMemberContributionsDataIssue": "مشكلة في المساهمات",
+    "FacultyMemberExperincesDataIssue": "مشكلة في الخبرات",
+    "FacultyMemberHigherStudiesDataIssue": "مشكلة في الدراسات العليا",
+    "FacultyMemberMissionsDataIssue": "مشكلة في المهمات",
+    "FacultyMemberPrizesDataIssue": "مشكلة في الجوائز",
+    "FacultyMemberProjectsAndComiteesDataIssue": "مشكلة في المشاريع واللجان",
+    "FacultyMemberResearchesDataIssue": "مشكلة في الأبحاث",
+    "FacultyMemberScientificProgressionDataIssue": "مشكلة في التدرج العلمي",
+    "FacultyMemberWritingsDataIssue": "مشكلة في المؤلفات",
+    "PermissionRequest": "طلب صلاحية",
+    "RoleAssignmentRequest": "طلب تعيين دور"
+  },
+
+  "statuses": {
+    "Opened": "مفتوحة",
+    "InProgress": "قيد المعالجة",
+    "Resolved": "محلولة",
+    "Reopened": "مُعاد فتحها",
+    "Closed": "مُغلقة",
+    "WithdrawByUser": "مسحوبة من المستخدم"
+  },
+
+  "priorities": {
+    "Low": "منخفضة",
+    "Medium": "متوسطة",
+    "High": "عالية",
+    "Critical": "حرجة"
+  },
+
+  "sorts": {
+    "TitleASC": "العنوان أ←ي",
+    "TitleDESC": "العنوان ي←أ",
+    "DescriptionASC": "الوصف أ←ي",
+    "DescriptionDESC": "الوصف ي←أ",
+    "CreatedAtASC": "الأقدم أولاً",
+    "CreatedAtDESC": "الأحدث أولاً"
+  },
+
+  "createModal": {
+    "title": "إنشاء تذكرة جديدة",
+    "titleLabel": "العنوان",
+    "titlePlaceholder": "ملخص مختصر للمشكلة",
+    "descriptionLabel": "الوصف",
+    "descriptionPlaceholder": "اشرح المشكلة بالتفصيل...",
+    "typeLabel": "نوع المشكلة",
+    "priorityLabel": "الأولوية",
+    "submit": "إرسال التذكرة",
+    "cancel": "إلغاء",
+    "selectType": "اختر نوع المشكلة...",
+    "selectPriority": "اختر الأولوية...",
+    "required": "يرجى تعبئة جميع الحقول المطلوبة."
+  },
+
+  "actions": {
+    "revoke": "إلغاء",
+    "reopen": "إعادة فتح",
+    "details": "التفاصيل",
+    "chat": "محادثة"
+  },
+
+  "revokeConfirmTitle": "إلغاء التذكرة",
+  "revokeConfirmMessage": "هل أنت متأكد من إلغاء هذه التذكرة؟ لا يمكن التراجع عن هذا الإجراء.",
+  "reopenConfirmTitle": "إعادة فتح التذكرة",
+  "reopenConfirmMessage": "هل أنت متأكد من إعادة فتح هذه التذكرة؟",
+  "confirm": "تأكيد",
+  "cancel": "إلغاء",
+  "revokeInProgress": "هذه التذكرة قيد المعالجة حالياً ولا يمكن إلغاؤها.",
+  "actionError": "حدث خطأ. يرجى المحاولة مجدداً.",
+  "successCreate": "تم إنشاء التذكرة بنجاح.",
+
+  "expanded": {
+    "description": "الوصف",
+    "assignee": "المسؤول",
+    "noAssignee": "لم يُعيَّن بعد",
+    "noDescription": "لا يوجد وصف."
+  },
+
+  "pagination": {
+    "prev": "السابق",
+    "next": "التالي",
+    "of": "من",
+    "page": "صفحة"
+  },
+
+  "activeFilters": "الفلاتر النشطة:",
+  "clearAll": "مسح الكل",
+
+  "admin": {
+    "title": "إدارة التذاكر",
+    "subtitle": "تخصيص وإدارة جميع تذاكر الدعم في النظام",
+    "assign": "تعيين",
+    "close": "إغلاق",
+    "delete": "حذف",
+    "noSender": "غير معروف",
+    "noAdmins": "لا يوجد مسؤولو دعم مناسبون لهذه التذكرة.",
+    "selectAdmin": "اختر مسؤول دعم لتعيين هذه التذكرة له.",
+    "loadingAdmins": "جاري تحميل المسؤولين المناسبين...",
+    "assignModalTitle": "تعيين التذكرة",
+    "closeConfirmTitle": "إغلاق التذكرة",
+    "closeConfirmMessage": "هل أنت متأكد من إغلاق هذه التذكرة؟ سيتم تعيين حالتها إلى مغلقة.",
+    "deleteConfirmTitle": "حذف التذكرة",
+    "deleteConfirmMessage": "هل أنت متأكد من حذف هذه التذكرة نهائياً؟ لا يمكن التراجع عن هذا الإجراء.",
+    "table": {
+      "sender": "المُرسِل",
+      "assignedBy": "مُعيَّن من قِبَل"
+    }
+  },
+
+  "support": {
+    "title": "تذاكر الدعم الخاصة بي",
+    "subtitle": "عرض وإدارة التذاكر المعيَّنة لك",
+    "resolve": "حل",
+    "chat": "محادثة",
+    "manageData": "إدارة البيانات",
+    "resolveConfirmTitle": "حل التذكرة",
+    "resolveConfirmMessage": "هل أنت متأكد من تعيين هذه التذكرة كمحلولة؟",
+    "noTicketsHint": "لا توجد تذاكر معيَّنة لك حالياً.",
+    "userNotFound": "تعذّر العثور على المستخدم المرتبط بهذه التذكرة.",
+    "userLookupError": "خطأ في البحث عن المستخدم. يرجى المحاولة مجدداً.",
+    "table": {
+      "sender": "المُرسِل",
+      "chat": "محادثة"
+    }
+  }
+}

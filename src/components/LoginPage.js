@@ -114,10 +114,17 @@ export default function LoginPage() {
       );
 
       const userType = loginResponse?.data?.role;
-  
 
+      // Persist role for sidebar/access control
+      if (userType) localStorage.setItem("userRole", userType);
+
+      // Role-based navigation
       if (userType === "Faculty Member") {
         navigate("/profile");
+      } else if (userType === "ManagementAdmin") {
+        navigate("/admin/users");
+      } else if (userType === "SupportAdmin") {
+        navigate("/support-admin");
       } else {
         navigate(redirectTo);
       }

@@ -16,6 +16,7 @@
   "contactInfo": "بيانات الاتصال",
   "socialNetworking": "صفحات التواصل ",
   "identificationCard": "البطاقة التعريفية",
+  "myCv": "سيرتي الذاتية",
   "scientificProgression": "التدرج العلمي",
   "academicQualifications": "المؤهلات العلمية",
   "jobGrades": "الدرجات الوظيفية",
@@ -50,5 +51,12 @@
   "participation-in-quality-work": "المشاركة في اعمال الجودة",
   "general-experiences": "الخبرات العامة",
   "teaching-experiences": "الخبرات التدريسية",
-  "scientific-writing":"المؤلفات العلمية"
+  "scientific-writing": "المؤلفات العلمية",
+  "adminPanel": "لوحة الإدارة",
+  "systemLogs": "سجلات النظام",
+  "logsCategories": "فئات وإجراءات السجلات",
+  "systemUsers": "مستخدمو النظام",
+  "createUser": "إنشاء مستخدم جديد",
+  "managementTickets": "إدارة التذاكر",
+  "supportAdminTickets": "تذاكري"
 }

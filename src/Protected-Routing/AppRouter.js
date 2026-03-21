@@ -99,8 +99,21 @@ import JobGrade from "../pages/JobGrade";
 import AdminstrativePosition from "../pages/AdminstrativePosition";
 import PersonalDataV2 from "../components/PersonalDataV2";
 import PersonalData from "../pages/PersonalData";
-import ResearchesPage from "../pages/ResearchesPage"
+import ResearchesPage from "../pages/ResearchesPage";
 import ScientificResearchInternalProfile from "../pages/ScientificResearchInternalProfile";
+import LogsPage from "../pages/LogsPage";
+import LogsCategoryPage from "../pages/LogsCategoryPage";
+import UsersPage from "../pages/UsersPage";
+import AddUserPermissionPage from "../pages/AddUserPermissionPage";
+import CreateUserPage from "../pages/CreateUserPage";
+import EditUserPermissionsPage from "../pages/EditUserPermissionsPage";
+import AdminFacultyDataPage from "../pages/AdminFacultyDataPage";
+import TicketingPage from "../pages/TicketingPage";
+import AdminTicketingPage from "../pages/AdminTicketingPage";
+import SupportAdminTicketingPage from "../pages/SupportAdminTicketingPage";
+import ChatPage from "../pages/ChatPage";
+import CVPage from "../pages/CVPage";
+import ManageCVPage from "../pages/ManageCVPage";
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -278,10 +291,7 @@ function AppRouterInner() {
         path="/participation-in-quality-work"
         element={<ParticipationInQualityWorks />}
       />
-      <Route
-        path="/PersonalV2"
-        element={<PersonalDataV2 />}
-      />
+      <Route path="/PersonalV2" element={<PersonalDataV2 />} />
       <Route
         path="/add-scientific-writing"
         element={<AddScientificWriting />}
@@ -290,22 +300,34 @@ function AppRouterInner() {
         path="/edit-scientific-writing"
         element={<EditScientificWriting />}
       />
-      <Route
-        path="/personal-data"
-        element={<PersonalData />}
-      />
-      <Route
-        path="/ResearchesPage"
-        element={<ResearchesPage />}
-      />
+      <Route path="/personal-data" element={<PersonalData />} />
+      <Route path="/ResearchesPage" element={<ResearchesPage />} />
       <Route
         path="/InternalProfile"
         element={<ScientificResearchInternalProfile />}
       />
 
-
       <Route path="/scientific-writing" element={<ScientificWriting />} />
       <Route path="/profile" element={<ProfileDashboard />} />
+      <Route path="/logs" element={<LogsPage />} />
+      <Route path="/logs-categories" element={<LogsCategoryPage />} />
+      <Route path="/admin/users" element={<UsersPage />} />
+      <Route
+        path="/admin/add-user-permission"
+        element={<AddUserPermissionPage />}
+      />
+      <Route
+        path="/admin/edit-user-permissions"
+        element={<EditUserPermissionsPage />}
+      />
+      <Route path="/admin/create-user" element={<CreateUserPage />} />
+      <Route path="/admin/faculty-data" element={<AdminFacultyDataPage />} />
+      <Route path="/support-admin" element={<SupportAdminTicketingPage />} />
+      <Route path="/tickets" element={<TicketingPage />} />
+      <Route path="/admin/tickets" element={<AdminTicketingPage />} />
+      <Route path="/chat" element={<ChatPage />} />
+      <Route path="/cv" element={<CVPage />} />
+      <Route path="/manage-cv" element={<ManageCVPage />} />
       {/* ✅ Protected Routes */}
       <Route element={<ProtectedRoute />}></Route>
       {/* Catch-all */}

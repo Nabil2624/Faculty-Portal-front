@@ -1,0 +1,161 @@
+{
+  "title": "My Tickets",
+  "subtitle": "Raise and track support tickets for system issues",
+  "createTicket": "Create Ticket",
+  "search": "Search by title or description...",
+  "filter": "Filter",
+  "filterTitle": "Filter Tickets",
+  "apply": "Apply Filters",
+  "reset": "Reset",
+  "close": "Close",
+  "refresh": "Refresh",
+  "noTickets": "No tickets found.",
+  "noTicketsHint": "Try adjusting your search or filters, or create a new ticket.",
+  "loading": "Loading tickets...",
+  "results": "ticket(s) found",
+
+  "table": {
+    "no": "#",
+    "title": "Title",
+    "type": "Type",
+    "priority": "Priority",
+    "status": "Status",
+    "assignee": "Assignee",
+    "actions": "Actions"
+  },
+
+  "filterSections": {
+    "sort": "Sort By",
+    "type": "Issue Type",
+    "status": "Status",
+    "priority": "Priority"
+  },
+
+  "types": {
+    "AccountIssue": "Account Issue",
+    "FacultyMemberPersonalDataIssue": "Personal Data Issue",
+    "FacultyMemberContributionsDataIssue": "Contributions Issue",
+    "FacultyMemberExperincesDataIssue": "Experiences Issue",
+    "FacultyMemberHigherStudiesDataIssue": "Higher Studies Issue",
+    "FacultyMemberMissionsDataIssue": "Missions Issue",
+    "FacultyMemberPrizesDataIssue": "Prizes Issue",
+    "FacultyMemberProjectsAndComiteesDataIssue": "Projects & Committees Issue",
+    "FacultyMemberResearchesDataIssue": "Researches Issue",
+    "FacultyMemberScientificProgressionDataIssue": "Scientific Progression Issue",
+    "FacultyMemberWritingsDataIssue": "Writings Issue",
+    "PermissionRequest": "Permission Request",
+    "RoleAssignmentRequest": "Role Assignment Request"
+  },
+
+  "statuses": {
+    "Opened": "Opened",
+    "InProgress": "In Progress",
+    "Resolved": "Resolved",
+    "Reopened": "Reopened",
+    "Closed": "Closed",
+    "WithdrawByUser": "Withdrawn"
+  },
+
+  "priorities": {
+    "Low": "Low",
+    "Medium": "Medium",
+    "High": "High",
+    "Critical": "Critical"
+  },
+
+  "sorts": {
+    "TitleASC": "Title A→Z",
+    "TitleDESC": "Title Z→A",
+    "DescriptionASC": "Description A→Z",
+    "DescriptionDESC": "Description Z→A",
+    "CreatedAtASC": "Oldest First",
+    "CreatedAtDESC": "Newest First"
+  },
+
+  "createModal": {
+    "title": "Create New Ticket",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Brief summary of the issue",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Describe the issue in detail...",
+    "typeLabel": "Issue Type",
+    "priorityLabel": "Priority",
+    "submit": "Submit Ticket",
+    "cancel": "Cancel",
+    "selectType": "Select issue type...",
+    "selectPriority": "Select priority...",
+    "required": "Please fill all required fields."
+  },
+
+  "actions": {
+    "revoke": "Revoke",
+    "reopen": "Reopen",
+    "details": "Details",
+    "chat": "Chat"
+  },
+
+  "revokeConfirmTitle": "Revoke Ticket",
+  "revokeConfirmMessage": "Are you sure you want to revoke this ticket? This action cannot be undone.",
+  "reopenConfirmTitle": "Reopen Ticket",
+  "reopenConfirmMessage": "Are you sure you want to reopen this ticket?",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "revokeInProgress": "This ticket is currently being processed and cannot be revoked.",
+  "actionError": "An error occurred. Please try again.",
+  "successCreate": "Ticket created successfully.",
+
+  "expanded": {
+    "description": "Description",
+    "assignee": "Assignee",
+    "noAssignee": "Not assigned yet",
+    "noDescription": "No description provided."
+  },
+
+  "pagination": {
+    "prev": "Prev",
+    "next": "Next",
+    "of": "of",
+    "page": "Page"
+  },
+
+  "activeFilters": "Active filters:",
+  "clearAll": "Clear all",
+
+  "admin": {
+    "title": "Ticket Management",
+    "subtitle": "Assign and manage all system support tickets",
+    "assign": "Assign",
+    "close": "Close",
+    "delete": "Delete",
+    "noSender": "Unknown",
+    "noAdmins": "No suitable support admins found for this ticket.",
+    "selectAdmin": "Select a support admin to assign this ticket to.",
+    "loadingAdmins": "Loading suitable admins...",
+    "assignModalTitle": "Assign Ticket",
+    "closeConfirmTitle": "Close Ticket",
+    "closeConfirmMessage": "Are you sure you want to close this ticket? It will be marked as closed.",
+    "deleteConfirmTitle": "Delete Ticket",
+    "deleteConfirmMessage": "Are you sure you want to permanently delete this ticket? This action cannot be undone.",
+    "table": {
+      "sender": "Sender",
+      "assignedBy": "Assigned By"
+    }
+  },
+
+  "support": {
+    "title": "My Support Tickets",
+    "subtitle": "View and manage tickets assigned to you",
+    "resolve": "Resolve",
+    "chat": "Chat",
+    "manageData": "Manage Data",
+    "resolveConfirmTitle": "Resolve Ticket",
+    "resolveConfirmMessage": "Are you sure you want to mark this ticket as resolved?",
+    "noTicketsHint": "No tickets are currently assigned to you.",
+    "userNotFound": "Could not find the user associated with this ticket.",
+    "userLookupError": "Error looking up user. Please try again.",
+    "table": {
+      "sender": "Sender",
+      "chat": "Chat"
+    }
+  }
+}

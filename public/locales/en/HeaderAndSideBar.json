@@ -16,6 +16,7 @@
   "contactInfo": "Contact Information",
   "socialNetworking": "Social Networking Pages",
   "identificationCard": "Identification card",
+  "myCv": "My CV",
   "scientificProgression": "Scientific Progression",
   "academicQualifications": "Academic Qualifications",
   "jobGrades": "Job Grades",
@@ -49,5 +50,12 @@
   "participation-in-quality-work": "Participation In Quality Works",
   "general-experiences": "General Experiences",
   "teaching-experiences": "Teaching Experiences",
-  "scientific-writing": "Scientific Writing"
+  "scientific-writing": "Scientific Writing",
+  "adminPanel": "Admin Panel",
+  "systemLogs": "System Logs",
+  "logsCategories": "Log Categories & Actions",
+  "systemUsers": "System Users",
+  "createUser": "Create New User",
+  "managementTickets": "Ticket Management",
+  "supportAdminTickets": "My Tickets"
 }

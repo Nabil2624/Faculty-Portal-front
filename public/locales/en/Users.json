@@ -1,0 +1,237 @@
+{
+  "title": "System Users",
+  "subtitle": "Manage users, roles and permissions",
+  "refresh": "Refresh",
+  "loading": "Loading users…",
+  "error": "Failed to load users. Please try again.",
+  "retry": "Retry",
+  "noUsers": "No users match your current filters.",
+  "search": "Search by name, email, username or national ID…",
+  "filter": "Filter",
+  "showing": "Showing {{count}} user",
+  "showing_plural": "Showing {{count}} users",
+  "filteredBy": "filtered by {{role}}",
+  "matching": "matching \"{{query}}\"",
+
+  "roles": {
+    "all": "All",
+    "FacultyMember": "Faculty Members",
+    "ManagementAdmin": "Management Admins",
+    "SupportAdmin": "Support Admins"
+  },
+
+  "stats": {
+    "total": "Total Users",
+    "FacultyMember": "Faculty Members",
+    "ManagementAdmin": "Management Admins",
+    "SupportAdmin": "Support Admins"
+  },
+
+  "table": {
+    "no": "#",
+    "name": "Name",
+    "email": "Email",
+    "nationalId": "National ID",
+    "role": "Role",
+    "actions": "Actions",
+    "edit": "Edit",
+    "noUsers": "No users match your current filters."
+  },
+
+  "roleBadge": {
+    "FacultyMember": "Faculty Member",
+    "ManagementAdmin": "Management",
+    "SupportAdmin": "Support",
+    "Support": "Support Staff",
+    "Management": "Management"
+  },
+
+  "editModal": {
+    "title": "Edit User",
+    "editing": "Editing",
+    "nationalId": "National ID",
+    "readOnly": "Read-only",
+    "email": "Email",
+    "username": "Username",
+    "password": "New Password",
+    "passwordHint": "(leave blank to keep current)",
+    "confirmPassword": "Confirm Password",
+    "emailPlaceholder": "Email address",
+    "usernamePlaceholder": "username",
+    "passwordPlaceholder": "New password",
+    "confirmPlaceholder": "Confirm new password",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "saving": "Saving…",
+    "emailRequired": "Email is required.",
+    "usernameRequired": "Username is required.",
+    "passwordMismatch": "Passwords do not match."
+  },
+
+  "permissions": {
+    "rolePermissions": "Role Permissions",
+    "rolePermissionsDesc": "{{count}} permissions inherited from the assigned role",
+    "individualPermissions": "Individual Permissions",
+
+    "individualPermissionsDesc": "{{count}} extra permissions granted to this user specifically",
+    "individualPermissionsDesc_one": "{{count}} extra permission granted to this user specifically",
+    "individualPermissionsDesc_other": "{{count}} extra permissions granted to this user specifically",
+    "individualPermissionsDesc_zero": "No extra permissions assigned",
+    "noRolePermissions": "No role permissions assigned.",
+    "noIndividualPermissions": "No individual permissions assigned.",
+    "addPermission": "Edit Individual Permissions",
+    "selectPermission": "Select permission…",
+    "add": "Add",
+    "removePermission": "Remove permission"
+  },
+
+  "toasts": {
+    "updateSuccess": "User updated successfully.",
+    "updateError": "Failed to update user.",
+    "addPermissionSuccess": "Permission added.",
+    "addPermissionError": "Failed to add permission.",
+    "removePermissionSuccess": "Permission removed.",
+    "removePermissionError": "Failed to remove permission."
+  },
+
+  "editActionSelector": {
+    "title": "Edit User",
+    "subtitle": "Select what to manage",
+    "noPermissions": "You have no permissions to manage this user.",
+    "viewEdit": "View & Edit",
+    "viewOnly": "View only"
+  },
+
+  "sections": {
+    "UserAccount": {
+      "label": "User Account",
+      "desc": "Name, username and password"
+    },
+    "FacultyMemberData": {
+      "label": "Personal Information",
+      "desc": "Faculty member personal data"
+    },
+    "FacultyMemberContributionsData": {
+      "label": "Contributions",
+      "desc": "University and community contributions"
+    },
+    "FacultyMemberExperincesData": {
+      "label": "Experiences",
+      "desc": "Teaching and general experience"
+    },
+    "FacultyMemberHigherStudiesData": {
+      "label": "Higher Studies",
+      "desc": "Theses and supervision records"
+    },
+    "FacultyMemberMissionsData": {
+      "label": "Scientific Missions",
+      "desc": "Missions, seminars and training"
+    },
+    "FacultyMemberPrizesData": {
+      "label": "Prizes & Rewards",
+      "desc": "Awards and recognitions"
+    },
+    "FacultyMemberProjectsAndComiteesData": {
+      "label": "Projects & Committees",
+      "desc": "Projects, committees and journals"
+    },
+    "FacultyMemberResearchesData": {
+      "label": "Researches",
+      "desc": "Scientific research and publications"
+    },
+    "FacultyMemberScientificProgressionData": {
+      "label": "Scientific Progression",
+      "desc": "Job grades and admin positions"
+    },
+    "FacultyMemberWritingsData": {
+      "label": "Writings",
+      "desc": "Scientific writings and patents"
+    },
+    "Tickets": { "label": "Tickets", "desc": "Support tickets and helpdesk" }
+  },
+
+  "createUser": {
+    "title": "Create New User",
+    "subtitle": "Fill in the details below to create a new system user",
+    "back": "Back",
+    "submit": "Create User",
+    "submitting": "Creating…",
+
+    "userInfo": {
+      "title": "User Information",
+      "userName": "Username",
+      "userNamePlaceholder": "Enter username",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter email address",
+      "nationalNumber": "National ID Number",
+      "nationalNumberPlaceholder": "Enter national ID number",
+      "password": "Password",
+      "passwordPlaceholder": "Enter password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter password"
+    },
+
+    "role": {
+      "title": "Assign Role",
+      "FacultyMember": "Faculty Member",
+      "ManagementAdmin": "Management Admin",
+      "SupportAdmin": "Support Admin"
+    },
+
+    "permissions": {
+      "title": "Assign Permissions",
+      "search": "Search permissions…",
+      "allTypes": "All",
+      "selected": "{{count}} selected",
+      "noPermissions": "No permissions match your search.",
+      "lockedTitle": "Permissions Not Applicable",
+      "lockedDescription": "Faculty Members receive permissions automatically based on their role. Individual permission assignment is not available."
+    },
+
+    "validation": {
+      "userNameRequired": "Username is required.",
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Please enter a valid email address.",
+      "nationalNumberRequired": "National ID number is required.",
+      "passwordRequired": "Password is required.",
+      "passwordNoUppercase": "Password must contain at least one uppercase letter (A–Z).",
+      "passwordNoDigit": "Password must contain at least one numeric digit (0–9).",
+      "passwordMismatch": "Passwords do not match.",
+      "roleRequired": "Please select a role."
+    },
+
+    "toasts": {
+      "success": "User created successfully.",
+      "error": "Failed to create user. Please try again.",
+      "conflict": "A user with the same National ID, email, or username already exists."
+    },
+
+    "success": {
+      "title": "User Created!",
+      "subtitle": "The new user account has been created successfully.",
+      "createAnother": "Create Another User",
+      "goToUsers": "Go to Users"
+    }
+  },
+
+  "editPermissions": {
+    "title": "Edit Individual Permissions",
+    "back": "Back",
+    "refresh": "Refresh",
+    "search": "Search permissions…",
+    "allTypes": "All Types",
+    "grant": "Grant",
+    "revoke": "Revoke",
+    "grantAll": "Grant All",
+    "revokeAll": "Revoke All",
+    "noResults": "No permissions match your search or filter.",
+    "loadError": "Failed to load permissions. Please try again.",
+    "retry": "Retry",
+    "toasts": {
+      "grantSuccess": "Permission granted successfully.",
+      "revokeSuccess": "Permission revoked successfully.",
+      "grantError": "Failed to update permission.",
+      "alreadyHasPermission": "The user already has this permission."
+    }
+  }
+}

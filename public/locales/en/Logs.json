@@ -1,0 +1,73 @@
+{
+  "title": "System Logs",
+  "subtitle": "Monitor and audit system activity across all services",
+
+  "stats": {
+    "total": "Total Logs",
+    "information": "Information",
+    "warning": "Warning",
+    "error": "Error",
+    "critical": "Fatal"
+  },
+
+  "search": "Search by message, user or IP...",
+  "filter": "Filter",
+  "filterTitle": "Filter Logs",
+  "apply": "Apply Filters",
+  "reset": "Reset",
+  "close": "Close",
+
+  "filterSections": {
+    "dateRange": "Date Range",
+    "dateFrom": "From",
+    "dateTo": "To",
+    "level": "Level",
+    "category": "Category",
+    "categoryAction": "Action",
+    "selectCategoryFirst": "Select a category first to see its actions.",
+    "code": "Service Code"
+  },
+
+  "table": {
+    "no": "#",
+    "timestamp": "Timestamp",
+    "level": "Level",
+    "code": "Code",
+    "category": "Category",
+    "categoryAction": "Action",
+    "userName": "Username",
+    "userIp": "User IP",
+    "renderedMessage": "Message",
+    "details": "Details"
+  },
+
+  "codes": {
+    "1001": "Worker Service",
+    "2001": "Core Service",
+    "3001": "Research Service"
+  },
+
+  "expanded": {
+    "exception": "Exception",
+    "exceptionMessage": "Exception Message",
+    "exceptionDetail": "Stack Trace",
+    "additionalInfo": "Additional Information",
+    "noException": "No exception recorded for this log entry."
+  },
+
+  "noLogs": "No logs match your current filters.",
+  "noLogsHint": "Try adjusting your search or filter criteria.",
+  "loading": "Loading logs...",
+  "error": "Failed to load logs. Please try again.",
+  "retry": "Retry",
+
+  "showing": "Showing",
+  "of": "of",
+  "entries": "entries",
+  "page": "Page",
+  "previous": "Previous",
+  "next": "Next",
+
+  "expandRow": "Show details",
+  "collapseRow": "Hide details"
+}
