@@ -15,5 +15,9 @@
   "emptyPositions": "No administrative positions found",
   "fetchError": "Failed to fetch administrative positions",
   "deleteError": "Failed to delete administrative position",
-  "confirmDelete": "Are you sure you want to delete this position?"
+  "confirmDelete": "Are you sure you want to delete this position?",
+  "positionDetails": "Adminstrative Position Details",
+  "notes": "Adminstrative Position Description",
+  "backToList": "Back To List",
+  "searchPlaceholder": "search..."
 }

@@ -33,3 +33,18 @@ export const getJobGradeLookups = () => {
     skipGlobalErrorHandler: true,
   });
 };
+export const jobGradeService = {
+  getDegrees: () => axiosInstance.get("/LookUpItems/EmploymentDegrees"),
+  
+  create: (data) => axiosInstance.post("/ScientificProgression/CreateJobRank", {
+    jobRankId: data.jobGrade,
+    dateOfJobRank: data.gradeDate,
+    notes: data.notes || "",
+  }),
+
+  update: (id, data) => axiosInstance.put(`/ScientificProgression/UpdateJobRank/${id}`, {
+    jobRankId: data.jobGrade,
+    dateOfJobRank: data.gradeDate,
+    notes: data.notes || "",
+  }),
+};

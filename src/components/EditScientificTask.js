@@ -9,7 +9,7 @@ import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 
 export default function EditScientificTask() {
   const location = useLocation();
-  const taskData = location.state?.taskData || null;
+  const taskData = location.state?.item || null;
   const { t, i18n } = useTranslation("add-scientific-task");
   const isArabic = i18n.language === "ar";
   const dir = i18n.dir();

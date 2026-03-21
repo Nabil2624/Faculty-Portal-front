@@ -26,9 +26,8 @@ export default function LayoutMobile({ children }) {
       {/* Header */}
       <MobileHeader onBurgerClick={() => setSidebarMobileOpen(true)} />
 
-   
       {/* Main Content */}
-      <div className="flex-1 overflow-auto bg-white pt-[60px]">{children}</div>
+      <div className="flex-1 overflow-auto bg-white pt-16">{children}</div>
     </div>
   );
 }

@@ -1,56 +1,58 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Info, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import {
+  ShieldCheck,
+  ArrowRight,
+  ArrowLeft,
+  Globe,
+  LockKeyhole,
+} from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
-import LoadingSpinner from "../components/LoadingSpinner";
 import helwanImage from "../assets/helwan-university.jpeg";
-import egyptFlag from "../assets/egyptFlag.png";
-import ukFlag from "../assets/americaFlag.png";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function OtpPage() {
   const { t, i18n } = useTranslation("otp");
-  const [openDropdown, setOpenDropdown] = useState(false);
-  const [otp, setOtp] = useState(Array(6).fill(""));
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const inputRefs = useRef([]);
-  const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const inputRefs = useRef([]);
 
-  // 🔹 Get email from state
+  const [otp, setOtp] = useState(Array(6).fill(""));
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const email = location.state?.email || "";
-
-  const handleLanguageChange = (lang) => {
-    i18n.changeLanguage(lang);
-    setOpenDropdown(false);
-  };
-
-  useEffect(() => {
-    const isArabic = i18n.language === "ar";
-    document.documentElement.dir = isArabic ? "rtl" : "ltr";
-    document.documentElement.classList.toggle("arabic-font", isArabic);
-  }, [i18n.language]);
-
-  // 🔹 Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setOpenDropdown(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const isArabic = i18n.language === "ar";
 
-  // 🔹 OTP Input Handling
-  const handleChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return; // Only allow digits
+  // 🔹 Handle Paste Functionality
+  const handlePaste = (e) => {
+    const data = e.clipboardData.getData("text").trim();
+    if (!/^\d+$/.test(data)) return; // Only process if digits
+
+    const pasteData = data.slice(0, 6).split(""); // Take first 6 digits
     const newOtp = [...otp];
-    newOtp[index] = value;
+
+    pasteData.forEach((char, index) => {
+      newOtp[index] = char;
+      if (inputRefs.current[index]) {
+        inputRefs.current[index].value = char;
+      }
+    });
+
+    setOtp(newOtp);
+
+    // Focus the next available input or the last one
+    const nextIndex = pasteData.length < 6 ? pasteData.length : 5;
+    inputRefs.current[nextIndex].focus();
+    e.preventDefault();
+  };
+
+  // 🔹 OTP Input Logic
+  const handleChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    const newOtp = [...otp];
+    newOtp[index] = value.slice(-1);
     setOtp(newOtp);
 
     if (value && index < 5) {
@@ -64,9 +66,9 @@ export default function OtpPage() {
     }
   };
 
-  // 🔹 Handle OTP Submit
-  const handleSubmit = async () => {
-    setError("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
 
     if (!email) {
       setError(t("errors.emailMissing"));
@@ -84,18 +86,15 @@ export default function OtpPage() {
     try {
       await axiosInstance.post(
         "/Authentication/VerifyOTP",
-        { otp: otpValue, email }, // ✅ send email along with OTP
-        { skipGlobalErrorHandler: true }
+        { otp: otpValue, email },
+        { skipGlobalErrorHandler: true },
       );
-
-      // ✅ Navigate to Reset Password page with email
       navigate("/reset-password", { state: { email } });
     } catch (err) {
       const status = err.response?.status;
       if (status === 400) setError(t("errors.invalidOtp"));
       else if (status === 429) setError(t("errors.tooManyRequests"));
-      else if (status === 404) setError(t("errors.notFound"));
-      else if (status === 500) navigate("/error/500", { replace: true });
+      else if (status === 500) navigate("/error/500");
       else setError(t("errors.unexpected"));
     } finally {
       setLoading(false);
@@ -103,120 +102,122 @@ export default function OtpPage() {
   };
 
   return (
-    <div className="relative flex h-screen bg-gray-100 overflow-hidden p-5">
-      {/* 🔹 Spinner overlay */}
-      {loading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
-          <LoadingSpinner />
-        </div>
-      )}
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#050b14]">
+      {/* Background with Filters */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={helwanImage}
+          alt="University Background"
+          className="w-full h-full object-cover opacity-50"
+        />
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#050b14] via-[#19355a]/40 to-[#050b14]/80" />
+      </div>
 
-      {/* Left Side */}
-      <div className="flex flex-col flex-1 px-8 py-6 relative">
-        {/* Language Selector */}
-        <div className="flex mb-6">
-          <div
-            ref={dropdownRef}
-            className={`relative inline-block ${isArabic ? "mr-auto" : "ml-auto"}`}
-          >
-            <button
-              onClick={() => setOpenDropdown((s) => !s)}
-              className="flex items-center gap-2 px-3 py-1 border rounded-sm bg-white shadow-sm cursor-pointer"
-            >
-              <img
-                src={isArabic ? egyptFlag : ukFlag}
-                alt="flag"
-                className="w-5 h-5 object-cover"
-              />
-              <ChevronDown size={16} />
-            </button>
+      {/* Language Toggle */}
+      <div className={`fixed top-6 ${isArabic ? "left-6" : "right-6"} z-[100]`}>
+        <button
+          onClick={() => i18n.changeLanguage(isArabic ? "en" : "ar")}
+          className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-xl border border-[#b38e19]/40 rounded-xl text-white hover:border-[#b38e19] transition-all duration-300 group shadow-2xl"
+        >
+          <Globe size={16} className="text-[#b38e19]" />
+          <span className="text-[11px] font-black tracking-widest uppercase">
+            {isArabic ? "English" : "عربي"}
+          </span>
+        </button>
+      </div>
 
-            {openDropdown && (
-              <div
-                className={`absolute top-full mt-1 w-36 bg-white shadow-md rounded-sm border z-50 ${
-                  isArabic ? "left-0" : "right-0"
-                }`}
-              >
-                <button
-                  onClick={() => handleLanguageChange("ar")}
-                  className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-100 text-sm"
-                >
-                  <img src={egyptFlag} alt="Arabic" className="w-5 h-5" />
-                  <span className="whitespace-nowrap">العربية</span>
-                </button>
-                <button
-                  onClick={() => handleLanguageChange("en")}
-                  className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-100 text-sm"
-                >
-                  <img src={ukFlag} alt="English" className="w-5 h-5" />
-                  <span className="whitespace-nowrap">English</span>
-                </button>
-              </div>
-            )}
+      <main className="relative z-10 w-full max-w-[1200px] flex flex-col lg:flex-row items-center justify-between px-6 gap-10">
+        <div
+          className={`w-full lg:w-1/2 ${isArabic ? "text-right" : "text-left"} hidden lg:block`}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-1 w-12 bg-[#b38e19] rounded-full" />
+            <span className="text-[#b38e19] font-black uppercase tracking-[5px] text-[clamp(0.6rem,1.2vw,1rem)]">
+              {isArabic ? "تحقق الأمان" : "Security Verification"}
+            </span>
           </div>
-        </div>
-
-        {/* Form Content */}
-        <div className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}>
-          <h1 className="text-4xl font-bold mt-[50px] mb-12 text-gray-900">
-            {t("title")}
+          <h1 className="text-[clamp(2.5rem,6vw,5rem)] font-[900] leading-none mb-6 tracking-tighter text-white uppercase">
+            {isArabic ? "رمز التحقق" : "OTP VERIFICATION"}
           </h1>
-
-          <div className="flex items-start gap-2 mb-6">
-            <Info size={20} className="text-yellow-600 mt-1" />
-            <p className="text-gray-600 text-base">{t("subtitle")}</p>
-          </div>
-
-          {/* OTP Inputs */}
-          <div className="flex justify-between mb-4 gap-2 ltr" style={{ direction: "ltr" }}>
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                ref={(el) => (inputRefs.current[index] = el)}
-                type="text"
-                maxLength="1"
-                value={digit}
-                onChange={(e) => handleChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-12 h-12 border border-gray-300 rounded-md text-center text-xl focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-            ))}
-          </div>
-
-          {/* 🔹 Error Message */}
-          {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
-
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition disabled:opacity-70"
-          >
-            {t("verifyButton")}
-          </button>
+          <p className="text-[clamp(0.9rem,1.2vw,1.25rem)] text-white/50 max-w-md font-light leading-relaxed">
+            {isArabic
+              ? `لقد أرسلنا رمزاً مكوناً من 6 أرقام إلى بريدك الإلكتروني: ${email}.`
+              : `We have sent a 6-digit code to your email: ${email}.`}
+          </p>
         </div>
-      </div>
 
-      {/* Right Side - Image */}
-      <div
-        className="hidden md:flex w-1/2 relative rounded-[35px] mr-5 justify-center items-center text-white text-center bg-cover bg-right"
-        style={{ backgroundImage: `url(${helwanImage})` }}
-      >
-        <div className="absolute inset-0 bg-black/10 backdrop-blur-sm rounded-[35px] z-0"></div>
-        <div className="absolute inset-0 bg-black/45 rounded-[35px] z-0"></div>
+        <div className="w-full lg:w-[460px] relative">
+          <div className="absolute inset-0 bg-[#b38e19]/10 blur-[80px] rounded-full" />
 
-        <div className="relative z-10 flex flex-col items-center w-full text-center px-6">
-          <h3
-            className={`font-bold ${
-              isArabic
-                ? "text-[2.5rem] text-right mr-5"
-                : "text-[2.5rem] text-left ml-5"
-            }`}
-          >
-            {t("welcome")}
-          </h3>
-          <p className="text-lg mt-3 text-gray-200 max-w-[80%]">{t("sub")}</p>
+          <div className="relative bg-[#19355a]/20 backdrop-blur-[40px] border border-white/10 rounded-[2.5rem] p-10 md:p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
+            <header
+              className={`mb-10 ${isArabic ? "text-right" : "text-left"}`}
+            >
+              <div className="w-14 h-14 bg-[#19355a] border border-[#b38e19]/30 rounded-2xl flex items-center justify-center mb-6 shadow-2xl">
+                <LockKeyhole className="text-[#b38e19]" size={32} />
+              </div>
+              <h3 className="text-[clamp(1.5rem,2vw,2rem)] font-black text-white tracking-tight mb-1">
+                {t("title")}
+              </h3>
+              <p className="text-[#b38e19] text-[clamp(0.6rem,0.8vw,0.7rem)] font-black uppercase tracking-[4px]">
+                {t("subtitle")}
+              </p>
+            </header>
+
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {error && (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold rounded-xl">
+                  {error}
+                </div>
+              )}
+
+              {/* OTP Inputs Grid with onPaste */}
+              <div
+                className="flex justify-between gap-2 md:gap-3"
+                style={{ direction: "ltr" }}
+              >
+                {otp.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    type="text"
+                    maxLength="1"
+                    value={digit}
+                    onPaste={handlePaste} // 👈 إضافة خاصية اللصق هنا
+                    onChange={(e) => handleChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    disabled={loading}
+                    className="w-full h-14 md:h-16 bg-white/5 border border-white/10 focus:border-[#b38e19]/50 focus:bg-white/10 text-white text-center text-2xl font-black rounded-xl outline-none transition-all"
+                  />
+                ))}
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full relative overflow-hidden bg-[#19355a] text-white py-5 rounded-2xl font-black text-[clamp(0.7rem,0.9vw,0.85rem)] uppercase tracking-[4px] shadow-2xl hover:shadow-[#19355a]/40 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-3 group"
+              >
+                <>
+                  <span>{t("verifyButton")}</span>
+                  {isArabic ? (
+                    <ArrowLeft size={16} />
+                  ) : (
+                    <ArrowRight size={16} />
+                  )}
+                </>
+
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#b38e19]/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
+      </main>
+
+      <footer className="absolute bottom-6 w-full text-center">
+        <p className="text-white/10 text-[8px] font-black uppercase tracking-[10px]">
+          Strategic Portal • Capital University
+        </p>
+      </footer>
     </div>
   );
 }

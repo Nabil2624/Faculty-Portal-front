@@ -70,12 +70,11 @@
   "dependOnRole": "حسب الدور",
   "Administrator": "مسؤول",
   "Reviewer": "مراجع",
-  "AdministratorAndReviewer": "مسؤول ومراجع",
+  "AdministratorAndReviewer": "مسؤول و مراجع",
   "EnrollmentDateASC": "تاريخ القيد تصاعدياً",
   "EnrollmentDateDESC": "تاريخ القيد تنازلياً",
   "RegisterationDateASC": "تاريخ التسجيل تصاعدياً",
   "RegisterationDateDESC": "تاريخ التسجيل تنازلياً",
-  "CitesAsc":"الاقتباسات تصاعدياً",
-  "CitesDesc":"الاقتباسات تنازلياً"
-
+  "CitesAsc": "الاقتباسات تصاعدياً",
+  "CitesDesc": "الاقتباسات تنازلياً"
 }

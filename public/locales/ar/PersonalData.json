@@ -25,5 +25,6 @@
   "accurateSpecialization": "التخصص الدقيق",
   "authority": "الجهة",
   "personalInfo": "المعلومات الشخصيه",
-  "workInfo": "معلومات العمل"
+  "workInfo": "معلومات العمل",
+  "updateFailed":"خطأ في الحفظ"
 }

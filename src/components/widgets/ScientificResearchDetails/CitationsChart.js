@@ -6,11 +6,11 @@ const MAX_VISIBLE_YEARS = 7;
 
 export default function CitationsChart({ data = [], title }) {
   const { t } = useTranslation("CitationsChart");
+  const isArabic = useTranslation().i18n.language === "ar";
 
-  // Sort by year ASC
   const sortedData = useMemo(() => {
     return [...data]
-      .sort((a, b) => b.year - a.year)
+      .sort((a, b) => a.year - b.year)
       .map((item) => ({
         year: item.year,
         value: item.numberOfCites,
@@ -21,116 +21,75 @@ export default function CitationsChart({ data = [], title }) {
     Math.max(sortedData.length - MAX_VISIBLE_YEARS, 0),
   );
 
-  const [maxBarHeight, setMaxBarHeight] = useState(220);
+  // تقليل الارتفاع الافتراضي للموبايل
+  const [maxBarHeight, setMaxBarHeight] = useState(100);
 
-  // Responsive height
   useEffect(() => {
     const updateHeight = () => {
-      if (window.innerWidth < 768) setMaxBarHeight(180);
-      else setMaxBarHeight(220);
+      if (window.innerWidth < 768) setMaxBarHeight(80); // ارتفاع أقل للموبايل لضمان عدم التداخل
+      else setMaxBarHeight(140);
     };
-
     updateHeight();
     window.addEventListener("resize", updateHeight);
     return () => window.removeEventListener("resize", updateHeight);
   }, []);
 
-  // Update start index if data changes
-  useEffect(() => {
-    setStartIndex(Math.max(sortedData.length - MAX_VISIBLE_YEARS, 0));
-  }, [sortedData]);
-
-  const visibleData = sortedData.slice(
-    startIndex,
-    startIndex + MAX_VISIBLE_YEARS,
-  );
-
-  const maxValue =
-    visibleData.length > 0 ? Math.max(...visibleData.map((d) => d.value)) : 1;
-
+  const visibleData = sortedData.slice(startIndex, startIndex + MAX_VISIBLE_YEARS);
+  const maxValue = visibleData.length > 0 ? Math.max(...visibleData.map((d) => d.value)) : 1;
   const canGoPrev = startIndex > 0;
   const canGoNext = startIndex + MAX_VISIBLE_YEARS < sortedData.length;
 
-  if (!data || data.length === 0) {
-    return (
-      <div className="bg-[#EDEDED] border border-[#19355a] rounded-[14px] px-6 pt-6 pb-8 min-h-[360px] max-w-[365px] mt-6">
-        <h4 className="text-2xl font-semibold text-center text-[#19355a]">
-          {title || t("citations")}
-        </h4>
-        <div className="flex items-center justify-center h-[200px] text-gray-500">
-          No citation data
-        </div>
-      </div>
-    );
-  }
+  if (!data || data.length === 0) return null;
 
   return (
-    <div className="bg-[#EDEDED] border border-[#19355a] rounded-[14px] shadow-[0_4px_10px_rgba(0,0,0,0.08)] px-6 pt-6 pb-8 min-h-[360px] max-w-[365px] mt-6">
-      {/* Title */}
-      <h4 className="text-2xl font-semibold text-center text-[#19355a] -translate-y-2">
-        {title || t("citations")}
-      </h4>
-      <span className="block w-[145px] h-[5px] bg-[#b38e19] mx-auto mt-2 rounded-[5px]" />
-
-      {/* Chart */}
-      <div className="flex-1 flex items-center justify-center mt-10">
-        <div className="flex items-center justify-center gap-2">
-          {/* Older */}
-          <FiChevronRight
-            onClick={() => canGoPrev && setStartIndex((prev) => prev - 1)}
-            className={`text-3xl cursor-pointer transition ${
-              canGoPrev
-                ? "text-black hover:text-[#B38E19]"
-                : "text-[#D9D9D9] cursor-not-allowed"
-            }`}
-          />
-
-          {/* Bars */}
-          <div className="relative flex items-end gap-2 h-[220px] pb-1">
-            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#D9D9D9]" />
-
-            {visibleData.map((item, index) => {
-              const isGold = index % 2 === 0;
-
-              return (
-                <div
-                  key={item.year}
-                  className="group flex flex-col items-center justify-end relative z-10"
-                >
-                  {/* Value */}
-                  <span className="mb-1 min-w-[22px] h-[14px] flex items-center justify-center text-[9px] text-[#19355A] bg-[#D9D9D9] rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
-                    {item.value}
-                  </span>
-
-                  {/* Bar */}
-                  <div
-                    className={`w-[18px] rounded-md ${
-                      isGold ? "bg-[#B38E19]" : "bg-[#19355A]"
-                    } transition-all duration-700 ease-in-out`}
-                    style={{
-                      height: `${(item.value / maxValue) * maxBarHeight}px`,
-                    }}
-                  />
-
-                  {/* Year */}
-                  <span className="mt-1 min-w-[30px] h-[14px] flex items-center justify-center text-[7px] text-[#19355A] bg-[#D9D9D9] rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
-                    {item.year}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Newer */}
-          <FiChevronLeft
-            onClick={() => canGoNext && setStartIndex((prev) => prev + 1)}
-            className={`text-3xl cursor-pointer transition ${
-              canGoNext
-                ? "text-black hover:text-[#B38E19]"
-                : "text-[#D9D9D9] cursor-not-allowed"
-            }`}
-          />
+    <div className="w-full h-full flex flex-col bg-white" style={{ isolation: 'isolate' }}>
+      <div className="flex items-center justify-between mb-4 bg-white py-2">
+        <h4 className="text-[#19355A] font-black text-[10px] md:text-sm uppercase tracking-widest shrink-0">
+          {title || t("citations")}
+        </h4>
+        <div className="flex gap-2 ml-2">
+          <button 
+            onClick={() => canGoPrev && setStartIndex(prev => prev - 1)}
+            className={`p-1 rounded-md border ${canGoPrev ? "border-[#B38E19] text-[#B38E19]" : "border-gray-200 text-gray-300 cursor-not-allowed"}`}
+          >
+            {isArabic ? <FiChevronRight size={12}/> : <FiChevronLeft size={12}/>}
+          </button>
+          <button 
+            onClick={() => canGoNext && setStartIndex(prev => prev + 1)}
+            className={`p-1 rounded-md border ${canGoNext ? "border-[#B38E19] text-[#B38E19]" : "border-gray-200 text-gray-300 cursor-not-allowed"}`}
+          >
+            {isArabic ? <FiChevronLeft size={12}/> : <FiChevronRight size={12}/>}
+          </button>
         </div>
+      </div>
+
+      {/* 2. حاوية الرسم البياني: أضفنا overflow-hidden هنا */}
+      <div className="relative flex-1 flex items-end justify-between gap-1 md:gap-2 px-1 pb-8 min-h-[120px] overflow-hidden">
+        {/* خط القاعدة */}
+        <div className="absolute bottom-8 left-0 right-0 h-[1px] bg-gray-100 -z-10" />
+        
+        {visibleData.map((item, index) => (
+          <div key={item.year} className="group flex flex-col items-center flex-1 relative">
+            {/* الرقم فوق العمود - جعلناه يختفي لو خرج عن المساحة */}
+            <span className="mb-1 text-[9px] font-bold text-[#19355A] opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-full">
+              {item.value}
+            </span>
+            
+            <div
+              className={`w-full max-w-[18px] md:max-w-[25px] rounded-t-sm transition-all duration-500 ${
+                index % 2 === 0 ? "bg-[#B38E19]" : "bg-[#19355A]"
+              }`}
+              style={{ 
+                height: `${(item.value / maxValue) * maxBarHeight}px`,
+                maxHeight: '100%' // يمنع العمود من تجاوز حاويته
+              }}
+            />
+            
+            <span className="absolute -bottom-6 text-[8px] md:text-[9px] font-black text-gray-400">
+              {item.year}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );

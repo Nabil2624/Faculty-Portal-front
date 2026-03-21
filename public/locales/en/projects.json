@@ -24,5 +24,25 @@
   "errors": {
     "loadFailed": "An error occurred while loading data",
     "deleteFailed": "Failed to delete the item"
+  },
+  "projects": {
+    "pageTitle": "Projects",
+    "searchPlaceholder": "Search projects...",
+    "addNew": "Add New Project",
+    "noDataAvailable": "No projects available",
+    "backToList": "Back to List",
+    "documentDetails": "Project Details",
+    "localInternational": "Local / International",
+    "fundingAuthority": "Funding Authority",
+    "participationRole": "Participation Role",
+    "projectType": "Project Type",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "description": "Description",
+    "noDescriptionAdded": "No description added for this project",
+    "selectItemToPreview": "Select a project to preview details",
+    "local": "Local",
+    "international": "International",
+    "present": "Present"
   }
 }

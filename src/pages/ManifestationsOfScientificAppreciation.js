@@ -6,7 +6,7 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 
 import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
-
+import { Medal } from "lucide-react";
 import useManifestations from "../hooks/useManifestations";
 import { deleteManifestation } from "../services/manifestationsOfScientificAppreciation";
 
@@ -14,6 +14,8 @@ import ManifestationCard from "../components/widgets/ManifestationsOfScientificA
 import ManifestationModal from "../components/widgets/ManifestationsOfScientificAppreciation/ManifestationModal";
 
 import ManifestationDeleteModal from "../components/widgets/ManifestationsOfScientificAppreciation/ManifestationDeleteModal";
+import ManifestationsTable from "../components/widgets/ManifestationsOfScientificAppreciation/ManifestationsTable";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 
 export default function ManifestationsOfScientificAppreciation() {
   const { t, i18n } = useTranslation(
@@ -116,18 +118,9 @@ export default function ManifestationsOfScientificAppreciation() {
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
         {/* Header */}
-        <PageHeader
+        <PageHeaderNoAction
           title={t("title")}
-          addLabel={t("add")}
-          onAdd={() =>
-            navigate("/add-manifestations-of-scientific-appreciation")
-          }
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
-          isArabic={isArabic}
-          onFilterClick={() => setShowFilterModal(true)}
+          icon={Medal}
         />
 
         {/* Error */}
@@ -140,58 +133,22 @@ export default function ManifestationsOfScientificAppreciation() {
           </div>
         )}
 
-        {/* Empty */}
-        {!loading && !error && filteredItems.length === 0 && (
-          <div
-            className="text-center text-gray-500"
-            style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
-          >
-            {t("empty")}
-          </div>
-        )}
-
-        {/* Grid */}
-        {!loading && !error && filteredItems.length > 0 && (
-          <div
-            className="overflow-y-auto pr-2 mb-4 flex-1"
-            style={{ maxHeight: "calc(90vh - 200px)" }}
-          >
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${
-                isArabic ? "text-right" : "text-left"
-              }`}
-              style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
-            >
-              {filteredItems.map((item) => (
-                <ManifestationCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onEdit={() => handleEditNavigate(item)}
-                  onDelete={(p) => {
-                    setSelectedItem(p);
-                    setShowDelete(true);
-                    setDeleteError(false);
-                  }}
-                  onDetails={(p) => {
-                    setSelectedItem(p);
-                    setShowDetails(true);
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Pagination */}
-        <div className="mt-auto">
-          <Pagination
+        <div className=" flex-1 overflow-hidden">
+          <ManifestationsTable
+            data={items}
+            onEdit={handleEditNavigate}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onAdd={() => navigate("/add-manifestations-of-scientific-appreciation")}
+            onFilterClick={() => setShowFilterModal(true)}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            t={t}
-            isArabic={isArabic}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
           />
         </div>
 

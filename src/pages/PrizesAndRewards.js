@@ -11,7 +11,9 @@ import { deletePrizeOrReward } from "../services/prizesAndRewards.service";
 import usePrizesAndRewardsLookups from "../hooks/usePrizesAndRewardsLookups";
 import PrizeCard from "../components/widgets/PrizesAndRewards/PrizesCard";
 import PrizesAndRewardsModal from "../components/widgets/PrizesAndRewards/PrizesAndRewardsModal";
-
+import PrizesRewardsTable from "../components/widgets/PrizesAndRewards/PrizesRewardsTable";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import { Award } from "lucide-react";
 export default function PrizesAndRewards() {
   const { t, i18n } = useTranslation("prizes-and-rewards");
   const navigate = useNavigate();
@@ -121,16 +123,9 @@ export default function PrizesAndRewards() {
       <div
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
-        <PageHeader
+        <PageHeaderNoAction
           title={t("title")}
-          addLabel={t("add")}
-          onAdd={() => navigate("/add-prizes-and-rewards")}
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
-          isArabic={isArabic}
-          onFilterClick={() => setShowFilterModal(true)}
+          icon={Award}
         />
 
         {!loading && error && (
@@ -139,42 +134,25 @@ export default function PrizesAndRewards() {
           </div>
         )}
 
-        {!loading && !error && filteredItems.length === 0 && (
-          <div className="text-center text-gray-500">{t("empty")}</div>
-        )}
-
-        {!loading && !error && filteredItems.length > 0 && (
-          <div className="overflow-y-auto pr-2 mb-4 flex-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredItems.map((item) => (
-                <PrizeCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onDelete={(p) => {
-                    setSelectedItem(p);
-                    setShowDelete(true);
-                    setDeleteError(false);
-                  }}
-                  onDetails={(p) => {
-                    setSelectedItem(p);
-                    setShowDetails(true);
-                  }}
-                  onEdit={handleEditNavigate}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="mt-auto">
-          <Pagination
+        <div className=" flex-1 overflow-hidden">
+          <PrizesRewardsTable
+            data={items}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onEdit={(item) =>
+              navigate("/edit-prizes-and-rewards", { state: { item } })
+            }
+            onAdd={() => navigate("/add-prizes-and-rewards")}
+            onFilterClick={() => setShowFilterModal(true)}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
             t={t}
-            isArabic={isArabic}
           />
         </div>
 

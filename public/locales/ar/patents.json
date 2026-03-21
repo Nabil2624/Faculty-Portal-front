@@ -7,14 +7,15 @@
   "type": "النوع",
   "local": "محلي",
   "international": "دولي",
-
+  "patentDetails": "تفاصيل براءات الاختراع",
+  "backToList": "العودة الي القائمة",
   "nameOfPatent": "اسم براءة الاختراع",
   "authority": "جهة الاعتماد / الدولة",
   "applyingDate": "تاريخ التقديم",
   "accreditationDate": "تاريخ الاعتماد",
   "attachments": "المرفقات",
   "description": "الوصف",
-
+  "noDescriptionAdded": "لا يوجد وصف",
   "areYouSureDelete": "هل أنت متأكد أنك تريد حذف براءة الاختراع؟",
   "delete": "حذف",
   "cancel": "إلغاء",
@@ -23,8 +24,6 @@
   "next": "التالي",
   "page": "الصفحة",
   "of": "من",
-
-
 
   "errors": {
     "loadFailed": "فشل تحميل براءات الاختراع",

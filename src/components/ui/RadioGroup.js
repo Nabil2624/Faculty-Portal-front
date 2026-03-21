@@ -6,65 +6,63 @@ export default function RadioGroup({
   value,
   onChange,
   disabled = false,
+  error, // ضفت لك الـ error عشان يظهر لو فيه مشكلة
 }) {
   return (
-    <div>
+    <div className="w-full flex flex-col justify-between">
       {label && (
-        <div className="text-[clamp(13px,1.2vw,30px)] font-medium">
-          {label}
+        <div className="text-[clamp(14px,1.2vw,25px)] mb-2 font-semibold text-gray-700">
+          {label} <span className="text-red-500">*</span>
         </div>
       )}
 
-      <div className="flex gap-4">
+      {/* flex-nowrap لضمان بقائهم بجانب بعض، و whitespace-nowrap للنصوص */}
+      <div className="flex flex-nowrap items-center gap-[clamp(0.5rem,1vw,1rem)] overflow-x-auto no-scrollbar pb-1">
         {options.map((opt) => {
-          const checked = value === opt.value;
+          const isChecked = String(value) === String(opt.value);
 
           return (
-            <label
+            <div
               key={opt.value}
-              className={`
-                flex items-center gap-3 px-3 py-[7px] rounded-lg cursor-pointer
-                border transition
-                ${
-                  checked
-                    ? "border-[#B38E19] bg-[#B38E19]/10"
-                    : "border-gray-300 hover:border-[#B38E19]"
+              onClick={() => {
+                if (!disabled) {
+                  onChange(opt.value);
                 }
-                ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+              }}
+              className={`
+                flex items-center gap-2 px-[clamp(8px,0.8vw,14px)] py-[clamp(6px,0.6vw,10px)] 
+                rounded-lg cursor-pointer border transition-all duration-200 select-none 
+                flex-1 min-w-fit whitespace-nowrap
+                ${
+                  isChecked
+                    ? "border-[#B38E19] bg-[#B38E19]/5 shadow-sm"
+                    : "border-gray-200 hover:border-[#B38E19]/30 bg-white text-gray-600"
+                }
+                ${disabled ? "opacity-50 cursor-not-allowed" : "active:scale-95"}
               `}
             >
-              <input
-                type="radio"
-                value={opt.value}
-                checked={checked}
-                onChange={(e) => onChange(e.target.value)}
-                disabled={disabled}
-                className="hidden"
-              />
-
-              {/* Custom circle */}
+              {/* الدائرة المخصصة - صغرت حجمها شوية عشان التناسق */}
               <div
                 className={`
-                  w-5 h-5 rounded-full border-2 flex items-center justify-center
-                  ${
-                    checked
-                      ? "border-[#B38E19]"
-                      : "border-gray-400"
-                  }
+                  w-4 h-4 rounded-full border flex items-center justify-center shrink-0
+                  ${isChecked ? "border-[#B38E19]" : "border-gray-400"}
                 `}
               >
-                {checked && (
-                  <div className="w-3 h-3 rounded-full bg-[#B38E19]" />
+                {isChecked && (
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#B38E19]" />
                 )}
               </div>
 
-              <span className="text-[clamp(13px,1.2vw,30px)]">
+              <span className={`text-[clamp(12px,0.9vw,15px)] ${isChecked ? "font-bold text-[#B38E19]" : "font-medium"}`}>
                 {opt.label}
               </span>
-            </label>
+            </div>
           );
         })}
       </div>
+
+      {/* عرض الخطأ إن وجد */}
+      {error && <p className="text-red-500 text-[11px] mt-1 animate-pulse">{error}</p>}
     </div>
   );
 }

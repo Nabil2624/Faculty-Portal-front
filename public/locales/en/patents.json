@@ -7,7 +7,7 @@
   "type": "Type",
   "local": "Local",
   "international": "International",
-
+  "noDescriptionAdded": "No Description Added",
   "nameOfPatent": "Patent Name",
   "authority": "Accrediting Authority / Country",
   "applyingDate": "Applying Date",
@@ -23,7 +23,8 @@
   "next": "Next",
   "page": "Page",
   "of": "of",
-
+  "patentDetails": "Patent Details",
+  "backToList": "Back To List",
   "errors": {
     "loadFailed": "Failed to load patents",
     "deleteFailed": "Failed to delete patent"

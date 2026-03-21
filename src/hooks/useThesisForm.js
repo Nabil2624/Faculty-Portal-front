@@ -56,6 +56,7 @@ export function useThesisForm({
 
   const [initialMembers, setInitialMembers] = useState([]);
 
+  // ================= INIT MEMBERS =================
   useEffect(() => {
     if (mode === "edit" && thesisData) {
       setInitialMembers(
@@ -70,6 +71,7 @@ export function useThesisForm({
       );
     }
   }, [mode, thesisData]);
+
   // ================= LOAD LOOKUPS =================
   useEffect(() => {
     const fetchLookups = async () => {
@@ -104,7 +106,6 @@ export function useThesisForm({
 
     setResearches(thesisData.researches || []);
 
-    // FIXED COMMITTEE MEMBERS MAPPING
     setMembers(
       (thesisData.comitteeMembers || []).map((s) => {
         let roleValue = 3;
@@ -118,8 +119,8 @@ export function useThesisForm({
         }
 
         return {
-          id: s.id, // ✅ VERY IMPORTANT
-          memberId: s.memberId, // ✅ VERY IMPORTANT
+          id: s.id,
+          memberId: s.memberId,
           role: roleValue,
           name: s.name || "",
           jobTitle: s.jobLevelId || null,
@@ -131,7 +132,7 @@ export function useThesisForm({
 
   // ================= SEARCH =================
   useEffect(() => {
-    if (!searchTerm || searchTerm.length < 2) {
+    if (!searchTerm) {
       setSearchResults([]);
       return;
     }
@@ -176,13 +177,15 @@ export function useThesisForm({
   // ================= VALIDATION =================
   const validate = () => {
     const newErrors = {};
+
     if (!registrationDate)
       newErrors.registrationDate = `${t("registrationDate")} ${t("required")}`;
     if (!enrollmentDate)
       newErrors.enrollmentDate = `${t("enrollmentDate")} ${t("required")}`;
     if (!thesisTitle)
       newErrors.thesisTitle = `${t("thesisTitle")} ${t("required")}`;
-    if (!degreeId) newErrors.degreeId = `${t("degree")} ${t("required")}`;
+    if (!degreeId)
+      newErrors.degreeId = `${t("degree")} ${t("required")}`;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -195,7 +198,6 @@ export function useThesisForm({
     setLoading(true);
 
     try {
-      // ================= CURRENT MEMBERS =================
       const currentMembers = members
         .filter((m) => m.name && m.jobTitle)
         .map((m) => ({
@@ -208,7 +210,6 @@ export function useThesisForm({
           thesesId: thesisId,
         }));
 
-      // ================= RESEARCHES =================
       const currentResearches = researches.map((r) => ({
         ...r,
         contributions: r.contributions || [],
@@ -219,27 +220,24 @@ export function useThesisForm({
 
       if (mode === "edit") {
         const supervisorsToAdd = currentMembers.filter((cm) => !cm.id);
+
         const supervisorsToUpdate = currentMembers
           .filter((cm) => cm.id)
           .map((cm) => ({
             id: cm.id,
-            data: {
-              memberId: cm.memberId,
-              role: cm.role,
-              name: cm.name,
-              jobLevelId: cm.jobLevelId,
-              authority: cm.authority,
-              thesesId: cm.thesesId,
-            },
+            data: cm,
           }));
+
         const supervisorsToDelete = initialMembers.filter(
           (im) => !currentMembers.some((cm) => cm.id === im.id),
         );
 
         const researchesToAdd = currentResearches.filter((r) => !r.id);
+
         const researchesToUpdate = currentResearches
           .filter((r) => r.id)
           .map((r) => ({ id: r.id, data: r }));
+
         const researchesToDelete = (thesisData?.researches || []).filter(
           (r) => !currentResearches.some((cr) => cr.id === r.id),
         );
@@ -258,11 +256,29 @@ export function useThesisForm({
           researchesToAdd,
           researchesToUpdate,
           researchesToDelete,
-          attachmentsToAdd: [], // handle attachments if needed
-          attachmentsToDelete: [], // handle deletions if needed
         };
+
+        // ✅ UPDATE CALL
+        await updateThesis(thesisId, payload);
+
+        // ================= ATTACHMENTS =================
+        const attachmentsToDelete = initialAttachments.filter(
+          (initial) =>
+            !attachments.some((current) => current.id === initial.id),
+        );
+
+        const attachmentsToAdd = attachments.filter((file) => !file.id);
+
+        for (const file of attachmentsToDelete) {
+          await axiosInstance.delete(
+            `/Attachments/${thesisId}/${file.id}?context=2`,
+          );
+        }
+
+        if (attachmentsToAdd.length > 0) {
+          await uploadThesisAttachments(thesisId, attachmentsToAdd);
+        }
       } else {
-        // Add mode
         payload = {
           type: thesisType,
           title: thesisTitle,
@@ -274,44 +290,13 @@ export function useThesisForm({
           comitteeMembers: currentMembers,
           researches: currentResearches,
         };
-      }
 
-      // ================= SEND =================
-      if (mode === "edit") {
-        // ================= ATTACHMENTS LOGIC =================
-
-        // الملفات اللي اتمسحت
-        const attachmentsToDelete = initialAttachments.filter(
-          (initial) =>
-            !attachments.some((current) => current.id === initial.id),
-        );
-
-        //  الملفات الجديدة (ملهاش id)
-        const attachmentsToAdd = attachments.filter((file) => !file.id);
-
-        //  DELETE
-        for (const file of attachmentsToDelete) {
-          await axiosInstance.delete(
-            `/Attachments/${thesisId}/${file.id}?context=2`,
-          );
-        }
-
-        //  ADD
-        if (attachmentsToAdd.length > 0) {
-          await uploadThesisAttachments(thesisId, attachmentsToAdd);
-        }
-      } else {
         const response = await addThesis(payload);
 
-        // extract entityId
-        const entityId = response?.data?.id || response?.data || response?.id;
+        const entityId =
+          response?.data?.id || response?.data || response?.id;
 
-        if (!entityId) {
-          throw new Error("Entity ID not returned from backend");
-        }
-
-        // upload attachments if exists
-        if (attachments && attachments.length > 0) {
+        if (attachments.length > 0) {
           await uploadThesisAttachments(entityId, attachments);
         }
       }
@@ -321,17 +306,17 @@ export function useThesisForm({
       if (err.response?.status === 403) {
         setModalMessage(
           isArabic
-            ? "لا يمكنك تعديل أو إزالة بيانات هذا العضو لأنه مؤكد كمشرف على هذه الرسالة."
-            : "You can't edit or remove this committee member data because they are already confirmed supervising this thesis.",
+            ? "لا يمكنك تعديل هذا العضو"
+            : "You can't edit this member",
         );
         setIsModalOpen(true);
       } else {
-        console.error(err);
       }
     } finally {
       setLoading(false);
     }
   };
+
   const openDatePicker = (ref) => {
     if (ref.current?.showPicker) ref.current.showPicker();
   };

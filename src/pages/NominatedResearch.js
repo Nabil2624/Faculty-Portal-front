@@ -1,39 +1,44 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { FileBadge2 } from "lucide-react";
+// Components
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import LoadingSpinner from "../components/LoadingSpinner";
-import Pagination from "../components/ui/Pagination";
 import PageHeaderWithFilter from "../components/ui/PageHeaderWithFilter";
-import NominatedResearchCard from "../components/widgets/NominatedResearch/NominatedResearchCard";
 import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
 import ModalWrapper from "../components/ui/ModalWrapper";
 import CustomizeResultsModal from "../components/ui/CustomizeResultsPopup";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useEffect } from "react";
+import NominatedResearchesTable from "../components/widgets/NominatedResearch/NominatedResearchesTable"; // الجدول الجديد
 
+// Hooks
 import useNominatedScientificResearch from "../hooks/useNominatedScientificResearch";
 import useResearcherProfile from "../hooks/useResearcherProfile";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 
 export default function NominatedScientificResearch() {
   const navigate = useNavigate();
-  const [selectedResearch, setSelectedResearch] = useState(null);
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
 
+  // -- State للجدول والتحديد --
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // -- State للفلترة --
   const [filtersState, setFiltersState] = useState({});
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [sortValue, setSortValue] = useState(null);
   const [source, setSource] = useState([]);
   const [derivedFrom, setDerivedFrom] = useState([]);
   const [publisherType, setPublisherType] = useState([]);
-  const [PublicationType, setPublicationType] = useState([]);
+  const [publicationType, setPublicationType] = useState([]);
 
-  // Nominated researches
+  // Nominated researches hook
   const {
     t,
     isArabic,
     items,
     loading,
-    error,
     currentPage,
     totalPages,
     setCurrentPage,
@@ -43,82 +48,11 @@ export default function NominatedScientificResearch() {
   } = useNominatedScientificResearch(
     sortValue,
     publisherType,
-    PublicationType,
+    publicationType,
     source,
     derivedFrom,
   );
 
-  const sortOptions = [
-    { value: 1, label: "titleAsc" },
-    { value: 2, label: "titleDesc" },
-    { value: 3, label: "journalAsc" },
-    { value: 4, label: "journalDesc" },
-    { value: 5, label: "pubYearAsc" },
-    { value: 6, label: "pubYearDesc" },
-  ];
-  const mapTypes = [
-    { value: 1, label: "Internal" },
-    { value: 2, label: "External" },
-  ];
-  const mappedTypes = [
-    { value: 1, label: "Master" },
-    { value: 2, label: "PhD" },
-    { value: 3, label: "Other" },
-  ];
-  const mappedRadio = [
-    { value: 1, label: "Journal" },
-    { value: 2, label: "Conference" },
-    { value: 3, label: "Unspecified" },
-  ];
-  const mappingTypes = [
-    { value: 1, label: "local" },
-    { value: 2, label: "international" },
-    { value: 3, label: "Unspecified" },
-  ];
-  const filtersConfig = mappedTypes.length
-    ? [
-        {
-          key: "Source",
-          title: "dependOnSource",
-          options: mappedTypes,
-        },
-        {
-          key: "DerivedFrom",
-          title: "dependOnDerivedFrom",
-          options: mapTypes,
-        },
-        {
-          key: "PublisherType",
-          title: "dependOnPublisherType",
-          options: mappedRadio,
-        },
-        {
-          key: "PublicationType",
-          title: "dependLocalOrInternational",
-          options: mappingTypes,
-        },
-      ]
-    : [];
-  const handleApplyFilters = ({ sortValue, filters }) => {
-    setSortValue(sortValue);
-    setFiltersState(filters);
-
-    setSource(filters?.Source || []);
-    setDerivedFrom(filters?.DerivedFrom || []);
-    setPublisherType(filters?.PublisherType || []);
-    setPublicationType(filters?.PublicationType || []);
-
-    setCurrentPage(1);
-  };
-  const handleResetFilters = () => {
-    setSortValue(null);
-    setSource([]);
-    setDerivedFrom([]);
-    setPublisherType([]);
-    setPublicationType([]);
-    setFiltersState({});
-    setCurrentPage(1);
-  };
   // Researcher profile logic
   const {
     researcher,
@@ -136,23 +70,101 @@ export default function NominatedScientificResearch() {
       setHasScraped(true);
     }
   }, [waiting]);
-  // ================= LOADING =================
-  // if (loading || profileLoading) return <LoadingSpinner />;
 
-  // ================= WAITING (Scraping) =================
+  // -- Handlers للجراحة الجماعية (Bulk Actions) --
+  const handleBulkApprove = async () => {
+    // تصفية العناصر المختارة من القائمة الأساسية
+    const selectedItems = items.filter((item) => selectedIds.includes(item.id));
+    for (const item of selectedItems) {
+      await handleApprove(item);
+    }
+    setSelectedIds([]);
+    setIsSelectionMode(false);
+  };
+
+  const handleBulkReject = async () => {
+    const selectedItems = items.filter((item) => selectedIds.includes(item.id));
+    for (const item of selectedItems) {
+      await handleReject(item);
+    }
+    setSelectedIds([]);
+    setIsSelectionMode(false);
+  };
+
+  // -- Filter Config --
+  const sortOptions = [
+    { value: 1, label: "titleAsc" },
+    { value: 2, label: "titleDesc" },
+    { value: 3, label: "journalAsc" },
+    { value: 4, label: "journalDesc" },
+    { value: 5, label: "pubYearAsc" },
+    { value: 6, label: "pubYearDesc" },
+    { value: 7, label: "CitesAsc" },
+    { value: 8, label: "CitesDesc" },
+  ];
+
+  const filtersConfig = [
+    {
+      key: "Source",
+      title: "dependOnSource",
+      options: [
+        { value: 1, label: "Master" },
+        { value: 2, label: "PhD" },
+        { value: 3, label: "Other" },
+      ],
+    },
+    {
+      key: "DerivedFrom",
+      title: "dependOnDerivedFrom",
+      options: [
+        { value: 1, label: "Internal" },
+        { value: 2, label: "External" },
+      ],
+    },
+    {
+      key: "PublisherType",
+      title: "dependOnPublisherType",
+      options: [
+        { value: 1, label: "Journal" },
+        { value: 2, label: "Conference" },
+      ],
+    },
+  ];
+
+  const handleApplyFilters = ({ sortValue, filters }) => {
+    setSortValue(sortValue);
+    setFiltersState(filters);
+    setSource(filters?.Source || []);
+    setDerivedFrom(filters?.DerivedFrom || []);
+    setPublisherType(filters?.PublisherType || []);
+    setPublicationType(filters?.PublicationType || []);
+    setCurrentPage(1);
+  };
+
+  const handleResetFilters = () => {
+    setSortValue(null);
+    setSource([]);
+    setDerivedFrom([]);
+    setPublisherType([]);
+    setPublicationType([]);
+    setFiltersState({});
+    setCurrentPage(1);
+  };
+
+  // ================= RENDER LOGIC =================
+
   if (items.length === 0 && waiting) {
     return (
       <ResponsiveLayoutProvider>
-        <div className="text-center mt-20 text-xl font-semibold">
+        <div className="text-center mt-20 text-xl font-semibold text-[#19355A]">
           {isArabic
-            ? "برجاء الانتظار يتم جلب الابحاث"
-            : "Please wait, working on getting your researches"}
+            ? "برجاء الانتظار يتم جلب الأبحاث..."
+            : "Please wait, fetching your researches..."}
         </div>
       </ResponsiveLayoutProvider>
     );
   }
 
-  // ================= MISSING SCHOLAR =================
   if (items.length === 0 && missingScholar) {
     return (
       <ResponsiveLayoutProvider>
@@ -175,93 +187,52 @@ export default function NominatedScientificResearch() {
     );
   }
 
-  // ================= NO NOMINATED BUT PROFILE EXISTS =================
-  if (items.length === 0 && researcher) {
-    return (
-      <ResponsiveLayoutProvider>
-        <div className="text-center text-gray-500 mt-20 text-lg">
-          {t("empty")}
-        </div>
-      </ResponsiveLayoutProvider>
-    );
-  }
+  // تصفية الأبحاث بناءً على كلمة البحث (Search Term)
+  const filteredItems = items.filter((item) =>
+    item.title?.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
-  // ================= NORMAL RENDER =================
   return (
     <ResponsiveLayoutProvider>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
-        <PageHeaderWithFilter
-          title={t("title")}
-          onFilter={() => setShowFilterModal(true)}
+      <div
+        className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
+      >
+        <PageHeaderNoAction
+          title={
+            isArabic
+              ? "الأبحاث العلمية المرشحة"
+              : "Nominated Scientific Researches"
+          }
+          icon={FileBadge2}
         />
 
-        <div className="grid grid-cols-1 gap-6 max-w-5xl">
-          {items.map((item) => (
-            <NominatedResearchCard
-              key={item.id}
-              item={item}
-              isArabic={isArabic}
-              onAccept={(item) => handleApprove(item)}
-              onReject={(item) => {
-                setSelectedResearch(item);
-                setIsRejectModalOpen(true);
-              }}
-              onView={(item) => {
-                navigate(`/scientific-research-details`, {
-                  state: { research: item },
-                });
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="fixed bottom-10 left-0 w-full flex justify-center z-50">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            t={t}
-            isArabic={isArabic}
-          />
-        </div>
+        {/* الجدول الجديد مع كل الخصائص المطلوبة */}
+        <NominatedResearchesTable
+          researches={filteredItems}
+          loading={loading}
+          isArabic={isArabic}
+          t={t}
+          isSelectionMode={isSelectionMode}
+          toggleSelectionMode={() => {
+            setIsSelectionMode(!isSelectionMode);
+            setSelectedIds([]); // تصغير القائمة عند إغلاق الوضع
+          }}
+          selectedIds={selectedIds}
+          setSelectedIds={setSelectedIds}
+          handleBulkApprove={handleBulkApprove}
+          handleBulkReject={handleBulkReject}
+          handleApprove={handleApprove}
+          handleReject={handleReject}
+          setShowFilterModal={setShowFilterModal}
+          page={currentPage}
+          totalPages={totalPages}
+          setPage={setCurrentPage}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
       </div>
 
-      {/* Reject Modal */}
-      {isRejectModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-[400px] shadow-lg">
-            <h2 className="text-lg font-semibold mb-4 text-center">
-              {isArabic
-                ? "هل أنت متأكد من رفض هذا البحث؟"
-                : "Are you sure you want to reject this research?"}
-            </h2>
-
-            <div className="flex justify-between mt-6">
-              <button
-                className="px-4 py-2 bg-gray-300 rounded-md"
-                onClick={() => {
-                  setIsRejectModalOpen(false);
-                  setSelectedResearch(null);
-                }}
-              >
-                {isArabic ? "إلغاء" : "Cancel"}
-              </button>
-
-              <button
-                className="px-4 py-2 bg-red-600 text-white rounded-md"
-                onClick={async () => {
-                  await handleReject(selectedResearch);
-                  setIsRejectModalOpen(false);
-                  setSelectedResearch(null);
-                }}
-              >
-                {isArabic ? "تأكيد الرفض" : "Confirm Reject"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* مودال الفلترة */}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
           <CustomizeResultsModal

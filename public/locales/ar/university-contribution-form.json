@@ -1,5 +1,7 @@
 {
   "contribution_name": "اسم المساهمة",
+  "add_contribution_title": "اضافة مساهمة ",
+  "edit_contribution_title": "تعديل مساهمة ",
   "enter_contribution_name": "ادخل اسم المساهمة",
   "contribution_name_required": "اسم المساهمة مطلوب",
   "contribution_type": "نوع المساهمة",
@@ -12,6 +14,7 @@
   "description": "الوصف",
   "enter_description": "ادخل الوصف",
   "save": "حفظ",
+  "cancel":"الغاء",
   "loading": "جارٍ التحميل",
   "submit_error": "فشل في إرسال النموذج. حاول مرة أخرى.",
   "general_error": "خطأ عام"

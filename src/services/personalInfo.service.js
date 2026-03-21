@@ -1,12 +1,20 @@
 import axiosInstance from "../utils/axiosInstance";
 
-
-export const replaceProfilePicture = (entityId, oldAttachmentId, file) => {
+export const handleProfilePictureUpload = (entityId, oldAttachmentId, file) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  return axiosInstance.put(
-    `/Attachments/${entityId}/${oldAttachmentId}?context=3`,
-    formData
-  );
+  if (oldAttachmentId) {
+    // تحديث صورة موجودة مسبقاً
+    return axiosInstance.put(
+      `/Attachments/${entityId}/${oldAttachmentId}?context=3`,
+      formData
+    );
+  } else {
+    // رفع صورة لأول مرة
+    return axiosInstance.post(
+      `/Attachments/${entityId}?context=3`,
+      formData
+    );
+  }
 };

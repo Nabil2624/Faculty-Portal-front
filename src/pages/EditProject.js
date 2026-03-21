@@ -32,6 +32,7 @@ export default function AddEditProject() {
   return (
     <Layout>
       <ProjectForm
+      formTitle={t("editTitle")}
         t={t}
         isArabic={isArabic}
         projectTypes={projectTypes}

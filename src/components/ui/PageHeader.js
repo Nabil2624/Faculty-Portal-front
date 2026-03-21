@@ -70,7 +70,7 @@ export default function PageHeader({
         {/* Filter */}
         <div
           onClick={onFilterClick}
-          className="border-2 border-[#b38e19] rounded-md flex items-center justify-center cursor-pointer"
+          className="border-2 border-[#b38e19] hover:bg-[#d0a929] rounded-md flex items-center justify-center cursor-pointer"
           style={{
             flexShrink: 0,
             width: "clamp(2rem, 3vw, 4rem)",
@@ -84,21 +84,6 @@ export default function PageHeader({
             }}
           />
         </div>
-
-        {/* Add Button */}
-        {onAdd && (
-          <button
-            onClick={onAdd}
-            className="bg-[#b38e19] text-white rounded-md font-medium px-2 md:px-4"
-            style={{
-              flexShrink: 0,
-              height: "clamp(2.2rem, 3vw, 4rem)",
-              fontSize: "clamp(0.9rem, 1vw, 2rem)",
-            }}
-          >
-            {addLabel}
-          </button>
-        )}
       </div>
     </div>
   );

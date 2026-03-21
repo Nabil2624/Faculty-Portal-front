@@ -98,7 +98,7 @@ export default function PersonalDataPage() {
 
             {/* زرار Edit */}
             <button
-              onClick={() => navigate("/editpersonal", { state: personalData })}
+              // onClick={() => navigate("/editpersonal", { state: personalData })}
               className="mt-6 bg-[#b38e19] text-white px-6 py-2 rounded-md"
             >
               {t("edit")}

@@ -25,3 +25,7 @@ export const deleteScientificMission = async (id) => {
     skipGlobalErrorHandler: true,
   });
 };
+export const missionService = {
+  create: (data) => axiosInstance.post("/Missions/CreateScientificMission", data),
+  update: (id, data) => axiosInstance.put(`/Missions/UpdateScientificMission/${id}`, data),
+};

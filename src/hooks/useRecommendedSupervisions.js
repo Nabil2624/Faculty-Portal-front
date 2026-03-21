@@ -6,7 +6,13 @@ import {
   rejectRecommendedSupervision,
 } from "../services/recomendedSupervision.service";
 
-export default function useRecommendedSupervisions() {
+export default function useRecommendedSupervisions(
+  search,
+  sortValue,
+  gradeIds,
+  role,
+  type,
+) {
   const { t, i18n } = useTranslation("RecommendedSupervisions");
   const isArabic = i18n.language === "ar";
 
@@ -27,6 +33,11 @@ export default function useRecommendedSupervisions() {
       const response = await fetchRecommendedSupervisions(
         currentPage,
         pageSize,
+        search,
+        sortValue,
+        gradeIds,
+        role,
+        type,
       );
 
       const result = response.data;
@@ -77,7 +88,7 @@ export default function useRecommendedSupervisions() {
 
   useEffect(() => {
     loadData();
-  }, [currentPage, i18n.language]);
+  }, [currentPage, i18n.language, search, sortValue, gradeIds, role, type]);
 
   const handleApprove = async (item) => {
     await approveRecommendedSupervision(item.id);

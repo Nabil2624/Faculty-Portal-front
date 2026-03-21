@@ -13,7 +13,7 @@ export default function useTheses(page, pageSize = 4, search, sortValue, gradeId
     setError(null);
 
     try {
-      const res = await getTheses({page, pageSize, search, sort: sortValue, GradesID:gradeIds, Types: type});
+      const res = await getTheses({pageIndex:page, pageSize, search, sort: sortValue, GradesID:gradeIds, Types: type});
 
       const { data, totalCount } = res.data;
 

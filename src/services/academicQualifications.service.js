@@ -85,3 +85,27 @@ export const deleteAcademicQualificationAttachment = async (
     `/Attachments/${entityId}/${attachmentId}?context=7`,
   );
 };
+
+
+export const academicService = {
+  getLookups: () => Promise.all([
+    axiosInstance.get("/LookUpItems/AcademicGrades"),
+    axiosInstance.get("/LookUpItems/DispatchTypes"),
+    axiosInstance.get("/LookUpItems/AcademicQualifications"),
+  ]),
+
+  create: (data) => axiosInstance.post("/ScientificProgression/CreateAcademicQualification", data),
+  
+  update: (id, data) => axiosInstance.put(`/ScientificProgression/UpdateAcademicQualification/${id}`, data),
+
+  uploadAttachment: (entityId, file) => {
+    const formData = new FormData();
+    formData.append("files", file);
+    return axiosInstance.post(`/Attachments/${entityId}?context=7`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  deleteAttachment: (entityId, attachmentId) => 
+    axiosInstance.delete(`/Attachments/Delete/${entityId}/${attachmentId}?context=7`)
+};

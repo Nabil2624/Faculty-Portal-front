@@ -10,7 +10,9 @@ import PageHeader from "../components/ui/PageHeader";
 import useCommitteeLookups from "../hooks/useCommitteeLookups";
 import CommitteesModals from "../components/widgets/CommitteeAndAssociation/CommitteesModals";
 import useCommitteesAndAssociations from "../hooks/useCommitteesAndAssociations";
-
+import { UserRound } from "lucide-react";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import CommitteeMasterDetailTable from "../components/widgets/CommitteeAndAssociation/CommitteeMasterDetailTable";
 export default function CommitteesAndAssociationsPage() {
   const { t, i18n } = useTranslation("CommitteesAssociations");
   const isArabic = i18n.language === "ar";
@@ -101,16 +103,6 @@ export default function CommitteesAndAssociationsPage() {
     setCurrentPage(1);
   };
 
-  const handleDeleteClick = (item) => {
-    setSelectedItem(item);
-    setShowDelete(true);
-  };
-
-  const handleDetailsClick = (item) => {
-    setSelectedItem(item);
-    setShowDetails(true);
-  };
-
   const confirmDelete = async () => {
     if (!selectedItem?.id) return;
 
@@ -127,7 +119,7 @@ export default function CommitteesAndAssociationsPage() {
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
         {/* Header */}
-        <PageHeader
+        <PageHeaderNoAction
           title={t("title")}
           addLabel={t("add")}
           onAdd={() => navigate("/add-committee-associations")}
@@ -138,47 +130,35 @@ export default function CommitteesAndAssociationsPage() {
           searchPlaceholder={t("search")}
           isArabic={isArabic}
           onFilterClick={() => setShowFilterModal(true)}
+          icon={UserRound}
         />
 
-        <div className="items-center justify-center">
-          {!loading && error && (
-            <div className="text-red-500 text-lg text-center">
-              {t("fetchError")}
-            </div>
-          )}
-
-          {!loading && !error && committees.length === 0 && (
-            <div className="text-gray-500 text-xl text-center">
-              {t("empty")}
-            </div>
-          )}
+        {!loading && error && (
+          <div className="text-red-500 text-lg text-center">
+            {t("fetchError")}
+          </div>
+        )}
+        <div className=" flex-1 overflow-hidden">
+          <CommitteeMasterDetailTable
+            data={committees}
+            onEdit={(item) =>
+              navigate("/edit-committee-associations", {
+                state: { item },
+              })
+            }
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+            }}
+            onAdd={() => navigate("/add-committee-associations")}
+            onFilterClick={() => setShowFilterModal(true)}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
+          />
         </div>
-        {/* Content */}
-        <div className="flex-1">
-          {!loading && !error && committees.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {committees.map((item, idx) => (
-                <CommitteeCard
-                  key={item.id ?? idx}
-                  item={item}
-                  isArabic={isArabic}
-                  onDelete={handleDeleteClick}
-                  onDetails={handleDetailsClick}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Pagination ثابت */}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          isArabic={isArabic}
-          t={t}
-          onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-          onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-        />
       </div>
 
       {/* Modals */}

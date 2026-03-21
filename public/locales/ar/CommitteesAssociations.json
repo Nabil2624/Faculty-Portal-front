@@ -11,11 +11,24 @@
   "delete": "حذف",
   "cancel": "إلغاء",
   "areYouSureDelete": "هل أنت متأكد من الحذف؟",
-  "previous": "السابق",
-  "next": "التالي",
-  "page": "الصفحة",
-  "of": "من",
+
   "empty": "لا توجد لجان أو جمعيات",
   "fetchError": "فشل في تحميل البيانات",
-  "deleteError": "فشل في حذف العنصر"
+  "deleteError": "فشل في حذف العنصر",
+  "committees": {
+    "searchPlaceholder": "ابحث باسم اللجنة أو الجمعية...",
+    "addNew": "إضافة لجنة / جمعية جديدة",
+    "filter": "تصفية",
+    "noDataAvailable": "لا توجد لجان أو جمعيات مضافة",
+    "backToList": "العودة الى القائمة",
+    "documentDetails": "تفاصيل اللجنة / الجمعية",
+    "selectItemToPreview": "اختر لجنة / جمعية من القائمة لعرض تفاصيلها",
+    "type": "النوع",
+    "participationLevel": "درجة الاشتراك",
+    "startDate": "تاريخ البداية",
+    "endDate": "تاريخ النهاية",
+    "present": "حتى الآن",
+    "notes": "ملاحظات / ملخص",
+    "noDescriptionAdded": "لا توجد ملاحظات إضافية."
+  }
 }

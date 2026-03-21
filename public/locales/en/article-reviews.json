@@ -13,5 +13,18 @@
   "of": "of",
   "empty": "No articles found",
   "fetchError": "Failed to fetch articles",
-    "deleteError": "Failed to delete the article"
+  "deleteError": "Failed to delete the article",
+  "articles": {
+    "searchPlaceholder": "Search for an article...",
+    "addNew": "Add New Article",
+    "documentDetails": "Article Review Details",
+    "backToList": "Back to List",
+    "selectItemToPreview": "Select an article to preview details",
+    "noDataAvailable": "No articles available",
+    "organization": "Organization",
+    "reviewDate": "Article Review Date",
+    "description": "Article Review Description",
+    "noDescription": "No description added",
+    "filter": "Filter"
+  }
 }

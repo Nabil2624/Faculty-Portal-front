@@ -10,7 +10,7 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 export default function EditTrainingProgram() {
   const location = useLocation();
   const navigate = useNavigate();
-  const existingData = location.state?.programData || {};
+  const existingData = location.state?.item || {};
   const { t, i18n } = useTranslation("add-training-program");
   const isArabic = i18n.language === "ar";
   const [loading, setLoading] = useState(false);

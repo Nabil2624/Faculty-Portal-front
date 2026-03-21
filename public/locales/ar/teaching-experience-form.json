@@ -5,7 +5,7 @@
   },
   "fields": {
     "course": "المقرر",
-    "AcademicLevel": "الفرقة الدراسية",
+    "academicLevel": "الفرقة الدراسية",
     "university": "الجامعة / الكلية",
     "startDate": "تاريخ البداية",
     "endDate": "تاريخ النهاية",

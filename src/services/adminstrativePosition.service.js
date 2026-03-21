@@ -25,3 +25,10 @@ export const deleteAdminPosition = async (id) => {
     { skipGlobalErrorHandler: true },
   );
 };
+export const adminPositionService = {
+  create: (data) => 
+    axiosInstance.post("/ScientificProgression/CreateAdministrativePosition", data, { skipGlobalErrorHandler: true }),
+  
+  update: (id, data) => 
+    axiosInstance.put(`/ScientificProgression/UpdateAdministrativePosition/${id}`, { id, ...data }, { skipGlobalErrorHandler: true }),
+};

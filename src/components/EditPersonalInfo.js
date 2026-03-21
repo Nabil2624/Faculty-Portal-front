@@ -1,275 +1,227 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import Layout from "../components/Layout";
-import subPicture from "../assets/profile.jpg";
-import { FiUpload, FiCalendar } from "react-icons/fi";
+import { FiUpload, FiCalendar, FiSave, FiX } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import LoadingSpinner from "./LoadingSpinner";
+import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
+import subPicture from "../assets/prof.jpg";
 
+// --- Upload function تدعم array ---
+export const handleProfilePictureUpload = (entityId, oldAttachmentId, files) => {
+  if (!files || files.length === 0) return Promise.resolve();
+
+  const formData = new FormData();
+  const fileToSend = files[0]; // أول ملف فقط
+
+  if (oldAttachmentId) {
+    // تعديل صورة موجودة → newAttachment
+    formData.append("newAttachment", fileToSend);
+
+    return axiosInstance.put(
+      `/Attachments/${entityId}/${oldAttachmentId}?context=3`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+  } else {
+    // رفع صورة جديدة → files
+    formData.append("files", fileToSend);
+
+    return axiosInstance.post(
+      `/Attachments/${entityId}?context=3`,
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+  }
+};
 export default function EditPersonalInfo() {
   const { t, i18n } = useTranslation("PersonalData");
   const isArabic = i18n.language === "ar";
-
   const navigate = useNavigate();
   const location = useLocation();
-
   const routerData = location.state;
 
   const [personalInfo, setPersonalInfo] = useState({});
   const [profileImage, setProfileImage] = useState(subPicture);
+  const [imageFiles, setImageFiles] = useState([]); // array من الصور
   const [loading, setLoading] = useState(true);
-
+  const [err, setErr] = useState("");
   const dateInputRef = useRef(null);
 
-  // ----------------------------------------------------------
-  // SIMPLE NONE CHECK
-  // ----------------------------------------------------------
-  const showValue = (value) => {
-    if (!value || value === "") return t("none");
-    return value;
-  };
-
-  // ----------------------------------------------------------
-  // OBJECT FIELD TRANSLATION
-  // ----------------------------------------------------------
-  const getTranslated = (obj) => {
-    if (!obj) return t("none");
-    return isArabic ? obj.valueAr || t("none") : obj.valueEn || t("none");
-  };
-
-  // ----------------------------------------------------------
-  // LOAD DATA (MATCH PERSONAL DATA PAGE)
-  // ----------------------------------------------------------
+  // --- Fetch data on mount ---
   useEffect(() => {
-    if (routerData) {
-      setPersonalInfo({ ...routerData });
-      setLoading(false);
-      return;
-    }
-
     const fetchData = async () => {
-      setLoading(true);
-
       try {
-        const res = await axiosInstance.get("/FacultyMemberData/PersonalData", {
-          skipGlobalErrorHandler: true,
-        });
+        let data = routerData;
+        if (!data) {
+          const res = await axiosInstance.get("/FacultyMemberData/PersonalData");
+          data = res.data;
+        }
+        setPersonalInfo(data || {});
 
-        setPersonalInfo(res.data || {});
+        if (data?.profilePicture?.id) {
+          setProfileImage(
+            `${axiosInstance.defaults.baseURL}/Attachments/${data.id}/${data.profilePicture.id}?context=3`
+          );
+        }
       } catch (err) {
-        console.error("Failed to load personal data:", err);
-        setPersonalInfo({});
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, [routerData, isArabic]);
+  }, [routerData]);
 
-  // ----------------------------------------------------------
-  // HANDLERS
-  // ----------------------------------------------------------
-  const handleChange = (key, value) => {
+  const handleChange = (key, value) =>
     setPersonalInfo((prev) => ({ ...prev, [key]: value }));
-  };
 
-  const handlePhotoUpload = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setProfileImage(URL.createObjectURL(e.target.files[0]));
+  const handlePhotoChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const filesArray = Array.from(e.target.files);
+      setImageFiles(filesArray);
+      setProfileImage(URL.createObjectURL(filesArray[0])); // عرض أول صورة مؤقتًا
     }
   };
- 
-  const openDatePicker = () => {
-    if (!dateInputRef.current) return;
-
-    if (dateInputRef.current.showPicker) {
-      dateInputRef.current.showPicker();
-    } else {
-      dateInputRef.current.focus();
-    }
-  };
-
-  // ----------------------------------------------------------
-  // SAVE (UPDATED TO MATCH PERSONALDATAPAGE)
-  // ----------------------------------------------------------
   const handleSave = async () => {
-    try {
-      await axiosInstance.put(
-        "/FacultyMemberData/UpdatePersonalData",
-        personalInfo,
-        { skipGlobalErrorHandler: true },
-      );
+    const entityId = personalInfo.id;
+    const oldAttachmentId = personalInfo.profilePicture?.id || null;
 
-      navigate("/personal");
-    } catch (err) {
-      console.error("Failed to update personal data:", err);
+    if (!entityId) {
+      setErr("User ID is missing.");
+      return;
+    }
+
+    setLoading(true);
+    setErr("");
+
+    try {
+      
+      if (imageFiles.length > 0) {
+        await handleProfilePictureUpload(entityId, oldAttachmentId, imageFiles);
+      }
+
+      // تحديث البيانات الشخصية
+      await axiosInstance.put("/FacultyMemberData/UpdatePersonalData", personalInfo);
+
+      navigate("/personal-data");
+    } catch (error) {
+      console.error("Save error:", error.response?.data || error.message);
+      setErr(t("updateFailed") || "Update failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex justify-center items-center h-screen text-xl font-semibold text-[#19355a]">
-          {t("loading")}...
-        </div>
-      </Layout>
-    );
-  }
-
-  // ----------------------------------------------------------
-  // OBJECT FIELD NAMES
-  // ----------------------------------------------------------
-  const objectFields = [
-    "title",
-    "gender",
-    "maritalStatus",
-    "university",
-    "department",
-    "authority",
-    "field",
+  const orderedKeys = [
+    { key: "name" },
+    { key: "nationalNumber", disabled: true },
+    { key: "nameInComposition" },
+    { key: "birthDate", type: "date" },
+    { key: "birthPlace" },
+    { key: "gender", disabled: true },
+    { key: "maritalStatus" },
+    { key: "title" },
+    { key: "university" },
+    { key: "department" },
+    { key: "authority" },
+    { key: "field" },
+    { key: "generalSpecialization" },
+    { key: "accurateSpecialization" },
   ];
 
-  // ----------------------------------------------------------
-  // UI
-  // ----------------------------------------------------------
+  if (loading) return <LoadingSpinner />;
+
   return (
-    <Layout>
+    <ResponsiveLayoutProvider>
       <style>{`
-        input[type="date"]::-webkit-calendar-picker-indicator { display:none; }
+        input[type="date"]::-webkit-calendar-picker-indicator { display: none; }
+        .no-scroll-textarea::-webkit-scrollbar { width: 4px; }
+        .no-scroll-textarea::-webkit-scrollbar-thumb { background: #b38e19; border-radius: 10px; }
+        :root {
+          --fluid-text-xs: clamp(0.75rem, 0.7vw + 0.5rem, 0.875rem);
+          --fluid-h2: clamp(1.125rem, 1.5vw + 0.5rem, 1.5rem);
+          --fluid-gap: clamp(0.625rem, 1.2vw, 1.70rem);
+        }
       `}</style>
 
-      <div className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col`}>
-        <h2 className="text-3xl font-bold mb-20">
-          {t("editPersonalData")}
-          <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
-        </h2>
-
-        <div className="flex flex-wrap justify-center flex-row-reverse gap-x-20">
-          {/* IMAGE ------------------------------------------------ */}
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-[200px] h-[280px] rounded-lg overflow-hidden">
-              <img src={profileImage} className="w-full h-full object-cover" />
+      <div className={`min-h-[90vh] w-full bg-[#fcfcfc] flex flex-col p-3 ${isArabic ? "rtl text-right" : "ltr text-left"}`}>
+        {/* Header */}
+        <div className="w-full flex justify-between items-center bg-white p-2 rounded-2xl shadow-sm border-b-[3px] border-[#b38e19] mb-6">
+          <div className="flex items-center gap-3">
+            <div className="relative group w-14 h-14 rounded-xl border-2 border-gray-100 overflow-hidden shadow-sm bg-gray-50 shrink-0">
+              <img src={profileImage} className="w-full h-full object-cover" alt="Profile" />
+              <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center cursor-pointer">
+                <FiUpload className="text-white text-lg" />
+                <input type="file" className="hidden" onChange={handlePhotoChange} accept="image/*" multiple />
+              </label>
             </div>
-
-            <label className="flex items-center gap-2 cursor-pointer bg-[#19355a] text-white px-4 py-2 rounded-md">
-              <FiUpload />
-              {t("uploadPhoto")}
-              <input
-                type="file"
-                className="hidden"
-                onChange={handlePhotoUpload}
-              />
-            </label>
+            <div>
+              <h2 className="text-[#19355a] font-semibold text-xl leading-tight">{t("editPersonalData")}</h2>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{isArabic ? "البيانات الشخصية" : "Personal Data"}</p>
+            </div>
           </div>
-
-          {/* BUTTONS ------------------------------------------------ */}
-          <div
-            className={`flex gap-3 mt-6 absolute ${
-              isArabic ? "left-[53px]" : "right-[53px]"
-            } bottom-[28px]`}
-          >
-            <button
-              className="bg-[#b38e19] text-white w-24 h-10 rounded-md"
-              onClick={handleSave}
-            >
-              {t("save")}
+          <div className="flex gap-2">
+            <button onClick={() => navigate("/personal-data")} className="px-6 py-2 text-xs text-gray-500 border border-gray-200 hover:bg-gray-50 rounded-xl flex items-center gap-1.5 transition-all">
+              <FiX size={16} /> {t("cancel")}
             </button>
-
-            <button
-              className="bg-gray-300 w-24 h-10 rounded-md"
-              onClick={() => navigate("/personal")}
-            >
-              {t("cancel")}
+            <button onClick={handleSave} className="px-6 py-2 text-xs bg-[#19355a] text-white font-black rounded-xl flex items-center gap-2 hover:bg-[#244a7d] transition-all shadow-md border-b-[3px] border-[#b38e19]">
+              <FiSave size={14} className="text-[#b38e19]" /> {t("save")}
             </button>
           </div>
+        </div>
 
-          {/* FIELDS ------------------------------------------------ */}
-          <div className="flex-1 min-w-[200px] max-w-[1050px] flex flex-col gap-4">
-            <div className="grid grid-cols-3 gap-5">
-              {[
-                "name",
-                "nationalNumber",
-                "title",
-                "gender",
-                "maritalStatus",
-                "university",
-                "department",
-                "authority",
-                "field",
-                "generalSpecialization",
-                "accurateSpecialization",
-                "birthDate",
-                "birthPlace",
-                "nameInComposition",
-              ].map((key) => (
-                <div
-                  key={key}
-                  className="flex h-[40px] rounded-md overflow-hidden border border-gray-300"
-                >
-                  <label className="bg-[#19355a] text-white w-32 flex items-center justify-center">
-                    {t(key)}
+        {/* Main Form */}
+        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+          {err && <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-xs font-bold">{err}</div>}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {orderedKeys.map((item) => {
+              const isObj = ["title", "gender", "maritalStatus", "university", "department", "authority", "field"].includes(item.key);
+              const val = isObj ? (isArabic ? personalInfo[item.key]?.valueAr : personalInfo[item.key]?.valueEn) : personalInfo[item.key];
+
+              return (
+                <div key={item.key} className="flex flex-col">
+                  <label className="text-[10px] font-black text-[#19355a]/50 mb-1 px-1 uppercase tracking-tight">
+                    {t(item.key)}
                   </label>
-
-                  {key === "birthDate" ? (
-                    <div className="relative flex-1 flex items-center bg-gray-200">
-                      <FiCalendar
-                        onClick={openDatePicker}
-                        size={18}
-                        className={`cursor-pointer absolute text-[#B38E19] ${
-                          isArabic ? "left-3" : "right-3"
-                        }`}
-                      />
-                      <input
-                        ref={dateInputRef}
-                        type="date"
-                        value={personalInfo[key] || ""}
-                        onChange={(e) => handleChange(key, e.target.value)}
-                        className="w-full text-center bg-gray-200 outline-none"
-                      />
-                    </div>
-                  ) : (
+                  <div className="relative">
                     <input
-                      type="text"
-                      value={
-                        objectFields.includes(key)
-                          ? isArabic
-                            ? personalInfo[key]?.valueAr || ""
-                            : personalInfo[key]?.valueEn || ""
-                          : personalInfo[key] || ""
-                      }
-                      onChange={(e) => handleChange(key, e.target.value)}
-                      disabled={key === "nationalNumber" || key === "gender"}
-                      className={`flex-1 px-2 text-center outline-none ${
-                        key === "nationalNumber" || key === "gender"
-                          ? "bg-gray-100 cursor-not-allowed text-gray-500"
-                          : "bg-gray-200"
+                      type={item.type || "text"}
+                      ref={item.type === "date" ? dateInputRef : null}
+                      disabled={item.disabled}
+                      value={val || ""}
+                      onChange={(e) => handleChange(item.key, e.target.value)}
+                      className={`w-full h-10 px-3 rounded-xl border-2 transition-all outline-none text-sm text-center ${
+                        item.disabled ? "bg-gray-50 border-gray-100 text-gray-300" : "bg-white border-gray-100 focus:border-[#b38e19] focus:ring-2 focus:ring-[#b38e19]/5"
                       }`}
                     />
-                  )}
+                    {item.type === "date" && (
+                      <FiCalendar
+                        onClick={() => dateInputRef.current?.showPicker()}
+                        className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? "left-3" : "right-3"} text-[#b38e19] cursor-pointer hover:scale-110 transition-transform`}
+                      />
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
 
-            {/* COMPOSITION TOPICS ----------------------------------- */}
-            <div className="w-full mt-10">
-              <div className="max-w-[690px]">
-                <h3 className="text-xl font-bold mb-2">
-                  {t("compositionTopicTitle")}
-                </h3>
-
-                <textarea
-                  value={personalInfo.compositionTopics || ""}
-                  onChange={(e) =>
-                    handleChange("compositionTopics", e.target.value)
-                  }
-                  className="bg-gray-200 text-black rounded-[12px] border border-[#19355a] w-full h-[120px] p-4 overflow-y-auto break-words whitespace-pre-wrap"
-                />
-              </div>
+            {/* Topics Section */}
+            <div className="col-span-1 md:col-span-2 lg:col-span-4 mt-4 pt-4 border-t border-gray-50">
+              <label className="text-[10px] font-black text-[#19355a]/50 mb-2 block px-1 uppercase tracking-wider">
+                {t("compositionTopicTitle")}
+              </label>
+              <textarea
+                value={personalInfo.compositionTopics || ""}
+                onChange={(e) => handleChange("compositionTopics", e.target.value)}
+                className="w-full min-h-[100px] p-3 rounded-2xl border-2 border-gray-100 bg-gray-50/30 focus:border-[#b38e19] focus:bg-white outline-none resize-none no-scroll-textarea transition-all text-sm"
+                placeholder="..."
+              />
             </div>
           </div>
         </div>
       </div>
-    </Layout>
+    </ResponsiveLayoutProvider>
   );
-}
+} 

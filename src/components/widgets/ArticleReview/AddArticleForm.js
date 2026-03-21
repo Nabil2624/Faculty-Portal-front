@@ -1,208 +1,170 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Calendar, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import InputField from "../../ui/InputField";
+import DateField from "../../ui/DateField";
+import FormButton from "../../ui/FormButton";
+import PageHeaderNoAction from "../../ui/PageHeaderNoAction";
+import { FileText } from "lucide-react";
 import axiosInstance from "../../../utils/axiosInstance";
+import ResponsiveLayoutProvider from "../../ResponsiveLayoutProvider";
 
 export default function AddArticleForm({ onCancel, onSuccess }) {
   const { t, i18n } = useTranslation("AddArticleForm");
+  const navigate = useNavigate();
   const dir = i18n.dir();
   const isArabic = i18n.language === "ar";
 
-  // Form state with backend field names
-  const [formData, setFormData] = useState({
-    titleOfArticle: "",
-    authority: "",
-    reviewingDate: "",
-    description: "",
-  });
+  // 1. تعريف States منفصلة لكل حقل لضمان أعلى أداء واستقرار أثناء الكتابة
+  const [titleOfArticle, setTitleOfArticle] = useState("");
+  const [authority, setAuthority] = useState("");
+  const [reviewingDate, setReviewingDate] = useState("");
+  const [description, setDescription] = useState("");
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const reviewDateRef = useRef(null);
-  const [reviewFocused, setReviewFocused] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const openDatePicker = (ref) => {
-    if (!ref?.current) return;
-    try {
-      ref.current.showPicker();
-    } catch {
-      ref.current.focus();
-    }
-  };
-
   const validate = () => {
     const newErrors = {};
-    if (!formData.titleOfArticle.trim())
-      newErrors.titleOfArticle = t("required_article_name");
-    if (!formData.authority.trim()) newErrors.authority = t("required_entity");
-    if (!formData.reviewingDate.trim())
-      newErrors.reviewingDate = t("required_review_date");
+    if (!titleOfArticle.trim()) newErrors.titleOfArticle = t("required_article_name");
+    if (!authority.trim()) newErrors.authority = t("required_entity");
+    if (!reviewingDate.trim()) newErrors.reviewingDate = t("required_review_date");
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!validate()) return;
 
     setLoading(true);
     setErrors({});
 
+  
+    const finalData = {
+      titleOfArticle,
+      authority,
+      reviewingDate,
+      description,
+    };
+
     try {
       const response = await axiosInstance.post(
         "/ProjectsAndCommittees/CreateReviewingArticle",
-        formData,
+        finalData,
         { skipGlobalErrorHandler: true }
       );
 
-      // تحقق على نجاح الإضافة
-      if (response.status === 200 && response.data?.id) {
-        onSuccess && onSuccess(response.data);
-        onCancel && onCancel();
+      if (response.status === 200) {
+        onSuccess?.(response.data);
+        // التوجيه للصفحة المطلوبة
+        navigate("/article-reviews");
+        onCancel?.();
       } else {
         setErrors({ submit: t("submit_error") });
       }
     } catch (err) {
-      console.error(err);
       setErrors({ submit: t("submit_error") });
     } finally {
       setLoading(false);
     }
   };
 
-  const inputClass =
-    "w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 transition duration-150 bg-[#E2E2E2]";
-  const focusClasses =
-    "focus:outline-none focus:ring-2 focus:ring-[#B38E19] transition duration-150 shadow";
-
   return (
-    <form
-      key={i18n.language}
-      dir={dir}
-      onSubmit={handleSubmit}
-      className="w-[420px] max-w-full bg-[#EDEDED] border-[#b38e19] border-2 rounded-xl shadow-sm p-6"
-    >
-      {/* Header */}
-      <div className="flex items-center justify-center mb-6">
-        <Plus className="text-[#B38E19] mx-1" size={23} />
-        <h2 className="text-xl font-semibold text-gray-800">{t("add_article")}</h2>
-      </div>
+    <ResponsiveLayoutProvider>
+      <div className={`flex flex-col bg-[#f8fafc] h-full ${dir}`}>
+        <PageHeaderNoAction title={t("add_article")} icon={FileText} />
 
-      {/* Title of Article */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("article_name")} <span className="text-[#B38E19]">*</span>
-        </label>
-        <input
-          type="text"
-          name="titleOfArticle"
-          value={formData.titleOfArticle}
-          onChange={handleChange}
-          className={`${inputClass} ${focusClasses}`}
-          placeholder={t("enter_article_name")}
-        />
-        {errors.titleOfArticle && (
-          <p className="text-red-500 text-sm mt-1">{errors.titleOfArticle}</p>
-        )}
-      </div>
+        <main className="flex-1 p-[clamp(1rem,2.5vw,2.5rem)] flex items-center justify-center">
+          <div className="w-full max-w-[clamp(80%,92%,1600px)] bg-white rounded-[clamp(1rem,1.5vw,2rem)] shadow-xl border border-gray-100 flex flex-col relative">
+            
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(1.5rem,4vw,5rem)] p-[clamp(1.5rem,2vw,4rem)] relative z-20">
+              
+              <div className="space-y-[clamp(1rem,1.8vw,2.5rem)]">
+                <InputField
+                  label={t("article_name")}
+                  name="titleOfArticle"
+                  value={titleOfArticle}
+                  onChange={(e) => setTitleOfArticle(e.target.value)} // تحديث مباشر
+                  placeholder={t("enter_article_name")}
+                  required
+                  disabled={loading}
+                  error={errors.titleOfArticle}
+                />
 
-      {/* Authority */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("entity")} <span className="text-[#B38E19]">*</span>
-        </label>
-        <input
-          type="text"
-          name="authority"
-          value={formData.authority}
-          onChange={handleChange}
-          className={`${inputClass} ${focusClasses}`}
-          placeholder={t("enter_entity")}
-        />
-        {errors.authority && (
-          <p className="text-red-500 text-sm mt-1">{errors.authority}</p>
-        )}
-      </div>
+                <InputField
+                  label={t("entity")}
+                  name="authority"
+                  value={authority}
+                  onChange={(e) => setAuthority(e.target.value)} // تحديث مباشر
+                  placeholder={t("enter_entity")}
+                  required
+                  disabled={loading}
+                  error={errors.authority}
+                />
+              </div>
 
-      {/* Reviewing Date */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("review_date")} <span className="text-[#B38E19]">*</span>
-        </label>
-        <div className="relative">
-          <input
-            type="text"
-            name="reviewingDate"
-            value={formData.reviewingDate}
-            readOnly
-            onClick={() => openDatePicker(reviewDateRef)}
-            className={`${inputClass} ${focusClasses} ${
-              reviewFocused ? "ring-2 ring-[#B38E19]" : ""
-            } cursor-pointer`}
-            placeholder={t("select_review_date")}
-          />
-          <input
-            ref={reviewDateRef}
-            type="date"
-            value={formData.reviewingDate}
-            onChange={(e) =>
-              setFormData((p) => ({ ...p, reviewingDate: e.target.value }))
-            }
-            onFocus={() => setReviewFocused(true)}
-            onBlur={() => setReviewFocused(false)}
-            className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10"
-            style={{ colorScheme: "light" }}
-            aria-hidden="true"
-            tabIndex={-1}
-          />
-          <Calendar
-            size={18}
-            className="absolute top-2.5 text-[#B38E19] cursor-pointer z-20"
-            style={dir === "rtl" ? { left: "10px" } : { right: "10px" }}
-            onClick={() => openDatePicker(reviewDateRef)}
-          />
-        </div>
-        {errors.reviewingDate && (
-          <p className="text-red-500 text-sm mt-1">{errors.reviewingDate}</p>
-        )}
-      </div>
+              <div className="space-y-[clamp(1rem,1.8vw,2.5rem)] lg:border-s lg:ps-[clamp(1.5rem,4vw,5rem)] border-gray-100 flex flex-col">
+                <DateField
+                  label={t("review_date")}
+                  value={reviewingDate}
+                  onChange={(val) => setReviewingDate(val)} // تحديث مباشر
+                  required
+                  disabled={loading}
+                  placeholder={t("select_review_date")}
+                  error={errors.reviewingDate}
+                  isArabic={isArabic}
+                />
 
-      {/* Description */}
-      <div className="mb-6">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("description")}
-        </label>
-        <textarea
-          name="description"
-          rows="3"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder={t("enter_description")}
-          className={`${inputClass} ${focusClasses} bg-[#f5f5f5] resize-none text-gray-600`}
-        />
-      </div>
+                <div className="flex-1">
+                  <InputField
+                    label={t("description")}
+                    name="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)} // تحديث مباشر
+                    placeholder={t("enter_description")}
+                    textarea
+                    disabled={loading}
+                    className="h-full min-h-[clamp(150px,12vh,250px)]"
+                  />
+                </div>
 
-      {/* Submit Error */}
-      {errors.submit && <p className="text-red-500 text-center mb-4">{errors.submit}</p>}
+                {errors.submit && (
+                  <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm border border-red-100 text-center">
+                    {errors.submit}
+                  </div>
+                )}
+              </div>
+            </form>
 
-      {/* Buttons */}
-      <div className="flex justify-center gap-3 mt-8">
-        <button
-          type="submit"
-          disabled={loading}
-          className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${
-            isArabic ? "cairo" : "roboto"
-          } text-sm`}
-        >
-          {loading ? t("loading") : t("add")}
-        </button>
-      
+            <footer className="bg-gray-50/50 border-t border-gray-100 px-[clamp(1.5rem,3vw,4rem)] py-[clamp(1rem,1.5vw,2rem)] relative z-0">
+              <div className={`flex items-center gap-[clamp(1rem,1.5vw,2rem)] ${isArabic ? "flex-row-reverse" : "flex-row"}`}>
+                <div className="min-w-[clamp(140px,8vw,220px)]">
+                  <FormButton
+                    variant="primary"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="w-full !h-[clamp(45px,3vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
+                  >
+                    {loading ? t("loading") : t("add")}
+                  </FormButton>
+                </div>
+                <div className="min-w-[clamp(140px,8vw,220px)]">
+                  <FormButton
+                    variant="secondary"
+                    onClick={onCancel}
+                    disabled={loading}
+                    className="w-full !h-[clamp(45px,3vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
+                  >
+                    {t("cancel")}
+                  </FormButton>
+                </div>
+              </div>
+            </footer>
+          </div>
+        </main>
       </div>
-    </form>
+    </ResponsiveLayoutProvider>
   );
 }

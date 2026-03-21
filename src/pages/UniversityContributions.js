@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
-
+import { School } from "lucide-react";
 import useUniversityContribution from "../hooks/useUniversityContribution";
 import useUniversityContributionForm from "../hooks/useUniversityContributionForm";
 import useAddUniversityContributionForm from "../hooks/useAddUniversityContributionForm";
@@ -12,8 +12,10 @@ import useContributionTypeLookups from "../hooks/useContributionTypeLookups";
 
 import UniversityContributionCard from "../components/widgets/University Contribution/UniversityContributionCard";
 import UniversityContributionModal from "../components/widgets/University Contribution/UniversityContributionModal";
-
+import { useNavigate } from "react-router-dom";
 import { deleteUniversityContribution } from "../services/universityContribution.service";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import UniversityContributionsTable from "../components/widgets/University Contribution/UniversityContributionsTable";
 
 export default function UniversityContributions() {
   const { t, i18n } = useTranslation("university-contribution");
@@ -37,6 +39,8 @@ export default function UniversityContributions() {
 
   const [filtersState, setFiltersState] = useState({});
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const navigate = useNavigate();
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -140,16 +144,12 @@ export default function UniversityContributions() {
 
   /* ================= EDIT ================= */
   const handleEdit = (item) => {
-    setMode("edit");
-    setSelectedItem(item);
-    setShowForm(true);
+    navigate("/edit-university-contribution", { state: { item } });
   };
 
   /* ================= ADD ================= */
   const handleAdd = () => {
-    setMode("add");
-    setSelectedItem(null);
-    setShowForm(true);
+    navigate("/add-university-contribution");
   };
 
   return (
@@ -158,7 +158,7 @@ export default function UniversityContributions() {
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
         {/* Header */}
-        <PageHeader
+        <PageHeaderNoAction
           title={t("title")}
           addLabel={t("add")}
           onAdd={handleAdd}
@@ -168,6 +168,7 @@ export default function UniversityContributions() {
           searchPlaceholder={t("search")}
           isArabic={isArabic}
           onFilterClick={() => setShowFilterModal(true)}
+          icon={School}
         />
         {/* Error / Empty */}
         {!loading && error && (
@@ -179,53 +180,23 @@ export default function UniversityContributions() {
           </div>
         )}
 
-        {!loading && !error && contributions.length === 0 && (
-          <div
-            className="text-center text-gray-500"
-            style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
-          >
-            {t("empty")}
-          </div>
-        )}
-        {/* Grid */}
-        {!loading && !error && contributions.length > 0 && (
-          <div className="overflow-y-auto pr-2 mb-4 flex-1">
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${
-                isArabic ? "text-right" : "text-left"
-              }`}
-              style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
-            >
-              {contributions.map((item) => (
-                <UniversityContributionCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onEdit={() => handleEdit(item)}
-                  onDelete={(p) => {
-                    setSelectedItem(p);
-                    setShowDelete(true);
-                    setDeleteError(false);
-                  }}
-                  onDetails={(p) => {
-                    setSelectedItem(p);
-                    setShowDetails(true);
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Pagination */}
-        <div className="mt-auto">
-          <Pagination
+        <div className="flex-1 overflow-hidden">
+          <UniversityContributionsTable
+            data={contributions}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onEdit={handleEdit}
+            onAdd={handleAdd}
+            onFilterClick={() => setShowFilterModal(true)}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
             t={t}
-            isArabic={isArabic}
           />
         </div>
 

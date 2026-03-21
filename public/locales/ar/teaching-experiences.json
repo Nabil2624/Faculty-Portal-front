@@ -15,6 +15,10 @@
   "page": "الصفحة",
   "of": "من",
   "search": "ابحث في الخبرات...",
+  "noDescriptionAdded": "لا يوجد وصف",
+  "experienceDetails":"تفاصيل الخبرة التدريسية",
+  "description":"وصف الخبرة التدريسية",
+  "backToList":"العودة الى القائمة",
   "errors": {
     "loadFailed": "فشل تحميل البيانات",
     "deleteFailed": "فشل في عملية الحذف"

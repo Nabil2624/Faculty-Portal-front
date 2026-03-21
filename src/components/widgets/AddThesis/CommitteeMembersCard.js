@@ -77,7 +77,7 @@ export default function CommitteeMembersCard({
           {/* Name */}
           <label className="block mb-4 text-lg">{t("memberName")}</label>
           <input
-            className="h-[40px] bg-[#E2E2E2] text-[12px] outline-none w-full md:max-w-[510px] rounded-[3px] pr-3"
+            className="h-[40px] bg-white border border-gray-300 text-[12px] outline-none w-full md:max-w-[510px] rounded-[3px] pr-3"
             placeholder={t("memberNamePlaceholder")}
             value={member.name}
             onChange={(e) => updateMember(index, "name", e.target.value)}
@@ -93,7 +93,7 @@ export default function CommitteeMembersCard({
                   onClick={() =>
                     setOpenIndex(openIndex === index ? null : index)
                   }
-                  className="h-[40px] bg-[#E2E2E2] rounded-[3px] px-3 text-[12px] flex items-center justify-between cursor-pointer"
+                  className="h-[40px] bg-white border border-gray-300 rounded-[3px] px-3 text-[12px] flex items-center justify-between cursor-pointer"
                 >
                   <span>
                     {jobLevelOptions.find((j) => j.id === member.jobTitle)?.[
@@ -135,7 +135,7 @@ export default function CommitteeMembersCard({
                       openIndex === `org-${index}` ? null : `org-${index}`,
                     )
                   }
-                  className="h-[40px] bg-[#E2E2E2] rounded-[3px] px-3 text-[12px] flex items-center justify-between cursor-pointer"
+                  className="h-[40px] bg-white border border-gray-300 rounded-[3px] px-3 text-[12px] flex items-center justify-between cursor-pointer"
                 >
                   <span>
                     {universityOptions.find(

@@ -12,7 +12,7 @@ import ModalWrapper from "../components/ui/ModalWrapper";
 import CustomizeResultsModal from "../components/ui/CustomizeResultsPopup";
 import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
 
-// المكونات المنفصلة التي تم إنشاؤها
+// المكونات المنفصلة
 import ResearcherHero from "../components/widgets/Researches/ResearcherHero";
 import ResearchesTable from "../components/widgets/Researches/ResearchesTable";
 
@@ -30,7 +30,8 @@ export default function ResearchesPage() {
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
 
-  // --- States الفلترة والترتيب ---
+  // --- States الفلترة والترتيب والبحث ---
+  const [searchTerm, setSearchTerm] = useState("");
   const [sortValue, setSortValue] = useState(null);
   const [filtersState, setFiltersState] = useState({});
   const [source, setSource] = useState([]);
@@ -44,7 +45,9 @@ export default function ResearchesPage() {
   const [allResearches, setAllResearches] = useState([]);
   const [page, setPage] = useState(1);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
+  
+  // التعديل: تحويل المعرف الواحد إلى مصفوفة
+  const [selectedIds, setSelectedIds] = useState([]);
 
   const {
     researcher,
@@ -64,7 +67,7 @@ export default function ResearchesPage() {
     fetchResearches,
   } = useScientificResearches(
     10,
-    "",
+    searchTerm,
     sortValue,
     publisherType,
     publicationType,
@@ -91,15 +94,16 @@ export default function ResearchesPage() {
     }
   }, [researches, page]);
 
-  // إعادة ضبط الحالة عند تغيير الفلاتر أو اللغة
+  // إعادة ضبط الحالة عند تغيير الفلاتر أو البحث أو اللغة
   useEffect(() => {
     setAllResearches([]);
     setPage(1);
     lastProcessedDataRef.current = null;
-    setSelectedId(null);
+    setSelectedIds([]); // تعديل هنا
     setIsSelectionMode(false);
   }, [
     i18n.language,
+    searchTerm,
     sortValue,
     source,
     derivedFrom,
@@ -107,17 +111,16 @@ export default function ResearchesPage() {
     publicationType,
   ]);
 
+  // البحث المختار (يستخدم غالباً في التعديل - نأخذ أول عنصر مختار)
   const selectedResearch = useMemo(
-    () => allResearches.find((r) => r.id === selectedId),
-    [selectedId, allResearches],
+    () => allResearches.find((r) => r.id === selectedIds[0]),
+    [selectedIds, allResearches],
   );
 
   // --- Handlers ---
-  
-  // دالة الـ Toggle المحدثة لتصفير الاختيار عند الإغلاق
   const toggleSelectionMode = () => {
     if (isSelectionMode) {
-      setSelectedId(null); // تصفير الـ ID المختار فوراً لإزالة الـ Style
+      setSelectedIds([]); // تفريغ عند الإغلاق
     }
     setIsSelectionMode((prev) => !prev);
   };
@@ -143,11 +146,16 @@ export default function ResearchesPage() {
   };
 
   const handleDeleteAction = async () => {
-    if (!selectedId) return;
+    if (selectedIds.length === 0) return;
     try {
-      await deleteScientificResearch(selectedId);
+      // ملاحظة: إذا كان الـ API يدعم حذف واحد فقط، نكرر الطلب أو نعدل الـ API
+      // حالياً سنقوم بحذف العناصر المختارة واحداً تلو الآخر (أو العنصر الأول فقط حسب إعدادات السيرفر لديك)
+      for (const id of selectedIds) {
+        await deleteScientificResearch(id);
+      }
+      
       setShowDeleteModal(false);
-      setSelectedId(null);
+      setSelectedIds([]);
       setPage(1);
       await fetchResearches(1);
     } catch (err) {
@@ -156,7 +164,8 @@ export default function ResearchesPage() {
   };
 
   const handleEditAction = () => {
-    if (selectedResearch && selectedResearch.source === "Internal") {
+    // التعديل مسموح فقط لبحث واحد ومن مصدر داخلي
+    if (selectedIds.length === 1 && selectedResearch && selectedResearch.source === "Internal") {
       navigate("/edit-scientific-research", {
         state: { research: selectedResearch },
       });
@@ -164,7 +173,6 @@ export default function ResearchesPage() {
   };
 
   const handleAddAction = () => {
-    console.log("Add button clicked!");
     navigate("/add-scientific-research");
   };
 
@@ -173,6 +181,8 @@ export default function ResearchesPage() {
     { value: 2, label: "titleDesc" },
     { value: 3, label: "journalAsc" },
     { value: 4, label: "journalDesc" },
+    { value: 5, label: "pubYearAsc" },
+    { value: 6, label: "pubYearDesc" },
     { value: 7, label: "CitesAsc" },
     { value: 8, label: "CitesDesc" },
   ];
@@ -216,11 +226,18 @@ export default function ResearchesPage() {
 
   const dummyCoAuthors = [
     { id: 1, name: "Dr. Ahmed Ali", avatar: "https://i.pravatar.cc/150?u=2" },
-    { id: 2, name: "Prof. Sarah Johnson", avatar: "https://i.pravatar.cc/150?u=1" },
-    { id: 3, name: "Dr. Laila Hassan", avatar: "https://i.pravatar.cc/150?u=3" },
+    {
+      id: 2,
+      name: "Prof. Sarah Johnson",
+      avatar: "https://i.pravatar.cc/150?u=1",
+    },
+    {
+      id: 3,
+      name: "Dr. Laila Hassan",
+      avatar: "https://i.pravatar.cc/150?u=3",
+    },
   ];
 
-  // --- Conditional Rendering ---
   if (profileLoading && page === 1) return <LoadingSpinner />;
 
   if (waiting) {
@@ -257,7 +274,8 @@ export default function ResearchesPage() {
     );
   }
 
-  if (error) return <div className="text-red-500 text-center mt-6">{error}</div>;
+  if (error)
+    return <div className="text-red-500 text-center mt-6">{error}</div>;
 
   if (!researcher && !waiting)
     return (
@@ -345,10 +363,13 @@ export default function ResearchesPage() {
               loading={researchesLoading}
               isArabic={isArabic}
               t={t}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
               isSelectionMode={isSelectionMode}
-              toggleSelectionMode={toggleSelectionMode} // الدالة المحدثة
-              selectedId={selectedId}
-              setSelectedId={setSelectedId}
+              toggleSelectionMode={toggleSelectionMode}
+              // تمرير الحالة والمجموعة الجديدة
+              selectedIds={selectedIds}
+              setSelectedIds={setSelectedIds}
               selectedResearch={selectedResearch}
               handleEditAction={handleEditAction}
               setShowDeleteModal={setShowDeleteModal}
@@ -412,7 +433,8 @@ export default function ResearchesPage() {
 
         {showDeleteModal && (
           <DeleteResearchModal
-            item={selectedResearch}
+            // نمرر أول عنصر مختار للعرض في الرسالة التأكيدية، أو نعدل المودال ليظهر عدد العناصر
+            item={selectedResearch} 
             t={t}
             onConfirm={handleDeleteAction}
             onCancel={() => setShowDeleteModal(false)}

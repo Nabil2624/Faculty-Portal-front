@@ -11,6 +11,7 @@
     "invalidOtp": "The entered OTP is incorrect.",
     "tooManyRequests": "Too many attempts. Please try again later.",
     "notFound": "Verification failed. Please try again.",
-    "unexpected": "An unexpected error occurred. Try again."
+    "unexpected": "An unexpected error occurred. Try again.",
+    "emailMissing":"Email Missing"
   }
 }

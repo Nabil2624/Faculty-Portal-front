@@ -6,6 +6,7 @@
   "location": "الدولة/المدينة",
   "startDate": "تاريخ البداية",
   "endDate": "تاريخ النهاية",
+  "empty": "لا توجد بيانات للعرض",
   "previous": "السابق",
   "next": "التالي",
   "page": "الصفحة",
@@ -13,5 +14,10 @@
   "institution": "الجامعة/الكلية",
   "cancel": "إلغاء",
   "areYouSureDelete": "هل أنت متأكد أنك تريد حذف",
-  "deleteError": "فشل الحذف"
+  "deleteError": "فشل الحذف",
+  "searchPlaceholder": "ابحث هنا",
+  "missionDetails": "تفاصيل المهمة",
+  "backToList": "العودة الي القائمة",
+    "noDescriptionAdded": "لا يوجد وصف",
+  "missionNotes": "وصف المهمة"
 }

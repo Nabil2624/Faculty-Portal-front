@@ -17,5 +17,20 @@
   "errors": {
     "loadFailed": "حدث خطأ أثناء تحميل البيانات",
     "deleteFailed": "فشل حذف العنصر"
+  },
+  "journals": {
+    "title": "المجلات العلمية",
+    "searchPlaceholder": "بحث عن مجلة...",
+    "addNew": "إضافة مجلة جديدة",
+    "documentDetails": "تفاصيل المجلة",
+    "backToList": "العودة الى القائمة",
+    "selectItemToPreview": "اختر مجلة لعرض التفاصيل",
+    "noDataAvailable": "لا توجد مجلات متاحة حالياً",
+    "nameOfMagazine": "اسم المجلة",
+    "journalWebsite": "رابط المجلة",
+    "participationType": "نوع المشاركة",
+    "notes": "ملاحظات إضافية",
+    "noNotes": "لا توجد ملاحظات مضافة",
+    "filter": "تصفية"
   }
 }

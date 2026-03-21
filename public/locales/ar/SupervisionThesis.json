@@ -16,6 +16,8 @@
   "PHD": "دكتوراة",
   "Adminstrator": "مشرف",
   "Reviewer": "محكم",
+  "titleText": "العنوان",
   "AdminstratorAndReviewer": "مشرف و محكم",
+  "showMore": "عرض المزيد",
   "Student": "الطالب"
 }

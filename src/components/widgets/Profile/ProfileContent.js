@@ -1,15 +1,16 @@
-import { FaFacebookF, FaGithub, FaLinkedinIn, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import { FaFacebookF, FaGithub, FaLinkedinIn, FaInstagram, FaYoutube } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6"; 
 import { useTranslation } from "react-i18next";
-
 
 const iconMap = {
   linkedin: FaLinkedinIn,
   github: FaGithub,
   facebook: FaFacebookF,
   instagram: FaInstagram,
-  x: FaTwitter, // هنا اختار أيقونة مناسبة لـ X (Twitter سابقًا)
+  x: FaXTwitter,
   youtube: FaYoutube,
 };
+
 export default function ProfileContent({
   fullName,
   college,
@@ -19,78 +20,86 @@ export default function ProfileContent({
   isArabic = false,
 }) {
   const { t } = useTranslation("dashboard");
+
   return (
     <div
       dir={isArabic ? "rtl" : "ltr"}
-      className="flex flex-col items-center justify-center text-center w-full h-full p-[clamp(10px,1.2vw,24px)]"
+      className="flex flex-col items-center justify-center text-center w-full h-full p-[clamp(8px,1.2vw,20px)] bg-white/40 backdrop-blur-sm rounded-[1.5rem]"
     >
-      {/* Profile Image */}
-      <div
-        className="
-          w-[clamp(80px,8vw,180px)]
-          h-[clamp(80px,8vw,180px)]
-          rounded-full
-          border-[clamp(1.5px,0.3vw,7px)]
-          border-[#b38e19]
-          overflow-hidden
-          mb-[clamp(8px,1vw,18px)]
-        "
-      >
-        <img
-          src={profileImage}
-          alt="profile"
-          className="w-full h-full object-cover"
-        />
+      {/* Profile Image - Reduced Size */}
+      <div className="relative group">
+        <div
+          className="
+            w-[clamp(70px,7vw,140px)]
+            h-[clamp(70px,7vw,140px)]
+            rounded-full
+            border-[clamp(2px,0.3vw,5px)]
+            border-[#b38e19]
+            overflow-hidden
+            mb-[clamp(6px,1vw,14px)]
+            shadow-lg
+            transition-transform
+            duration-500
+            group-hover:scale-105
+            z-10
+          "
+        >
+          <img
+            src={profileImage || "/default-avatar.png"}
+            alt="profile"
+            className="w-full h-full object-cover"
+          />
+        </div>
       </div>
 
-      {/* Full Name */}
-      <h2 className="text-[#19355A] font-bold text-[clamp(14px,1.1vw,40px)] mb-[clamp(4px,0.2vw,17px)]">
+      {/* Full Name - Smaller Text */}
+      <h2 className="text-[#19355A] font-extrabold text-[clamp(15px,1vw,32px)] mb-1 leading-tight">
         {fullName}
       </h2>
 
-      {/* College */}
-      <p className="text-[#b38e19] font-semibold text-[clamp(12px,1vw,35px)] mb-[clamp(3px,0.1vw,15px)]">
-        {college}
-      </p>
+      {/* College - Compact Badge */}
+      <div className="bg-[#b38e19]/10 px-3 py-0.5 rounded-full mb-2">
+        <p className="text-[#b38e19] font-bold text-[clamp(11px,0.8vw,24px)]">
+          {college}
+        </p>
+      </div>
 
-      {/* Job Title */}
-      <p className="text-gray-700 text-[clamp(11px,0.8vw,25px)] mb-[clamp(10px,1vw,25px)]">
+      {/* Job Title - Muted and Smaller */}
+      <p className="text-gray-500 font-medium text-[clamp(10px,0.65vw,18px)] max-w-[90%] leading-snug mb-4">
         {jobTitle}
       </p>
 
-      {/* Social Icons */}
-      <div
-        className={`flex gap-[clamp(8px,1vw,18px)] mt-[clamp(6px,0.8vw,25px)] ${
-          isArabic ? "justify-end" : "justify-start"
-        }`}
-      >
+      {/* Social Icons - More Compact */}
+      <div className="flex flex-wrap items-center justify-center gap-2">
         {socials.map((social, index) => {
-          const Icon = iconMap[social.type];
+          const Icon = iconMap[social.type] || FaGithub;
           const isActive = !!social.url;
 
           return (
-            <div
+            <button
               key={index}
-              onClick={() =>
-                isActive &&
-                window.open(social.url, "_blank", "noopener,noreferrer")
-              }
+              disabled={!isActive}
+              onClick={() => isActive && window.open(social.url, "_blank", "noopener,noreferrer")}
               className={`
+                group/icon
                 flex items-center justify-center
-                w-[clamp(32px,2vw,60px)]
-                h-[clamp(32px,2vw,60px)]
-                rounded-[clamp(5px,0.2vw,15px)]
-                border-[clamp(1.5px,0.25vw,5px)]
-                transition
-                ${isActive ? "border-[#19355A] cursor-pointer hover:scale-110" : "border-gray-300 cursor-not-allowed"}
+                w-[clamp(28px,1.8vw,48px)]
+                h-[clamp(28px,1.8vw,48px)]
+                rounded-lg
+                border
+                transition-all
+                ${isActive 
+                  ? "border-gray-100 bg-white shadow-sm hover:border-[#19355A] hover:-translate-y-0.5" 
+                  : "border-gray-50 bg-gray-50/50 opacity-40"}
               `}
             >
               <Icon
-                className={`${
-                  isActive ? "text-[#19355A]" : "text-gray-300"
-                } w-[clamp(14px,1.1vw,35px)] h-[clamp(14px,1.1vw,35px)]`}
+                className={`
+                  ${isActive ? "text-[#19355A]" : "text-gray-300"} 
+                  w-[clamp(14px,0.9vw,22px)] h-[clamp(14px,0.9vw,22px)]
+                `}
               />
-            </div>
+            </button>
           );
         })}
       </div>

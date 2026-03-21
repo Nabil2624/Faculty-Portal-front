@@ -17,5 +17,7 @@
   "Adminstrator": "Administrator",
   "Reviewer": "Reviewer",
   "AdminstratorAndReviewer": "Administrator and Reviewer",
-  "Student": "Student"
+  "Student": "Student",
+  "showMore": "Show more",
+  "titleText": "Title"
 }

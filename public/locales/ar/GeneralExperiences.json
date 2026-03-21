@@ -15,6 +15,10 @@
   "page": "الصفحة",
   "of": "من",
   "search": "ابحث في الخبرات...",
+  "experienceDetails": "تفاصيل الخبرة",
+  "backToList": "العودة الى القائمة",
+  "description": "وصف الخبرة العامة",
+  "noDescriptionAdded": "لا يوجد وصف",
   "errors": {
     "loadFailed": "فشل تحميل البيانات",
     "deleteFailed": "فشل في عملية الحذف"

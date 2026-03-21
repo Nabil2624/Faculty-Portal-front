@@ -18,11 +18,15 @@
   "endDate": "End Date",
   "present": "Present",
   "type": "Type",
+  "noDescriptionAdded": "No Description Added",
   "Seminar": "Seminar",
   "Conference": "Conference",
   "scope": "Scope",
   "participationRole": "Participation Role",
   "website": "Website",
-  "attachments": "Attachments"
-  
+  "attachments": "Attachments",
+  "seminarDetails": "Seminar / Conference Details",
+  "backToList": "Back To List",
+  "searchPlaceholder": "Search...",
+  "notes": "Seminar / Conference Details"
 }

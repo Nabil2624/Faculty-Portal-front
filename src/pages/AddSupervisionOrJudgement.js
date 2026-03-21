@@ -1,25 +1,26 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Users } from "lucide-react";
 
-import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
+// UI Components
+import InputField from "../components/ui/InputField";
+import FormButton from "../components/ui/FormButton";
+import RadioGroup from "../components/ui/RadioGroup";
+import DateField from "../components/ui/DateField";
+import CustomDropdown from "../components/ui/CustomDropdown"; // المكون الجديد
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
-import InputFieldArea from "../components/ui/InputFieldArea";
-import TextareaField from "../components/ui/TextAreaField";
-import SelectWithIcon from "../components/ui/SelectWithIcon";
-import DateInput from "../components/ui/DateInput";
+import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import LoadingSpinner from "../components/LoadingSpinner";
 
+// Hook
 import useSupervisionForm from "../hooks/useSupervisionForm";
 
 export default function AddSupervisionOrJudgement() {
   const { t, i18n } = useTranslation("AddSupervision");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
-
-  const [degrees, setDegrees] = useState([]);
-  const [degreesLoading, setDegreesLoading] = useState(false);
+  const dir = isArabic ? "rtl" : "ltr";
 
   const {
     thesisType,
@@ -50,241 +51,165 @@ export default function AddSupervisionOrJudgement() {
     handleSubmit,
   } = useSupervisionForm(navigate);
 
-  // const registrationRef = useRef(null);
-  // const formationRef = useRef(null);
-  // const discussionRef = useRef(null);
-  // const grantingRef = useRef(null);
-
-  // const openPicker = (ref) => {
-  //   if (!ref.current) return;
-  //   try {
-  //     ref.current.showPicker?.();
-  //   } catch {
-  //     ref.current.focus();
-  //   }
-  // };
-
-  const inputBase =
-    "w-full h-[40px] bg-[#E2E2E2] rounded-md px-3 text-[12px] outline-none text-gray-800 placeholder:text-gray-600";
+  // تحضير الخيارات للـ CustomDropdown بناءً على اللغة
+  const degreeOptions = useMemo(() => {
+    return grades.map((grade) => ({
+      id: grade.id,
+      label: isArabic ? grade.valueAr : grade.valueEn,
+    }));
+  }, [grades, isArabic]);
 
   if (loading) return <LoadingSpinner />;
 
   return (
     <ResponsiveLayoutProvider>
-      <div
-        className={`${isArabic ? "rtl" : "ltr"} bg-white max-w-[1700px] mx-auto p-6`}
-      >
-        <PageHeaderNoAction title={t("pageTitle")} />
+      <div className={`flex flex-col p-3 bg-[#f8fafc] min-h-screen ${dir}`}>
+        {/* هيدر الصفحة */}
+        <PageHeaderNoAction title={t("pageTitle")} icon={Users} />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-32 mt-12 max-w-[1500px] mx-auto">
-          {/* LEFT COLUMN */}
-          <div
-            className={`space-y-6 max-w-full md:max-w-[600px] ${
-              isArabic ? "md:col-start-2 md:pl-24" : "md:col-start-1 md:pl-0 "
-            } md:row-start-1`}
-          >
-            {/* Faculty Role */}
-            <div>
-              <label className="block mb-3 font-medium text-lg">
-                {t("facultyRole")}
-              </label>
+        <main className="flex-1 p-[clamp(0.5rem,1.5vw,2.5rem)] flex items-center justify-center">
+          <div className="w-full max-w-[1500px] bg-white rounded-[2rem] shadow-xl border border-gray-100 flex flex-col overflow-visible">
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-[clamp(2rem,4vw,5rem)] gap-y-10 p-[clamp(1.5rem,3vw,4rem)]">
+              
+              {/* --- القسم الأيسر: بيانات الرسالة --- */}
+              <div className="flex flex-col gap-6">
+                <RadioGroup
+                  label={t("thesisType")}
+                  options={[
+                    { label: t("PHD"), value: 1 },
+                    { label: t("MASTER"), value: 2 },
+                  ]}
+                  value={thesisType}
+                  onChange={(val) => setThesisType(Number(val))}
+                  error={errors.thesisType ? t("thesisTypeRequired") : ""}
+                />
 
-              <div className="flex gap-8 text-sm text-gray-700">
-                {[
-                  { label: t("supervisor"), value: 1 },
-                  { label: t("examiner"), value: 2 },
-                  { label: t("both"), value: 3 },
-                ].map((role) => (
-                  <label
-                    key={role.value}
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="facultyRole"
-                      value={role.value}
-                      checked={facultyRole === role.value}
-                      onChange={(e) => setFacultyRole(Number(e.target.value))}
-                    />
-                    {role.label}
-                  </label>
-                ))}
+                <InputField
+                  label={t("thesisTitle")}
+                  placeholder={t("thesisTitlePlaceholder")}
+                  value={thesisTitle}
+                  onChange={(e) => setThesisTitle(e.target.value)}
+                  required
+                  textarea
+                  error={errors.thesisTitle ? t(errors.thesisTitle) : ""}
+                  className="min-h-[120px]"
+                />
+
+                <InputField
+                  label={t("studentName")}
+                  placeholder={t("studentNamePlaceholder")}
+                  value={studentName}
+                  onChange={(e) => setStudentName(e.target.value)}
+                  required
+                  error={errors.studentName ? t(errors.studentName) : ""}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <InputField
+                    label={t("specialization")}
+                    placeholder={t("specializationPlaceholder")}
+                    value={specialization}
+                    onChange={(e) => setSpecialization(e.target.value)}
+                  />
+                  
+                  {/* استخدام CustomDropdown الجديد هنا */}
+                  <CustomDropdown
+                    label={t("degree")}
+                    placeholder={t("chooseDegree")}
+                    options={degreeOptions}
+                    value={degreeId}
+                    onChange={(val) => setDegreeId(val)}
+                    isArabic={isArabic}
+                    error={errors.degreeId ? t(errors.degreeId) : ""}
+                  />
+                </div>
+
+                <InputField
+                  label={t("university")}
+                  placeholder={t("universityPlaceholder")}
+                  value={universityOrFaculty}
+                  onChange={(e) => setUniversityOrFaculty(e.target.value)}
+                />
               </div>
 
-              {/* ERROR MESSAGE */}
-              {errors.facultyRole && (
-                <p className="text-red-600 text-sm mt-2">
-                  {t("facultyRoleRequired")}
-                </p>
-              )}
-            </div>
+              {/* --- القسم الأيمن: الدور والتواريخ --- */}
+              <div className="flex flex-col gap-8 lg:border-s lg:ps-[clamp(2rem,4vw,5rem)] border-gray-100">
+                
+                <RadioGroup
+                  label={t("facultyRole")}
+                  options={[
+                    { label: t("supervisor"), value: 1 },
+                    { label: t("examiner"), value: 2 },
+                    { label: t("both"), value: 3 },
+                  ]}
+                  value={facultyRole}
+                  onChange={(val) => setFacultyRole(Number(val))}
+                  error={errors.facultyRole ? t("facultyRoleRequired") : ""}
+                />
 
-            {/* Degree */}
-            <div>
-              <label className="block mb-4 font-medium text-lg">
-                {t("degree")}
-              </label>
-              <SelectWithIcon
-                value={degreeId}
-                onChange={(e) => setDegreeId(e.target.value)}
-                className={inputBase}
-                isArabic={isArabic}
-              >
-                <option value="">{t("chooseDegree")}</option>
-
-                {grades.map((grade) => (
-                  <option key={grade.id} value={grade.id}>
-                    {isArabic ? grade.valueAr : grade.valueEn}
-                  </option>
-                ))}
-              </SelectWithIcon>
-
-              {errors.degreeId && (
-                <p className="text-red-600 text-sm mt-2">
-                  {t(errors.degreeId)}
-                </p>
-              )}
-            </div>
-
-            {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
-              <DateInput
-                label={t("registrationDate")}
-                placeholder={t("registrationDatePlaceholder")}
-                inputClass={inputBase}
-                isArabic={isArabic}
-                value={registrationDate}
-                onChange={setRegistrationDate}
-              />
-              <DateInput
-                label={t("formationDate")}
-                placeholder={t("formationDatePlaceholder")}
-                inputClass={inputBase}
-                isArabic={isArabic}
-                value={formationDate}
-                onChange={setFormationDate}
-              />
-              <DateInput
-                label={t("defenseDate")}
-                placeholder={t("defenseDatePlaceholder")}
-                inputClass={inputBase}
-                isArabic={isArabic}
-                value={discussionDate}
-                onChange={setDiscussionDate}
-              />
-              <DateInput
-                label={t("grantDate")}
-                placeholder={t("grantDatePlaceholder")}
-                inputClass={inputBase}
-                isArabic={isArabic}
-                value={grantingDate}
-                onChange={setGrantingDate}
-              />
-            </div>
-
-            {/* University */}
-            <InputFieldArea
-              label={t("university")}
-              placeholder={t("universityPlaceholder")}
-              value={universityOrFaculty}
-              onChange={(e) => setUniversityOrFaculty(e.target.value)}
-            />
-          </div>
-
-          {/* RIGHT COLUMN */}
-          <div
-            className={`space-y-6 ${
-              isArabic
-                ? "md:col-start-1 md:pl-12"
-                : "md:col-start-2 md:pl-24 md:-translate-x-28"
-            } md:row-start-1`}
-          >
-            {/* Thesis Type */}
-            <div>
-              <label className="block mb-2 font-medium text-lg">
-                {t("thesisType")}
-              </label>
-
-              <div className="flex gap-6 text-sm text-gray-700">
-                {[
-                  { label: t("PHD"), value: 1 },
-                  { label: t("MASTER"), value: 2 },
-                ].map((type) => (
-                  <label key={type.value} className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="thesisType"
-                      value={type.value}
-                      checked={thesisType === type.value}
-                      onChange={(e) => setThesisType(Number(e.target.value))}
+                {/* حاوية التواريخ المنظمة */}
+                <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100 shadow-inner">
+                  <h3 className="text-gray-800 font-bold mb-6 border-b pb-2 border-gray-200 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-[#B38E19] rounded-full"></span>
+                    {isArabic ? "المواعيد والتواريخ" : "Dates & Timeline"}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <DateField
+                      label={t("registrationDate")}
+                      placeholder={t("registrationDatePlaceholder")}
+                      isArabic={isArabic}
+                      value={registrationDate}
+                      onChange={setRegistrationDate}
                     />
-                    {type.label}
-                  </label>
-                ))}
+                    <DateField
+                      label={t("formationDate")}
+                      placeholder={t("formationDatePlaceholder")}
+                      isArabic={isArabic}
+                      value={formationDate}
+                      onChange={setFormationDate}
+                    />
+                    <DateField
+                      label={t("defenseDate")}
+                      placeholder={t("defenseDatePlaceholder")}
+                      isArabic={isArabic}
+                      value={discussionDate}
+                      onChange={setDiscussionDate}
+                    />
+                    <DateField
+                      label={t("grantDate")}
+                      placeholder={t("grantDatePlaceholder")}
+                      isArabic={isArabic}
+                      value={grantingDate}
+                      onChange={setGrantingDate}
+                    />
+                  </div>
+                </div>
               </div>
-
-              {/* ERROR MESSAGE */}
-              {errors.thesisType && (
-                <p className="text-red-600 text-sm mt-2">
-                  {t("thesisTypeRequired")}
-                </p>
-              )}
             </div>
 
-            {/* Thesis Title */}
-            <TextareaField
-              label={t("thesisTitle")}
-              placeholder={t("thesisTitlePlaceholder")}
-              value={thesisTitle}
-              onChange={setThesisTitle}
-              required
-              height="h-[160px]"
-              className="border-2 border-[#B38E19]"
-              error={errors.thesisTitle ? t(errors.thesisTitle) : ""}
-            />
-
-            {/* Student Name */}
-            <div className="md:-translate-y-5">
-              <InputFieldArea
-                label={t("studentName")}
-                placeholder={t("studentNamePlaceholder")}
-                value={studentName}
-                onChange={(e) => setStudentName(e.target.value)}
-                required
-                className="-mt-1.5"
-                error={errors.studentName ? t(errors.studentName) : ""}
-              />
-            </div>
-
-            {/* Specialization */}
-            <div className="md:-translate-y-5">
-              <InputFieldArea
-                label={t("specialization")}
-                placeholder={t("specializationPlaceholder")}
-                value={specialization}
-                onChange={(e) => setSpecialization(e.target.value)}
-              />
-            </div>
+            {/* --- تذييل الصفحة (الأزرار) --- */}
+            <footer className="bg-gray-50/80 backdrop-blur-sm border-t border-gray-100 px-12 py-8 rounded-b-[2rem]">
+              <div className="flex items-center justify-end gap-6">
+                <FormButton
+                  variant="primary"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="w-44 h-14 !text-lg shadow-md hover:shadow-lg transition-all"
+                >
+                  {loading ? t("loading") : t("save")}
+                </FormButton>
+                <FormButton
+                  variant="secondary"
+                  onClick={() => navigate("/supervision-thesis")}
+                  className="w-44 h-14 !text-lg"
+                >
+                  {t("back")}
+                </FormButton>
+              </div>
+            </footer>
           </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="flex gap-4 mt-16 justify-center md:mt-36 md:justify-end px-4">
-          <button
-            className="bg-[#B38E19] text-white px-10 py-1.5 rounded-md"
-            onClick={handleSubmit}
-            disabled={loading} // just prevents double submit
-          >
-            {t("save")}
-          </button>
-
-          <button
-            className="bg-[#D9D9D9] text-black px-10 py-1.5 rounded-md"
-            onClick={() => navigate("/supervision-thesis")}
-          >
-            {t("back")}
-          </button>
-        </div>
+        </main>
       </div>
     </ResponsiveLayoutProvider>
   );

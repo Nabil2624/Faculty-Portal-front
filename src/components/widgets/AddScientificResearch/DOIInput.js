@@ -29,7 +29,7 @@ export default function DOIInput({
           disabled={disabled}
           className={`flex-1 h-[40px] rounded-md px-3 text-[12px] outline-none
     border border-[#B38E19]
-    ${disabled ? "bg-[#A8A8A8] placeholder:text-black" : "bg-[#E2E2E2] placeholder:text-gray-600"}
+    ${disabled ? "bg-[#A8A8A8] placeholder:text-black" : "bg-white placeholder:text-gray-600"}
     ${error ? "border-red-500" : ""}
   `}
           placeholder={placeholder}

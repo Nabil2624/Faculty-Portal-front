@@ -7,12 +7,14 @@ import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
 import AcademicQualificationCard from "../components/widgets/AcademicQualifications/AcademicQualificationCard";
 import AcademicQualificationsModal from "../components/widgets/AcademicQualifications/AcademicQualificationModal";
-
+import { GraduationCap } from "lucide-react";
 import useAcademicQualifications from "../hooks/useAcademicQualifications";
 import { deleteAcademicQualification } from "../services/academicQualifications.service";
 import useDelegation from "../hooks/useDelegation";
 import useAcademicGrade from "../hooks/useAcademicGrade";
 import useDegreeLookup from "../hooks/useDegreeLookup";
+import AcademicQualificationsTable from "../components/widgets/AcademicQualifications/AcademicQualificationsTable";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 
 export default function AcademicQualificationsPage() {
   const { t, i18n } = useTranslation("AcademicQualifications");
@@ -70,9 +72,6 @@ export default function AcademicQualificationsPage() {
       label: isArabic ? item.valueAr : item.valueEn,
     })) || [];
 
-
-
-    
   const filtersConfig = mappedTypes.length
     ? [
         {
@@ -131,61 +130,36 @@ export default function AcademicQualificationsPage() {
   return (
     <ResponsiveLayoutProvider>
       <div
-        className={`${isArabic ? "rtl" : "ltr"} p-4 flex flex-col min-h-[90vh]`}
+        className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
-        <PageHeader
+        <PageHeaderNoAction
           title={t("academicQualifications")}
-          addLabel={t("add")}
-          onAdd={() => navigate("/add-academic-qualification")}
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
-          isArabic={isArabic}
-          onFilterClick={() => setShowFilterModal(true)}
+          icon={GraduationCap}
+
         />
 
         {!loading && error && (
           <div className="text-center text-red-500 mb-4">{error}</div>
         )}
-        {!loading && !error && qualifications.length === 0 && (
-          <div className="text-center text-gray-500 mb-4">{t("empty")}</div>
-        )}
-        {loading && (
-          <div className="text-center text-gray-500 mb-4">Loading...</div>
-        )}
-
-        {!loading && qualifications.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {qualifications.map((item) => (
-              <AcademicQualificationCard
-                key={item.id}
-                item={item}
-                isArabic={isArabic}
-                onEdit={() =>
-                  navigate("/edit-academic-qualification", { state: { item } })
-                }
-                onDelete={() => {
-                  setSelectedItem(item);
-                  setShowDelete(true);
-                }}
-                onDetails={() => {
-                  setSelectedItem(item);
-                  setShowDetails(true);
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="mt-auto flex justify-center items-center gap-3">
-          <Pagination
+        <div className="flex-1 overflow-hidden">
+          <AcademicQualificationsTable
+            data={qualifications}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onEdit={(item) =>
+              navigate("/edit-academic-qualification", { state: { item } })
+            }
+            onAdd={() => navigate("/add-academic-qualification")}
+            onFilterClick={() => setShowFilterModal(true)}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
             t={t}
-            isArabic={isArabic}
           />
         </div>
 

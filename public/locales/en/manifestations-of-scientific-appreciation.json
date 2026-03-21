@@ -12,7 +12,12 @@
   "of": "of",
   "issuingAuthority": "Issuing Authority",
   "dateOfAppreciation": "Date of Appreciation",
-"attachments": "Attachments",
+  "backToList": "Back To List",
+  "noAttachments": "No Attachments",
+  "details": "Manifestation Details",
+  "description": "Manifestation Description",
+  "noDescriptionAdded": "No Description Added",
+  "attachments": "Attachments",
   "errors": {
     "loadFailed": "Failed to load data. Please try again."
   }

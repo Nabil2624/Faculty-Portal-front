@@ -11,7 +11,9 @@ import Pagination from "../components/ui/Pagination";
 import { deleteProject } from "../services/projects.service";
 import PageHeader from "../components/ui/PageHeader";
 import { useProjectLookups } from "../hooks/useProjectLookups";
-
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import { Layers } from "lucide-react";
+import ProjectsTable from "../components/widgets/Projects/ProjectsTable";
 export default function ProjectsPage() {
   const { t, i18n } = useTranslation("Projects");
   const isArabic = i18n.language === "ar";
@@ -144,7 +146,7 @@ export default function ProjectsPage() {
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
         {/* Header */}
-        <PageHeader
+        <PageHeaderNoAction
           title={t("pageTitle")}
           addLabel={t("add")}
           onAdd={() => navigate("/add-project")}
@@ -154,58 +156,33 @@ export default function ProjectsPage() {
           searchPlaceholder={t("search")}
           isArabic={isArabic}
           onFilterClick={() => setShowFilterModal(true)}
+          icon={Layers}
         />
 
-        {/* Content wrapper flex-1 عشان الباجينيشن ثابت تحت */}
-        <div className="flex-1 overflow-y-auto pr-2 mb-4">
-          {!loading && error && (
-            <div className="text-red-500 text-lg text-center">
-              {t("errors.loadFailed")}
-            </div>
-          )}
+        {!loading && error && (
+          <div className="text-red-500 text-lg text-center">
+            {t("errors.loadFailed")}
+          </div>
+        )}
 
-          {!loading && !error && projects.length === 0 && (
-            <div className="text-gray-500 text-xl text-center">
-              {t("empty")}
-            </div>
-          )}
-
-          {!loading && !error && projects.length > 0 && (
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${
-                isArabic ? "text-right" : "text-left"
-              }`}
-            >
-              {projects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  isArabic={isArabic}
-                  onDelete={(p) => {
-                    setSelectedItem(p);
-                    setShowDelete(true);
-                    setDeleteError(false);
-                  }}
-                  onDetails={(p) => {
-                    setSelectedItem(p);
-                    setShowDetails(true);
-                  }}
-                  onEditNavigate={handleEditNavigate}
-                />
-              ))}
-            </div>
-          )}
+        <div className=" flex-1 overflow-hidden">
+          <ProjectsTable
+            data={projects}
+            onEdit={handleEditNavigate}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onAdd={() => navigate("/add-project")}
+            onFilterClick={() => setShowFilterModal(true)}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
+          />
         </div>
-
-        {/* Pagination ثابت تحت */}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-          onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-          t={t}
-          isArabic={isArabic}
-        />
 
         {/* Modals */}
         <ProjectsModals

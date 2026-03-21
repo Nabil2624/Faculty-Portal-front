@@ -10,7 +10,9 @@
   "enter_description": "Enter Description",
   "save": "Save",
   "loading": "Loading...",
-
+  "add_participation_title": "Add Participation",
+  "edit_participation_title": "Edit Participation",
+  "cancel": "Cancel",
   "errors": {
     "participationName_required": "Participation Name is required",
     "startDate_required": "Start Date is required",

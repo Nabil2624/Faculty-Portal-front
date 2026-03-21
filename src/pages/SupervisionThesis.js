@@ -1,46 +1,59 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
+import { Users } from "lucide-react";
+// Components
 import LoadingSpinner from "../components/LoadingSpinner";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
-import useAcademicGradesLookups from "../hooks/useAcademicGradesLookups";
-import SupervisionThesisCard from "../components/widgets/SupervisionThesis/SupervisionThesisCard";
-import DeleteSupervisionModal from "../components/widgets/SupervisionThesis/DeleteSupervisionModal";
 import ModalWrapper from "../components/ui/ModalWrapper";
 import CustomizeResultsModal from "../components/ui/CustomizeResultsPopup";
-import useSupervisionThesis from "../hooks/useSupervisionThesis";
+import DeleteSupervisionModal from "../components/widgets/SupervisionThesis/DeleteSupervisionModal";
+import SupervisionThesisTable from "../components/widgets/SupervisionThesis/SupervisionThesisTable";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 
+// Hooks & Services
+import useAcademicGradesLookups from "../hooks/useAcademicGradesLookups";
+import useSupervisionThesis from "../hooks/useSupervisionThesis";
 import { deleteSupervisionThesis } from "../services/supervisionThesis.service";
 
 export default function SupervisionThesis() {
-  const { t, i18n } = useTranslation("SupervisionThesis");
+  const { t, i18n } = useTranslation(["SupervisionThesis", "filter-sort"]);
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
+
+  // --- States الفلترة والترتيب والبحث ---
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [sortValue, setSortValue] = useState(null);
   const [filtersState, setFiltersState] = useState({});
   const [gradeIds, setGradeIds] = useState([]);
   const [type, setType] = useState([]);
   const [role, setRole] = useState([]);
-  const [showFilterModal, setShowFilterModal] = useState(false);
-  const [sortValue, setSortValue] = useState(null);
+
+  // --- States التحكم في القائمة والـ Pagination والاختيار ---
+  const [allSupervisions, setAllSupervisions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]); // التعديل هنا لمصفوفة
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [deleteError, setDeleteError] = useState(null);
+
+  const lastProcessedDataRef = useRef(null);
+
+  // Search Debounce logic
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
       setCurrentPage(1);
     }, 400);
-
     return () => clearTimeout(timeout);
   }, [search]);
+
+  // جلب البيانات
   const { items, totalPages, loading, error, loadData } = useSupervisionThesis(
     currentPage,
-    4,
+    10,
     debouncedSearch,
     sortValue,
     gradeIds,
@@ -48,56 +61,51 @@ export default function SupervisionThesis() {
     type,
   );
 
-  const [deleteError, setDeleteError] = useState(null);
-  const { types, loadingTypes } = useAcademicGradesLookups();
-  const mappedTypes =
-    types?.map((item) => ({
-      value: item.id,
-      label: isArabic ? item.valueAr : item.valueEn,
-    })) || [];
-  const mapTypes = [
-    { value: 1, label: "PhD" },
-    { value: 2, label: "Master" },
-  ];
-  const mappingTypes = [
-    { value: 1, label: "Administrator" },
-    { value: 2, label: "Reviewer" },
-    { value: 3, label: "AdministratorAndReviewer" },
-  ];
-  const filtersConfig = mappedTypes.length
-    ? [
-        {
-          key: "GradeIds",
-          title: "dependAcademicGrade",
-          options: mappedTypes,
-        },
-        {
-          key: "Type",
-          title: "dependOnType",
-          options: mapTypes,
-        },
-        {
-          key: "Role",
-          title: "dependOnRole",
-          options: mappingTypes,
-        },
-      ]
-    : [];
-  const sortOptions = [
-    { value: 1, label: "TitleASC" },
-    { value: 2, label: "TitleDESC" },
-    { value: 3, label: "StudentNameASC" },
-    { value: 4, label: "StudentNameDESC" },
-    { value: 5, label: "RegistrationDateASC" },
-    { value: 6, label: "RegistrationDateDESC" },
-    { value: 7, label: "SupervisionFormationDateASC" },
-    { value: 8, label: "SupervisionFormationDateDESC" },
-    { value: 9, label: "DiscussionDateASC" },
-    { value: 10, label: "DiscussionDateDESC" },
-    { value: 11, label: "GrantingDateASC" },
-    { value: 12, label: "GrantingDateDESC" },
-  ];
+  // دمج البيانات (Infinite Scroll / Show More)
+  useEffect(() => {
+    if (items) {
+      if (currentPage === 1) {
+        setAllSupervisions(items);
+      } else if (items !== lastProcessedDataRef.current) {
+        setAllSupervisions((prev) => {
+          const existingIds = new Set(prev.map((item) => item.id));
+          const newUniqueItems = items.filter(
+            (item) => !existingIds.has(item.id),
+          );
+          return [...prev, ...newUniqueItems];
+        });
+      }
+      lastProcessedDataRef.current = items;
+    }
+  }, [items, currentPage]);
 
+  // إعادة ضبط الحالة عند تغيير المعايير
+  useEffect(() => {
+    setAllSupervisions([]);
+    setCurrentPage(1);
+    lastProcessedDataRef.current = null;
+    setSelectedIds([]); // تصفير الاختيارات
+    setIsSelectionMode(false);
+  }, [i18n.language, debouncedSearch, sortValue, gradeIds, role, type]);
+
+  // الحصول على أول عنصر مختار (للتعديل أو العرض البسيط)
+  const firstSelectedItem = useMemo(
+    () => allSupervisions.find((i) => i.id === selectedIds[0]),
+    [selectedIds, allSupervisions],
+  );
+
+  // Lookups
+  const { types } = useAcademicGradesLookups();
+  const mappedGrades = useMemo(
+    () =>
+      types?.map((item) => ({
+        value: item.id,
+        label: isArabic ? item.valueAr : item.valueEn,
+      })) || [],
+    [types, isArabic],
+  );
+
+  // Handlers
   const handleApplyFilters = ({ sortValue, filters }) => {
     setSortValue(sortValue);
     setFiltersState(filters);
@@ -105,130 +113,85 @@ export default function SupervisionThesis() {
     setGradeIds(filters?.GradeIds || []);
     setType(filters?.Type || []);
     setCurrentPage(1);
+    setShowFilterModal(false);
   };
+
   const handleResetFilters = () => {
     setSortValue(null);
+    setFiltersState({});
+    setRole([]);
     setGradeIds([]);
     setType([]);
-    setRole([]);
-    setFiltersState({});
     setCurrentPage(1);
+    setShowFilterModal(false);
   };
+
   const handleDelete = async () => {
-    if (!selectedItem) return;
-
-    setDeleteError(null);
-
     try {
-      await deleteSupervisionThesis(selectedItem.id);
-
-      // Close the modal
-      setShowDelete(false);
-
-      // Reload the list automatically
-      if (items.length === 1 && currentPage > 1) {
-        setCurrentPage((prev) => prev - 1);
-      } else {
-        loadData();
+      // تنفيذ عملية الحذف لكل العناصر المختارة
+      for (const id of selectedIds) {
+        await deleteSupervisionThesis(id);
       }
+      setShowDelete(false);
+      setSelectedIds([]);
+      setCurrentPage(1);
+      loadData();
     } catch (err) {
-      // Show translated error inside modal
       setDeleteError(err?.response?.data?.errorMessage || t("deleteFailed"));
     }
+  };
+
+  const handleEditAction = () => {
+    if (selectedIds.length !== 1 || !firstSelectedItem) return;
+    const roleMap = { Adminstrator: 1, Reviewer: 2 };
+    let roleValue = roleMap[firstSelectedItem.facultyMemberRole] || 3;
+
+    navigate("/edit-supervision", {
+      state: { ...firstSelectedItem, facultyMemberRole: roleValue },
+    });
   };
 
   return (
     <ResponsiveLayoutProvider>
       <div
-        className={`${isArabic ? "rtl" : "ltr"} p-6 flex flex-col min-h-[90vh]`}
+        className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
-        <PageHeader
-          title={t("title")}
-          addLabel={t("add")}
-          onAdd={() => navigate("/add-supervision")}
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
+        <PageHeaderNoAction title={t("title")} icon={Users} />
+
+        <SupervisionThesisTable
+          items={allSupervisions}
+          loading={loading}
           isArabic={isArabic}
-          onFilterClick={() => setShowFilterModal(true)}
-        />
-        {/* Error Massage*/}
-        {error && (
-          <div className="text-center text-red-500 mt-4">{t("fetchError")}</div>
-        )}
-        <div className="flex-1">
-          {items.length ? (
-            <div className="grid grid-cols-1 gap-6 max-w-5xl">
-              {items.map((item) => (
-                <SupervisionThesisCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onClick={(item) => {
-                    navigate("/supervision-info", {
-                      state: {
-                        ...item, // preserve all original fields
-                      },
-                    });
-                  }}
-                  onDelete={(item) => {
-                    setSelectedItem(item);
-                    setShowDelete(true);
-                  }}
-                  onEdit={(item) => {
-                    // Map role string to numeric value
-                    let roleValue;
-                    switch (item.facultyMemberRole) {
-                      case "Adminstrator":
-                        roleValue = 1; // Supervisor
-                        break;
-                      case "Reviewer":
-                        roleValue = 2; // Examiner
-                        break;
-                      case "AdminstratorAndReviewer":
-                      case "ReviewerAndAdminstrator": // whatever your API returns for both
-                        roleValue = 3; // Supervisor + Examiner
-                        break;
-                      default:
-                        roleValue = 1; // default fallback
-                    }
-
-                    navigate("/edit-supervision", {
-                      state: {
-                        ...item,
-                        facultyMemberRole: roleValue,
-                      },
-                    });
-                  }}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="p-10 text-center text-gray-500 text-xl">
-              {t("empty")}
-            </div>
-          )}
-        </div>
-
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPrev={() => setCurrentPage((p) => p - 1)}
-          onNext={() => setCurrentPage((p) => p + 1)}
           t={t}
-          isArabic={isArabic}
+          isSelectionMode={isSelectionMode}
+          toggleSelectionMode={() => {
+            if (isSelectionMode) setSelectedIds([]);
+            setIsSelectionMode(!isSelectionMode);
+          }}
+          selectedIds={selectedIds} // تمرير المصفوفة
+          setSelectedIds={setSelectedIds} // تمرير الدالة
+          searchTerm={search}
+          setSearchTerm={setSearch}
+          page={currentPage}
+          totalPages={totalPages}
+          setPage={setCurrentPage}
+          setShowFilterModal={setShowFilterModal}
+          setShowDeleteModal={setShowDelete}
+          handleAddAction={() => navigate("/add-supervision")}
+          handleEditAction={handleEditAction}
         />
 
         {showDelete && (
           <DeleteSupervisionModal
-            item={selectedItem}
+            item={firstSelectedItem}
+            count={selectedIds.length} // يمكنك تعديل المودال ليعرض "حذف X عنصر"
             t={t}
             onConfirm={handleDelete}
             onCancel={() => setShowDelete(false)}
             error={deleteError}
           />
         )}
+
         {showFilterModal && (
           <ModalWrapper onClose={() => setShowFilterModal(false)}>
             <CustomizeResultsModal
@@ -237,9 +200,39 @@ export default function SupervisionThesis() {
               onReset={handleResetFilters}
               currentSort={sortValue}
               currentFilters={filtersState}
-              filtersConfig={filtersConfig}
+              filtersConfig={[
+                {
+                  key: "GradeIds",
+                  title: "dependAcademicGrade",
+                  options: mappedGrades,
+                },
+                {
+                  key: "Type",
+                  title: "dependOnType",
+                  options: [
+                    { value: 1, label: "PhD" },
+                    { value: 2, label: "Master" },
+                  ],
+                },
+                {
+                  key: "Role",
+                  title: "dependOnRole",
+                  options: [
+                    { value: 1, label: "Administrator" },
+                    { value: 2, label: "Reviewer" },
+                    { value: 3, label: "AdministratorAndReviewer" },
+                  ],
+                },
+              ]}
               translationNamespace="filter-sort"
-              sortOptions={sortOptions}
+              sortOptions={[
+                { value: 1, label: "TitleASC" },
+                { value: 2, label: "TitleDESC" },
+                { value: 3, label: "StudentNameASC" },
+                { value: 4, label: "StudentNameDESC" },
+                { value: 5, label: "RegistrationDateASC" },
+                { value: 6, label: "RegistrationDateDESC" },
+              ]}
             />
           </ModalWrapper>
         )}

@@ -14,7 +14,11 @@
   "next": "Next",
   "page": "Page",
   "of": "of",
+  "noDescriptionAdded": "No Description Added",
   "search": "Search in experiences...",
+  "experienceDetails": "Teaching Experience Details",
+  "description": "Teaching Experience Description",
+  "backToList": "Back To List",
   "errors": {
     "loadFailed": "Failed to load data",
     "deleteFailed": "Failed to delete"

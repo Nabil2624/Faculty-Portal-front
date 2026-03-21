@@ -1,101 +1,71 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
-import helwanImage from "../assets/helwan-university.jpeg";
-import egyptFlag from "../assets/egyptFlag.png";
-import ukFlag from "../assets/americaFlag.png";
-import LoadingSpinner from "../components/LoadingSpinner";
+import {
+  ShieldCheck,
+  User,
+  ArrowRight,
+  ArrowLeft,
+  Globe,
+  Fingerprint,
+} from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
+import helwanImage from "../assets/helwan-university.jpeg";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function RegisterPage() {
   const { t, i18n } = useTranslation("register");
   const navigate = useNavigate();
 
-  const [openDropdown, setOpenDropdown] = useState(false);
-  const dropdownRef = useRef(null);
   const [nationalID, setNationalID] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleLanguageChange = (lang) => {
-    i18n.changeLanguage(lang);
-    setOpenDropdown(false);
-  };
-
-  useEffect(() => {
-    const isArabic = i18n.language === "ar";
-    document.documentElement.dir = isArabic ? "rtl" : "ltr";
-    if (isArabic) {
-      document.documentElement.classList.add("arabic-font");
-    } else {
-      document.documentElement.classList.remove("arabic-font");
-    }
-  }, [i18n.language]);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setOpenDropdown(false);
-      }
-    };
-    const handleKey = (e) => {
-      if (e.key === "Escape") setOpenDropdown(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKey);
-    };
-  }, []);
+  const [error, setError] = useState(null);
 
   const isArabic = i18n.language === "ar";
 
-  // ✅ Handle Registration
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(null);
 
     const trimmedID = nationalID.trim();
 
-    // 🔹 Validation rules
+    // Validation rules
     if (!/^[0-9]+$/.test(trimmedID)) {
-      setError(t("onlyNumbersError") || "National ID must contain only numbers.");
+      setError(
+        t("onlyNumbersError") || "National ID must contain only numbers.",
+      );
       return;
     }
 
     if (trimmedID.length !== 14) {
-      setError(t("invalidLengthError") || "National ID must be exactly 14 digits.");
+      setError(
+        t("invalidLengthError") || "National ID must be exactly 14 digits.",
+      );
       return;
     }
 
     try {
       setLoading(true);
-
       const registerRes = await axiosInstance.post(
         "/Authentication/Register",
         { NationalNumber: trimmedID },
-        { skipGlobalErrorHandler: true, 
-          withCredentials: false,
-        }
+        { skipGlobalErrorHandler: true, withCredentials: false },
       );
 
-      // ✅ Registration succeeded
       if (registerRes.data?.status !== false) {
         navigate("/login");
       } else {
-        setError(registerRes.data?.message || t("serverError") || "Something went wrong.");
+        setError(registerRes.data?.message || t("serverError"));
       }
     } catch (err) {
       if (err.response?.status === 400) {
-        setError(err.response?.data?.message || t("invalidNationalID") || "Invalid national ID.");
+        setError(err.response?.data?.message || t("invalidNationalID"));
       } else if (err.response?.status === 409) {
-        setError(t("alreadyRegistered") || "User already registered.");
+        setError(t("alreadyRegistered"));
       } else if (err.response?.status >= 500) {
         window.location.href = "/error/500";
       } else {
-        setError(t("unexpectedError") || "An unexpected error occurred. Please try again.");
+        setError(t("unexpectedError"));
       }
     } finally {
       setLoading(false);
@@ -103,114 +73,136 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden p-5 relative">
-      {loading && (
-        <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-50">
-          <LoadingSpinner />
-        </div>
-      )}
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#050b14]">
+      {/* Background with Filters */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={helwanImage}
+          alt="Capital University"
+          className="w-full h-full object-cover opacity-50"
+        />
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#050b14] via-[#19355a]/40 to-[#050b14]/80" />
+      </div>
 
-      <div className="flex flex-col flex-1 px-8 py-6 relative">
-        {/* 🌍 Language Selector */}
-        <div className="flex mb-6">
-          <div ref={dropdownRef} className={`relative inline-block ${isArabic ? "mr-auto" : "ml-auto"}`}>
-            <button
-              onClick={() => setOpenDropdown((s) => !s)}
-              aria-haspopup="true"
-              aria-expanded={openDropdown}
-              className="flex items-center gap-2 px-3 py-1 border rounded-sm bg-white shadow-sm cursor-pointer"
-            >
-              <img src={isArabic ? egyptFlag : ukFlag} alt="flag" className="w-5 h-5 object-cover" />
-              <ChevronDown size={16} />
-            </button>
+      {/* Language Toggle */}
+      <div className={`fixed top-6 ${isArabic ? "left-6" : "right-6"} z-[100]`}>
+        <button
+          onClick={() => i18n.changeLanguage(isArabic ? "en" : "ar")}
+          className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-xl border border-[#b38e19]/40 rounded-xl text-white hover:border-[#b38e19] transition-all duration-300 group shadow-2xl"
+        >
+          <Globe size={16} className="text-[#b38e19]" />
+          <span className="text-[11px] font-black tracking-widest uppercase">
+            {isArabic ? "English" : "عربي"}
+          </span>
+        </button>
+      </div>
 
-            {openDropdown && (
-              <div
-                className={`absolute top-full mt-1 w-36 bg-white shadow-md rounded-sm border z-50 ${isArabic ? "left-0" : "right-0"}`}
-              >
-                <button
-                  onClick={() => handleLanguageChange("ar")}
-                  className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-100 text-sm"
-                >
-                  <img src={egyptFlag} alt="Arabic" className="w-5 h-5" />
-                  <span className="whitespace-nowrap">العربية</span>
-                </button>
-                <button
-                  onClick={() => handleLanguageChange("en")}
-                  className="flex items-center gap-2 px-3 py-2 w-full hover:bg-gray-100 text-sm"
-                >
-                  <img src={ukFlag} alt="English" className="w-5 h-5" />
-                  <span className="whitespace-nowrap">English</span>
-                </button>
-              </div>
-            )}
+      <main className="relative z-10 w-full max-w-[1200px] flex flex-col lg:flex-row items-center justify-between px-6 gap-10">
+        {/* Welcome Text Section */}
+        <div
+          className={`w-full lg:w-1/2 ${isArabic ? "text-right" : "text-left"} hidden lg:block`}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-1 w-12 bg-[#b38e19] rounded-full" />
+            <span className="text-[#b38e19] font-black uppercase tracking-[5px] text-[clamp(0.6rem,1.2vw,1rem)]">
+              {isArabic ? "بوابة التسجيل" : "Registration Portal"}
+            </span>
           </div>
-        </div>
-
-        {/* 🧾 Form */}
-        <form onSubmit={handleRegister} className={`max-w-md w-full mx-auto ${isArabic ? "text-right" : "text-left"}`}>
-          <h1 className="text-4xl font-bold mt-[50px] mb-3 text-gray-900">{t("signUp")}</h1>
-          <p className="text-gray-600 mb-10">{t("subtitle")}</p>
-
-          {error && (
-            <div className="mb-3 text-red-600 text-sm border border-red-400 p-2 rounded-md bg-red-50">
-              {error}
-            </div>
-          )}
-
-          <input
-            type="text"
-            placeholder={t("nationalID")}
-            value={nationalID}
-            onChange={(e) => setNationalID(e.target.value)}
-            disabled={loading}
-            dir={isArabic ? "rtl" : "ltr"}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3 text-base focus:ring-2 focus:ring-blue-500 outline-none disabled:opacity-60"
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full bg-[#003366] text-white py-2 rounded-md font-semibold hover:bg-[#002244] transition ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
-          >
-            {t("signUp")}
-          </button>
-
-          <div className="flex items-center my-6">
-            <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="px-2 text-gray-500">{t("or")}</span>
-            <div className="flex-1 h-px bg-gray-300"></div>
-          </div>
-
-          <p className="text-sm text-center">
-            {t("loginText")}{" "}
-            <button
-              onClick={() => navigate("/login")}
-              type="button"
-              className="text-yellow-600 font-semibold hover:underline"
-              disabled={loading}
-            >
-              {t("login")}
-            </button>
+          <h1 className="text-[clamp(2.5rem,6vw,5rem)] font-[900] leading-none mb-6 tracking-tighter text-white">
+            {isArabic ? "جامعة العاصمة" : "CAPITAL UNIVERSITY"}
+          </h1>
+          <p className="text-[clamp(0.9rem,1.2vw,1.25rem)] text-white/50 max-w-md font-light leading-relaxed">
+            {isArabic
+              ? "ابدأ رحلتك الرقمية معنا. قم بإنشاء حسابك للوصول إلى كافة الخدمات الأكاديمية المتطورة."
+              : "Start your digital journey with us. Create your account to access advanced academic services."}
           </p>
-        </form>
-      </div>
-
-      {/* Right Side - Image */}
-      <div
-        className="hidden md:flex w-1/2 relative rounded-[35px] mr-5 justify-center items-center text-white text-center bg-cover bg-right"
-        style={{ backgroundImage: `url(${helwanImage})` }}
-      >
-        <div className="absolute inset-0 bg-black/10 backdrop-blur-sm rounded-[35px] z-0"></div>
-        <div className="absolute inset-0 bg-black/45 rounded-[35px] z-0"></div>
-
-        <div className="relative z-10 flex flex-col items-center w-full text-center px-6">
-          <h3 className={`font-bold ${isArabic ? "text-[2.5rem] text-right mr-5" : "text-[3rem] text-left ml-5"}`}>
-            {t("welcome")}
-          </h3>
-          <p className="text-lg mt-3 text-gray-200 max-w-[80%]">{t("sub")}</p>
         </div>
-      </div>
+
+        {/* Register Card */}
+        <div className="w-full lg:w-[440px] relative">
+          <div className="absolute inset-0 bg-[#b38e19]/10 blur-[80px] rounded-full" />
+
+          <div className="relative bg-[#19355a]/20 backdrop-blur-[40px] border border-white/10 rounded-[2.5rem] p-10 md:p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
+            <header
+              className={`mb-10 ${isArabic ? "text-right" : "text-left"}`}
+            >
+              <div className="w-14 h-14 bg-[#19355a] border border-[#b38e19]/30 rounded-2xl flex items-center justify-center mb-6 shadow-2xl">
+                <Fingerprint className="text-[#b38e19]" size={32} />
+              </div>
+              <h3 className="text-[clamp(1.5rem,2vw,2rem)] font-black text-white tracking-tight mb-1">
+                {t("signUp")}
+              </h3>
+              <p className="text-[#b38e19] text-[clamp(0.6rem,0.8vw,0.7rem)] font-black uppercase tracking-[4px]">
+                {t("subtitle")}
+              </p>
+            </header>
+
+            <form onSubmit={handleRegister} className="space-y-6">
+              {error && (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold rounded-xl">
+                  {error}
+                </div>
+              )}
+
+              {/* National ID Input */}
+              <div className="group space-y-2">
+                <label className="text-[clamp(0.65rem,1vw,0.9rem)] font-black uppercase tracking-widest text-white/30 px-1">
+                  {t("nationalID")}
+                </label>
+                <div className="relative">
+                  <User
+                    className={`absolute top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    value={nationalID}
+                    onChange={(e) => setNationalID(e.target.value)}
+                    disabled={loading}
+                    className={`w-full bg-white/5 border border-white/10 focus:border-[#b38e19]/50 focus:bg-white/10 text-white py-4 ${isArabic ? "pr-12 pl-4" : "pl-12 pr-4"} rounded-2xl outline-none transition-all font-bold placeholder:text-white/10`}
+                    placeholder="2990101XXXXXXXX"
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full relative overflow-hidden bg-[#19355a] text-white py-5 rounded-2xl font-black text-[clamp(0.7rem,0.9vw,0.85rem)] uppercase tracking-[4px] shadow-2xl hover:shadow-[#19355a]/40 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-3 group"
+              >
+                <>
+                  <span>{t("signUp")}</span>
+                  {isArabic ? (
+                    <ArrowLeft size={16} />
+                  ) : (
+                    <ArrowRight size={16} />
+                  )}
+                </>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#b38e19]/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              </button>
+            </form>
+
+            <div className="mt-10 text-center pt-8 border-t border-white/5">
+              <p className="text-[clamp(0.6rem,0.8vw,0.7rem)] font-black text-white/20 uppercase tracking-[2px]">
+                {t("loginText")}{" "}
+                <button
+                  onClick={() => navigate("/login")}
+                  className="text-[#b38e19] hover:text-white font-black text-[clamp(0.6rem,0.8vw,0.7rem)] transition-colors underline underline-offset-8"
+                >
+                  {t("login")}
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer className="absolute bottom-6 w-full text-center">
+        <p className="text-white/10 text-[8px] font-black uppercase tracking-[10px]">
+          Strategic Portal • Capital University
+        </p>
+      </footer>
     </div>
   );
 }

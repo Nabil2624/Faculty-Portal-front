@@ -20,5 +20,9 @@
   "next": "Next",
   "page": "Page",
   "of": "of",
-  "confirmDelete": "Are you sure you want to delete this?"
+  "confirmDelete": "Are you sure you want to delete this?",
+  "backToList": "Back To List",
+  "searchPlaceholder": "Search...",
+  "gradeDetails": "Job Grade Details",
+  "notes": "Job Grade Description"
 }

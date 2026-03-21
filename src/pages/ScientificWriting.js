@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
+import { BookType } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeader from "../components/ui/PageHeader";
 
@@ -11,6 +11,7 @@ import useAuthorRoles from "../hooks/useAuthorRoles";
 
 import ScientificWritingTable from "../components/widgets/ScientificWriting/ScientificWritingTable";
 import ScientificWritingModal from "../components/widgets/ScientificWriting/ScientificWritingModal";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 
 export default function ScientificWriting() {
   const { t, i18n } = useTranslation("scientific-writing");
@@ -103,7 +104,6 @@ export default function ScientificWriting() {
       setDeleteError(false);
       loadData();
     } catch (err) {
-      console.error(err);
       setDeleteError(true);
     }
   };
@@ -114,15 +114,10 @@ export default function ScientificWriting() {
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
         {/* ✅ Page Header unchanged */}
-        <PageHeader
+        <PageHeaderNoAction
           title={t("title")}
-          addLabel={t("add")}
-          onAdd={() => navigate("/add-scientific-writing")}
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
           isArabic={isArabic}
-          onFilterClick={() => setShowFilterModal(true)}
+          icon={BookType}
         />
 
         {/* Error */}
@@ -132,11 +127,8 @@ export default function ScientificWriting() {
           </div>
         )}
 
-
-
-        {/* ✅ Table only */}
-        {!loading && !error && (
-          <div className="mt-4 flex-1">
+       
+          <div className="flex-1 overflow-hidden">
             <ScientificWritingTable
               addLabel={t("add")}
               data={items}
@@ -151,6 +143,8 @@ export default function ScientificWriting() {
                 setShowDelete(true);
                 setDeleteError(false);
               }}
+              searchTerm={search}
+              onSearchChange={setSearch}
               searchPlaceholder={t("search")}
               value={search}
               onChange={setSearch}
@@ -158,7 +152,6 @@ export default function ScientificWriting() {
               onFilterClick={() => setShowFilterModal(true)}
             />
           </div>
-        )}
 
         {/* ✅ Only Delete + Filter modal remain */}
         <ScientificWritingModal

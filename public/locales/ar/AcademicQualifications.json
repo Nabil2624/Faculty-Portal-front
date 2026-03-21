@@ -23,5 +23,9 @@
   "faculty": "الجامعة/الكلية",
   "location": "الدولة/المدينة",
   "date": "تاريخ الحصول",
-"attachments": "المرفقات"
+"attachments": "المرفقات",
+"qualificationDetails":"تفاصيل المؤهل العلمي",
+"searchPlaceholder":"ابحث هنا",
+"backToList":"العودة الى القائمة"
+
 }

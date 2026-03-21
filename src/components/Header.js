@@ -2,8 +2,7 @@ import React from "react";
 import { Bell, Mail, Search, LogOut, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {logout} from "../services/auth.service";
-
+import {logout} from "../services/auth.service"
 
 export default function Header({ isExpanded }) {
   const { t, i18n } = useTranslation("headerandsidebar");
@@ -25,7 +24,6 @@ const handleLogout = async () => {
     }
   };
 
-  
   return (
     <header
       className={`flex items-center gap-[clamp(10px,1.5vw,30px)]
@@ -40,34 +38,27 @@ const handleLogout = async () => {
       {/* 1. Icons Section (Notification & Mail) */}
       <div className="flex items-center gap-1 shrink-0">
         <button className="p-2.5 hover:bg-white/10 rounded-xl transition-all relative group">
-          <Bell
-            size={20}
-            className="text-white/40 group-hover:text-white transition-colors"
-          />
+          <Bell size={20} className="text-white/40 group-hover:text-white transition-colors" />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#b38e19] rounded-full border border-[#19355a]"></span>
         </button>
         <button className="p-2.5 hover:bg-white/10 rounded-xl transition-all group">
-          <Mail
-            size={20}
-            className="text-white/40 group-hover:text-white transition-colors"
-          />
+          <Mail size={20} className="text-white/40 group-hover:text-white transition-colors" />
         </button>
       </div>
 
       {/* 2. Integrated Search Bar */}
-      {!isSupportAdmin && (
-        <div className="relative flex-1 max-w-[400px] group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#b38e19] transition-colors" />
-          <input
-            type="text"
-            placeholder={isArabic ? "بحث في النظام..." : "Search system..."}
-            className="w-full h-[clamp(35px,2.5vw,45px)] bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 text-sm focus:bg-white/10 focus:border-[#b38e19] outline-none transition-all placeholder:text-white/60"
-          />
-        </div>
-      )}
+      <div className="relative flex-1 max-w-[400px] group">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#b38e19] transition-colors" />
+        <input
+          type="text"
+          placeholder={isArabic ? "بحث في النظام..." : "Search system..."}
+          className="w-full h-[clamp(35px,2.5vw,45px)] bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 text-sm focus:bg-white/10 focus:border-[#b38e19] outline-none transition-all placeholder:text-white/60"
+        />
+      </div>
 
       {/* 3. Controls Section (Language & Logout) */}
       <div className="flex items-center gap-5 ms-auto shrink-0">
+        
         {/* المقلد من صفحة الـ Login: Glassmorphism Language Toggle */}
         <button
           onClick={handleLanguageChange}
@@ -88,11 +79,9 @@ const handleLogout = async () => {
             {t("logout")}
           </span>
           <div className="w-[1px] h-4 bg-white/10 group-hover:bg-[#b38e19]/30 transition-colors"></div>
-          <LogOut
-            size={18}
-            className="transition-transform group-hover:translate-x-1"
-          />
+          <LogOut size={18} className="transition-transform group-hover:translate-x-1" />
         </button>
+
       </div>
     </header>
   );

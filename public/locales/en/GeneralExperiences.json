@@ -15,6 +15,10 @@
   "page": "Page",
   "of": "of",
   "search": "Search in Experiences...",
+  "experienceDetails": "Experience Details",
+  "backToList": "Back To List",
+  "description": "Experience Description",
+  "noDescriptionAdded": "No Description Added",
   "errors": {
     "loadFailed": "Failed to load data",
     "deleteFailed": "Failed to delete item"

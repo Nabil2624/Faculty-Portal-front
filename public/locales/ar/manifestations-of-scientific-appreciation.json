@@ -13,6 +13,11 @@
   "issuingAuthority": "جهة الإصدار",
   "dateOfAppreciation": "تاريخ التقدير",
   "attachments": "المرفقات",
+  "backToList": "العودة الى القائمة",
+  "noAttachments": "لا يوجد مرفقات",
+  "details": "تفاصيل المظهر العلمي",
+  "description": "وصف المظهر العلمي",
+  "noDescriptionAdded": "لا يوجد وصف",
   "errors": {
     "loadFailed": "فشل في تحميل البيانات. يرجى المحاولة مرة أخرى."
   }

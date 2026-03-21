@@ -70,3 +70,10 @@ export const deleteSeminarAttachment = async (
     `/Attachments/${entityId}/${attachmentId}?context=8`
   );
 };
+
+
+export const conferenceService = {
+  create: (data) => axiosInstance.post("/Missions/CreateConfernceOrSeminar", data),
+  update: (id, data) => axiosInstance.put(`/Missions/UpdateConferncesOrSeminars/${id}`, data),
+  getRoles: () => axiosInstance.get("/LookUpItems/SeminarParticipationTypes"),
+};

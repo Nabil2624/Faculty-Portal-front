@@ -46,7 +46,7 @@ export default function ParticipantList({
       <div className="flex items-center gap-2 mb-2">
         <input
           type="text"
-          className={`w-full sm:flex-1 h-[40px] bg-[#E2E2E2] rounded-md px-3 text-[12px] outline-none text-gray-800 placeholder:text-gray-600 mt-2 sm:mt-0 ${
+          className={`w-full sm:flex-1 h-[40px] bg-white border border-gray-300 rounded-md px-3 text-[12px] outline-none text-gray-800 placeholder:text-gray-600 mt-2 sm:mt-0 ${
             orcidError ? "border border-red-500" : ""
           }`}
           placeholder={placeholder || "Enter ORCID"}
