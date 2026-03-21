@@ -10,13 +10,13 @@ export default function InputField({
   textarea = false,
 }) {
   const base =
-    "w-full border border-gray-300 rounded-[clamp(0.2rem,0.4vw,0.7rem)] bg-[#E2E2E2] outline-none transition";
+    "w-full border border-gray-300 rounded-[clamp(0.2rem,0.4vw,0.7rem)] bg-white outline-none transition";
 
   const responsive =
     `
     px-[clamp(12px,1.4vw,28px)]
     py-[clamp(10px,0.6vw,28px)]
-    text-[clamp(13px,1vw,30px)]
+    text-[clamp(13px,1vw,20px)]
   `;
 
   const focus =
@@ -27,7 +27,7 @@ export default function InputField({
   return (
     <div className="w-full space-y-4">
       {label && (
-        <label className="block font-medium text-[clamp(14px,1.2vw,32px)]">
+        <label className="block font-medium text-[clamp(14px,1.2vw,25px)]">
           {label}
           {required && <span className="text-[#b38e19] ml-1">*</span>}
         </label>
@@ -38,7 +38,7 @@ export default function InputField({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className={`${shared} resize-none min-h-[clamp(90px,10.8vw,195px)]`}
+          className={`${shared} resize-none min-h-[clamp(90px,9.5vw,225px)]`}
         />
       ) : (
         <input

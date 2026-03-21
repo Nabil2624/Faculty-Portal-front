@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-
+import { ShieldCheck } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
@@ -12,7 +12,9 @@ import ParticipationInQualityWorkCard from "../components/widgets/Participationi
 import ParticipationInQualityWorkModal from "../components/widgets/ParticipationinQualityWork/ParticipationInQualityWorkModal";
 
 import { deleteParticipation } from "../services/participationInQualityWork.service";
-
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import ParticipationInQualityWorkTable from "../components/widgets/ParticipationinQualityWork/ParticipationInQualityWorkTable";
+import { useNavigate } from "react-router-dom";
 export default function ParticipationInQualityWorks() {
   const { t, i18n } = useTranslation("participation-quality-work");
   const isArabic = i18n.language === "ar";
@@ -31,6 +33,7 @@ export default function ParticipationInQualityWorks() {
   const [filtersState, setFiltersState] = useState({});
   const [sortValue, setSortValue] = useState(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const navigate = useNavigate();
   /* ================= DATA ================= */
   const [debouncedSearch, setDebouncedSearch] = useState("");
   useEffect(() => {
@@ -62,20 +65,20 @@ export default function ParticipationInQualityWorks() {
   }, [totalPages]);
 
   /* ================= FORM HOOK ================= */
-  const {
-    formData,
-    errors,
-    loading: formLoading,
-    handleChange,
-    submitForm,
-  } = useParticipationForm({
-    mode,
-    selectedItem,
-    onSuccess: () => {
-      setShowForm(false);
-      loadData();
-    },
-  });
+  // const {
+  //   formData,
+  //   errors,
+  //   loading: formLoading,
+  //   handleChange,
+  //   submitForm,
+  // } = useParticipationForm({
+  //   mode,
+  //   selectedItem,
+  //   onSuccess: () => {
+  //     setShowForm(false);
+  //     loadData();
+  //   },
+  // });
   const sortOptions = [
     { value: 4, label: "newestFirst" },
     { value: 3, label: "oldestFirst" },
@@ -109,16 +112,12 @@ export default function ParticipationInQualityWorks() {
 
   /* ================= EDIT ================= */
   const handleEdit = (item) => {
-    setMode("edit");
-    setSelectedItem(item);
-    setShowForm(true);
+    navigate("edit-participation-quality-work", { state: { item } });
   };
 
   /* ================= ADD ================= */
   const handleAdd = () => {
-    setMode("add");
-    setSelectedItem(null);
-    setShowForm(true);
+    navigate("/add-participation-quality-work");
   };
 
   return (
@@ -127,7 +126,7 @@ export default function ParticipationInQualityWorks() {
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
         {/* Header */}
-        <PageHeader
+        <PageHeaderNoAction
           title={t("title")}
           addLabel={t("add")}
           onAdd={handleAdd}
@@ -137,6 +136,7 @@ export default function ParticipationInQualityWorks() {
           searchPlaceholder={t("search")}
           isArabic={isArabic}
           onFilterClick={() => setShowFilterModal(true)}
+          icon={ShieldCheck}
         />
 
         {/* Error / Empty */}
@@ -149,72 +149,31 @@ export default function ParticipationInQualityWorks() {
           </div>
         )}
 
-        {!loading && !error && participations.length === 0 && (
-          <div
-            className="text-center text-gray-500"
-            style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
-          >
-            {t("empty")}
-          </div>
-        )}
-
-        {/* Grid */}
-        {!loading && !error && participations.length > 0 && (
-          <div
-            className="overflow-y-auto pr-2 mb-4 flex-1"
-            style={{ maxHeight: "calc(90vh - 200px)" }}
-          >
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${
-                isArabic ? "text-right" : "text-left"
-              }`}
-              style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
-            >
-              {participations.map((item) => (
-                <ParticipationInQualityWorkCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onEdit={() => handleEdit(item)}
-                  onDelete={() => {
-                    setSelectedItem(item);
-                    setShowDelete(true);
-                    setDeleteError(false);
-                  }}
-                  onDetails={() => {
-                    setSelectedItem(item);
-                    setShowDetails(true);
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Pagination */}
-        <div className="mt-auto">
-          <Pagination
+        <div className="flex-1 overflow-hidden">
+          <ParticipationInQualityWorkTable
+            data={participations}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onEdit={handleEdit}
+            onAdd={handleAdd}
+            onFilterClick={() => setShowFilterModal(true)}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
             t={t}
-            isArabic={isArabic}
           />
         </div>
 
         {/* ================= MODALS ================= */}
         <ParticipationInQualityWorkModal
-          mode={mode}
-          showForm={showForm}
           showDelete={showDelete}
           showDetails={showDetails}
           selectedItem={selectedItem}
-          formData={formData}
-          errors={errors}
-          handleChange={handleChange}
-          submitForm={submitForm}
-          loading={formLoading}
           deleteError={deleteError}
           onDelete={handleDelete}
           setShowForm={setShowForm}

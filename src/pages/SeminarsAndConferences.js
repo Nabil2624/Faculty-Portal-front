@@ -8,8 +8,9 @@ import SeminarCard from "../components/widgets/SeminarAndConferences/SeminarCard
 import SeminarModal from "../components/widgets/SeminarAndConferences/SeminarModal";
 import { useNavigate } from "react-router-dom";
 import useSeminarParticipationType from "../hooks/useSeminarParticipationType";
-
-
+import SeminarsAndConferencesTable from "../components/widgets/SeminarAndConferences/SeminarsAndConferencesTable";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import { Mic2 } from "lucide-react";
 export default function SeminarsAndConferences() {
   const { t, i18n } = useTranslation("SeminarsAndConferences");
   const isArabic = i18n.language === "ar";
@@ -115,69 +116,30 @@ export default function SeminarsAndConferences() {
       <div
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
-        <PageHeader
+        <PageHeaderNoAction
           title={t("seminarsAndConferences")}
-          addLabel={t("add")}
-          onAdd={() => navigate("/add-conference")}
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
-          isArabic={isArabic}
-          onFilterClick={() => setShowFilterModal(true)}
+          icon={Mic2}
         />
 
         {/* Error / Empty */}
         {!loading && error && (
           <div className="text-center text-red-500">{t(error)}</div>
         )}
-        {!loading && !error && seminars.length === 0 && (
-          <div className="text-center text-gray-500">{t("empty")}</div>
-        )}
-
-        {/* Grid */}
-        {!loading && !error && seminars.length > 0 && (
-          <div
-            className="overflow-y-auto pr-2 mb-4 flex-1"
-            style={{ maxHeight: "calc(90vh - 200px)" }}
-          >
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${isArabic ? "text-right" : "text-left"}`}
-              style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
-            >
-              {seminars.map((item) => (
-                <SeminarCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onEdit={() =>
-                    navigate("/edit-conference", {
-                      state: { existingData: item },
-                    })
-                  }
-                  onDelete={() => {
-                    setSelectedItem(item);
-                    setShowDelete(true);
-                  }}
-                  onDetails={() => {
-                    setSelectedItem(item);
-                    setShowDetails(true);
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Pagination */}
-        <div className="mt-auto">
-          <Pagination
+        <div className=" flex-1 overflow-hidden">
+          <SeminarsAndConferencesTable
+            data={seminars}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+            }}
+            onEdit={(item) => navigate("/edit-conference", { state: { item } })}
+            onAdd={() => navigate("/add-conference")}
+            onFilterClick={() => setShowFilterModal(true)}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            t={t}
-            isArabic={isArabic}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
           />
         </div>
 

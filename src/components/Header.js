@@ -1,152 +1,86 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Bell, Mail, Search, ChevronDown } from "lucide-react";
+import React from "react";
+import { Bell, Mail, Search, LogOut, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
-import egyptFlag from "../assets/egyptFlag.png";
-import ukFlag from "../assets/americaFlag.png";
-
-import FloatingSearch from "./FloatingSearch";
+import {logout} from "../services/auth.service"
 
 export default function Header({ isExpanded }) {
   const { t, i18n } = useTranslation("headerandsidebar");
   const navigate = useNavigate();
-
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
-
-  const [searchOpen, setSearchOpen] = useState(false);
-
   const isArabic = i18n.language === "ar";
 
-  /* ===============================
-     Responsive sizes (Tablet → XL)
-  =============================== */
+  const handleLanguageChange = () => {
+    i18n.changeLanguage(isArabic ? "en" : "ar");
+  };
 
-  const iconClass =
-    "w-[clamp(20px,1.6vw,60px)] h-[clamp(20px,1.6vw,60px)] shrink-0";
-
-  /* =============================== */
-
-  useEffect(() => {
-    document.documentElement.dir = isArabic ? "rtl" : "ltr";
-
-    if (isArabic) {
-      document.documentElement.classList.add("arabic-font");
-      document.documentElement.classList.remove("english-font");
-    } else {
-      document.documentElement.classList.add("english-font");
-      document.documentElement.classList.remove("arabic-font");
+const handleLogout = async () => {
+    try {
+      await logout(); 
+      navigate("/login", { replace: true })
+    } catch (error) {  
+      alert(t("logoutError")); 
     }
-  }, [i18n.language]);
-
-  const handleLanguageChange = (lang) => {
-    i18n.changeLanguage(lang);
-    setDropdownOpen(false);
   };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login", { replace: true });
-  };
-
-  // close dropdown on outside click
-  useEffect(() => {
-    const handler = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
 
   return (
     <header
-      className={`flex items-center justify-between
+      className={`flex items-center gap-[clamp(10px,1.5vw,30px)]
         w-[calc(100%-0.5rem)]
         h-[clamp(48px,3.2vw,130px)]
-        px-[clamp(16px,2vw,50px)]
-        bg-[#19355a]
-        text-white rounded-[clamp(1px,0.5vw,20px)]
+        px-[clamp(16px,2vw,40px)]
+        bg-[#19355a] text-white rounded-[clamp(1px,0.5vw,20px)]
         ${isArabic ? "mr-1" : "ml-1"}
-        relative z-50 top-0
+        relative z-50 top-0 border-b border-white/10 shadow-lg
       `}
     >
-      {/* Right side icons */}
-      <div className="flex items-center gap-[clamp(8px,1vw,16px)]">
-        <Bell className={iconClass} />
-        <Mail className={iconClass} />
-
-        <button
-          onClick={() => setSearchOpen(true)}
-          className="p-[clamp(4px,0.6vw,8px)] hover:bg-white/20 rounded-full transition"
-        >
-          <Search className={iconClass} />
+      {/* 1. Icons Section (Notification & Mail) */}
+      <div className="flex items-center gap-1 shrink-0">
+        <button className="p-2.5 hover:bg-white/10 rounded-xl transition-all relative group">
+          <Bell size={20} className="text-white/40 group-hover:text-white transition-colors" />
+          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#b38e19] rounded-full border border-[#19355a]"></span>
+        </button>
+        <button className="p-2.5 hover:bg-white/10 rounded-xl transition-all group">
+          <Mail size={20} className="text-white/40 group-hover:text-white transition-colors" />
         </button>
       </div>
 
-      {/* Left controls */}
-      <div className="flex items-center gap-[clamp(8px,1vw,16px)]">
-        {/* Language dropdown */}
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-[clamp(13px,1vw,20px)] bg-[#19355a] text-white text-[clamp(13px,0.9vw,15px)]"
-          >
-            {isArabic ? (
-              <>
-                <img src={egyptFlag} alt="Arabic" className="w-[clamp(8px,2vw,80px)] h-[clamp(8px,1.5vw,50px)]" />
-                <span className="text-[clamp(13px,1.2vw,45px)]">ع</span>
-              </>
-            ) : (
-              <>
-                <img src={ukFlag} alt="English" className="w-[clamp(8px,2vw,50px)] h-[clamp(8px,2vw,50px)]" />
-                <span>En</span>
-              </>
-            )}
+      {/* 2. Integrated Search Bar */}
+      <div className="relative flex-1 max-w-[400px] group">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-[#b38e19] transition-colors" />
+        <input
+          type="text"
+          placeholder={isArabic ? "بحث في النظام..." : "Search system..."}
+          className="w-full h-[clamp(35px,2.5vw,45px)] bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 text-sm focus:bg-white/10 focus:border-[#b38e19] outline-none transition-all placeholder:text-white/60"
+        />
+      </div>
 
-            <ChevronDown className="w-[clamp(12px,1.5vw,50px)] h-[clamp(12px,1.5vw,50px)]" />
-          </button>
+      {/* 3. Controls Section (Language & Logout) */}
+      <div className="flex items-center gap-5 ms-auto shrink-0">
+        
+        {/* المقلد من صفحة الـ Login: Glassmorphism Language Toggle */}
+        <button
+          onClick={handleLanguageChange}
+          className="flex items-center gap-2 px-4 h-[clamp(32px,2.2vw,42px)] bg-black/40 backdrop-blur-xl border border-[#b38e19]/40 rounded-xl text-white hover:border-[#b38e19] transition-all duration-300 group shadow-lg"
+        >
+          <Globe size={16} className="text-[#b38e19]" />
+          <span className="text-[11px] font-black tracking-widest uppercase">
+            {isArabic ? "English" : "عربي"}
+          </span>
+        </button>
 
-          {dropdownOpen && (
-            <div
-              className={`absolute mt-1 bg-[#19355a] text-white shadow-md z-[2000] text-sm
-              ${isArabic ? "left-0" : "right-0"}`}
-            >
-              <button
-                onClick={() => handleLanguageChange("ar")}
-                className="flex items-center gap-[clamp(13px,1vw,20px)] w-full px-3 py-2 hover:bg-[#17314f]"
-              >
-                <img src={egyptFlag} className="w-5 h-4" alt="" />
-                العربية
-              </button>
-
-              <button
-                onClick={() => handleLanguageChange("en")}
-                className="flex items-center gap-[clamp(13px,1vw,20px)] w-full px-3 py-2 hover:bg-[#17314f]"
-              >
-                <img src={ukFlag} className="w-5 h-4" alt="" />
-                English
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Logout */}
+        {/* Professional Logout Button (نسخة واضحة ومحددة) */}
         <button
           onClick={handleLogout}
-          className="font-semibold hover:underline text-[clamp(13px,1.2vw,45px)]"
+          className="flex items-center gap-3 px-6 h-[clamp(32px,2.2vw,42px)] bg-white/5 border border-white/20 rounded-xl hover:bg-[#b38e19]/10 hover:border-[#b38e19] hover:text-[#b38e19] transition-all group shadow-sm active:scale-95"
         >
-          {t("logout")}
+          <span className="text-[12px] font-black uppercase tracking-[0.15em]">
+            {t("logout")}
+          </span>
+          <div className="w-[1px] h-4 bg-white/10 group-hover:bg-[#b38e19]/30 transition-colors"></div>
+          <LogOut size={18} className="transition-transform group-hover:translate-x-1" />
         </button>
-      </div>
 
-      {/* Floating Search */}
-      <FloatingSearch
-        isOpen={searchOpen}
-        onClose={() => setSearchOpen(false)}
-      />
+      </div>
     </header>
   );
 }

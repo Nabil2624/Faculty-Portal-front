@@ -13,5 +13,18 @@
   "of": "من",
   "empty": "لا توجد مقالات",
   "fetchError": "فشل تحميل المقالات",
-    "deleteError": "فشل حذف المقال"
+  "deleteError": "فشل حذف المقال",
+  "articles": {
+    "searchPlaceholder": "بحث عن مقال...",
+    "addNew": "إضافة مقال جديد",
+    "documentDetails": "تفاصيل مراجعة المقال",
+    "backToList": "العودة الى القائمة",
+    "selectItemToPreview": "اختر مقالاً لعرض التفاصيل",
+    "noDataAvailable": "لا توجد مقالات متاحة حالياً",
+    "organization": "الجهة",
+    "reviewDate": "تاريخ تحكيم المقال",
+    "description": "تفاصيل تحكيم المقال",
+    "noDescription": "لا يوجد وصف مضاف",
+    "filter": "تصفية"
+  }
 }

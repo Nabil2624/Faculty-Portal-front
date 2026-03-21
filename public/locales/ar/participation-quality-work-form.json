@@ -10,7 +10,9 @@
   "enter_description": "أدخل الوصف",
   "save": "حفظ",
   "loading": "جاري الحفظ...",
-
+  "add_participation_title": "اضافة مشاركة",
+  "edit_participation_title": "تعديل مشاركة",
+  "cancel": "الغاء",
   "errors": {
     "participationName_required": "اسم المشاركة مطلوب",
     "startDate_required": "تاريخ البداية مطلوب",

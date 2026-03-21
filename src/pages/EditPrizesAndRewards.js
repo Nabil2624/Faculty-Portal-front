@@ -91,9 +91,7 @@ export default function EditPrizesAndRewards() {
 
       navigate("/prizes-and-rewards");
     } catch (error) {
-      setServerErrors(
-        error.response?.data || { message: t("messages.failedSave") },
-      );
+      setServerErrors({ message: t("messages.failedSave") });
     } finally {
       setLoading(false);
     }

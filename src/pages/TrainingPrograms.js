@@ -10,7 +10,9 @@ import useTrainingPrograms from "../hooks/useTrainingPrograms";
 import { deleteTrainingProgram } from "../services/trainingPrograms.service";
 import TrainingProgramCard from "../components/widgets/TrainingProgram/TrainingProgramCard";
 import TrainingProgramModal from "../components/widgets/TrainingProgram/TrainingProgramModal";
-
+import TrainingProgramsTable from "../components/widgets/TrainingProgram/TrainingProgramsTable";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import { GraduationCap } from "lucide-react";
 export default function TrainingPrograms() {
   const { t, i18n } = useTranslation("TrainingPrograms");
   const isArabic = i18n.language === "ar";
@@ -121,65 +123,36 @@ export default function TrainingPrograms() {
   return (
     <ResponsiveLayoutProvider>
       <div
-        className={`${isArabic ? "rtl" : "ltr"} p-4 flex flex-col min-h-[90vh]`}
+        className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
-        <PageHeader
+        <PageHeaderNoAction
           title={t("trainingPrograms")}
-          addLabel={t("add")}
-          onAdd={() => navigate("/add-training-program")}
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
-          isArabic={isArabic}
-          onFilterClick={() => setShowFilterModal(true)}
+          icon={GraduationCap}
         />
 
         {!loading && error && (
           <div className="text-center text-red-500 mb-4">{error}</div>
         )}
 
-        {!loading && !error && programs.length === 0 && (
-          <div className="text-center text-gray-500 mb-4">{t("empty")}</div>
-        )}
-
-        {loading && (
-          <div className="text-center text-gray-500 mb-4">Loading...</div>
-        )}
-
-        {!loading && programs.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {programs.map((item) => (
-              <TrainingProgramCard
-                key={item.id}
-                item={item}
-                isArabic={isArabic}
-                onEdit={(itm) =>
-                  navigate("/edit-training-program", {
-                    state: { programData: itm },
-                  })
-                }
-                onDelete={(itm) => {
-                  setSelectedItem(itm);
-                  setShowDelete(true);
-                }}
-                onDetails={(itm) => {
-                  setSelectedItem(itm);
-                  setShowDetails(true);
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="mt-auto flex justify-center items-center gap-3">
-          <Pagination
+        <div className="flex-1 overflow-hidden">
+          <TrainingProgramsTable
+            data={programs}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onEdit={(item) =>
+              navigate("/edit-training-program", { state: { item } })
+            }
+            onAdd={() => navigate("/add-training-program")}
+            onFilterClick={() => setShowFilterModal(true)}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
             t={t}
-            isArabic={isArabic}
           />
         </div>
 

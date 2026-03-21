@@ -1,16 +1,15 @@
+// ProtectedRoute.jsx
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
-// Checks for authentication before rendering protected pages
-export default function ProtectedRoute() {
-  const token = localStorage.getItem("token");
+export default function ProtectedRoute({ isAuthenticated, isCheckingAuth }) {
+  // 1. لو لسه بنعمل Check على السيشن من الـ AuthMe.. متعملش Redirect دلوقتي
+  if (isCheckingAuth) return null; 
 
-  // If no token → redirect to login
- if (!token) {
-  return <Navigate to={`/login?redirect=${encodeURIComponent(window.location.pathname)}`} replace />;
- }
+  // 2. لو خلصنا فحص وطلع مش مسجل دخول
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-
-  // Otherwise → render the child routes
   return <Outlet />;
 }

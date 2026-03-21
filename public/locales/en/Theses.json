@@ -4,7 +4,7 @@
   "empty": "No theses available",
   "fetchError": "Failed to load theses",
   "areYouSureDelete": "Are you sure you want to delete this thesis?",
-    "phd": "PHD",
+  "phd": "PHD",
   "master": "Master's",
   "delete": "Delete",
   "cancel": "Cancel",
@@ -12,5 +12,7 @@
   "next": "Next",
   "page": "page",
   "of": "of",
-  "registrationDate": "Registration Date"
+  "showMore": "Show more",
+  "registrationDate": "Registration Date",
+  "titleText": "Title"
 }

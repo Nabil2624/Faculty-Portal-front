@@ -1,236 +1,121 @@
-import React, { useRef, useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { Calendar, ChevronDown, Plus } from "lucide-react";
-import axiosInstance from "../../../utils/axiosInstance";
+import React from "react";
+import InputField from "../../ui/InputField";
+import DateField from "../../ui/DateField";
+import FormButton from "../../ui/FormButton";
+import PageHeaderNoAction from "../../ui/PageHeaderNoAction";
+import Dropdown from "../../ui/Dropdown"; // استيراد الـ Dropdown الخاص بك
+import { GraduationCap, Milestone } from "lucide-react";
+import ResponsiveLayoutProvider from "../../ResponsiveLayoutProvider";
+import CustomDropdown from "../../ui/CustomDropdown";
 
-export default function JobGradeForm({ onCancel, onSuccess }) {
-  const { t, i18n } = useTranslation("form");
-  const dir = i18n.dir();
-  const isArabic = i18n.language === "ar";
+export default function JobGradeForm({
+  t,
+  isArabic,
+  formData,
+  degrees,
+  onChange,
+  onSave,
+  onCancel,
+  loading,
+  loadingDegrees,
+  error,
+  formTitle,
+}) {
+  const dir = isArabic ? "rtl" : "ltr";
 
-  const [formData, setFormData] = useState({
-    jobGrade: "",
-    gradeDate: "",
-    notes: "",
-  });
-
-  const [degrees, setDegrees] = useState([]);
-  const [loadingDegrees, setLoadingDegrees] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-
-  const gradeDateRef = useRef(null);
-  const [gradeFocused, setGradeFocused] = useState(false);
-
-  // Fetch Employment Degrees
-  const fetchDegrees = async () => {
-    try {
-      setLoadingDegrees(true);
-      const response = await axiosInstance.get(
-        "/LookUpItems/EmploymentDegrees",
-        { skipGlobalErrorHandler: true },
-      );
-      setDegrees(response.data || []);
-    } catch (err) {
-      setErrors((prev) => ({ ...prev, degrees: t("fetchDegreesError") }));
-    } finally {
-      setLoadingDegrees(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDegrees();
-  }, []);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const openDatePicker = (ref) => {
-    if (!ref?.current) return;
-    try {
-      ref.current.showPicker();
-    } catch (err) {
-      ref.current.focus();
-    }
-  };
-
-  const validate = () => {
-    const errs = {};
-    if (!formData.jobGrade) errs.jobGrade = t("required");
-    if (!formData.gradeDate) errs.gradeDate = t("required");
-    return errs;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length) return;
-
-    try {
-      setLoading(true);
-      const payload = {
-        jobRankId: formData.jobGrade,
-        dateOfJobRank: formData.gradeDate,
-        notes: formData.notes || "",
-      };
-
-      await axiosInstance.post(
-        "/ScientificProgression/CreateJobRank",
-        payload,
-        {
-          skipGlobalErrorHandler: true,
-        },
-      );
-
-      if (onSuccess) onSuccess();
-    } catch (err) {
-      console.error("Failed to create job rank:", err);
-      setErrors({ api: t("submitError") });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const inputClass =
-    "w-full bg-white border border-gray-300 rounded-md py-2 px-3 text-sm text-gray-800 transition duration-150 bg-[#E2E2E2]";
-  const focusClasses =
-    "focus:outline-none focus:ring-2 focus:ring-[#B38E19] transition duration-150 shadow";
+  // تحويل البيانات لشكل يقبله الـ Dropdown المخصص (عادة id و value)
+  const degreeOptions = degrees.map((deg) => ({
+    id: deg.id,
+    label: isArabic ? deg.valueAr : deg.valueEn,
+  }));
 
   return (
-    <form
-      key={i18n.language}
-      dir={dir}
-      onSubmit={handleSubmit}
-      style={{
-        width: "clamp(320px, 32vw, 600px)",
-        padding: "clamp(1rem, 2.5vw, 2rem)",
-        borderRadius: "clamp(12px, 1.8vw, 22px)",
-      }}
-      className="bg-[#EDEDED] border-2 border-[#b38e19] shadow-sm mx-auto"
-    >
-      <div className="flex items-center justify-center mb-6">
-        <Plus className="text-[#B38E19] mx-1" size={23} />
-        <h2 className="text-xl font-semibold text-gray-800">
-          {t("add_job_grade")}
-        </h2>
-      </div>
+    <ResponsiveLayoutProvider>
+      <div className={`flex flex-col p-3 bg-[#f8fafc] h-[90vh] ${dir}`}>
+        <PageHeaderNoAction title={formTitle} icon={Milestone} />
 
-      {/* Job Grade */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("job_grade")}
-        </label>
-        <div className="relative">
-          {loadingDegrees ? (
-            <p className="text-gray-500">{t("loading")}</p>
-          ) : (
-            <>
-              <select
-                name="jobGrade"
+        <main className="flex-1 flex items-center justify-center">
+          <div className="w-full max-w-[clamp(350px,45vw,800px)] bg-white rounded-[clamp(1rem,1.5vw,2rem)] shadow-xl border border-gray-100 flex flex-col relative overflow-hidden">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                onSave();
+              }}
+              className="flex flex-col gap-[clamp(1.2rem,1vw,2rem)] p-[clamp(1.2rem,1.5vw,4rem)] relative z-20"
+            >
+              {/* اختيار الدرجة الوظيفية باستخدام الـ Custom Dropdown */}
+              <CustomDropdown
+                label={t("job_grade")}
+                options={degreeOptions}
                 value={formData.jobGrade}
-                onChange={handleChange}
-                className={`${inputClass} ${focusClasses} appearance-none`}
-              >
-                <option value="">{t("select_job_grade")}</option>
-                {degrees.map((deg) => (
-                  <option key={deg.id} value={deg.id}>
-                    {isArabic ? deg.valueAr : deg.valueEn}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                size={18}
-                className="absolute top-2.5 text-[#B38E19] pointer-events-none"
-                style={dir === "rtl" ? { left: "10px" } : { right: "10px" }}
+                onChange={(val) => onChange("jobGrade", val)} // نمرر القيمة المباشرة
+                placeholder={
+                  loadingDegrees ? t("loading") : t("select_job_grade")
+                }
+                error={error.jobGrade}
+                disabled={loading || loadingDegrees}
+                required
               />
-            </>
-          )}
-        </div>
-        {errors.jobGrade && (
-          <p className="text-red-500 text-sm mt-1">{errors.jobGrade}</p>
-        )}
-        {errors.degrees && (
-          <p className="text-red-500 text-sm mt-1">{errors.degrees}</p>
-        )}
-      </div>
 
-      {/* Job Grade Date */}
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("grade_date")}
-        </label>
-        <div className="relative">
-          <input
-            type="text"
-            name="gradeDate"
-            value={formData.gradeDate}
-            readOnly
-            onClick={() => openDatePicker(gradeDateRef)}
-            className={`${inputClass} ${focusClasses} ${gradeFocused ? "ring-2 ring-[#B38E19]" : ""} cursor-pointer`}
-            placeholder={t("select_grade_date")}
-          />
-          <input
-            ref={gradeDateRef}
-            type="date"
-            value={formData.gradeDate}
-            onChange={(e) =>
-              setFormData((p) => ({ ...p, gradeDate: e.target.value }))
-            }
-            onFocus={() => setGradeFocused(true)}
-            onBlur={() => setGradeFocused(false)}
-            className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer z-10"
-            tabIndex={-1}
-            aria-hidden="true"
-          />
-          <Calendar
-            size={18}
-            className="absolute top-2.5 text-[#B38E19] cursor-pointer z-20"
-            style={dir === "rtl" ? { left: "10px" } : { right: "10px" }}
-            onClick={() => openDatePicker(gradeDateRef)}
-          />
-        </div>
-        {errors.gradeDate && (
-          <p className="text-red-500 text-sm mt-1">{errors.gradeDate}</p>
-        )}
-      </div>
+              {/* التاريخ */}
+              <DateField
+                label={t("grade_date")}
+                value={formData.gradeDate}
+                onChange={(val) => onChange("gradeDate", val)}
+                required
+                disabled={loading}
+                placeholder={t("select_grade_date")}
+                error={error.gradeDate}
+                isArabic={isArabic}
+              />
 
-      {/* Notes */}
-      <div className="mb-6">
-        <label className="block text-lg font-medium text-gray-700 mb-2">
-          {t("notes")}
-        </label>
-        <textarea
-          name="notes"
-          rows="3"
-          value={formData.notes}
-          onChange={handleChange}
-          placeholder={t("notes_placeholder")}
-          className={`${inputClass} ${focusClasses} bg-[#f5f5f5] resize-none text-gray-600`}
-        ></textarea>
-      </div>
+              {/* الملاحظات */}
+              <InputField
+                label={t("notes")}
+                value={formData.notes}
+                onChange={(e) => onChange("notes", e.target.value)}
+                placeholder={t("notes_placeholder")}
+                textarea
+                disabled={loading}
+                className="min-h-[clamp(100px,12vh,150px)]"
+              />
 
-      {errors.api && (
-        <p className="text-red-500 text-center mb-4">{errors.api}</p>
-      )}
+              {error.api && (
+                <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg text-center">
+                  {error.api}
+                </div>
+              )}
+            </form>
 
-      <div className="flex justify-center gap-3 mt-8">
-        <button
-          type="submit"
-          disabled={loading}
-          className={`bg-[#b38e19] text-white w-24 h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}
-        >
-          {loading ? t("adding") : t("add")}
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className={`bg-gray-300 text-black w-24 h-10 rounded-md cursor-pointer font-${isArabic ? "cairo" : "roboto"} text-sm`}
-        >
-          {t("cancel")}
-        </button>
+            <footer className="bg-gray-50/50 border-t border-gray-100 px-[clamp(1.5rem,3vw,4rem)] py-[clamp(1rem,1.5vw,2rem)] relative z-0">
+              <div
+                className={`flex items-center gap-[clamp(1rem,1.5vw,2rem)] ${isArabic ? "flex-row-reverse" : "flex-row"}`}
+              >
+                <div className="min-w-[clamp(140px,6vw,220px)]">
+                  <FormButton
+                    variant="primary"
+                    onClick={onSave}
+                    disabled={loading}
+                    className="w-full !h-[clamp(45px,2.5vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
+                  >
+                    {t("save")}
+                  </FormButton>
+                </div>
+                <div className="min-w-[clamp(140px,6vw,220px)]">
+                  <FormButton
+                    variant="secondary"
+                    onClick={onCancel}
+                    disabled={loading}
+                    className="w-full !h-[clamp(45px,2.5vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
+                  >
+                    {t("cancel")}
+                  </FormButton>
+                </div>
+              </div>
+            </footer>
+          </div>
+        </main>
       </div>
-    </form>
+    </ResponsiveLayoutProvider>
   );
 }

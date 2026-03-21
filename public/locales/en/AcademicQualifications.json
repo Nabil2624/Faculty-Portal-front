@@ -23,5 +23,8 @@
   "faculty": "University / Faculty",
   "location": "Country / City",
   "date": "Date Obtained",
-  "attachments": "Attachments"
+  "attachments": "Attachments",
+  "qualificationDetails": "Qualification Details",
+  "searchPlaceholder": "search...",
+  "backToList": "Back To List"
 }

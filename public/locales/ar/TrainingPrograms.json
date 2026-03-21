@@ -14,14 +14,19 @@
   "next": "التالي",
   "page": "الصفحة",
   "of": "من",
+  "noDescriptionAdded": "لا يوجد وصف",
   "type": "نوع البرنامج",
   "participationType": "نوع المشاركة",
   "organizer": "الجهة المنظمة",
   "venue": "المكان",
   "startDate": "تاريخ البدء",
   "endDate": "تاريخ الانتهاء",
-   "InTheSpecialty": "في التخصص",
+  "InTheSpecialty": "في التخصص",
   "OutTheSpecialty": "خارج التخصص",
   "lecturer": "محاضر",
-  "listener": "مستمع"
+  "listener": "مستمع",
+  "searchPlaceholder": "ابحث هنا...",
+  "programDetails": "تفاصيل البرنامج",
+  "backToList": "العودة الى القائمة",
+  "description": "وصف البرنامج"
 }

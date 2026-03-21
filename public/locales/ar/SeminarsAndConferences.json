@@ -18,12 +18,15 @@
   "endDate": "تاريخ النهاية",
   "present": "حتى الآن",
   "type": "النوع",
-    "Seminar": "ندوة",
+  "Seminar": "ندوة",
   "Conference": "مؤتمر",
   "scope": "دولي/محلي",
   "participationRole": "دور المشاركة",
+  "noDescriptionAdded": "لا يوجد وصف",
   "website": "الموقع الإلكتروني",
-  "attachments": "المرفقات"
-
-  
+  "attachments": "المرفقات",
+  "seminarDetails": "تفاصيل الندوة / المؤتمر",
+  "backToList": "العودة الى القائمة",
+  "searchPlaceholder": "ابحث هنا...",
+  "notes": "تفاصيل الندوة / المؤتمر"
 }

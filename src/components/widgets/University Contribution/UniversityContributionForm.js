@@ -1,22 +1,25 @@
 import React, { useMemo } from "react";
-import { useTranslation } from "react-i18next";
-
-import Dropdown from "../../ui/Dropdown";
-import CustomInputField from "../../ui/CustomInputField";
-import CustomDateField from "../../ui/CustomDateField";
+import InputField from "../../ui/InputField";
+import DateField from "../../ui/DateField";
+import CustomDropdown from "../../ui/CustomDropdown";
+import FormButton from "../../ui/FormButton";
+import PageHeaderNoAction from "../../ui/PageHeaderNoAction";
+import { GraduationCap } from "lucide-react";
+import ResponsiveLayoutProvider from "../../ResponsiveLayoutProvider";
 
 export default function UniversityContributionForm({
-  title,
+  t,
+  isArabic,
   types = [],
   loadingTypes,
-  isArabic,
   formData,
   errors = {},
   handleChange,
   submitForm,
+  onCancel,
   loading,
+  formTitle,
 }) {
-  const { t } = useTranslation("university-contribution-form");
   const dir = isArabic ? "rtl" : "ltr";
 
   // Map types to Dropdown options
@@ -27,112 +30,114 @@ export default function UniversityContributionForm({
     }));
   }, [types, isArabic]);
 
-
   return (
-    <form
-      dir={dir}
-      onSubmit={submitForm}
-      style={{
-        width: "clamp(320px, 32vw, 600px)",
-        padding: "clamp(1rem, 2.5vw, 2rem)",
-        borderRadius: "clamp(12px, 1.8vw, 22px)",
-        direction: dir,
-      }}
-      className="bg-[#EDEDED] border-2 border-[#b38e19] shadow-sm mx-auto"
-    >
-      {/* Header */}
-      <div
-        className="flex items-center justify-center"
-        style={{ marginBottom: "clamp(1rem, 3vw, 2rem)" }}
-      >
-        <h2
-          className="font-semibold text-gray-800"
-          style={{ fontSize: "clamp(1.1rem, 2.6vw, 1.6rem)" }}
-        >
-          {title}
-        </h2>
-      </div>
-
-      {/* Contribution Name */}
-      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
-        <CustomInputField
-          label={t("contribution_name")}
-          value={formData.contributionName || ""}
-          onChange={(e) => handleChange("contributionName", e.target.value)}
-          placeholder={t("enter_contribution_name")}
-          error={errors.contributionName}
-          required
-          isArabic={isArabic}
+    <ResponsiveLayoutProvider>
+      <div className={`flex flex-col p-3 bg-[#f8fafc] h-[90vh] ${dir}`}>
+        {/* 1. Header */}
+        <PageHeaderNoAction
+          title={formTitle || t("title")}
+          icon={GraduationCap}
         />
+
+        {/* 2. Main Container */}
+        <main className="flex-1 p-[clamp(0.5rem,0.6vw,2.5rem)] flex items-center justify-center">
+          <div className="w-full max-w-[clamp(80%,92%,1600px)] bg-white rounded-[clamp(1rem,1.5vw,2rem)] shadow-xl border border-gray-100 flex flex-col relative">
+            <form className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(1.5rem,4vw,5rem)] p-[clamp(1.5rem,2vw,4rem)] relative z-20">
+              {/* القسـم الأيسـر - البيانات الأساسية */}
+              <div className="space-y-[clamp(1rem,1.8vw,2.5rem)]">
+                <InputField
+                  label={t("contribution_name")}
+                  value={formData.contributionName || ""}
+                  onChange={(e) =>
+                    handleChange("contributionName", e.target.value)
+                  }
+                  placeholder={t("enter_contribution_name")}
+                  error={errors.contributionName}
+                  required
+                  disabled={loading}
+                />
+
+                <div className="relative z-[100]">
+                  <CustomDropdown
+                    label={t("contribution_type")}
+                    value={formData.contributionTypeId}
+                    onChange={(id) => handleChange("contributionTypeId", id)}
+                    options={mappedTypes}
+                    placeholder={t("select_contribution_type")}
+                    error={errors.contributionTypeId}
+                    disabled={loadingTypes || loading}
+                    isArabic={isArabic}
+                    required
+                  />
+                </div>
+
+                <DateField
+                  label={t("contribution_date")}
+                  value={formData.contributionDate || ""}
+                  onChange={(val) => handleChange("contributionDate", val)}
+                  placeholder={t("select_contribution_date")}
+                  error={errors.contributionDate}
+                  required
+                  disabled={loading}
+                  isArabic={isArabic}
+                />
+              </div>
+
+              {/* القسـم الأيمـن - الوصف */}
+              <div className="space-y-[clamp(1rem,1.8vw,2.5rem)] lg:border-s lg:ps-[clamp(1.5rem,4vw,5rem)] border-gray-100 flex flex-col">
+                <div className="flex-1">
+                  <InputField
+                    label={t("description")}
+                    value={formData.description || ""}
+                    onChange={(e) =>
+                      handleChange("description", e.target.value)
+                    }
+                    placeholder={t("enter_description")}
+                    error={errors.description}
+                    textarea
+                    disabled={loading}
+                    className="h-full min-h-[clamp(200px,25vh,400px)]"
+                  />
+                </div>
+
+                {errors.submit && (
+                  <p className="text-red-500 text-sm text-center">
+                    {errors.submit}
+                  </p>
+                )}
+              </div>
+            </form>
+
+            {/* 3. Footer */}
+            <footer className="bg-gray-50/50 border-t border-gray-100 px-[clamp(1.5rem,3vw,4rem)] py-[clamp(1rem,1.5vw,2rem)] relative z-0">
+              <div
+                className={`flex items-end justify-end gap-[clamp(1rem,1.5vw,2rem)] `}
+              >
+                <div className="min-w-[clamp(140px,8vw,220px)]">
+                  <FormButton
+                    variant="secondary"
+                    onClick={onCancel}
+                    disabled={loading}
+                    className="w-full !h-[clamp(45px,3vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
+                  >
+                    {t("cancel")}
+                  </FormButton>
+                </div>
+                <div className="min-w-[clamp(140px,8vw,220px)]">
+                  <FormButton
+                    variant="primary"
+                    onClick={submitForm}
+                    disabled={loading}
+                    className="w-full !h-[clamp(45px,3vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
+                  >
+                    {loading ? t("loading") : t("save")}
+                  </FormButton>
+                </div>
+              </div>
+            </footer>
+          </div>
+        </main>
       </div>
-
-      {/* Contribution Type */}
-      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
-        <label
-          className="block font-medium mb-2 text-[clamp(14px,1.2vw,32px)]"
-          style={{ textAlign: isArabic ? "right" : "left" }}
-        >
-          {t("contribution_type")}
-        </label>
-
-        <Dropdown
-          value={formData.contributionTypeId}
-          onChange={(id) => handleChange("contributionTypeId", id)}
-          options={mappedTypes}
-          placeholder={t("select_contribution_type")}
-          error={errors.contributionTypeId}
-          disabled={loadingTypes}
-          isArabic={isArabic}
-        />
-      </div>
-
-      {/* Contribution Date */}
-      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
-        <CustomDateField
-          label={t("contribution_date")}
-          value={formData.contributionDate || ""}
-          onChange={(val) => handleChange("contributionDate", val)}
-          placeholder={t("select_contribution_date")}
-          error={errors.contributionDate}
-          required
-          isArabic={isArabic}
-        />
-      </div>
-
-      {/* Description */}
-      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
-        <CustomInputField
-          label={t("description")}
-          value={formData.description || ""}
-          onChange={(e) => handleChange("description", e.target.value)}
-          placeholder={t("enter_description")}
-          error={errors.description}
-          textarea
-          isArabic={isArabic}
-        />
-      </div>
-
-      {/* Submit Error */}
-      {errors.submit && (
-        <p className="text-red-500 text-center mb-4">{errors.submit}</p>
-      )}
-
-      {/* Actions */}
-      <div className="flex justify-center">
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: "clamp(6.5rem, 16vw, 9rem)",
-            height: "clamp(2.5rem, 5.5vw, 3.2rem)",
-          }}
-          className={`bg-[#b38e19] text-white rounded-md font-${
-            isArabic ? "cairo" : "roboto"
-          }`}
-        >
-          {loading ? t("loading") : t("save")}
-        </button>
-      </div>
-    </form>
+    </ResponsiveLayoutProvider>
   );
 }

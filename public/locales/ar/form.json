@@ -16,7 +16,12 @@
   "cancel": "إلغاء",
   "grade_date": "تاريخ الدرجة الوظيفية",
   "select_grade_date": "اختر تاريخ الدرجة الوظيفية",
-  "edit": "حفظ",
+  "end_date_after_start": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية",
+  "startDate-required": "تاريخ البداية مطلوب",
+  "admin-position-required": "المنصب الإداري مطلوب",
+  "job-grade-required":"الدرجة الوظيفية مطلوبة",
+  "grade-date-required":"تاريخ الدرجة الوظيفية مطلوب",
+  "save": "حفظ",
   "adding": "جارٍ الإضافة...",
   "required": "هذا الحقل مطلوب",
   "submitError": "فشل في إضافة الدرجة الوظيفية",
@@ -24,6 +29,4 @@
   "fetchDegreesError": "فشل في تحميل الدرجات الوظيفية",
   "updating": "جارٍ التحديث...",
   "position_placeholder": "أدخل اسم المنصب"
-
-
 }

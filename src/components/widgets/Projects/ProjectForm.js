@@ -3,8 +3,10 @@ import InputField from "../../ui/InputField";
 import DateField from "../../ui/DateField";
 import CustomDropdown from "../../ui/CustomDropdown";
 import FormButton from "../../ui/FormButton";
-import { projectValidationService } from "../../../services/projectValidationService";
 import RadioGroup from "../../ui/RadioGroup";
+import PageHeaderNoAction from "../../ui/PageHeaderNoAction";
+import { Layers } from "lucide-react";
+import { projectValidationService } from "../../../services/projectValidationService";
 
 export default function ProjectForm({
   t,
@@ -16,7 +18,10 @@ export default function ProjectForm({
   onCancel,
   error: apiError = {},
   loading = false,
+  formTitle,
 }) {
+  const dir = isArabic ? "rtl" : "ltr";
+
   /* ================= options ================= */
   const projectTypeOptions = projectTypes.map((p) => ({
     id: p.id,
@@ -32,20 +37,16 @@ export default function ProjectForm({
   const [nationality, setNationality] = useState(
     initialData.localOrInternational === "Local" ? "محلي" : "دولي"
   );
-
   const [projectName, setProjectName] = useState(initialData.nameOfProject || "");
-
   const [projectType, setProjectType] = useState("");
   const [role, setRole] = useState("");
-
   const [fundingSource, setFundingSource] = useState(initialData.financingAuthority || "");
   const [startDate, setStartDate] = useState(initialData.startDate || "");
   const [endDate, setEndDate] = useState(initialData.endDate || "");
   const [description, setDescription] = useState(initialData.description || "");
-
   const [error, setError] = useState({});
 
-  /* ================= sync initial data (EDIT MODE) ================= */
+  /* ================= sync initial data ================= */
   useEffect(() => {
     setProjectType(initialData.typeOfProject?.id || "");
     setRole(initialData.participationRole?.id || "");
@@ -74,132 +75,150 @@ export default function ProjectForm({
     onSave(payload);
   };
 
-  /* ================= UI ================= */
   return (
-    <div dir={isArabic ? "rtl" : "ltr"} className="flex flex-col bg-white min-h-[90vh]">
-      <div className="flex-1 px-[clamp(16px,1vw,80px)]">
-        <h2 className="font-semibold mb-[clamp(20px,3vw,70px)] text-[clamp(20px,2.2vw,60px)] text-start">
-          {t("title")}
-          <span className="block w-16 h-1 bg-[#b38e19] mt-1"></span>
-        </h2>
+    <div className={`flex flex-col p-3 bg-[#f8fafc] h-[90vh] ${dir}`}>
+      {/* 1. Header */}
+      <PageHeaderNoAction title={formTitle || t("title")} icon={Layers} />
 
-        <form className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(20px,20vw,600px)]">
-          {/* LEFT */}
-          <div className="space-y-[clamp(18px,2.2vw,60px)]">
-            <RadioGroup
-              label={t("fields.nationality")}
-              value={nationality}
-              onChange={setNationality}
-              disabled={loading}
-              options={[
-                { value: "دولي", label: t("options.international") },
-                { value: "محلي", label: t("options.local") },
-              ]}
-            />
-
-            <InputField
-              label={t("fields.projectName")}
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              placeholder={t("placeholders.projectName")}
-              required
-              disabled={loading}
-              error={error.projectName || apiError.projectName || apiError.submit}
-            />
-
-            {/* PROJECT TYPE */}
-            <div>
-              <label className="block mb-2 text-lg font-medium">
-                {t("fields.projectType")} <span className="text-[#B38E19]">*</span>
-              </label>
-              <CustomDropdown
-                value={projectType}
-                onChange={setProjectType}
-                options={projectTypeOptions}
-                placeholder={t("placeholders.projectType")}
-                error={error.projectType || apiError.projectType || apiError.submit}
-                isArabic={isArabic}
+      {/* 2. Main Container */}
+      <main className="flex-1 p-[clamp(0.5rem,0.6vw,2.5rem)] flex items-center justify-center">
+        {/* شيلنا الـ overflow-hidden خالص عشان الدروب داون تطير براحتها */}
+        <div className="w-full max-w-[clamp(80%,92%,1600px)] bg-white rounded-[clamp(1rem,1.5vw,2rem)] shadow-xl border border-gray-100 flex flex-col relative">
+          
+          {/* الفورم هنا ملوش overflow عشان ميحبسش الدروب داون جواه */}
+          <form className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(1.5rem,4vw,5rem)] p-[clamp(1.5rem,2vw,4rem)] relative z-20">
+            
+            {/* القسـم الأيسـر */}
+            <div className="space-y-[clamp(1rem,1.8vw,2.5rem)]">
+              <RadioGroup
+                label={t("fields.nationality")}
+                value={nationality}
+                onChange={setNationality}
                 disabled={loading}
+                options={[
+                  { value: "دولي", label: t("options.international") },
+                  { value: "محلي", label: t("options.local") },
+                ]}
               />
-            </div>
 
-            {/* ROLE */}
-            <div>
-              <label className="block mb-2 text-lg font-medium">
-                {t("fields.role")} <span className="text-[#B38E19]">*</span>
-              </label>
-              <CustomDropdown
-                value={role}
-                onChange={setRole}
-                options={roleOptions}
-                placeholder={t("placeholders.role")}
-                error={error.role || apiError.role || apiError.submit}
-                isArabic={isArabic}
-                disabled={loading}
-              />
-            </div>
-          </div>
-
-          {/* RIGHT */}
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <DateField
-                label={t("fields.startDate")}
-                value={startDate}
-                onChange={setStartDate}
+              <InputField
+                label={t("fields.projectName")}
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder={t("placeholders.projectName")}
                 required
                 disabled={loading}
-                error={error.startDate || apiError.startDate || apiError.submit}
-                placeholder={t("placeholders.startDate")}
-                isArabic={isArabic}
+                error={error.projectName || apiError.projectName}
               />
 
-              <DateField
-                label={t("fields.endDate")}
-                value={endDate}
-                onChange={setEndDate}
+              {/* الـ z-index هنا عالي جداً لضمان تخطي الفوتر */}
+              <div className="grid grid-cols-2 gap-[clamp(1rem,1.5vw,2rem)] items-start relative z-[100]">
+                <CustomDropdown
+                  label={t("fields.projectType")}
+                  value={projectType}
+                  onChange={setProjectType}
+                  options={projectTypeOptions}
+                  placeholder={t("placeholders.projectType")}
+                  isArabic={isArabic}
+                  required
+                  disabled={loading}
+                  error={error.projectType || apiError.projectType}
+                />
+
+                <CustomDropdown
+                  label={t("fields.role")}
+                  value={role}
+                  onChange={setRole}
+                  options={roleOptions}
+                  placeholder={t("placeholders.role")}
+                  isArabic={isArabic}
+                  required
+                  disabled={loading}
+                  error={error.role || apiError.role}
+                />
+              </div>
+
+              <InputField
+                label={t("fields.funding")}
+                value={fundingSource}
+                onChange={(e) => setFundingSource(e.target.value)}
+                placeholder={t("placeholders.funding")}
+                required
                 disabled={loading}
-                error={error.endDate || apiError.endDate || apiError.submit}
-                placeholder={t("placeholders.endDate")}
-                isArabic={isArabic}
+                error={error.fundingSource || apiError.fundingSource}
               />
             </div>
 
-            <InputField
-              label={t("fields.funding")}
-              value={fundingSource}
-              onChange={(e) => setFundingSource(e.target.value)}
-              placeholder={t("placeholders.funding")}
-              required
-              disabled={loading}
-              error={error.fundingSource || apiError.fundingSource || apiError.submit}
-            />
+            {/* القسـم الأيمـن */}
+            <div className="space-y-[clamp(1rem,1.8vw,2.5rem)] lg:border-s lg:ps-[clamp(1.5rem,4vw,5rem)] border-gray-100 flex flex-col">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[clamp(1rem,1.5vw,2rem)]">
+                <DateField
+                  label={t("fields.startDate")}
+                  value={startDate}
+                  onChange={setStartDate}
+                  required
+                  disabled={loading}
+                  placeholder={t("placeholders.startDate")}
+                  error={error.startDate || apiError.startDate}
+                  isArabic={isArabic}
+                />
 
-            <InputField
-              label={t("fields.description")}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder={t("placeholders.description")}
-              textarea
-              disabled={loading}
-              error={apiError.description || apiError.submit}
-            />
-          </div>
-        </form>
-      </div>
+                <DateField
+                  label={t("fields.endDate")}
+                  value={endDate}
+                  onChange={setEndDate}
+                  disabled={loading}
+                  placeholder={t("placeholders.endDate")}
+                  error={error.endDate || apiError.endDate}
+                  isArabic={isArabic}
+                />
+              </div>
 
-      <div
-        className="sticky bottom-0 bg-white flex gap-3 p-4"
-        style={{ flexDirection: isArabic ? "row-reverse" : "row" }}
-      >
-        <FormButton variant="primary" onClick={handleSubmit} disabled={loading}>
-          {t("buttons.save")}
-        </FormButton>
+              <div className="flex-1">
+                <InputField
+                  label={t("fields.description")}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder={t("placeholders.description")}
+                  textarea
+                  disabled={loading}
+                  className="h-full min-h-[clamp(150px,12vh,250px)]"
+                  error={apiError.description}
+                />
+              </div>
+            </div>
+          </form>
 
-        <FormButton variant="secondary" onClick={onCancel} disabled={loading}>
-          {t("buttons.cancel")}
-        </FormButton>
-      </div>
+          {/* 3. Footer */}
+          {/* الـ z-index هنا 0 عشان يفضل تحت القوائم */}
+          <footer className="bg-gray-50/50 border-t border-gray-100 px-[clamp(1.5rem,3vw,4rem)] py-[clamp(1rem,1.5vw,2rem)] relative z-0">
+            <div
+              className={`flex items-center gap-[clamp(1rem,1.5vw,2rem)] ${isArabic ? "flex-row-reverse" : "flex-row"}`}
+            >
+              <div className="min-w-[clamp(140px,8vw,220px)]">
+                <FormButton
+                  variant="primary"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className="w-full !h-[clamp(45px,3vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
+                >
+                  {t("buttons.save")}
+                </FormButton>
+              </div>
+              <div className="min-w-[clamp(140px,8vw,220px)]">
+                <FormButton
+                  variant="secondary"
+                  onClick={onCancel}
+                  disabled={loading}
+                  className="w-full !h-[clamp(45px,3vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
+                >
+                  {t("buttons.cancel")}
+                </FormButton>
+              </div>
+            </div>
+          </footer>
+        </div>
+      </main>
     </div>
   );
 }

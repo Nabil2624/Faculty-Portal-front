@@ -17,7 +17,7 @@ export default function EditConference() {
   const { t, i18n } = useTranslation("add-conference");
   const isArabic = i18n.language === "ar";
   const location = useLocation();
-  const existingData = location.state?.existingData || null;
+  const existingData = location.state?.item || null;
   const navigate = useNavigate();
   const startDateRef = useRef(null);
   const endDateRef = useRef(null);

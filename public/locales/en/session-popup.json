@@ -1,0 +1,5 @@
+{
+  "sessionExpiredTitle": "Session Expired",
+  "sessionExpiredDesc": "Your session has timed out for security reasons. Please log in again to continue working and protect your data.",
+  "goToLogin": "Go to Login"
+}

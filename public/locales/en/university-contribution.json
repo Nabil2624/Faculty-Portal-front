@@ -14,6 +14,11 @@
   "page": "Page",
   "of": "of",
   "search": "Search in contributions...",
+  "description": "Contribution Description",
+  "noDescriptionAdded": "No Description Added",
+  "backToList": "Back To List",
+  "contributionDetails": "Contribution Details",
+  "detailsTitle": "Contribution Details",
   "errors": {
     "loadFailed": "Failed to load data",
     "deleteFailed": "Failed to delete"

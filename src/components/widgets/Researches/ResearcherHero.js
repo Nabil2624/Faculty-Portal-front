@@ -5,13 +5,13 @@ const ResearcherHero = ({ researcher, t, isArabic }) => {
 
   return (
     <div
-      className="flex flex-row items-start w-full"
+      className="flex flex-col sm:flex-row items-center sm:items-start w-full text-center sm:text-start"
       style={{ gap: "clamp(1rem, 1.5vw, 2.5rem)" }}
     >
       {/* صورة الباحث */}
       <div className="flex-shrink-0">
         <div
-          className="rounded-full shadow-md"
+          className="rounded-full shadow-md transition-transform duration-300 hover:scale-105"
           style={{
             border: `clamp(2px, 0.3vw, 4px) solid #B38E19`,
             padding: "clamp(2px, 0.2vw, 5px)",
@@ -22,8 +22,8 @@ const ResearcherHero = ({ researcher, t, isArabic }) => {
             alt={researcher.academicName}
             className="rounded-full object-cover"
             style={{
-              width: "clamp(90px, 11vw, 160px)",
-              height: "clamp(90px, 11vw, 160px)",
+              width: "clamp(100px, 11vw, 160px)",
+              height: "clamp(100px, 11vw, 160px)",
             }}
           />
         </div>
@@ -31,12 +31,12 @@ const ResearcherHero = ({ researcher, t, isArabic }) => {
 
       {/* تفاصيل الباحث */}
       <div
-        className="flex flex-col items-start"
+        className="flex flex-col items-center sm:items-start flex-1"
         style={{ paddingTop: "0.5rem" }}
       >
         <h1
           className="font-bold text-[#19355A] leading-tight"
-          style={{ fontSize: "clamp(1.4rem, 2.5vw, 2.8rem)" }}
+          style={{ fontSize: "clamp(1.2rem, 2.5vw, 2.8rem)" }}
         >
           {researcher.academicName}
         </h1>
@@ -49,19 +49,24 @@ const ResearcherHero = ({ researcher, t, isArabic }) => {
         
         {/* الاهتمامات البحثية */}
         <div
-          className="flex flex-wrap text-[#B38E19] font-semibold mt-4"
+          className="flex flex-wrap justify-center sm:justify-start text-[#B38E19] font-semibold mt-4 w-full"
           style={{
-            fontSize: "clamp(0.75rem, 0.9vw, 1.1rem)",
+            fontSize: "clamp(0.7rem, 0.9vw, 1.1rem)",
             gap: "0.5rem",
           }}
         >
           {researcher.researcherInterests?.map((interest, idx) => (
-            <span key={idx} className="flex items-center">
-              {interest.name}
+            <div key={idx} className="flex items-center">
+              {/* في الموبايل بتظهر كـ Chip بسيط، وفي الشاشات الأكبر بنرجع الفاصل */}
+              <span className="bg-[#B38E19]/5 sm:bg-transparent px-2 py-1 sm:p-0 rounded-md whitespace-nowrap border border-[#B38E19]/10 sm:border-none">
+                {interest.name}
+              </span>
+              
+              {/* الفاصل يظهر فقط من شاشة الـ sm (التابلت/لابتوب) وما فوق */}
               {idx !== researcher.researcherInterests.length - 1 && (
-                <span className="text-gray-300 font-light mx-2"> | </span>
+                <span className="hidden sm:inline text-gray-300 font-light mx-2"> | </span>
               )}
-            </span>
+            </div>
           ))}
         </div>
       </div>

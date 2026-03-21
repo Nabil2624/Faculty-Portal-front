@@ -15,5 +15,9 @@
   "emptyPositions": "لا توجد مناصب إدارية",
   "fetchError": "فشل في جلب المناصب الإدارية",
   "deleteError": "فشل في حذف المنصب الإداري",
-  "confirmDelete": "هل أنت متأكد من حذف هذا المنصب؟"
+  "confirmDelete": "هل أنت متأكد من حذف هذا المنصب؟",
+  "positionDetails":"تفاصيل المنصب الاداري",
+  "notes":"وصف المنصب الاداري",
+  "backToList":"العودة الى القائمة",
+  "searchPlaceholder":"ابحث هنا..."
 }

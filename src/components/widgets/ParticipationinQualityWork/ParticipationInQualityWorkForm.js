@@ -1,119 +1,134 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-
-import CustomInputField from "../../ui/CustomInputField";
-import CustomDateField from "../../ui/CustomDateField";
+import InputField from "../../ui/InputField";
+import DateField from "../../ui/DateField";
+import FormButton from "../../ui/FormButton";
+import PageHeaderNoAction from "../../ui/PageHeaderNoAction";
+import { ShieldCheck } from "lucide-react";
+import ResponsiveLayoutProvider from "../../ResponsiveLayoutProvider";
 
 export default function ParticipationInQualityWorkForm({
-  title,
-  isArabic,
   formData,
   errors = {},
   handleChange,
   submitForm,
+  onCancel,
   loading,
+  formTitle,
 }) {
   const { t, i18n } = useTranslation("participation-quality-work-form");
+  const isArabic = i18n.language === "ar";
   const dir = isArabic ? "rtl" : "ltr";
 
   return (
-    <form
-      dir={dir}
-      onSubmit={submitForm}
-      style={{
-        width: "clamp(320px, 32vw, 600px)",
-        padding: "clamp(1rem, 2.5vw, 2rem)",
-        borderRadius: "clamp(12px, 1.8vw, 22px)",
-        direction: dir,
-      }}
-      className="bg-[#EDEDED] border-2 border-[#b38e19] shadow-sm mx-auto"
-    >
-      {/* Header */}
-      <div
-        className="flex items-center justify-center"
-        style={{ marginBottom: "clamp(1rem, 3vw, 2rem)" }}
-      >
-        <h2
-          className="font-semibold text-gray-800"
-          style={{ fontSize: "clamp(1.1rem, 2.6vw, 1.6rem)" }}
-        >
-          {title}
-        </h2>
-      </div>
-
-      {/* Participation Name */}
-      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
-        <CustomInputField
-          label={t("participation_name")}
-          value={formData.participationTitle}
-          onChange={(e) => handleChange("participationTitle", e.target.value)}
-          placeholder={t("enter_participation_name")}
-          error={errors.participationTitle}
-          required
-          isArabic={isArabic}
+    <ResponsiveLayoutProvider>
+      <div className={`flex flex-col p-3 bg-[#f8fafc] h-[90vh] ${dir}`}>
+        {/* 1. Header */}
+        <PageHeaderNoAction
+          title={formTitle || t("title")}
+          icon={ShieldCheck}
         />
-      </div>
 
-      {/* Start Date */}
-      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
-        <CustomDateField
-          label={t("start_date")}
-          value={formData.startDate || ""}
-          onChange={(val) => handleChange("startDate", val)}
-          placeholder={t("select_start_date")}
-          error={errors.startDate}
-          required
-          isArabic={isArabic}
-        />
-      </div>
+        {/* 2. Main Container */}
+        <main className="flex-1 p-[clamp(0.5rem,0.6vw,2.5rem)] flex items-center justify-center">
+          <div className="w-full max-w-[clamp(80%,92%,1600px)] bg-white rounded-[clamp(1rem,1.5vw,2rem)] shadow-xl border border-gray-100 flex flex-col relative">
+            <form
+              onSubmit={submitForm}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(1.5rem,4vw,5rem)] p-[clamp(1.5rem,2vw,4rem)] relative z-20"
+            >
+              {/* القسـم الأيسـر - التواريخ والعنوان */}
+              <div className="space-y-[clamp(1rem,1.8vw,2.5rem)]">
+                <InputField
+                  label={t("participation_name")}
+                  value={formData.participationTitle || ""}
+                  onChange={(e) =>
+                    handleChange("participationTitle", e.target.value)
+                  }
+                  placeholder={t("enter_participation_name")}
+                  error={errors.participationTitle}
+                  required
+                  disabled={loading}
+                />
 
-      {/* End Date */}
-      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
-        <CustomDateField
-          label={t("end_date")}
-          value={formData.endDate || ""}
-          onChange={(val) => handleChange("endDate", val)}
-          placeholder={t("select_end_date")}
-          error={errors.endDate}
-          required
-          isArabic={isArabic}
-        />
-      </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <DateField
+                    label={t("start_date")}
+                    value={formData.startDate || ""}
+                    onChange={(val) => handleChange("startDate", val)}
+                    placeholder={t("select_start_date")}
+                    error={errors.startDate}
+                    required
+                    disabled={loading}
+                    isArabic={isArabic}
+                  />
 
-      {/* Description */}
-      <div style={{ marginBottom: "clamp(0.75rem, 2vw, 1.25rem)" }}>
-        <CustomInputField
-          label={t("description")}
-          value={formData.description || ""}
-          onChange={(e) => handleChange("description", e.target.value)}
-          placeholder={t("enter_description")}
-          error={errors.description}
-          textarea
-          isArabic={isArabic}
-        />
-      </div>
+                  <DateField
+                    label={t("end_date")}
+                    value={formData.endDate || ""}
+                    onChange={(val) => handleChange("endDate", val)}
+                    placeholder={t("select_end_date")}
+                    error={errors.endDate}
+                    disabled={loading}
+                    isArabic={isArabic}
+                  />
+                </div>
+              </div>
 
-      {/* Submit Error */}
-      {errors.submit && (
-        <p className="text-red-500 text-center mb-4">{errors.submit}</p>
-      )}
+              {/* القسـم الأيمـن - الوصف */}
+              <div className="space-y-[clamp(1rem,1.8vw,2.5rem)] lg:border-s lg:ps-[clamp(1.5rem,4vw,5rem)] border-gray-100 flex flex-col">
+                <div className="flex-1">
+                  <InputField
+                    label={t("description")}
+                    value={formData.description || ""}
+                    onChange={(e) =>
+                      handleChange("description", e.target.value)
+                    }
+                    placeholder={t("enter_description")}
+                    error={errors.description}
+                    textarea
+                    disabled={loading}
+                    className="h-full min-h-[clamp(200px,25vh,400px)]"
+                  />
+                </div>
 
-      {/* Actions */}
-      <div className="flex justify-center">
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: "clamp(6.5rem, 16vw, 9rem)",
-            height: "clamp(2.5rem, 5.5vw, 3.2rem)",
-          }}
-          className={`bg-[#b38e19] text-white rounded-md font-${
-            isArabic ? "cairo" : "roboto"
-          }`}
-        >
-          {loading ? t("loading") : t("save")}
-        </button>
+                {errors.submit && (
+                  <p className="text-red-500 text-sm text-center font-medium">
+                    {errors.submit}
+                  </p>
+                )}
+              </div>
+            </form>
+
+            {/* 3. Footer */}
+            <footer className="bg-gray-50/50 border-t border-gray-100 px-[clamp(1.5rem,3vw,4rem)] py-[clamp(1rem,1.5vw,2rem)] relative z-0">
+              <div
+                className={`flex items-center gap-[clamp(1rem,1.5vw,2rem)] ${isArabic ? "flex-row-reverse" : "flex-row"}`}
+              >
+                <div className="min-w-[clamp(140px,8vw,220px)]">
+                  <FormButton
+                    variant="primary"
+                    onClick={submitForm}
+                    disabled={loading}
+                    className="w-full !h-[clamp(45px,3vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
+                  >
+                    {loading ? t("loading") : t("save")}
+                  </FormButton>
+                </div>
+                <div className="min-w-[clamp(140px,8vw,220px)]">
+                  <FormButton
+                    variant="secondary"
+                    onClick={onCancel}
+                    disabled={loading}
+                    className="w-full !h-[clamp(45px,3vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
+                  >
+                    {t("cancel")}
+                  </FormButton>
+                </div>
+              </div>
+            </footer>
+          </div>
+        </main>
       </div>
-    </form>
+    </ResponsiveLayoutProvider>
   );
 }

@@ -17,5 +17,22 @@
   "of": "of",
   "empty": "No committees or associations available",
   "fetchError": "Failed to load data",
-  "deleteError": "Failed to delete item"
+  "deleteError": "Failed to delete item",
+
+  "committees": {
+    "searchPlaceholder": "Search by committee name...",
+    "addNew": "Add New Committee / Association",
+    "filter": "Filter",
+    "noDataAvailable": "No committees /Associations found",
+    "backToList": "Back to List",
+    "documentDetails": "Committee / Association Details",
+    "selectItemToPreview": "Select a committee / Association to view details",
+    "type": "Type",
+    "participationLevel": "Participation Level",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "present": "Present",
+    "notes": "Notes / Summary",
+    "noDescriptionAdded": "No additional notes provided."
+  }
 }

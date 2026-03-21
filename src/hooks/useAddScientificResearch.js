@@ -151,7 +151,7 @@ const handleSave = async (navigate, attachments = []) => {
 
     // 4️⃣ Navigate after success
     if (navigate) {
-      navigate("/scientific-researches");
+      navigate("/ResearchesPage");
     }
 
   } catch (error) {

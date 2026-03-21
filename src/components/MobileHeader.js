@@ -1,129 +1,92 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Bell,
   Mail,
   Search,
   Menu,
-  ChevronDown,
   LogOut,
-  DoorOpen,
-} from "lucide-react"; // استخدم LogOut كأيقونة باب
+  Globe,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import FloatingSearch from "./FloatingSearch";
-import egyptFlag from "../assets/egyptFlag.png";
-import ukFlag from "../assets/americaFlag.png";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../services/auth.service";
 
 export default function MobileHeader({ onBurgerClick }) {
   const { t, i18n } = useTranslation("headerandsidebar");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
   const [searchOpen, setSearchOpen] = useState(false);
-
+  const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
 
-  useEffect(() => {
-    document.documentElement.dir = isArabic ? "rtl" : "ltr";
+  // دالة تبديل اللغة (Toggle)
+  const handleLanguageToggle = () => {
+    const newLang = isArabic ? "en" : "ar";
+    i18n.changeLanguage(newLang);
+  };
 
-    if (isArabic) {
-      document.documentElement.classList.add("arabic-font");
-      document.documentElement.classList.remove("english-font");
-    } else {
-      document.documentElement.classList.add("english-font");
-      document.documentElement.classList.remove("arabic-font");
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login", { replace: true });
+    } catch (error) {
+      alert(t("logoutError") || "Logout failed");
     }
-  }, [i18n.language]);
-
-  const handleLanguageChange = (lang) => {
-    i18n.changeLanguage(lang);
-    setDropdownOpen(false);
   };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
-  };
-
-  // Close language dropdown on outside click
-  useEffect(() => {
-    const handler = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
 
   return (
-    <header className="flex items-center justify-between w-full bg-[#19355a] text-white fixed top-0 z-10 p-2">
-      {/* Left side (Burger + icons) */}
+    <header className="flex items-center justify-between w-full h-16 bg-[#19355a]/95 backdrop-blur-md text-white fixed top-0 z-[50] px-3 border-b border-white/10 shadow-lg">
+      
+      {/* Left side: Burger & Main Icons */}
       <div className="flex items-center gap-2">
         <button
           onClick={onBurgerClick}
-          className="p-2 hover:bg-white/20 rounded-full"
+          className="p-2 hover:bg-white/10 active:bg-white/20 rounded-xl transition-all duration-200"
         >
-          <Menu size={20} />
+          <Menu size={22} />
         </button>
 
-        <Bell size={18} className="cursor-pointer" />
-        <Mail size={18} className="cursor-pointer" />
-        <button
-          onClick={() => setSearchOpen(true)}
-          className="p-1 hover:bg-white/20 rounded-full transition"
-        >
-          <Search size={18} />
-        </button>
+        <div className="flex items-center gap-0.5 bg-white/5 rounded-2xl p-1">
+          <button className="p-2 hover:text-[#B38e19] transition-colors relative">
+            <Bell size={18} />
+            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-[#b38e19] rounded-full border border-[#19355a]"></span>
+          </button>
+          <button className="p-2 hover:text-[#B38e19] transition-colors">
+            <Mail size={18} />
+          </button>
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="p-2 hover:text-[#B38e19] transition-colors"
+          >
+            <Search size={18} />
+          </button>
+        </div>
       </div>
 
-      {/* Right side (Language + Logout) */}
+      {/* Right side: Language Toggle & Logout */}
       <div className="flex items-center gap-2">
-        {/* Language Dropdown */}
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center gap-1 px-1 py-1 hover:bg-white/20 rounded-md"
-          >
-            <img
-              src={isArabic ? egyptFlag : ukFlag}
-              alt={isArabic ? "Arabic" : "English"}
-              className="w-5 h-4"
-            />
-            <ChevronDown size={14} />
-          </button>
+        
+        {/* المقلد: Glassmorphism Language Toggle (Mobile Version) */}
+        <button
+          onClick={handleLanguageToggle}
+          className="flex items-center gap-2 px-3 h-9 bg-black/40 backdrop-blur-xl border border-[#b38e19]/40 rounded-xl text-white hover:border-[#b38e19] transition-all duration-300 active:scale-95 shadow-lg"
+        >
+          <Globe size={14} className="text-[#b38e19]" />
+          <span className="text-[10px] font-black tracking-widest uppercase">
+            {isArabic ? "EN" : "عربي"}
+          </span>
+        </button>
 
-          {dropdownOpen && (
-            <div
-              className={`absolute mt-1 bg-[#19355a] text-white border rounded-md shadow-md z-[2000] text-sm ${
-                isArabic ? "left-0" : "right-0"
-              }`}
-            >
-              <button
-                onClick={() => handleLanguageChange("ar")}
-                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#19355a]"
-              >
-                <img src={egyptFlag} className="w-5 h-4" />
-              </button>
-              <button
-                onClick={() => handleLanguageChange("en")}
-                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-[#19355a]"
-              >
-                <img src={ukFlag} className="w-5 h-4" />
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Logout */}
+        {/* Professional Logout Button (نسخة مصغرة للموبايل) */}
         <button
           onClick={handleLogout}
-          className="flex items-center justify-center w-8 h-8 rounded-full  text-white"
-          title={t("logout") || "Logout"}
+          className="flex items-center justify-center w-9 h-9 bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition-all duration-300 active:scale-95"
+          title={t("logout")}
         >
-          <LogOut size={20} />
+          <LogOut size={18} />
         </button>
       </div>
 
-      {/* Floating Search */}
+      {/* Floating Search Component */}
       <FloatingSearch
         isOpen={searchOpen}
         onClose={() => setSearchOpen(false)}

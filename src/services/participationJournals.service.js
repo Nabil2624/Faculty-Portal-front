@@ -49,3 +49,9 @@ export const updateParticipationJournal = async (id, payload) => {
     { skipGlobalErrorHandler: true },
   );
 };
+
+export const journalService = {
+  add: (data) => axiosInstance.post("/ProjectsAndCommittees/CreateParticipationInMagazine", data),
+  update: (id, data) => axiosInstance.put(`/ProjectsAndCommittees/UpdateParticipationInMagazine/${id}`, data),
+  getParticipationTypes: () => axiosInstance.get("/LookUpItems/MagazineParticipationRoles"),
+};

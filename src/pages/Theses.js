@@ -1,27 +1,29 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import LoadingSpinner from "../components/LoadingSpinner";
+import { useState, useEffect, useMemo } from "react";
+import { Newspaper } from "lucide-react";
+// Components
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
-
-import ThesesCard from "../components/widgets/Theses/ThesesCard";
+import ThesesTable from "../components/widgets/Theses/ThesesTable";
 import DeleteThesisModal from "../components/widgets/Theses/DeleteThesisModal";
+import ModalWrapper from "../components/ui/ModalWrapper";
+import CustomizeResultsModal from "../components/ui/CustomizeResultsPopup";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 
+// Hooks & Services
 import useTheses from "../hooks/useTheses";
 import { deleteThesis } from "../services/theses.services";
 import useAcademicGradesLookups from "../hooks/useAcademicGradesLookups";
-import ModalWrapper from "../components/ui/ModalWrapper";
-import CustomizeResultsModal from "../components/ui/CustomizeResultsPopup";
 
 export default function Theses() {
   const { t, i18n } = useTranslation("Theses");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
 
-  const [page, setPage] = useState(1); // backend starts from 1
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [page, setPage] = useState(1);
+  const [allTheses, setAllTheses] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]); // تحويل الحالة لمصفوفة
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
   const [search, setSearch] = useState("");
@@ -32,179 +34,186 @@ export default function Theses() {
   const [sortValue, setSortValue] = useState(null);
   const [gradeIds, setGradeIds] = useState([]);
   const [type, setType] = useState([]);
+
+  // --- Search Debounce ---
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
-      setPage(1);
     }, 400);
-
     return () => clearTimeout(timeout);
   }, [search]);
+
+  // --- Fetch Data Hook ---
   const { items, totalPages, loading, error, loadData } = useTheses(
     page,
-    4,
+    10,
     debouncedSearch,
     sortValue,
     gradeIds,
     type,
   );
 
+  // دمج البيانات الجديدة مع القديمة ومنع التكرار
+  useEffect(() => {
+    if (items) {
+      if (page === 1) {
+        setAllTheses(items);
+      } else {
+        setAllTheses((prev) => {
+          const existingIds = new Set(prev.map((item) => item.id));
+          const newUniqueItems = items.filter(
+            (item) => !existingIds.has(item.id),
+          );
+          return [...prev, ...newUniqueItems];
+        });
+      }
+    }
+  }, [items, page]);
+
+  // تصفير الإعدادات عند تغيير البحث أو اللغة
+  useEffect(() => {
+    setPage(1);
+    setSelectedIds([]);
+    setIsSelectionMode(false);
+  }, [debouncedSearch, sortValue, gradeIds, type, i18n.language]);
+
+  // العنصر الأول المختار (يستخدم للتعديل)
+  const firstSelectedItem = useMemo(
+    () => allTheses.find((i) => i.id === selectedIds[0]),
+    [selectedIds, allTheses],
+  );
+
+  const toggleSelectionMode = () => {
+    setIsSelectionMode((prev) => {
+      if (prev) setSelectedIds([]); // تصفير الاختيارات عند إغلاق الوضع
+      return !prev;
+    });
+  };
+
   const handleDelete = async () => {
-    if (!selectedItem) return;
-
+    if (selectedIds.length === 0) return;
     setDeleteError(null);
-
     try {
-      await deleteThesis(selectedItem.id);
+      // حذف العناصر المختارة واحداً تلو الآخر (أو حسب دعم الـ API للـ Bulk Delete)
+      await Promise.all(selectedIds.map((id) => deleteThesis(id)));
+
       setShowDelete(false);
+      setSelectedIds([]);
+      setPage(1);
       loadData();
     } catch (err) {
       setDeleteError(t("errors.deleteFailed"));
     }
   };
 
-  const { types, loadingTypes } = useAcademicGradesLookups();
-
-  const mappedType =
-    types?.map((item) => ({
-      value: item.id,
-      label: isArabic ? item.valueAr : item.valueEn,
-    })) || [];
-
-  const sortOptions = [
-    { value: 1, label: "EnrollmentDateASC" },
-    { value: 2, label: "EnrollmentDateDESC" },
-    { value: 3, label: "RegisterationDateASC" },
-    { value: 4, label: "RegisterationDateDESC" },
-    { value: 5, label: "titleAsc" },
-    { value: 6, label: "titleDesc" },
-  ];
-
-  const mappedTypes = [
-    { value: 1, label: "Master" },
-    { value: 2, label: "PhD" },
-  ];
-  const filtersConfig = mappedTypes.length
-    ? [
-        {
-          key: "Type",
-          title: "dependOnType",
-          options: mappedTypes,
-        },
-        {
-          key: "GradeIds",
-          title: "dependAcademicGrade",
-          options: mappedType,
-        },
-      ]
-    : [];
+  const { types } = useAcademicGradesLookups();
+  const mappedGradeOptions = useMemo(
+    () =>
+      types?.map((item) => ({
+        value: item.id,
+        label: isArabic ? item.valueAr : item.valueEn,
+      })) || [],
+    [types, isArabic],
+  );
 
   const handleApplyFilters = ({ sortValue, filters }) => {
     setSortValue(sortValue);
     setFiltersState(filters);
-
     setType(filters?.Type || []);
     setGradeIds(filters?.GradeIds || []);
-
-    setPage(1);
+    setShowFilterModal(false);
   };
+
   const handleResetFilters = () => {
     setSortValue(null);
     setType([]);
     setGradeIds([]);
     setFiltersState({});
-    setPage(1);
+    setShowFilterModal(false);
   };
 
   return (
     <ResponsiveLayoutProvider>
-      <div className={`${isArabic ? "rtl" : "ltr"} p-6`}>
-        <PageHeader
-          title={t("title")}
-          addLabel={t("add")}
-          onAdd={() => navigate("/add-thesis")}
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
-          isArabic
-          onFilterClick={() => setShowFilterModal(true)}
+      <div
+        className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
+      >
+        <PageHeaderNoAction title={t("title")} icon={Newspaper} />
+
+        <ThesesTable
+          items={allTheses}
+          loading={loading}
+          isArabic={isArabic}
+          t={t}
+          isSelectionMode={isSelectionMode}
+          toggleSelectionMode={toggleSelectionMode}
+          selectedIds={selectedIds}
+          setSelectedIds={setSelectedIds}
+          handleEditAction={() =>
+            navigate("/edit-thesis", { state: { thesis: firstSelectedItem } })
+          }
+          setShowDeleteModal={setShowDelete}
+          setShowFilterModal={setShowFilterModal}
+          page={page}
+          totalPages={totalPages}
+          setPage={setPage}
+          handleAddAction={() => navigate("/add-thesis")}
+          searchTerm={search}
+          setSearchTerm={setSearch}
         />
 
-        {/* رسالة الخطأ */}
-        {/* {error && (
-    <div className="text-center text-red-500 mt-4">
-      {t("fetchError")}
-    </div>
-  )} */}
-        <div className="flex-1">
-          {error ? (
-            <div className="text-center text-red-500 mt-4 text-lg">
-              {t("fetchError")}
-            </div>
-          ) : items.length ? (
-            <div className="grid grid-cols-1 gap-6 max-w-5xl">
-              {items.map((item) => (
-                <ThesesCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onClick={(item) => navigate(`/theses-details/${item.id}`)}
-                  onDelete={(item) => {
-                    setSelectedItem(item);
-                    setShowDelete(true);
-                  }}
-                  onEdit={(item) =>
-                    navigate("/edit-thesis", {
-                      state: { thesis: item },
-                    })
-                  }
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="p-10 text-center text-gray-500 text-xl">
-              {t("empty")}
-            </div>
-          )}
-
-          <div className="fixed bottom-12 left-0 w-full flex justify-center z-50">
-            <Pagination
-              currentPage={page}
-              totalPages={totalPages}
-              onPrev={() => setPage((p) => Math.max(1, p - 1))}
-              onNext={() => setPage((p) => Math.min(totalPages, p + 1))}
-              t={t}
-              isArabic={isArabic}
-            />
+        {error && (
+          <div className="text-center text-red-500 mt-10">
+            {t("fetchError")}
           </div>
-        </div>
+        )}
 
         {showDelete && (
           <DeleteThesisModal
-            item={selectedItem}
+            item={firstSelectedItem}
+            count={selectedIds.length} // نمرر عدد العناصر للمودال
             t={t}
             error={deleteError}
             onConfirm={handleDelete}
             onCancel={() => setShowDelete(false)}
           />
         )}
-      </div>
 
-      {showFilterModal && (
-        <ModalWrapper onClose={() => setShowFilterModal(false)}>
-          <CustomizeResultsModal
-            onClose={() => setShowFilterModal(false)}
-            onApply={handleApplyFilters}
-            onReset={handleResetFilters}
-            currentSort={sortValue}
-            currentFilters={filtersState}
-            filtersConfig={filtersConfig}
-            translationNamespace="filter-sort"
-            sortOptions={sortOptions}
-          />
-        </ModalWrapper>
-      )}
+        {showFilterModal && (
+          <ModalWrapper onClose={() => setShowFilterModal(false)}>
+            <CustomizeResultsModal
+              onClose={() => setShowFilterModal(false)}
+              onApply={handleApplyFilters}
+              onReset={handleResetFilters}
+              currentSort={sortValue}
+              currentFilters={filtersState}
+              filtersConfig={[
+                {
+                  key: "Type",
+                  title: "dependOnType",
+                  options: [
+                    { value: 1, label: "Master" },
+                    { value: 2, label: "PhD" },
+                  ],
+                },
+                {
+                  key: "GradeIds",
+                  title: "dependAcademicGrade",
+                  options: mappedGradeOptions,
+                },
+              ]}
+              translationNamespace="filter-sort"
+              sortOptions={[
+                { value: 1, label: "EnrollmentDateASC" },
+                { value: 2, label: "EnrollmentDateDESC" },
+                { value: 3, label: "RegisterationDateASC" },
+                { value: 4, label: "RegisterationDateDESC" },
+                { value: 5, label: "TitleASC" },
+                { value: 6, label: "TitleDESC" },
+              ]}
+            />
+          </ModalWrapper>
+        )}
+      </div>
     </ResponsiveLayoutProvider>
   );
 }

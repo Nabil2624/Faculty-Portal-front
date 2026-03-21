@@ -2,15 +2,16 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
+import { PlaneTakeoff } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
 
 import useScientificMissions from "../hooks/useScientificMissions";
 import { deleteScientificMission } from "../services/scientificMission.service";
-import ScientificMissionsCard from "../components/widgets/ScientificMissions/ScientificMissionsCard";
+import ScientificMissionsTable from "../components/widgets/ScientificMissions/ScientificMissionsTable";
 import ScientificMissionsModal from "../components/widgets/ScientificMissions/ScientificMissionsModal";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 
 export default function ScientificMissions() {
   const { t, i18n } = useTranslation("ScientificMissions");
@@ -65,7 +66,7 @@ export default function ScientificMissions() {
       setSelectedItem(null);
       loadData();
     } catch (err) {
-      console.error(err);
+
       setDeleteError(t("deleteError"));
     }
   };
@@ -73,65 +74,33 @@ export default function ScientificMissions() {
   return (
     <ResponsiveLayoutProvider>
       <div
-        className={`${isArabic ? "rtl" : "ltr"} p-4 flex flex-col min-h-[90vh]`}
+        className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
-        <PageHeader
-          title={t("scientificMissions")}
-          addLabel={t("add")}
-          onAdd={() => navigate("/add-scientific-task")}
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
-          isArabic={isArabic}
-          onFilterClick={() => setShowFilterModal(true)}
-        />
+        <PageHeaderNoAction title={t("scientificMissions")} icon={PlaneTakeoff} />
 
         {!loading && error && (
           <div className="text-center text-red-500 mb-4">{error}</div>
         )}
 
-        {!loading && !error && missions.length === 0 && (
-          <div className="text-center text-gray-500 mb-4">{t("empty")}</div>
-        )}
-
-        {loading && (
-          <div className="text-center text-gray-500 mb-4">Loading...</div>
-        )}
-
-        {!loading && missions.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {missions.map((item) => (
-              <ScientificMissionsCard
-                key={item.id}
-                item={item}
-                isArabic={isArabic}
-                onEdit={(itm) =>
-                  navigate("/edit-scientific-task", {
-                    state: { taskData: itm },
-                  })
-                }
-                onDelete={(itm) => {
-                  setSelectedItem(itm);
-                  setShowDelete(true);
-                }}
-                onDetails={(itm) => {
-                  setSelectedItem(itm);
-                  setShowDetails(true);
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="mt-auto flex justify-center items-center gap-3">
-          <Pagination
+        <div className=" flex-1 overflow-hidden">
+          <ScientificMissionsTable
+            data={missions}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onEdit={(item) =>
+              navigate("/edit-scientific-task", { state: { item } })
+            }
+            onAdd={() => navigate("/add-scientific-task")}
+            onFilterClick={() => setShowFilterModal(true)}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
             t={t}
-            isArabic={isArabic}
           />
         </div>
 

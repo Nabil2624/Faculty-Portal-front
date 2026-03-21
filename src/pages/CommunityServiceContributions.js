@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
-
+import { HandHeart } from "lucide-react";
 import useCommunityServiceContribution from "../hooks/useCommunityServiceContribution";
 import useCommunityServiceContributionForm from "../hooks/useCommunityServiceContributionForm";
 
@@ -12,7 +12,9 @@ import CommunityServiceContributionsCard from "../components/widgets/CommunitySe
 import CommunityServiceContributionsModal from "../components/widgets/CommunityServiceContributions/CommunityServiceContributionsModal";
 
 import { deleteCommunityServiceContribution } from "../services/communityServiceContribution.service";
-
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import CommunityServiceContributionsTable from "../components/widgets/CommunityServiceContributions/CommunityServiceContributionsTable";
+import { useNavigate } from "react-router-dom";
 export default function CommunityServiceContributions() {
   const { t, i18n } = useTranslation("university-contribution");
   const isArabic = i18n.language === "ar";
@@ -32,14 +34,7 @@ export default function CommunityServiceContributions() {
   const [sortValue, setSortValue] = useState(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setDebouncedSearch(search);
-      setCurrentPage(1);
-    }, 400);
-
-    return () => clearTimeout(timeout);
-  }, [search]);
+  const navigate = useNavigate();
   /* ================= DATA ================= */
   const {
     items: contributions = [],
@@ -47,7 +42,13 @@ export default function CommunityServiceContributions() {
     loading,
     error,
     loadData,
-  } = useCommunityServiceContribution(currentPage, 9, debouncedSearch,sortValue);
+  } = useCommunityServiceContribution(
+    currentPage,
+    9,
+    search,
+    sortValue,
+    
+  );
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -56,36 +57,22 @@ export default function CommunityServiceContributions() {
   }, [totalPages]);
 
   /* ================= FORM HOOK ================= */
-  const {
-    formData,
-    errors,
-    loading: formLoading,
-    handleChange,
-    submitForm,
-  } = useCommunityServiceContributionForm({
-    mode,
-    selectedItem,
-    onSuccess: () => {
-      setShowForm(false);
-      loadData();
-    },
-  });
+  // const {
+  //   formData,
+  //   errors,
+  //   loading: formLoading,
+  //   handleChange,
+  //   submitForm,
+  // } = useCommunityServiceContributionForm({
+  //   mode,
+  //   selectedItem,
+  //   onSuccess: () => {
+  //     setShowForm(false);
+  //     loadData();
+  //   },
+  // });
 
   /* ================= SEARCH ================= */
-  const filtered = useMemo(() => {
-    const query = (search || "").toLowerCase().trim();
-    if (!query) return contributions;
-
-    return contributions.filter((item) => {
-      const title = item?.contributionTitle || "";
-      const desc = item?.description || "";
-
-      return (
-        title.toLowerCase().includes(query) ||
-        desc.toLowerCase().includes(query)
-      );
-    });
-  }, [search, contributions]);
   const sortOptions = [
     { value: 4, label: "newestFirst" },
     { value: 3, label: "oldestFirst" },
@@ -118,17 +105,13 @@ export default function CommunityServiceContributions() {
   };
 
   /* ================= EDIT ================= */
-  const handleEdit = (item) => {
-    setMode("edit");
-    setSelectedItem(item);
-    setShowForm(true);
+ const handleEdit = (item) => {
+    navigate("/edit-community-contribution", { state: { item } });
   };
 
   /* ================= ADD ================= */
   const handleAdd = () => {
-    setMode("add");
-    setSelectedItem(null);
-    setShowForm(true);
+    navigate("/add-community-contribution");
   };
 
   return (
@@ -137,7 +120,7 @@ export default function CommunityServiceContributions() {
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
         {/* Header */}
-        <PageHeader
+        <PageHeaderNoAction
           title={t("contributionTitle")}
           addLabel={t("add")}
           onAdd={handleAdd}
@@ -147,6 +130,7 @@ export default function CommunityServiceContributions() {
           searchPlaceholder={t("search")}
           isArabic={isArabic}
           onFilterClick={() => setShowFilterModal(true)}
+          icon={HandHeart}
         />
 
         {/* Error / Empty */}
@@ -159,55 +143,22 @@ export default function CommunityServiceContributions() {
           </div>
         )}
 
-        {!loading && !error && filtered.length === 0 && (
-          <div
-            className="text-center text-gray-500"
-            style={{ fontSize: "clamp(1rem, 2vw, 2.8rem)" }}
-          >
-            {t("empty")}
-          </div>
-        )}
-
-        {/* Grid */}
-        {!loading && !error && filtered.length > 0 && (
-          <div
-            className="overflow-y-auto pr-2 mb-4 flex-1"
-            style={{ maxHeight: "calc(90vh - 200px)" }}
-          >
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${isArabic ? "text-right" : "text-left"}`}
-              style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
-            >
-              {filtered.map((item) => (
-                <CommunityServiceContributionsCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onEdit={() => handleEdit(item)}
-                  onDelete={(p) => {
-                    setSelectedItem(p);
-                    setShowDelete(true);
-                    setDeleteError(false);
-                  }}
-                  onDetails={(p) => {
-                    setSelectedItem(p);
-                    setShowDetails(true);
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Pagination */}
-        <div className="mt-auto">
-          <Pagination
+        <div className="flex-1 overflow-hidden">
+          <CommunityServiceContributionsTable
+            data={contributions}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onEdit={handleEdit}
+            onAdd={handleAdd}
+            onFilterClick={() => setShowFilterModal(true)}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            t={t}
-            isArabic={isArabic}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
           />
         </div>
 
@@ -218,11 +169,6 @@ export default function CommunityServiceContributions() {
           showDelete={showDelete}
           showDetails={showDetails}
           selectedItem={selectedItem}
-          formData={formData}
-          errors={errors}
-          handleChange={handleChange}
-          submitForm={submitForm}
-          loading={formLoading}
           deleteError={deleteError}
           onDelete={handleDelete}
           setShowForm={setShowForm}

@@ -4,6 +4,7 @@
   "back": "Back",
   "location": "Country/City",
   "startDate": "Start Date",
+  "empty": "No patents available",
   "endDate": "End Date",
   "areYouSureDelete": "Are you sure you want to delete",
   "institution": "University/College",
@@ -13,5 +14,10 @@
   "previous": "Previous",
   "next": "Next",
   "page": "Page",
-  "of": "of"
+  "of": "of",
+  "backToList": "Back To List",
+  "searchPlaceholder": "Search...",
+  "missionDetails": "Mission Details",
+  "noDescriptionAdded": "No Description Added",
+  "missionNotes": "Mission Notes"
 }

@@ -25,5 +25,6 @@
   "authority" : "Authority",
   "accurateSpecialization": "Exact Specialization",
   "personalInfo":"personal Information",
-  "workInfo":"Work Information"
+  "workInfo":"Work Information",
+  "updateFailed":"Update Failed"
 }

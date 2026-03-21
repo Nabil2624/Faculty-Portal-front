@@ -13,9 +13,24 @@
   "page": "Page",
   "of": "of",
   "empty": "No data available",
-    "areYouSureDelete": "Are you sure you want to delete this journal?",
+  "areYouSureDelete": "Are you sure you want to delete this journal?",
   "errors": {
     "loadFailed": "An error occurred while loading data",
     "deleteFailed": "Failed to delete the item"
+  },
+  "journals": {
+    "title": "Scientific Journals",
+    "searchPlaceholder": "Search for a journal...",
+    "addNew": "Add New Journal",
+    "documentDetails": "Journal Details",
+    "backToList": "Back to List",
+    "selectItemToPreview": "Select a journal to preview details",
+    "noDataAvailable": "No journals available",
+    "nameOfMagazine": "Journal Name",
+    "journalWebsite": "Journal Website",
+    "participationType": "Participation Type",
+    "notes": "Additional Notes",
+    "noNotes": "No notes added",
+    "filter": "Filter"
   }
 }

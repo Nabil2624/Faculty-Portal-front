@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-
+import { Newspaper } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import LoadingSpinner from "../components/LoadingSpinner";
 import PageHeader from "../components/ui/PageHeader";
@@ -11,7 +11,9 @@ import JournalsModals from "../components/widgets/ParticipationJournals/Journals
 import useJournals from "../hooks/useJournals";
 import { deleteParticipationJournal } from "../services/participationJournals.service";
 import useMagazineParticipationTypes from "../hooks/useMagazineParticipationTypes";
-
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import JournalMasterDetailTable from "../components/widgets/ParticipationJournals/JournalMasterDetailTable";
+import { useNavigate } from "react-router-dom";
 export default function ParticipationInJournals() {
   const { t, i18n } = useTranslation("ParticipationJournals");
   const isArabic = i18n.language === "ar";
@@ -28,7 +30,7 @@ export default function ParticipationInJournals() {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [sortValue, setSortValue] = useState(null);
   const [typeOfParticipationIds, setTypeOfParticipationIds] = useState([]);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
@@ -96,7 +98,7 @@ export default function ParticipationInJournals() {
       setDeleteError(t("errors.deleteFailed"));
     }
   };
-console.log(types)
+  console.log(types);
   return (
     <ResponsiveLayoutProvider>
       <div
@@ -105,7 +107,7 @@ console.log(types)
           padding: "clamp(6px, 0.5vw, 20px)",
         }}
       >
-        <PageHeader
+        <PageHeaderNoAction
           title={t("title")}
           addLabel={t("add")}
           showSearch
@@ -116,55 +118,33 @@ console.log(types)
           onFilter={() => console.log("Filter clicked")}
           isArabic={isArabic}
           onFilterClick={() => setShowFilterModal(true)}
+          icon={Newspaper}
         />
-        <div className="items-center justify-center">
-          {!loading && error && (
-            <div className="text-red-500 text-lg text-center">
-              {t("errors.loadFailed")}
-            </div>
-          )}
-
-          {!loading && !error && items.length === 0 && (
-            <div className="text-gray-500 text-xl text-center">
-              {t("empty")}
-            </div>
-          )}
+        {!loading && error && (
+          <div className="text-red-500 text-lg text-center">
+            {t("errors.loadFailed")}
+          </div>
+        )}
+        <div className=" flex-1 overflow-hidden">
+          <JournalMasterDetailTable
+            data={items}
+            onEdit={(item) => {
+              navigate("/edit-journal", { state: { item } });
+            }}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onAdd={() => navigate("/add-journal")}
+            onFilterClick={() => setShowFilterModal(true)}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
+          />
         </div>
-        <div className="flex-1 ">
-          {!loading && !error && items.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr h-full">
-              {items.map((item) => (
-                <JournalCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onEdit={(item) => {
-                    setSelectedItem(item);
-                    setShowEdit(true);
-                  }}
-                  onDelete={(item) => {
-                    setSelectedItem(item);
-                    setShowDelete(true);
-                  }}
-                  onDetails={(item) => {
-                    setSelectedItem(item);
-                    setShowDetails(true);
-                  }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPrev={() => setCurrentPage((p) => p - 1)}
-          onNext={() => setCurrentPage((p) => p + 1)}
-          t={t}
-          isArabic={isArabic}
-        />
-
         <JournalsModals
           showAdd={showAdd}
           showEdit={showEdit}

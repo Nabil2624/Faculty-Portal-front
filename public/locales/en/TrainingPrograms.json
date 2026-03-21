@@ -21,8 +21,13 @@
   "next": "Next",
   "page": "Page",
   "of": "of",
-    "InTheSpecialty": "In the specialty",
+    "noDescriptionAdded": "No Description Added",
+  "InTheSpecialty": "In the specialty",
   "OutTheSpecialty": "Out of the specialty",
   "lecturer": "Lecturer",
+  "searchPlaceholder": "Search...",
+  "programDetails": "Program Details",
+  "backToList": "Back To List",
+  "description":"Program Description",
   "listener": "Listener"
 }

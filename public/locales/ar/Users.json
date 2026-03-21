@@ -1,0 +1,235 @@
+{
+  "title": "مستخدمو النظام",
+  "subtitle": "إدارة المستخدمين والأدوار والصلاحيات",
+  "refresh": "تحديث",
+  "loading": "جار تحميل المستخدمين…",
+  "error": "فشل تحميل المستخدمين. يرجى المحاولة مجدداً.",
+  "retry": "إعادة المحاولة",
+  "noUsers": "لا يوجد مستخدمون يطابقون الفلاتر الحالية.",
+  "search": "بحث بالاسم أو البريد الإلكتروني أو اسم المستخدم أو الرقم القومي…",
+  "filter": "تصفية",
+  "showing": "عرض {{count}} مستخدم",
+  "filteredBy": "مصفّى حسب {{role}}",
+  "matching": "يطابق \"{{query}}\"",
+
+  "roles": {
+    "all": "الكل",
+    "FacultyMember": "أعضاء هيئة التدريس",
+    "ManagementAdmin": "مدراء الإدارة",
+    "SupportAdmin": "مدراء الدعم"
+  },
+
+  "stats": {
+    "total": "إجمالي المستخدمين",
+    "FacultyMember": "أعضاء هيئة التدريس",
+    "ManagementAdmin": "مدراء الإدارة",
+    "SupportAdmin": "مدراء الدعم"
+  },
+
+  "table": {
+    "no": "#",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "nationalId": "الرقم القومي",
+    "role": "الدور",
+    "actions": "إجراءات",
+    "edit": "تعديل",
+    "noUsers": "لا يوجد مستخدمون يطابقون الفلاتر الحالية."
+  },
+
+  "roleBadge": {
+    "FacultyMember": "عضو هيئة تدريس",
+    "ManagementAdmin": "مدير إدارة",
+    "SupportAdmin": "مدير دعم",
+    "Support": "موظف دعم",
+    "Management": "إدارة"
+  },
+
+  "editModal": {
+    "title": "تعديل المستخدم",
+    "editing": "تعديل",
+    "nationalId": "الرقم القومي",
+    "readOnly": "للقراءة فقط",
+    "email": "البريد الإلكتروني",
+    "username": "اسم المستخدم",
+    "password": "كلمة مرور جديدة",
+    "passwordHint": "(اتركه فارغاً للإبقاء على الحالي)",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "emailPlaceholder": "عنوان البريد الإلكتروني",
+    "usernamePlaceholder": "اسم المستخدم",
+    "passwordPlaceholder": "كلمة مرور جديدة",
+    "confirmPlaceholder": "تأكيد كلمة المرور الجديدة",
+    "cancel": "إلغاء",
+    "save": "حفظ التغييرات",
+    "saving": "جار الحفظ…",
+    "emailRequired": "البريد الإلكتروني مطلوب.",
+    "usernameRequired": "اسم المستخدم مطلوب.",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين."
+  },
+
+  "permissions": {
+    "rolePermissions": "صلاحيات الدور",
+    "rolePermissionsDesc": "{{count}} صلاحية موروثة من الدور المعيّن",
+    "individualPermissions": "الصلاحيات الفردية",
+    "individualPermissionsDesc": "{{count}} صلاحية إضافية ممنوحة لهذا المستخدم تحديداً",
+    "individualPermissionsDesc_one": "{{count}} صلاحية إضافية ممنوحة لهذا المستخدم تحديداً",
+    "individualPermissionsDesc_other": "{{count}} صلاحيات إضافية ممنوحة لهذا المستخدم تحديداً",
+    "individualPermissionsDesc_zero": "لا توجد صلاحيات إضافية",
+    "noRolePermissions": "لا توجد صلاحيات دور محددة.",
+    "noIndividualPermissions": "لا توجد صلاحيات فردية محددة.",
+    "addPermission": "تعديل الصلاحيات الفردية",
+    "selectPermission": "اختر صلاحية…",
+    "add": "إضافة",
+    "removePermission": "إزالة الصلاحية"
+  },
+
+  "toasts": {
+    "updateSuccess": "تم تحديث المستخدم بنجاح.",
+    "updateError": "فشل تحديث المستخدم.",
+    "addPermissionSuccess": "تمت إضافة الصلاحية.",
+    "addPermissionError": "فشل إضافة الصلاحية.",
+    "removePermissionSuccess": "تمت إزالة الصلاحية.",
+    "removePermissionError": "فشل إزالة الصلاحية."
+  },
+
+  "editActionSelector": {
+    "title": "تعديل المستخدم",
+    "subtitle": "اختر ما تريد إدارته",
+    "noPermissions": "ليس لديك صلاحيات لإدارة هذا المستخدم.",
+    "viewEdit": "عرض وتعديل",
+    "viewOnly": "عرض فقط"
+  },
+
+  "sections": {
+    "UserAccount": {
+      "label": "الحساب",
+      "desc": "الاسم واسم المستخدم وكلمة المرور"
+    },
+    "FacultyMemberData": {
+      "label": "المعلومات الشخصية",
+      "desc": "البيانات الشخصية لعضو هيئة التدريس"
+    },
+    "FacultyMemberContributionsData": {
+      "label": "المساهمات",
+      "desc": "المساهمات الجامعية والمجتمعية"
+    },
+    "FacultyMemberExperincesData": {
+      "label": "الخبرات",
+      "desc": "خبرة التدريس والخبرة العامة"
+    },
+    "FacultyMemberHigherStudiesData": {
+      "label": "الدراسات العليا",
+      "desc": "الرسائل العلمية وسجلات المناقشة"
+    },
+    "FacultyMemberMissionsData": {
+      "label": "المهام العلمية",
+      "desc": "المهام والندوات والتدريب"
+    },
+    "FacultyMemberPrizesData": {
+      "label": "الجوائز والمكافآت",
+      "desc": "الجوائز والتكريمات"
+    },
+    "FacultyMemberProjectsAndComiteesData": {
+      "label": "المشاريع واللجان",
+      "desc": "المشاريع واللجان والمجلات"
+    },
+    "FacultyMemberResearchesData": {
+      "label": "الأبحاث",
+      "desc": "الأبحاث العلمية والمنشورات"
+    },
+    "FacultyMemberScientificProgressionData": {
+      "label": "التطور العلمي",
+      "desc": "الدرجات الوظيفية والمناصب الإدارية"
+    },
+    "FacultyMemberWritingsData": {
+      "label": "الكتابات",
+      "desc": "الكتابات العلمية وبراءات الاختراع"
+    },
+    "Tickets": { "label": "التذاكر", "desc": "تذاكر الدعم الفني" }
+  },
+
+  "editPermissions": {
+    "title": "تعديل الصلاحيات الفردية",
+    "back": "رجوع",
+    "refresh": "تحديث",
+    "search": "بحث في الصلاحيات…",
+    "allTypes": "جميع الأنواع",
+    "grant": "منح",
+    "revoke": "سحب",
+    "grantAll": "منح الكل",
+    "revokeAll": "سحب الكل",
+    "noResults": "لا توجد صلاحيات تطابق بحثك أو الفلتر المحدد.",
+    "loadError": "فشل تحميل الصلاحيات. يرجى المحاولة مجدداً.",
+    "retry": "إعادة المحاولة",
+    "toasts": {
+      "grantSuccess": "تم منح الصلاحية بنجاح.",
+      "revokeSuccess": "تم سحب الصلاحية بنجاح.",
+      "grantError": "فشل تحديث الصلاحية.",
+      "alreadyHasPermission": "المستخدم يمتلك هذه الصلاحية بالفعل."
+    }
+  },
+
+  "createUser": {
+    "title": "إنشاء مستخدم جديد",
+    "subtitle": "أدخل البيانات أدناه لإنشاء حساب مستخدم جديد في النظام",
+    "back": "رجوع",
+    "submit": "إنشاء المستخدم",
+    "submitting": "جارٍ الإنشاء…",
+
+    "userInfo": {
+      "title": "بيانات المستخدم",
+      "userName": "اسم المستخدم",
+      "userNamePlaceholder": "أدخل اسم المستخدم",
+      "email": "عنوان البريد الإلكتروني",
+      "emailPlaceholder": "أدخل البريد الإلكتروني",
+      "nationalNumber": "الرقم القومي",
+      "nationalNumberPlaceholder": "أدخل الرقم القومي",
+      "password": "كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور"
+    },
+
+    "role": {
+      "title": "تعيين الدور",
+      "FacultyMember": "عضو هيئة التدريس",
+      "ManagementAdmin": "مدير الإدارة",
+      "SupportAdmin": "مدير الدعم"
+    },
+
+    "permissions": {
+      "title": "تعيين الصلاحيات",
+      "search": "بحث في الصلاحيات…",
+      "allTypes": "الكل",
+      "selected": "{{count}} محدد",
+      "noPermissions": "لا توجد صلاحيات تطابق بحثك.",
+      "lockedTitle": "الصلاحيات غير متاحة",
+      "lockedDescription": "يحصل أعضاء هيئة التدريس على الصلاحيات تلقائياً بناءً على دورهم. لا يمكن تعيين صلاحيات فردية لهم."
+    },
+
+    "validation": {
+      "userNameRequired": "اسم المستخدم مطلوب.",
+      "emailRequired": "البريد الإلكتروني مطلوب.",
+      "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح.",
+      "nationalNumberRequired": "الرقم القومي مطلوب.",
+      "passwordRequired": "كلمة المرور مطلوبة.",
+      "passwordNoUppercase": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل (A–Z).",
+      "passwordNoDigit": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل (0–9).",
+      "passwordMismatch": "كلمتا المرور غير متطابقتين.",
+      "roleRequired": "يرجى اختيار دور."
+    },
+
+    "toasts": {
+      "success": "تم إنشاء المستخدم بنجاح.",
+      "error": "فشل إنشاء المستخدم. يرجى المحاولة مجدداً.",
+      "conflict": "يوجد مستخدم بنفس الرقم القومي أو البريد الإلكتروني أو اسم المستخدم بالفعل."
+    },
+
+    "success": {
+      "title": "تم إنشاء المستخدم!",
+      "subtitle": "تم إنشاء حساب المستخدم الجديد بنجاح.",
+      "createAnother": "إنشاء مستخدم آخر",
+      "goToUsers": "الذهاب إلى المستخدمين"
+    }
+  }
+}

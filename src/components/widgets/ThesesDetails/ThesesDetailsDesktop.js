@@ -21,7 +21,6 @@ export default function ThesesDetailsDesktop({ thesis, t }) {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Download failed:", error);
     }
   };
 

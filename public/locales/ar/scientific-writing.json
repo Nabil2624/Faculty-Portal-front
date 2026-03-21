@@ -14,18 +14,19 @@
   "next": "التالي",
   "page": "الصفحة",
   "of": "من",
-  "search": "ابحث في الخبرات...",
+  "noDescriptionAdded": "لا يوجد وصف",
+  "search": "ابحث في مؤلفة...",
   "errors": {
     "loadFailed": "فشل تحميل البيانات",
     "deleteFailed": "فشل في عملية الحذف"
   },
-  "documentDetails":"تفاصيل المؤلفة العلمية",
-  "Page":"صفحة",
-  "selectItemToPreview":"اختر عنصر لمشاهدة التفاصيل",
-  "BookTitle":"عنوان الكتاب",
-  "description":"الوصف",
-  "summaryDescription":"الوصف",
-  "searchPlaceholder":"ابحث هنا",
+  "documentDetails": "تفاصيل المؤلفة العلمية",
+  "Page": "صفحة",
+  "selectItemToPreview": "اختر عنصر لمشاهدة التفاصيل",
+  "BookTitle": "عنوان الكتاب",
+  "summaryDescription": "وصف المؤلفة العلمية",
+
+  "searchPlaceholder": "ابحث هنا",
   "actions": "الإجراءات",
-  "backToList":"عد الي القائمة"
+  "backToList": "عد الي القائمة"
 }

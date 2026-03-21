@@ -1,11 +1,11 @@
 import axiosInstance from "../utils/axiosInstance";
 import qs from "qs";
-export const getCommunityServiceContribution = (
+export const getCommunityServiceContribution = ({
   pageIndex,
   pageSize,
   sort,
   search,
-) => {
+}) => {
   return axiosInstance.get("/Contributions/ContributionsToCommunityService", {
     params: { pageIndex, pageSize, search, ...(sort && { sort }) },
     paramsSerializer: (params) =>

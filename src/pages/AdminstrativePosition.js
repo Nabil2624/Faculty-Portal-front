@@ -3,17 +3,19 @@ import { useTranslation } from "react-i18next";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeader from "../components/ui/PageHeader";
 import Pagination from "../components/ui/Pagination";
-
+import { Briefcase } from "lucide-react";
 import useAdminPosition from "../hooks/useAdminPosition";
 import { deleteAdminPosition } from "../services/adminstrativePosition.service";
 
 import AdminPositionCard from "../components/widgets/AdminPosition/AdminPositionCard";
 import AdminPositionModal from "../components/widgets/AdminPosition/AdminPositionModal";
-
+import AdministrativePositionsTable from "../components/widgets/AdminPosition/AdministrativePositionsTable";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import { useNavigate } from "react-router-dom";
 export default function AdminstrativePosition() {
   const { t, i18n } = useTranslation("AdministrativePositions");
   const isArabic = i18n.language === "ar";
-
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
 
   const [selectedItem, setSelectedItem] = useState(null);
@@ -70,64 +72,38 @@ export default function AdminstrativePosition() {
       setDeleteError(t("deleteError"));
     }
   };
-
+  const handleEditNavigate = (item) => {
+    navigate("/edit-admin-position", { state: { item } });
+  };
   return (
     <ResponsiveLayoutProvider>
       <div
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
-        <PageHeader
+        <PageHeaderNoAction
           title={t("administrativePositions")}
-          addLabel={t("add")}
-          onAdd={() => setShowAdd(true)}
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
-          isArabic={isArabic}
-          onFilterClick={() => setShowFilterModal(true)}
+          icon={Briefcase}
         />
 
         {!loading && error && (
           <div className="text-center text-red-500 mb-4">{error}</div>
         )}
-
-        {!loading && !error && jobRanks.length === 0 && (
-          <div className="text-center text-gray-500 mb-4">{t("empty")}</div>
-        )}
-
-        {!loading && jobRanks.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {jobRanks.map((item) => (
-              <AdminPositionCard
-                key={item.id}
-                item={item}
-                isArabic={isArabic}
-                onEdit={(itm) => {
-                  setSelectedItem(itm);
-                  setShowEdit(true);
-                }}
-                onDelete={(itm) => {
-                  setSelectedItem(itm);
-                  setShowDelete(true);
-                }}
-                onDetails={(itm) => {
-                  setSelectedItem(itm);
-                  setShowDetails(true);
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="mt-auto flex justify-center items-center gap-3">
-          <Pagination
+        <div className=" flex-1 overflow-hidden">
+          <AdministrativePositionsTable
+            data={jobRanks}
+            onEdit={handleEditNavigate}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+              setDeleteError(false);
+            }}
+            onAdd={() => navigate("/add-admin-position")}
+            onFilterClick={() => setShowFilterModal(true)}
             currentPage={currentPage}
             totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            t={t}
-            isArabic={isArabic}
+            onPageChange={setCurrentPage}
+            searchTerm={search}
+            onSearchChange={setSearch}
           />
         </div>
 

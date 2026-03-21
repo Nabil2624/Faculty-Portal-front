@@ -24,5 +24,25 @@
   "errors": {
     "loadFailed": "حدث خطأ أثناء تحميل البيانات",
     "deleteFailed": "فشل حذف العنصر"
+  },
+  "projects": {
+    "pageTitle": "المشاريع",
+    "searchPlaceholder": "البحث في المشاريع...",
+    "addNew": "إضافة مشروع جديد",
+    "noDataAvailable": "لا توجد مشاريع مضافة حالياً",
+    "backToList": "العودة الى القائمة",
+    "documentDetails": "تفاصيل المشروع",
+    "localInternational": "محلي / دولي",
+    "fundingAuthority": "جهة التمويل",
+    "participationRole": "دور المشاركة",
+    "projectType": "نوع المشروع",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "description": "وصف المشروع",
+    "noDescriptionAdded": "لا يوجد وصف مضاف لهذا المشروع",
+    "selectItemToPreview": "اختر مشروعاً لعرض تفاصيله",
+    "local": "محلي",
+    "international": "دولي",
+    "present": "الحالي"
   }
 }

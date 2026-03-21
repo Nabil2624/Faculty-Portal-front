@@ -20,5 +20,10 @@
   },
 
   "attachments": "المرفقات",
-  "attachment": "مرفق"
+  "attachment": "مرفق",
+  "noAttachments": "لا يوجد مرفقات",
+  "prizeDetails": "تفاصيل الجائزة / المكافئة",
+  "backToList": "العودة الى القائمة",
+  "noDescriptionAdded": "لا يوجد وصف",
+  "description": "وصف الجائزة / المكافئة"
 }

@@ -1,117 +1,96 @@
 import { useTranslation } from "react-i18next";
+import { Briefcase, ArrowUpRight, Calendar } from "lucide-react";
 
-export default function ExperiencesWidget({ data }) {
+export default function ExperiencesWidget({ data = [] }) {
   const { t, i18n } = useTranslation("dashboard");
   const isArabic = i18n.language === "ar";
 
   const hasData = Array.isArray(data) && data.length > 0;
+  const maxItems = 3;
 
   function formatDate(dateString) {
     if (!dateString) return isArabic ? "الآن" : "Present";
-
     const date = new Date(dateString);
-
     return date.toLocaleDateString(isArabic ? "ar-EG" : "en-US", {
       year: "numeric",
-      month: "long",
-      day: "numeric",
+      month: "short",
     });
   }
-  const maxItems = 3;
 
   return (
-    <div className="w-full h-full flex flex-col p-[clamp(12px,1vw,20px)]">
+    <div className="w-full h-full flex flex-col p-[clamp(12px,1vw,20px)] bg-white border border-gray-100 rounded-[clamp(14px,1vw,20px)] shadow-inner">
       {/* Header */}
-      <div className="flex justify-between items-center mb-[clamp(8px,1vw,16px)]">
-        <h3 className="text-[#19355A] font-bold text-[clamp(14px,1.2vw,24px)]">
-          {t("Experiences")}
-        </h3>
+      <div className="flex justify-between items-center mb-[clamp(8px,1vw,16px)] shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="bg-[#19355A] p-1.5 rounded-lg shadow-sm">
+            <Briefcase className="text-[#b38e19] w-[clamp(14px,1vw,20px)] h-[clamp(14px,1vw,20px)]" />
+          </div>
+          <h3 className="text-[#19355A] font-bold text-[clamp(14px,1.2vw,22px)]">
+            {t("Experiences")}
+          </h3>
+        </div>
 
         <a
           href="/general-experiences"
-          className="text-gray-500 text-[clamp(12px,1vw,18px)] hover:underline"
+          className="group flex items-center gap-1 text-[#b38e19] hover:underline transition-all text-[clamp(10px,0.8vw,15px)] font-bold"
         >
           {t("ViewMore")}
+          <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
         </a>
       </div>
 
-      {/* Content */}
-      {!hasData ? (
-        <div className="flex flex-col items-center justify-center flex-1 text-center">
-          <p
-            className="
-              text-[#19355A]
-              font-bold
-              text-[clamp(14px,1.2vw,20px)]
-              mb-[clamp(6px,0.6vw,12px)]
-            "
-          >
-            {t("noExperiencesLine1")}
-          </p>
-
-          <p
-            className="
-              text-[#b38e19]
-              font-semibold
-              text-[clamp(13px,1.1vw,18px)]
-            "
-          >
-            {t("noExperiencesLine2")}
-          </p>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-[clamp(8px,0.5vw,25px)] overflow-auto">
-          {data.slice(0, maxItems).map((item, index) => (
-            <div
-              key={index}
-              className={`relative
-                bg-gray-200
-                rounded-[clamp(12px,1.4vw,18px)]
-                shadow-sm
-                px-[clamp(0.75rem,0.5vw,1.25rem)]
-                py-[clamp(0.75rem,0.8vw,1.25rem)]
-                border-[clamp(2px,0.35vw,4px)]
-                border-[#19355A]
-                ${
-                  isArabic
-                    ? "border-r-[clamp(12px,2vw,20px)]"
-                    : "border-l-[clamp(12px,2vw,20px)]"
-                }
-              `}
-            >
-              <h4
-                className="text-[#19355A] font-bold
-                  text-[clamp(13px,1.1vw,20px)]
-                  mb-[clamp(4px,0.2vw,8px)]
-                  whitespace-nowrap
-                  overflow-hidden
-                  text-ellipsis"
-              >
-                {item.jobDegree}
-              </h4>
-
-              <p
-                className="text-black
-                  text-[clamp(12px,1vw,18px)]
-                  whitespace-nowrap
-                  overflow-hidden
-                  text-ellipsis"
-              >
-                {item.country} / {item.city}
-              </p>
-
-              <p
-                className="text-gray-500
-                  text-[clamp(11px,0.9vw,16px)]
-                  mt-[clamp(4px,0.4vw,8px)]"
-              >
-                {formatDate(item.startDate)} {isArabic ? "حتى" : "to"}{" "}
-                {formatDate(item.endDate)}
-              </p>
+      {/* Content Area */}
+      <div className="flex-1 flex flex-col justify-start overflow-hidden pt-1">
+        {!hasData ? (
+          <div className="flex flex-col items-center justify-center flex-1 text-center py-4 ">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+              <Briefcase size={32} className="text-gray-300" />
             </div>
-          ))}
-        </div>
-      )}
+            <p className="text-[#19355A] font-bold text-[clamp(13px,1.1vw,18px)] mb-1">
+              {t("noExperiencesLine1")}
+            </p>
+            <p className="text-gray-400 font-medium text-[clamp(11px,0.9vw,14px)]">
+              {t("noExperiencesLine2")}
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-[clamp(8px,0.6vw,12px)] overflow-hidden">
+            {data.slice(0, maxItems).map((item, index) => (
+              <div
+                key={index}
+                className={`group relative bg-[#F8F9FA] border border-gray-200 hover:border-[#b38e19] hover:shadow-md transition-all duration-300
+                  rounded-[clamp(10px,1vw,15px)]
+                  px-[clamp(10px,1.2vw,16px)]
+                  py-[clamp(8px,1vw,14px)]
+                  ${
+                    isArabic
+                      ? "border-r-[clamp(8px,1.5vw,20px)] border-r-[#19355A]"
+                      : "border-l-[clamp(8px,1.5vw,20px)] border-l-[#19355A]"
+                  }
+                `}
+              >
+                {/* Job Title / Degree */}
+                <h4 className="text-[#19355A] font-bold text-[clamp(12px,1vw,17px)] mb-1.5 truncate group-hover:text-[#b38e19] transition-colors">
+                  {item.jobDegree}
+                </h4>
+
+                {/* Location (Country / City) */}
+                <p className="text-gray-500 font-medium text-[clamp(11px,0.85vw,14px)] truncate">
+                  {item.country} {item.city ? `/ ${item.city}` : ""}
+                </p>
+
+                {/* Date with Icon */}
+                <div className="flex items-center gap-1.5 mt-3 text-gray-400">
+                  <Calendar className="w-3 h-3 text-[#b38e19]" />
+                  <p className="text-[clamp(10px,0.75vw,13px)] font-semibold">
+                    {formatDate(item.startDate)} — {formatDate(item.endDate)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

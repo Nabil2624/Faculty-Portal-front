@@ -30,3 +30,7 @@ export const deleteTrainingProgram = (id) => {
     skipGlobalErrorHandler: true,
   });
 };
+export const trainingService = {
+  create: (payload) => axiosInstance.post("/Missions/CreateTrainingProgram", payload),
+  update: (id, payload) => axiosInstance.put(`/Missions/UpdateTrainingProgram/${id}`, payload),
+};

@@ -19,5 +19,10 @@
     "deleteFailed": "Failed to delete"
   },
   "attachments": "Attachments",
-  "attachment": "Attachment"
+  "attachment": "Attachment",
+  "noAttachments": "No Attachments",
+  "prizeDetails": "Prize / Reward Details",
+  "backToList": "Back To List",
+  "noDescriptionAdded": "No Description Added",
+  "description": "Prize / Reward Description"
 }

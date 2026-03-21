@@ -1,0 +1,10 @@
+{
+  "title": "Ticket Chat",
+  "loading": "Loading messages...",
+  "noMessages": "No messages yet. Start the conversation.",
+  "noTicket": "No ticket selected.",
+  "goBack": "Go Back",
+  "loadMore": "Load older messages",
+  "inputPlaceholder": "Type a message…",
+  "ticketId": "Ticket"
+}

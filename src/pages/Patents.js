@@ -1,16 +1,17 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
 
 import usePatents from "../hooks/usePatents";
 import { deletePatent } from "../services/patents.service";
-
-import PatentCard from "../components/widgets/Patents/PatentCard";
+import { Lightbulb } from "lucide-react";
+// استيراد الجدول الجديد الذي قمنا بإنشائه
+import PatentsTable from "../components/widgets/Patents/PatentsTable";
 import PatentModal from "../components/widgets/Patents/PatentModal";
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 
 export default function Patents() {
   const { t, i18n } = useTranslation("patents");
@@ -21,7 +22,6 @@ export default function Patents() {
   const [search, setSearch] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [filtersState, setFiltersState] = useState({});
@@ -29,14 +29,16 @@ export default function Patents() {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [sortValue, setSortValue] = useState(null);
 
+  // التحكم في الـ Debounce للبحث
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(search);
       setCurrentPage(1);
     }, 400);
-
     return () => clearTimeout(timeout);
   }, [search]);
+
+  // جلب البيانات من الـ Hook
   const {
     items: patents = [],
     totalPages = 1,
@@ -45,7 +47,7 @@ export default function Patents() {
     loadData,
   } = usePatents(
     currentPage,
-    9,
+    10, // زيادة العدد قليلاً ليناسب شكل القائمة الجانبية
     debouncedSearch,
     localOrInternational,
     sortValue,
@@ -55,15 +57,15 @@ export default function Patents() {
     { value: 1, label: "local" },
     { value: 2, label: "international" },
   ];
-  const filtersConfig = mappedTypes.length
-    ? [
-        {
-          key: "LocalOrInternational",
-          title: "dependLocalOrInternational",
-          options: mappedTypes,
-        },
-      ]
-    : [];
+
+  const filtersConfig = [
+    {
+      key: "LocalOrInternational",
+      title: "dependLocalOrInternational",
+      options: mappedTypes,
+    },
+  ];
+
   const sortOptions = [
     { value: 1, label: "nameAsc" },
     { value: 2, label: "nameDec" },
@@ -76,44 +78,19 @@ export default function Patents() {
   const handleApplyFilters = ({ sortValue, filters }) => {
     setSortValue(sortValue);
     setFiltersState(filters);
-
-    const ids = filters?.LocalOrInternational || [];
-    setLocalOrInternational(ids);
-
+    setLocalOrInternational(filters?.LocalOrInternational || []);
     setCurrentPage(1);
   };
+
   const handleResetFilters = () => {
     setSortValue(null);
     setLocalOrInternational([]);
     setFiltersState({});
     setCurrentPage(1);
   };
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages || 1);
-    }
-  }, [totalPages]);
-
-  const filteredPatents = useMemo(() => {
-    const query = (search || "").toLowerCase().trim();
-    if (!query) return patents;
-
-    return patents.filter((p) => {
-      const name = p?.nameOfPatent || "";
-      const authority = p?.accreditingAuthorityOrCountry || "";
-      const type = p?.localOrInternational || "";
-
-      return (
-        name.toLowerCase().includes(query) ||
-        authority.toLowerCase().includes(query) ||
-        type.toLowerCase().includes(query)
-      );
-    });
-  }, [search, patents]);
 
   const handleDelete = async () => {
     if (!selectedItem) return;
-
     try {
       await deletePatent(selectedItem.id);
       setShowDelete(false);
@@ -126,92 +103,56 @@ export default function Patents() {
     }
   };
 
-  const handleEditNavigate = (item) => {
-    navigate("/edit-patent", { state: { item } });
-  };
-
   return (
     <ResponsiveLayoutProvider>
       <div
         className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
       >
-        {/* Header */}
-        <PageHeader
-          title={t("title")}
-          addLabel={t("add")}
-          onAdd={() => navigate("/add-patent")}
-          showSearch
-          searchValue={search}
-          onSearchChange={setSearch}
-          searchPlaceholder={t("search")}
-          isArabic={isArabic}
-          onFilterClick={() => setShowFilterModal(true)}
-        />
+        {/* Header - تم الاحتفاظ به لفلتر البحث المتقدم والفلترة */}
+        <PageHeaderNoAction title={t("title")} isArabic={isArabic} icon={Lightbulb}/>
 
-        {/* Error */}
+        <div className=" flex-1 overflow-hidden">
+          <PatentsTable
+            data={patents}
+            loading={loading}
+            onFilterClick={() => setShowFilterModal(true)}
+            // Logic التعديل والحذف
+            onEdit={(item) => navigate("/edit-patent", { state: { item } })}
+            onDelete={(item) => {
+              setSelectedItem(item);
+              setShowDelete(true);
+            }}
+            onAdd={() => navigate("/add-patent")}
+            // منطق البحث (نمرر Input البحث للجدول)
+            renderSearch={() => (
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t("search")}
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#b38e19] transition-all"
+              />
+            )}
+            // منطق الصفحات
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+
+        {/* Error Handling */}
         {!loading && error && (
-          <div className="text-center text-red-500">
+          <div className="text-center text-red-500 mt-2">
             {t("errors.loadFailed")}
           </div>
         )}
 
-        {/* Empty */}
-        {!loading && !error && filteredPatents.length === 0 && (
-          <div className="text-center text-gray-500">{t("empty")}</div>
-        )}
-
-        {/* Grid */}
-        {!loading && !error && filteredPatents.length > 0 && (
-          <div
-            className="overflow-y-auto pr-2 mb-4 flex-1"
-            style={{ maxHeight: "calc(90vh - 200px)" }}
-          >
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${
-                isArabic ? "text-right" : "text-left"
-              }`}
-              style={{ gap: "clamp(0.5rem, 0.8vw, 2rem)" }}
-            >
-              {filteredPatents.map((item) => (
-                <PatentCard
-                  key={item.id}
-                  item={item}
-                  isArabic={isArabic}
-                  onEdit={() => handleEditNavigate(item)}
-                  onDelete={(p) => {
-                    setSelectedItem(p);
-                    setShowDelete(true);
-                    setDeleteError(false);
-                  }}
-                  onDetails={(p) => {
-                    setSelectedItem(p);
-                    setShowDetails(true);
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Pagination */}
-        <div className="mt-auto">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPrev={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            onNext={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            t={t}
-            isArabic={isArabic}
-          />
-        </div>
-
-        {/* Modals */}
+        {/* Modals - للحذف والفلترة فقط */}
         <PatentModal
           showDelete={showDelete}
-          showDetails={showDetails}
+          showDetails={false} // لم نعد بحاجة لمودال التفاصيل لأنه يعرض الآن في الـ Side Detail
           selectedItem={selectedItem}
           setShowDelete={setShowDelete}
-          setShowDetails={setShowDetails}
           onDelete={handleDelete}
           deleteError={deleteError}
           handleApplyFilters={handleApplyFilters}

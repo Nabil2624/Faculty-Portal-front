@@ -8,6 +8,7 @@ import ProjectForm from "../components/widgets/Projects/ProjectForm";
 import { useProjectLookups } from "../hooks/useProjectLookups";
 import { useProjectForm } from "../hooks/useProjectForm";
 import { projectService } from "../services/projects.service";
+import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 
 export default function AddEditProject() {
   const { t, i18n } = useTranslation("AddProject");
@@ -15,11 +16,17 @@ export default function AddEditProject() {
   const navigate = useNavigate();
   const { id } = useParams(); // لو edit
 
-  const { projectTypes, projectRoles, loading: lookupsLoading } = useProjectLookups();
+  const {
+    projectTypes,
+    projectRoles,
+    loading: lookupsLoading,
+  } = useProjectLookups();
   const [initialData, setInitialData] = useState(null);
-  const { loading: formLoading, error, handleSave } = useProjectForm(initialData || {}, () =>
-    navigate("/projects")
-  );
+  const {
+    loading: formLoading,
+    error,
+    handleSave,
+  } = useProjectForm(initialData || {}, () => navigate("/projects"));
 
   useEffect(() => {
     if (id) {
@@ -35,8 +42,9 @@ export default function AddEditProject() {
   if (lookupsLoading || formLoading || !initialData) return <LoadingSpinner />;
 
   return (
-    <Layout>
+    <ResponsiveLayoutProvider>
       <ProjectForm
+        formTitle={t("title")}
         t={t}
         isArabic={isArabic}
         projectTypes={projectTypes}
@@ -46,6 +54,6 @@ export default function AddEditProject() {
         onCancel={() => navigate("/projects")}
         error={error}
       />
-    </Layout>
+    </ResponsiveLayoutProvider>
   );
 }

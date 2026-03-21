@@ -5,8 +5,8 @@ import { getCommunityServiceContribution } from "../services/communityServiceCon
 export default function useCommunityServiceContribution(
   page = 1,
   pageSize = 9,
-  sortValue = 0,
   search,
+  sortValue = 0,
 ) {
   const [items, setItems] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -18,12 +18,12 @@ export default function useCommunityServiceContribution(
     setError(null);
 
     try {
-      const res = await getCommunityServiceContribution(
-        page,
+      const res = await getCommunityServiceContribution({
+        pageIndex: page,
         pageSize,
         search,
         sortValue,
-      );
+      });
       const { data, totalCount } = res.data; // زي Journals
       setItems(data || []);
       setTotalPages(Math.ceil(totalCount / pageSize) || 1);

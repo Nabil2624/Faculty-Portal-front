@@ -1,0 +1,73 @@
+{
+  "title": "سجلات النظام",
+  "subtitle": "مراقبة ومراجعة نشاط النظام عبر جميع الخدمات",
+
+  "stats": {
+    "total": "إجمالي السجلات",
+    "information": "معلومات",
+    "warning": "تحذير",
+    "error": "خطأ",
+    "critical": "خطير"
+  },
+
+  "search": "بحث برسالة أو مستخدم أو IP...",
+  "filter": "تصفية",
+  "filterTitle": "تصفية السجلات",
+  "apply": "تطبيق الفلاتر",
+  "reset": "إعادة تعيين",
+  "close": "إغلاق",
+
+  "filterSections": {
+    "dateRange": "نطاق التاريخ",
+    "dateFrom": "من",
+    "dateTo": "إلى",
+    "level": "المستوى",
+    "category": "الفئة",
+    "categoryAction": "الإجراء",
+    "selectCategoryFirst": "اختر فئة أولاً لعرض إجراءاتها.",
+    "code": "كود الخدمة"
+  },
+
+  "table": {
+    "no": "#",
+    "timestamp": "التوقيت",
+    "level": "المستوى",
+    "code": "الكود",
+    "category": "الفئة",
+    "categoryAction": "الإجراء",
+    "userName": "المستخدم",
+    "userIp": "عنوان IP",
+    "renderedMessage": "الرسالة",
+    "details": "التفاصيل"
+  },
+
+  "codes": {
+    "1001": "خدمة العامل",
+    "2001": "الخدمة الأساسية",
+    "3001": "خدمة البحث"
+  },
+
+  "expanded": {
+    "exception": "الاستثناء",
+    "exceptionMessage": "رسالة الاستثناء",
+    "exceptionDetail": "تتبع المكدس",
+    "additionalInfo": "معلومات إضافية",
+    "noException": "لم يتم تسجيل أي استثناء لهذا السجل."
+  },
+
+  "noLogs": "لا توجد سجلات تطابق الفلاتر الحالية.",
+  "noLogsHint": "حاول تعديل معايير البحث أو التصفية.",
+  "loading": "جار تحميل السجلات...",
+  "error": "فشل تحميل السجلات. يرجى المحاولة مجدداً.",
+  "retry": "إعادة المحاولة",
+
+  "showing": "عرض",
+  "of": "من",
+  "entries": "سجل",
+  "page": "صفحة",
+  "previous": "السابق",
+  "next": "التالي",
+
+  "expandRow": "عرض التفاصيل",
+  "collapseRow": "إخفاء التفاصيل"
+}
