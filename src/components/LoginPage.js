@@ -23,7 +23,8 @@ export default function LoginPage() {
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
-
+  const redirectTo =
+    new URLSearchParams(window.location.search).get("redirect") || "/";
   const isArabic = i18n.language === "ar";
 
   const handleLogin = async (e) => {
