@@ -1,29 +1,9 @@
-// Template 4 — Professional (navy sidebar + white main content)
+﻿// Template 4 — Professional (navy sidebar + white main content)
 import React from "react";
+import { getVal, fmtShort as fmt, buildSections } from "./CVShared";
 
 const NAVY = "#19355a";
 const GOLD = "#b38e19";
-
-const getVal = (obj, isArabic) =>
-  obj ? (isArabic ? obj.valueAr : obj.valueEn) || "" : "";
-
-const fmt = (d, isArabic) => {
-  if (!d) return "";
-  try {
-    return new Date(d).toLocaleDateString(isArabic ? "ar-EG" : "en-US", {
-      year: "numeric",
-      month: "short",
-    });
-  } catch {
-    return d;
-  }
-};
-
-const dateRange = (start, end, isArabic) => {
-  const s = fmt(start, isArabic);
-  const e = end ? fmt(end, isArabic) : "—";
-  return s || e ? `${s} – ${e}` : "";
-};
 
 function SidebarSection({ title, children }) {
   return (
@@ -63,7 +43,7 @@ function SidebarText({ children }) {
   );
 }
 
-function MainSectionTitle({ children, isArabic }) {
+function MainSectionTitle({ children }) {
   return (
     <div
       style={{
@@ -116,9 +96,27 @@ function EntryItem({ title, meta }) {
   );
 }
 
+const SOCIAL_ENTRIES = [
+  { label: "LinkedIn", key: "linkedIn" },
+  { label: "Scholar", key: "googleScholar" },
+  { label: "Scopus", key: "scopus" },
+  { key: "personalWebsite" },
+  { label: "Instagram", key: "instagram" },
+  { label: "Facebook", key: "facebook" },
+  { label: "X", key: "x" },
+  { label: "YouTube", key: "youTube" },
+];
+
 export default function CVTemplate4({ data, isArabic, t }) {
   if (!data) return null;
   const dir = isArabic ? "rtl" : "ltr";
+
+  const sections = buildSections(data, isArabic, t, fmt);
+
+  const socialLinks = SOCIAL_ENTRIES.map((l) => ({
+    label: l.label || "",
+    val: data[l.key],
+  })).filter((l) => l.val);
 
   return (
     <div
@@ -174,7 +172,6 @@ export default function CVTemplate4({ data, isArabic, t }) {
           </span>
         </div>
 
-        {/* Name */}
         <div
           style={{
             color: "#fff",
@@ -201,41 +198,27 @@ export default function CVTemplate4({ data, isArabic, t }) {
         )}
 
         <div style={{ flex: 1, overflow: "visible" }}>
-          {/* Contact */}
-          {(data.officialEmail ||
-            data.mainPhoneNumber ||
-            data.workPhoneNumber ||
-            data.faxNumber) && (
+          {(data.officialEmail || data.mainPhoneNumber || data.workPhoneNumber || data.faxNumber) && (
             <SidebarSection title={t("sections.contactInfo")}>
-              {data.officialEmail && (
-                <SidebarText>{data.officialEmail}</SidebarText>
-              )}
+              {data.officialEmail && <SidebarText>{data.officialEmail}</SidebarText>}
               {data.mainPhoneNumber && (
-                <SidebarText>
-                  {t("contact.phone")}: {data.mainPhoneNumber}
-                </SidebarText>
+                <SidebarText>{t("contact.phone")}: {data.mainPhoneNumber}</SidebarText>
               )}
               {data.workPhoneNumber && (
-                <SidebarText>
-                  {t("contact.workPhone")}: {data.workPhoneNumber}
-                </SidebarText>
+                <SidebarText>{t("contact.workPhone")}: {data.workPhoneNumber}</SidebarText>
               )}
               {data.faxNumber && (
-                <SidebarText>
-                  {t("contact.fax")}: {data.faxNumber}
-                </SidebarText>
+                <SidebarText>{t("contact.fax")}: {data.faxNumber}</SidebarText>
               )}
             </SidebarSection>
           )}
 
-          {/* Birth date */}
           {data.birthDate && (
             <SidebarSection title={t("fields.date")}>
               <SidebarText>{fmt(data.birthDate, isArabic)}</SidebarText>
             </SidebarSection>
           )}
 
-          {/* Skills */}
           {data.skills?.length > 0 && (
             <SidebarSection title={t("sections.skills")}>
               {data.skills.map((s, i) => (
@@ -259,36 +242,13 @@ export default function CVTemplate4({ data, isArabic, t }) {
             </SidebarSection>
           )}
 
-          {/* Social links */}
-          {(data.linkedIn ||
-            data.googleScholar ||
-            data.scopus ||
-            data.personalWebsite ||
-            data.instagram ||
-            data.facebook ||
-            data.x ||
-            data.youTube) && (
+          {socialLinks.length > 0 && (
             <SidebarSection title={t("sections.socialMedia")}>
-              {data.linkedIn && (
-                <SidebarText>LinkedIn: {data.linkedIn}</SidebarText>
-              )}
-              {data.googleScholar && (
-                <SidebarText>Scholar: {data.googleScholar}</SidebarText>
-              )}
-              {data.scopus && <SidebarText>Scopus: {data.scopus}</SidebarText>}
-              {data.personalWebsite && (
-                <SidebarText>{data.personalWebsite}</SidebarText>
-              )}
-              {data.instagram && (
-                <SidebarText>Instagram: {data.instagram}</SidebarText>
-              )}
-              {data.facebook && (
-                <SidebarText>Facebook: {data.facebook}</SidebarText>
-              )}
-              {data.x && <SidebarText>X: {data.x}</SidebarText>}
-              {data.youTube && (
-                <SidebarText>YouTube: {data.youTube}</SidebarText>
-              )}
+              {socialLinks.map((l, i) => (
+                <SidebarText key={i}>
+                  {l.label ? `${l.label}: ` : ""}{l.val}
+                </SidebarText>
+              ))}
             </SidebarSection>
           )}
         </div>
@@ -302,9 +262,7 @@ export default function CVTemplate4({ data, isArabic, t }) {
           overflowY: "auto",
         }}
       >
-        {/* Affiliation */}
-        {(getVal(data.department, isArabic) ||
-          getVal(data.university, isArabic)) && (
+        {(getVal(data.department, isArabic) || getVal(data.university, isArabic)) && (
           <div
             style={{
               background: "#f0f4f8",
@@ -325,12 +283,9 @@ export default function CVTemplate4({ data, isArabic, t }) {
           </div>
         )}
 
-        {/* Bio */}
         {data.bioSummary && (
           <div style={{ marginBottom: "clamp(10px,1.2vw,20px)" }}>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.bio")}
-            </MainSectionTitle>
+            <MainSectionTitle>{t("sections.bio")}</MainSectionTitle>
             <p
               style={{
                 fontSize: "clamp(0.65rem,0.85vw,0.92rem)",
@@ -343,376 +298,18 @@ export default function CVTemplate4({ data, isArabic, t }) {
           </div>
         )}
 
-        {/* Academic Qualifications */}
-        {data.academicQualifications?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.academicQualifications")}
-            </MainSectionTitle>
-            {data.academicQualifications.map((aq, i) => (
+        {sections.map((sec) => (
+          <React.Fragment key={sec.key}>
+            <MainSectionTitle>{t(sec.titleKey)}</MainSectionTitle>
+            {sec.items.map((item, i) => (
               <EntryItem
                 key={i}
-                title={`${getVal(aq.qualification, isArabic)}${aq.specialization ? ` — ${aq.specialization}` : ""}`}
-                meta={[
-                  getVal(aq.grade, isArabic),
-                  aq.universityOrFaculty,
-                  aq.countryOrCity,
-                  fmt(aq.dateOfObtainingTheQualification, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
+                title={sec.getTitle(item)}
+                meta={sec.getMeta(item)}
               />
             ))}
-          </>
-        )}
-
-        {/* Job Ranks */}
-        {data.jobRanks?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.jobRanks")}
-            </MainSectionTitle>
-            {data.jobRanks.map((jr, i) => (
-              <EntryItem
-                key={i}
-                title={getVal(jr.jobRank, isArabic)}
-                meta={fmt(jr.dateOfJobRank, isArabic)}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Administrative Positions */}
-        {data.administrativePositions?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.administrativePositions")}
-            </MainSectionTitle>
-            {data.administrativePositions.map((ap, i) => (
-              <EntryItem
-                key={i}
-                title={ap.position}
-                meta={dateRange(ap.startDate, ap.endDate, isArabic)}
-              />
-            ))}
-          </>
-        )}
-
-        {/* General Experiences */}
-        {data.generalExperiences?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.generalExperiences")}
-            </MainSectionTitle>
-            {data.generalExperiences.map((ge, i) => (
-              <EntryItem
-                key={i}
-                title={ge.experienceTitle}
-                meta={[
-                  ge.authority,
-                  ge.countryOrCity,
-                  dateRange(ge.startDate, ge.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Teaching Experiences */}
-        {data.teachingExperiences?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.teachingExperiences")}
-            </MainSectionTitle>
-            {data.teachingExperiences.map((te, i) => (
-              <EntryItem
-                key={i}
-                title={te.courseName}
-                meta={[
-                  te.academicLevel,
-                  te.universityOrFaculty,
-                  dateRange(te.startDate, te.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Scientific Missions */}
-        {data.scientificMissions?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.scientificMissions")}
-            </MainSectionTitle>
-            {data.scientificMissions.map((sm, i) => (
-              <EntryItem
-                key={i}
-                title={sm.missionName}
-                meta={[
-                  sm.universityOrFaculty,
-                  sm.countryOrCity,
-                  dateRange(sm.startDate, sm.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Conferences */}
-        {data.conferencesAndSeminars?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.conferencesAndSeminars")}
-            </MainSectionTitle>
-            {data.conferencesAndSeminars.map((cs, i) => (
-              <EntryItem
-                key={i}
-                title={cs.name}
-                meta={[
-                  getVal(cs.roleOfParticipation, isArabic),
-                  cs.organizingAuthority,
-                  cs.venue,
-                  dateRange(cs.startDate, cs.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Training Programs */}
-        {data.trainingPrograms?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.trainingPrograms")}
-            </MainSectionTitle>
-            {data.trainingPrograms.map((tp, i) => (
-              <EntryItem
-                key={i}
-                title={tp.trainingProgramName}
-                meta={[tp.venue, dateRange(tp.startDate, tp.endDate, isArabic)]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Projects */}
-        {data.projects?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.projects")}
-            </MainSectionTitle>
-            {data.projects.map((p, i) => (
-              <EntryItem
-                key={i}
-                title={p.nameOfProject}
-                meta={[
-                  getVal(p.typeOfProject, isArabic),
-                  getVal(p.participationRole, isArabic),
-                  p.financingAuthority,
-                  dateRange(p.startDate, p.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Scientific Writings */}
-        {data.scientificWritings?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.scientificWritings")}
-            </MainSectionTitle>
-            {data.scientificWritings.map((sw, i) => (
-              <EntryItem
-                key={i}
-                title={sw.title}
-                meta={[
-                  getVal(sw.authorRole, isArabic),
-                  sw.publishingHouse,
-                  sw.isbn,
-                  fmt(sw.publishingDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Patents */}
-        {data.patents?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.patents")}
-            </MainSectionTitle>
-            {data.patents.map((p, i) => (
-              <EntryItem
-                key={i}
-                title={p.nameOfPatent}
-                meta={[
-                  p.accreditingAuthorityOrCountry,
-                  fmt(p.accreditationDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Committees */}
-        {data.committeesAndAssociations?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.committeesAndAssociations")}
-            </MainSectionTitle>
-            {data.committeesAndAssociations.map((ca, i) => (
-              <EntryItem
-                key={i}
-                title={ca.nameOfCommitteeOrAssociation}
-                meta={[
-                  getVal(ca.typeOfCommitteeOrAssociation, isArabic),
-                  getVal(ca.degreeOfSubscription, isArabic),
-                  dateRange(ca.startDate, ca.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Magazines, Articles */}
-        {data.participationInMagazines?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.participationInMagazines")}
-            </MainSectionTitle>
-            {data.participationInMagazines.map((pm, i) => (
-              <EntryItem
-                key={i}
-                title={pm.nameOfMagazine}
-                meta={getVal(pm.typeOfParticipation, isArabic)}
-              />
-            ))}
-          </>
-        )}
-
-        {data.reviewingArticles?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.reviewingArticles")}
-            </MainSectionTitle>
-            {data.reviewingArticles.map((ra, i) => (
-              <EntryItem
-                key={i}
-                title={ra.titleOfArticle}
-                meta={[ra.authority, fmt(ra.reviewingDate, isArabic)]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Awards */}
-        {data.prizesAndRewards?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.prizesAndRewards")}
-            </MainSectionTitle>
-            {data.prizesAndRewards.map((pr, i) => (
-              <EntryItem
-                key={i}
-                title={getVal(pr.prize, isArabic)}
-                meta={[pr.awardingAuthority, fmt(pr.dateReceived, isArabic)]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Manifestations */}
-        {data.manifestationsOfScientificAppreciation?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.manifestationsOfScientificAppreciation")}
-            </MainSectionTitle>
-            {data.manifestationsOfScientificAppreciation.map((m, i) => (
-              <EntryItem
-                key={i}
-                title={m.titleOfAppreciation}
-                meta={[m.issuingAuthority, fmt(m.dateOfAppreciation, isArabic)]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Contributions */}
-        {data.contributionsToCommunityService?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.contributionsToCommunityService")}
-            </MainSectionTitle>
-            {data.contributionsToCommunityService.map((c, i) => (
-              <EntryItem
-                key={i}
-                title={c.contributionTitle}
-                meta={fmt(c.dateOfContribution, isArabic)}
-              />
-            ))}
-          </>
-        )}
-        {data.contributionsToUniversity?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.contributionsToUniversity")}
-            </MainSectionTitle>
-            {data.contributionsToUniversity.map((c, i) => (
-              <EntryItem
-                key={i}
-                title={c.contributionTitle}
-                meta={[
-                  getVal(c.typeOfContribution, isArabic),
-                  fmt(c.dateOfContribution, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Quality Work */}
-        {data.participationInQualityWork?.length > 0 && (
-          <>
-            <MainSectionTitle isArabic={isArabic}>
-              {t("sections.participationInQualityWork")}
-            </MainSectionTitle>
-            {data.participationInQualityWork.map((pq, i) => (
-              <EntryItem
-                key={i}
-                title={pq.participationTitle}
-                meta={dateRange(pq.startDate, pq.endDate, isArabic)}
-              />
-            ))}
-          </>
-        )}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );

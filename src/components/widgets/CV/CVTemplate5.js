@@ -1,30 +1,10 @@
-// Template 5 — Timeline (vertical timeline with gold dots and navy line)
+﻿// Template 5 — Timeline (vertical timeline with gold dots and navy line)
 import React from "react";
+import { getVal, fmtShort as fmt, buildSections } from "./CVShared";
 
 const NAVY = "#19355a";
 const GOLD = "#b38e19";
 const LIGHT = "#f8fafc";
-
-const getVal = (obj, isArabic) =>
-  obj ? (isArabic ? obj.valueAr : obj.valueEn) || "" : "";
-
-const fmt = (d, isArabic) => {
-  if (!d) return "";
-  try {
-    return new Date(d).toLocaleDateString(isArabic ? "ar-EG" : "en-US", {
-      year: "numeric",
-      month: "short",
-    });
-  } catch {
-    return d;
-  }
-};
-
-const dateRange = (start, end, isArabic) => {
-  const s = fmt(start, isArabic);
-  const e = end ? fmt(end, isArabic) : "—";
-  return s || e ? `${s} – ${e}` : "";
-};
 
 function SectionTitle({ children, isArabic }) {
   return (
@@ -156,6 +136,8 @@ export default function CVTemplate5({ data, isArabic, t }) {
   if (!data) return null;
   const dir = isArabic ? "rtl" : "ltr";
 
+  const sections = buildSections(data, isArabic, t, fmt);
+
   return (
     <div
       id="cv-print-area"
@@ -240,58 +222,27 @@ export default function CVTemplate5({ data, isArabic, t }) {
               marginTop: "clamp(8px,1vw,16px)",
             }}
           >
-            {getVal(data.department, isArabic) && (
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.1)",
-                  borderRadius: 6,
-                  padding: "clamp(4px,0.5vw,8px) clamp(10px,1.2vw,18px)",
-                  color: "#e2e8f0",
-                  fontSize: "clamp(0.6rem,0.78vw,0.85rem)",
-                }}
-              >
-                {getVal(data.department, isArabic)}
-              </div>
-            )}
-            {getVal(data.university, isArabic) && (
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.1)",
-                  borderRadius: 6,
-                  padding: "clamp(4px,0.5vw,8px) clamp(10px,1.2vw,18px)",
-                  color: "#e2e8f0",
-                  fontSize: "clamp(0.6rem,0.78vw,0.85rem)",
-                }}
-              >
-                {getVal(data.university, isArabic)}
-              </div>
-            )}
-            {data.officialEmail && (
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.1)",
-                  borderRadius: 6,
-                  padding: "clamp(4px,0.5vw,8px) clamp(10px,1.2vw,18px)",
-                  color: "#e2e8f0",
-                  fontSize: "clamp(0.6rem,0.78vw,0.85rem)",
-                }}
-              >
-                {data.officialEmail}
-              </div>
-            )}
-            {data.mainPhoneNumber && (
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.1)",
-                  borderRadius: 6,
-                  padding: "clamp(4px,0.5vw,8px) clamp(10px,1.2vw,18px)",
-                  color: "#e2e8f0",
-                  fontSize: "clamp(0.6rem,0.78vw,0.85rem)",
-                }}
-              >
-                {data.mainPhoneNumber}
-              </div>
-            )}
+            {[
+              getVal(data.department, isArabic),
+              getVal(data.university, isArabic),
+              data.officialEmail,
+              data.mainPhoneNumber,
+            ]
+              .filter(Boolean)
+              .map((val, i) => (
+                <div
+                  key={i}
+                  style={{
+                    background: "rgba(255,255,255,0.1)",
+                    borderRadius: 6,
+                    padding: "clamp(4px,0.5vw,8px) clamp(10px,1.2vw,18px)",
+                    color: "#e2e8f0",
+                    fontSize: "clamp(0.6rem,0.78vw,0.85rem)",
+                  }}
+                >
+                  {val}
+                </div>
+              ))}
           </div>
         </div>
       </div>
@@ -322,421 +273,63 @@ export default function CVTemplate5({ data, isArabic, t }) {
           </div>
         )}
 
-        {/* Skills + Social */}
-        {(data.skills?.length > 0 || data.linkedIn || data.googleScholar) && (
+        {/* Skills */}
+        {data.skills?.length > 0 && (
           <div
             style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap: "clamp(10px,1.2vw,20px)",
+              background: "#fff",
+              borderRadius: 8,
+              padding: "clamp(8px,1vw,16px)",
               marginBottom: "clamp(10px,1.2vw,20px)",
             }}
           >
-            {data.skills?.length > 0 && (
-              <div
-                style={{
-                  background: "#fff",
-                  borderRadius: 8,
-                  padding: "clamp(8px,1vw,16px)",
-                  flex: "1 1 200px",
-                }}
-              >
-                <div
+            <div
+              style={{
+                color: NAVY,
+                fontWeight: 700,
+                fontSize: "clamp(0.65rem,0.82vw,0.88rem)",
+                marginBottom: 8,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
+            >
+              {t("sections.skills")}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+              {data.skills.map((s, i) => (
+                <span
+                  key={i}
                   style={{
+                    background: "#f0f4f8",
                     color: NAVY,
-                    fontWeight: 700,
-                    fontSize: "clamp(0.65rem,0.82vw,0.88rem)",
-                    marginBottom: 8,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.08em",
+                    borderRadius: 99,
+                    padding: "2px 10px",
+                    fontSize: "clamp(0.58rem,0.72vw,0.78rem)",
+                    fontWeight: 600,
                   }}
                 >
-                  {t("sections.skills")}
-                </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                  {data.skills.map((s, i) => (
-                    <span
-                      key={i}
-                      style={{
-                        background: "#f0f4f8",
-                        color: NAVY,
-                        borderRadius: 99,
-                        padding: "2px 10px",
-                        fontSize: "clamp(0.58rem,0.72vw,0.78rem)",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+                  {s}
+                </span>
+              ))}
+            </div>
           </div>
         )}
 
-        {/* Academic Qualifications timeline */}
-        {data.academicQualifications?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.academicQualifications")}
-            </SectionTitle>
-            {data.academicQualifications.map((aq, i) => (
+        {/* Timeline sections */}
+        {sections.map((sec) => (
+          <React.Fragment key={sec.key}>
+            <SectionTitle isArabic={isArabic}>{t(sec.titleKey)}</SectionTitle>
+            {sec.items.map((item, i) => (
               <TimelineItem
                 key={i}
                 isArabic={isArabic}
-                dateStr={fmt(aq.dateOfObtainingTheQualification, isArabic)}
-                title={`${getVal(aq.qualification, isArabic)}${aq.specialization ? ` — ${aq.specialization}` : ""}`}
-                meta={[
-                  getVal(aq.grade, isArabic),
-                  aq.universityOrFaculty,
-                  aq.countryOrCity,
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
+                dateStr={sec.getDate(item)}
+                title={sec.getTitle(item)}
+                meta={sec.getTimelineMeta(item) || undefined}
               />
             ))}
-          </>
-        )}
-
-        {/* Job Ranks */}
-        {data.jobRanks?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.jobRanks")}
-            </SectionTitle>
-            {data.jobRanks.map((jr, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={fmt(jr.dateOfJobRank, isArabic)}
-                title={getVal(jr.jobRank, isArabic)}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Administrative Positions */}
-        {data.administrativePositions?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.administrativePositions")}
-            </SectionTitle>
-            {data.administrativePositions.map((ap, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={dateRange(ap.startDate, ap.endDate, isArabic)}
-                title={ap.position}
-              />
-            ))}
-          </>
-        )}
-
-        {/* General & Teaching Experiences */}
-        {data.generalExperiences?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.generalExperiences")}
-            </SectionTitle>
-            {data.generalExperiences.map((ge, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={dateRange(ge.startDate, ge.endDate, isArabic)}
-                title={ge.experienceTitle}
-                meta={[ge.authority, ge.countryOrCity]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {data.teachingExperiences?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.teachingExperiences")}
-            </SectionTitle>
-            {data.teachingExperiences.map((te, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={dateRange(te.startDate, te.endDate, isArabic)}
-                title={te.courseName}
-                meta={[te.academicLevel, te.universityOrFaculty]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Scientific Missions */}
-        {data.scientificMissions?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.scientificMissions")}
-            </SectionTitle>
-            {data.scientificMissions.map((sm, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={dateRange(sm.startDate, sm.endDate, isArabic)}
-                title={sm.missionName}
-                meta={[sm.universityOrFaculty, sm.countryOrCity]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Conferences */}
-        {data.conferencesAndSeminars?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.conferencesAndSeminars")}
-            </SectionTitle>
-            {data.conferencesAndSeminars.map((cs, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={dateRange(cs.startDate, cs.endDate, isArabic)}
-                title={cs.name}
-                meta={[
-                  getVal(cs.roleOfParticipation, isArabic),
-                  cs.organizingAuthority,
-                  cs.venue,
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Training Programs */}
-        {data.trainingPrograms?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.trainingPrograms")}
-            </SectionTitle>
-            {data.trainingPrograms.map((tp, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={dateRange(tp.startDate, tp.endDate, isArabic)}
-                title={tp.trainingProgramName}
-                meta={tp.venue}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Projects */}
-        {data.projects?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.projects")}
-            </SectionTitle>
-            {data.projects.map((p, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={dateRange(p.startDate, p.endDate, isArabic)}
-                title={p.nameOfProject}
-                meta={[getVal(p.typeOfProject, isArabic), p.financingAuthority]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Scientific Writings */}
-        {data.scientificWritings?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.scientificWritings")}
-            </SectionTitle>
-            {data.scientificWritings.map((sw, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={fmt(sw.publishingDate, isArabic)}
-                title={sw.title}
-                meta={[
-                  getVal(sw.authorRole, isArabic),
-                  sw.publishingHouse,
-                  sw.isbn,
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Patents */}
-        {data.patents?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.patents")}
-            </SectionTitle>
-            {data.patents.map((p, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={fmt(p.accreditationDate, isArabic)}
-                title={p.nameOfPatent}
-                meta={p.accreditingAuthorityOrCountry}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Committees */}
-        {data.committeesAndAssociations?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.committeesAndAssociations")}
-            </SectionTitle>
-            {data.committeesAndAssociations.map((ca, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={dateRange(ca.startDate, ca.endDate, isArabic)}
-                title={ca.nameOfCommitteeOrAssociation}
-                meta={[
-                  getVal(ca.typeOfCommitteeOrAssociation, isArabic),
-                  getVal(ca.degreeOfSubscription, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Prizes & Manifestations */}
-        {data.prizesAndRewards?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.prizesAndRewards")}
-            </SectionTitle>
-            {data.prizesAndRewards.map((pr, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={fmt(pr.dateReceived, isArabic)}
-                title={getVal(pr.prize, isArabic)}
-                meta={pr.awardingAuthority}
-              />
-            ))}
-          </>
-        )}
-
-        {data.manifestationsOfScientificAppreciation?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.manifestationsOfScientificAppreciation")}
-            </SectionTitle>
-            {data.manifestationsOfScientificAppreciation.map((m, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={fmt(m.dateOfAppreciation, isArabic)}
-                title={m.titleOfAppreciation}
-                meta={m.issuingAuthority}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Contributions */}
-        {data.contributionsToCommunityService?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.contributionsToCommunityService")}
-            </SectionTitle>
-            {data.contributionsToCommunityService.map((c, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={fmt(c.dateOfContribution, isArabic)}
-                title={c.contributionTitle}
-              />
-            ))}
-          </>
-        )}
-        {data.contributionsToUniversity?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.contributionsToUniversity")}
-            </SectionTitle>
-            {data.contributionsToUniversity.map((c, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={fmt(c.dateOfContribution, isArabic)}
-                title={c.contributionTitle}
-                meta={getVal(c.typeOfContribution, isArabic)}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Quality Work */}
-        {data.participationInQualityWork?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.participationInQualityWork")}
-            </SectionTitle>
-            {data.participationInQualityWork.map((pq, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={dateRange(pq.startDate, pq.endDate, isArabic)}
-                title={pq.participationTitle}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Magazines & Articles */}
-        {data.participationInMagazines?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.participationInMagazines")}
-            </SectionTitle>
-            {data.participationInMagazines.map((pm, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr=""
-                title={pm.nameOfMagazine}
-                meta={getVal(pm.typeOfParticipation, isArabic)}
-              />
-            ))}
-          </>
-        )}
-        {data.reviewingArticles?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.reviewingArticles")}
-            </SectionTitle>
-            {data.reviewingArticles.map((ra, i) => (
-              <TimelineItem
-                key={i}
-                isArabic={isArabic}
-                dateStr={fmt(ra.reviewingDate, isArabic)}
-                title={ra.titleOfArticle}
-                meta={ra.authority}
-              />
-            ))}
-          </>
-        )}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );
