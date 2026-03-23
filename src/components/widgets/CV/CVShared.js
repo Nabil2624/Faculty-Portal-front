@@ -54,9 +54,16 @@ export const buildSections = (data, isArabic, t, fmtFn) => {
       getTitle: (aq) =>
         `${g(aq.qualification)}${aq.specialization ? ` — ${aq.specialization}` : ""}`,
       getMeta: (aq) =>
-        join(g(aq.grade), g(aq.dispatchType), aq.universityOrFaculty, aq.countryOrCity, f(aq.dateOfObtainingTheQualification)),
+        join(
+          g(aq.grade),
+          g(aq.dispatchType),
+          aq.universityOrFaculty,
+          aq.countryOrCity,
+          f(aq.dateOfObtainingTheQualification),
+        ),
       getDate: (aq) => f(aq.dateOfObtainingTheQualification),
-      getTimelineMeta: (aq) => join(g(aq.grade), aq.universityOrFaculty, aq.countryOrCity),
+      getTimelineMeta: (aq) =>
+        join(g(aq.grade), aq.universityOrFaculty, aq.countryOrCity),
     },
     {
       key: "jobRanks",
@@ -81,7 +88,8 @@ export const buildSections = (data, isArabic, t, fmtFn) => {
       titleKey: "sections.generalExperiences",
       items: data.generalExperiences,
       getTitle: (ge) => ge.experienceTitle,
-      getMeta: (ge) => join(ge.authority, ge.countryOrCity, dr(ge.startDate, ge.endDate)),
+      getMeta: (ge) =>
+        join(ge.authority, ge.countryOrCity, dr(ge.startDate, ge.endDate)),
       getDate: (ge) => dr(ge.startDate, ge.endDate),
       getTimelineMeta: (ge) => join(ge.authority, ge.countryOrCity),
     },
@@ -90,7 +98,12 @@ export const buildSections = (data, isArabic, t, fmtFn) => {
       titleKey: "sections.teachingExperiences",
       items: data.teachingExperiences,
       getTitle: (te) => te.courseName,
-      getMeta: (te) => join(te.academicLevel, te.universityOrFaculty, dr(te.startDate, te.endDate)),
+      getMeta: (te) =>
+        join(
+          te.academicLevel,
+          te.universityOrFaculty,
+          dr(te.startDate, te.endDate),
+        ),
       getDate: (te) => dr(te.startDate, te.endDate),
       getTimelineMeta: (te) => join(te.academicLevel, te.universityOrFaculty),
     },
@@ -99,7 +112,12 @@ export const buildSections = (data, isArabic, t, fmtFn) => {
       titleKey: "sections.scientificMissions",
       items: data.scientificMissions,
       getTitle: (sm) => sm.missionName,
-      getMeta: (sm) => join(sm.universityOrFaculty, sm.countryOrCity, dr(sm.startDate, sm.endDate)),
+      getMeta: (sm) =>
+        join(
+          sm.universityOrFaculty,
+          sm.countryOrCity,
+          dr(sm.startDate, sm.endDate),
+        ),
       getDate: (sm) => dr(sm.startDate, sm.endDate),
       getTimelineMeta: (sm) => join(sm.universityOrFaculty, sm.countryOrCity),
     },
@@ -109,9 +127,15 @@ export const buildSections = (data, isArabic, t, fmtFn) => {
       items: data.conferencesAndSeminars,
       getTitle: (cs) => cs.name,
       getMeta: (cs) =>
-        join(g(cs.roleOfParticipation), cs.organizingAuthority, cs.venue, dr(cs.startDate, cs.endDate)),
+        join(
+          g(cs.roleOfParticipation),
+          cs.organizingAuthority,
+          cs.venue,
+          dr(cs.startDate, cs.endDate),
+        ),
       getDate: (cs) => dr(cs.startDate, cs.endDate),
-      getTimelineMeta: (cs) => join(g(cs.roleOfParticipation), cs.organizingAuthority, cs.venue),
+      getTimelineMeta: (cs) =>
+        join(g(cs.roleOfParticipation), cs.organizingAuthority, cs.venue),
     },
     {
       key: "trainingPrograms",
@@ -128,7 +152,12 @@ export const buildSections = (data, isArabic, t, fmtFn) => {
       items: data.projects,
       getTitle: (p) => p.nameOfProject,
       getMeta: (p) =>
-        join(g(p.typeOfProject), g(p.participationRole), p.financingAuthority, dr(p.startDate, p.endDate)),
+        join(
+          g(p.typeOfProject),
+          g(p.participationRole),
+          p.financingAuthority,
+          dr(p.startDate, p.endDate),
+        ),
       getDate: (p) => dr(p.startDate, p.endDate),
       getTimelineMeta: (p) => join(g(p.typeOfProject), p.financingAuthority),
     },
@@ -137,16 +166,24 @@ export const buildSections = (data, isArabic, t, fmtFn) => {
       titleKey: "sections.scientificWritings",
       items: data.scientificWritings,
       getTitle: (sw) => sw.title,
-      getMeta: (sw) => join(g(sw.authorRole), sw.publishingHouse, sw.isbn, f(sw.publishingDate)),
+      getMeta: (sw) =>
+        join(
+          g(sw.authorRole),
+          sw.publishingHouse,
+          sw.isbn,
+          f(sw.publishingDate),
+        ),
       getDate: (sw) => f(sw.publishingDate),
-      getTimelineMeta: (sw) => join(g(sw.authorRole), sw.publishingHouse, sw.isbn),
+      getTimelineMeta: (sw) =>
+        join(g(sw.authorRole), sw.publishingHouse, sw.isbn),
     },
     {
       key: "patents",
       titleKey: "sections.patents",
       items: data.patents,
       getTitle: (p) => p.nameOfPatent,
-      getMeta: (p) => join(p.accreditingAuthorityOrCountry, f(p.accreditationDate)),
+      getMeta: (p) =>
+        join(p.accreditingAuthorityOrCountry, f(p.accreditationDate)),
       getDate: (p) => f(p.accreditationDate),
       getTimelineMeta: (p) => p.accreditingAuthorityOrCountry || "",
     },
@@ -156,9 +193,14 @@ export const buildSections = (data, isArabic, t, fmtFn) => {
       items: data.committeesAndAssociations,
       getTitle: (ca) => ca.nameOfCommitteeOrAssociation,
       getMeta: (ca) =>
-        join(g(ca.typeOfCommitteeOrAssociation), g(ca.degreeOfSubscription), dr(ca.startDate, ca.endDate)),
+        join(
+          g(ca.typeOfCommitteeOrAssociation),
+          g(ca.degreeOfSubscription),
+          dr(ca.startDate, ca.endDate),
+        ),
       getDate: (ca) => dr(ca.startDate, ca.endDate),
-      getTimelineMeta: (ca) => join(g(ca.typeOfCommitteeOrAssociation), g(ca.degreeOfSubscription)),
+      getTimelineMeta: (ca) =>
+        join(g(ca.typeOfCommitteeOrAssociation), g(ca.degreeOfSubscription)),
     },
     {
       key: "participationInMagazines",
