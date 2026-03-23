@@ -28,7 +28,7 @@ import {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function Toast({ message, type, onDismiss }) {
+function Toast({ message, type, onDismiss, isArabic }) {
   useEffect(() => {
     const t = setTimeout(onDismiss, 3500);
     return () => clearTimeout(t);
@@ -56,7 +56,9 @@ function Toast({ message, type, onDismiss }) {
       className="fixed z-[60] flex items-center gap-2 rounded-xl border shadow-lg"
       style={{
         top: "clamp(1rem, 2vw, 1.5rem)",
-        right: "clamp(1rem, 2vw, 1.5rem)",
+        ...(isArabic
+          ? { right: "clamp(4rem, 5vw, 5rem)" }
+          : { left: "clamp(4rem, 5vw, 5rem)" }),
         backgroundColor: colors.bg,
         borderColor: colors.border,
         color: colors.text,
@@ -675,6 +677,7 @@ export default function LogsCategoryPage() {
             message={toast.message}
             type={toast.type}
             onDismiss={() => setToast(null)}
+            isArabic={isArabic}
           />
         )}
 

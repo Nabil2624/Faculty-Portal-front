@@ -144,16 +144,54 @@ export default function ChatPage() {
   const messageListRef = useRef(null);
   const textareaRef = useRef(null);
   const isFirstLoad = useRef(true);
+  // true when the user is scrolled near (or at) the bottom
+  const isAtBottomRef = useRef(true);
+  // set to true when the current user sends a message → force scroll regardless
+  const shouldForceScrollRef = useRef(false);
+  // saved scrollHeight before a loadMore prepend so we can restore position
+  const prevScrollHeightRef = useRef(null);
 
-  // Scroll to bottom on initial load and new messages
+  // Keep isAtBottomRef in sync with the scroll position
+  useEffect(() => {
+    const container = messageListRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const distanceFromBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight;
+      isAtBottomRef.current = distanceFromBottom < 80;
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Scroll to bottom on initial load and new messages (only when appropriate)
   useEffect(() => {
     if (loadingInit) return;
+
+    const container = messageListRef.current;
+
+    // After a loadMore, restore the relative scroll position instead of jumping
+    if (prevScrollHeightRef.current !== null && container) {
+      const newScrollHeight = container.scrollHeight;
+      const added = newScrollHeight - prevScrollHeightRef.current;
+      container.scrollTop = container.scrollTop + added;
+      prevScrollHeightRef.current = null;
+      return;
+    }
+
     if (isFirstLoad.current) {
       messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
       isFirstLoad.current = false;
-    } else {
+      return;
+    }
+
+    // Only auto-scroll if the user is near the bottom or just sent a message
+    if (isAtBottomRef.current || shouldForceScrollRef.current) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
+    shouldForceScrollRef.current = false;
   }, [messages, loadingInit]);
 
   // Mark read when messages are visible
@@ -176,6 +214,8 @@ export default function ChatPage() {
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
       }
+      // Force scroll to bottom after the user's own message is added
+      shouldForceScrollRef.current = true;
       await doSend(text);
     },
     [input, sending, doSend],
@@ -301,7 +341,13 @@ export default function ChatPage() {
         {hasMore && (
           <div className="flex justify-center mb-4">
             <button
-              onClick={loadMore}
+              onClick={() => {
+                if (messageListRef.current) {
+                  prevScrollHeightRef.current =
+                    messageListRef.current.scrollHeight;
+                }
+                loadMore();
+              }}
               disabled={loadingMore}
               className="flex items-center gap-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition disabled:opacity-50"
               style={{

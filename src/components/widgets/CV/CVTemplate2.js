@@ -1,31 +1,10 @@
-// Template 2 — Classic (single-column, minimal, traditional academic look)
+﻿// Template 2 — Classic (single-column, minimal, traditional academic look)
 import React from "react";
+import { getVal, fmt, buildSections } from "./CVShared";
 
 const DARK = "#1a1a2e";
 const GRAY = "#64748b";
 const LINE = "#e2e8f0";
-
-const getVal = (obj, isArabic) =>
-  obj ? (isArabic ? obj.valueAr : obj.valueEn) || "" : "";
-
-const fmt = (d, isArabic) => {
-  if (!d) return "";
-  try {
-    return new Date(d).toLocaleDateString(isArabic ? "ar-EG" : "en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  } catch {
-    return d;
-  }
-};
-
-const dateRange = (start, end, isArabic) => {
-  const s = fmt(start, isArabic);
-  const e = end ? fmt(end, isArabic) : "—";
-  return s || e ? `${s} – ${e}` : "";
-};
 
 function SectionTitle({ children }) {
   return (
@@ -94,6 +73,8 @@ export default function CVTemplate2({ data, isArabic, t }) {
   if (!data) return null;
   const dir = isArabic ? "rtl" : "ltr";
 
+  const sections = buildSections(data, isArabic, t);
+
   return (
     <div
       id="cv-print-area"
@@ -124,8 +105,7 @@ export default function CVTemplate2({ data, isArabic, t }) {
         >
           {data.name}
         </div>
-        {(getVal(data.title, isArabic) ||
-          getVal(data.department, isArabic)) && (
+        {(getVal(data.title, isArabic) || getVal(data.department, isArabic)) && (
           <div
             style={{
               fontSize: "clamp(0.8rem,1.1vw,1.1rem)",
@@ -139,8 +119,7 @@ export default function CVTemplate2({ data, isArabic, t }) {
               .join(" · ")}
           </div>
         )}
-        {(getVal(data.university, isArabic) ||
-          getVal(data.authority, isArabic)) && (
+        {(getVal(data.university, isArabic) || getVal(data.authority, isArabic)) && (
           <div
             style={{
               fontSize: "clamp(0.7rem,0.9vw,0.95rem)",
@@ -148,10 +127,7 @@ export default function CVTemplate2({ data, isArabic, t }) {
               marginTop: 4,
             }}
           >
-            {[
-              getVal(data.university, isArabic),
-              getVal(data.authority, isArabic),
-            ]
+            {[getVal(data.university, isArabic), getVal(data.authority, isArabic)]
               .filter(Boolean)
               .join(" · ")}
           </div>
@@ -211,7 +187,7 @@ export default function CVTemplate2({ data, isArabic, t }) {
         </>
       )}
 
-      {/* Academic Qualifications */}
+      {/* Academic Qualifications — needs Muted for specialization */}
       {data.academicQualifications?.length > 0 && (
         <>
           <SectionTitle>{t("sections.academicQualifications")}</SectionTitle>
@@ -236,296 +212,20 @@ export default function CVTemplate2({ data, isArabic, t }) {
         </>
       )}
 
-      {/* Job Ranks */}
-      {data.jobRanks?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.jobRanks")}</SectionTitle>
-          {data.jobRanks.map((jr, i) => (
-            <Row key={i}>
-              <Strong>{getVal(jr.jobRank, isArabic)}</Strong>
-              <InfoLine>{fmt(jr.dateOfJobRank, isArabic)}</InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Administrative Positions */}
-      {data.administrativePositions?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.administrativePositions")}</SectionTitle>
-          {data.administrativePositions.map((ap, i) => (
-            <Row key={i}>
-              <Strong>{ap.position}</Strong>
-              <InfoLine>
-                {dateRange(ap.startDate, ap.endDate, isArabic)}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* General Experiences */}
-      {data.generalExperiences?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.generalExperiences")}</SectionTitle>
-          {data.generalExperiences.map((ge, i) => (
-            <Row key={i}>
-              <Strong>{ge.experienceTitle}</Strong>
-              <InfoLine>
-                {[
-                  ge.authority,
-                  ge.countryOrCity,
-                  dateRange(ge.startDate, ge.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Teaching Experiences */}
-      {data.teachingExperiences?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.teachingExperiences")}</SectionTitle>
-          {data.teachingExperiences.map((te, i) => (
-            <Row key={i}>
-              <Strong>{te.courseName}</Strong>
-              <InfoLine>
-                {[
-                  te.academicLevel,
-                  te.universityOrFaculty,
-                  dateRange(te.startDate, te.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Scientific Missions */}
-      {data.scientificMissions?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.scientificMissions")}</SectionTitle>
-          {data.scientificMissions.map((sm, i) => (
-            <Row key={i}>
-              <Strong>{sm.missionName}</Strong>
-              <InfoLine>
-                {[
-                  sm.universityOrFaculty,
-                  sm.countryOrCity,
-                  dateRange(sm.startDate, sm.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Conferences */}
-      {data.conferencesAndSeminars?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.conferencesAndSeminars")}</SectionTitle>
-          {data.conferencesAndSeminars.map((cs, i) => (
-            <Row key={i}>
-              <Strong>{cs.name}</Strong>
-              <InfoLine>
-                {[
-                  getVal(cs.roleOfParticipation, isArabic),
-                  cs.organizingAuthority,
-                  cs.venue,
-                  dateRange(cs.startDate, cs.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Training Programs */}
-      {data.trainingPrograms?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.trainingPrograms")}</SectionTitle>
-          {data.trainingPrograms.map((tp, i) => (
-            <Row key={i}>
-              <Strong>{tp.trainingProgramName}</Strong>
-              <InfoLine>
-                {[tp.venue, dateRange(tp.startDate, tp.endDate, isArabic)]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Projects */}
-      {data.projects?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.projects")}</SectionTitle>
-          {data.projects.map((p, i) => (
-            <Row key={i}>
-              <Strong>{p.nameOfProject}</Strong>
-              <InfoLine>
-                {[
-                  getVal(p.typeOfProject, isArabic),
-                  p.financingAuthority,
-                  dateRange(p.startDate, p.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Scientific Writings */}
-      {data.scientificWritings?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.scientificWritings")}</SectionTitle>
-          {data.scientificWritings.map((sw, i) => (
-            <Row key={i}>
-              <Strong>{sw.title}</Strong>
-              <InfoLine>
-                {[sw.publishingHouse, sw.isbn, fmt(sw.publishingDate, isArabic)]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Patents */}
-      {data.patents?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.patents")}</SectionTitle>
-          {data.patents.map((p, i) => (
-            <Row key={i}>
-              <Strong>{p.nameOfPatent}</Strong>
-              <InfoLine>
-                {[
-                  p.accreditingAuthorityOrCountry,
-                  fmt(p.accreditationDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Committees */}
-      {data.committeesAndAssociations?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.committeesAndAssociations")}</SectionTitle>
-          {data.committeesAndAssociations.map((ca, i) => (
-            <Row key={i}>
-              <Strong>{ca.nameOfCommitteeOrAssociation}</Strong>
-              <InfoLine>
-                {[
-                  getVal(ca.typeOfCommitteeOrAssociation, isArabic),
-                  getVal(ca.degreeOfSubscription, isArabic),
-                  dateRange(ca.startDate, ca.endDate, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Prizes & Rewards */}
-      {data.prizesAndRewards?.length > 0 && (
-        <>
-          <SectionTitle>{t("sections.prizesAndRewards")}</SectionTitle>
-          {data.prizesAndRewards.map((pr, i) => (
-            <Row key={i}>
-              <Strong>{getVal(pr.prize, isArabic)}</Strong>
-              <InfoLine>
-                {[pr.awardingAuthority, fmt(pr.dateReceived, isArabic)]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Manifestations */}
-      {data.manifestationsOfScientificAppreciation?.length > 0 && (
-        <>
-          <SectionTitle>
-            {t("sections.manifestationsOfScientificAppreciation")}
-          </SectionTitle>
-          {data.manifestationsOfScientificAppreciation.map((m, i) => (
-            <Row key={i}>
-              <Strong>{m.titleOfAppreciation}</Strong>
-              <InfoLine>
-                {[m.issuingAuthority, fmt(m.dateOfAppreciation, isArabic)]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Community & University Contributions */}
-      {(data.contributionsToCommunityService?.length > 0 ||
-        data.contributionsToUniversity?.length > 0) && (
-        <>
-          <SectionTitle>
-            {t("sections.contributionsToCommunityService")}
-          </SectionTitle>
-          {data.contributionsToCommunityService?.map((c, i) => (
-            <Row key={i}>
-              <Strong>{c.contributionTitle}</Strong>
-              <InfoLine>{fmt(c.dateOfContribution, isArabic)}</InfoLine>
-            </Row>
-          ))}
-          {data.contributionsToUniversity?.map((c, i) => (
-            <Row key={`u${i}`}>
-              <Strong>{c.contributionTitle}</Strong>
-              <InfoLine>
-                {[
-                  getVal(c.typeOfContribution, isArabic),
-                  fmt(c.dateOfContribution, isArabic),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
-
-      {/* Quality Work */}
-      {data.participationInQualityWork?.length > 0 && (
-        <>
-          <SectionTitle>
-            {t("sections.participationInQualityWork")}
-          </SectionTitle>
-          {data.participationInQualityWork.map((pq, i) => (
-            <Row key={i}>
-              <Strong>{pq.participationTitle}</Strong>
-              <InfoLine>
-                {dateRange(pq.startDate, pq.endDate, isArabic)}
-              </InfoLine>
-            </Row>
-          ))}
-        </>
-      )}
+      {/* All remaining sections via shared config */}
+      {sections
+        .filter((s) => s.key !== "academicQualifications")
+        .map((sec) => (
+          <React.Fragment key={sec.key}>
+            <SectionTitle>{t(sec.titleKey)}</SectionTitle>
+            {sec.items.map((item, i) => (
+              <Row key={i}>
+                <Strong>{sec.getTitle(item)}</Strong>
+                <InfoLine>{sec.getMeta(item)}</InfoLine>
+              </Row>
+            ))}
+          </React.Fragment>
+        ))}
     </div>
   );
 }

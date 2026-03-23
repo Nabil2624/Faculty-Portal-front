@@ -18,7 +18,7 @@ import RoleSelectorWidget from "../components/widgets/CreateUser/RoleSelectorWid
 import PermissionsPickerWidget from "../components/widgets/CreateUser/PermissionsPickerWidget";
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
-function Toast({ messageKey, type, onDismiss }) {
+function Toast({ messageKey, type, onDismiss, isArabic }) {
   const { t } = useTranslation("Users");
 
   useEffect(() => {
@@ -36,7 +36,9 @@ function Toast({ messageKey, type, onDismiss }) {
       className="fixed z-[60] flex items-center gap-2 rounded-xl border shadow-lg"
       style={{
         top: "clamp(1rem, 2vw, 2.5rem)",
-        right: "clamp(1rem, 2vw, 2.5rem)",
+        ...(isArabic
+          ? { left: "clamp(4rem, 5vw, 5rem)" }
+          : { right: "clamp(4rem, 5vw, 5rem)" }),
         backgroundColor: colors.bg,
         borderColor: colors.border,
         color: colors.text,

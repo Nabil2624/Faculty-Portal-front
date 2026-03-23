@@ -8,6 +8,8 @@ export default function Header({ isExpanded }) {
   const { t, i18n } = useTranslation("headerandsidebar");
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
+  const userRole = localStorage.getItem("userRole");
+  const isSupportAdmin = userRole === "SupportAdmin";
 
   const handleLanguageChange = () => {
     i18n.changeLanguage(isArabic ? "en" : "ar");

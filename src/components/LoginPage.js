@@ -29,9 +29,8 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
-
+    setError(null);
     try {
       const loginResponse = await axiosInstance.post(
         "/Authentication/Login",

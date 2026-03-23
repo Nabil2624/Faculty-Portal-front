@@ -83,7 +83,6 @@ export default function EditPersonalInfo() {
       setProfileImage(URL.createObjectURL(filesArray[0])); // عرض أول صورة مؤقتًا
     }
   };
-
   const handleSave = async () => {
     const entityId = personalInfo.id;
     const oldAttachmentId = personalInfo.profilePicture?.id || null;

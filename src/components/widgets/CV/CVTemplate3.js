@@ -1,32 +1,11 @@
-// Template 3 — Academic (gold top bar, split header, navy table-style sections)
+﻿// Template 3 — Academic (gold top bar, split header, navy table-style sections)
 import React from "react";
+import { getVal, fmt, dateRange, buildSections } from "./CVShared";
 
 const NAVY = "#19355a";
 const GOLD = "#b38e19";
 const LIGHT_GOLD = "#fdf8ec";
 const LINE = "#e2e8f0";
-
-const getVal = (obj, isArabic) =>
-  obj ? (isArabic ? obj.valueAr : obj.valueEn) || "" : "";
-
-const fmt = (d, isArabic) => {
-  if (!d) return "";
-  try {
-    return new Date(d).toLocaleDateString(isArabic ? "ar-EG" : "en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  } catch {
-    return d;
-  }
-};
-
-const dateRange = (start, end, isArabic) => {
-  const s = fmt(start, isArabic);
-  const e = end ? fmt(end, isArabic) : "—";
-  return s || e ? `${s} – ${e}` : "";
-};
 
 function SectionTitle({ children, isArabic }) {
   return (
@@ -131,9 +110,94 @@ function Meta({ children }) {
   );
 }
 
+// Sections that use TableRow for their sub-fields (custom rendering)
+const DETAILED_KEYS = new Set([
+  "academicQualifications",
+  "generalExperiences",
+  "teachingExperiences",
+  "conferencesAndSeminars",
+  "projects",
+  "scientificWritings",
+]);
+
+function renderDetailedCard(sec, item, i, t, isArabic) {
+  const k = sec.key;
+  if (k === "academicQualifications") {
+    return (
+      <EntryCard key={i}>
+        <EntryTitle>
+          {getVal(item.qualification, isArabic)}
+          {item.specialization ? ` — ${item.specialization}` : ""}
+        </EntryTitle>
+        <TableRow label={t("fields.grade")} value={getVal(item.grade, isArabic)} />
+        <TableRow label={t("fields.dispatchType")} value={getVal(item.dispatchType, isArabic)} />
+        <TableRow label={t("fields.universityOrFaculty")} value={item.universityOrFaculty} />
+        <TableRow label={t("fields.countryOrCity")} value={item.countryOrCity} />
+        <TableRow label={t("fields.dateObtained")} value={fmt(item.dateOfObtainingTheQualification, isArabic)} />
+      </EntryCard>
+    );
+  }
+  if (k === "generalExperiences") {
+    return (
+      <EntryCard key={i}>
+        <EntryTitle>{item.experienceTitle}</EntryTitle>
+        <TableRow label={t("fields.authority")} value={item.authority} />
+        <TableRow label={t("fields.countryOrCity")} value={item.countryOrCity} />
+        <Meta>{dateRange(item.startDate, item.endDate, isArabic)}</Meta>
+      </EntryCard>
+    );
+  }
+  if (k === "teachingExperiences") {
+    return (
+      <EntryCard key={i}>
+        <EntryTitle>{item.courseName}</EntryTitle>
+        <TableRow label={t("fields.academicLevel")} value={item.academicLevel} />
+        <TableRow label={t("fields.universityOrFaculty")} value={item.universityOrFaculty} />
+        <Meta>{dateRange(item.startDate, item.endDate, isArabic)}</Meta>
+      </EntryCard>
+    );
+  }
+  if (k === "conferencesAndSeminars") {
+    return (
+      <EntryCard key={i}>
+        <EntryTitle>{item.name}</EntryTitle>
+        <TableRow label={t("fields.role")} value={getVal(item.roleOfParticipation, isArabic)} />
+        <TableRow label={t("fields.authority")} value={item.organizingAuthority} />
+        <TableRow label={t("fields.venue")} value={item.venue} />
+        <Meta>{dateRange(item.startDate, item.endDate, isArabic)}</Meta>
+      </EntryCard>
+    );
+  }
+  if (k === "projects") {
+    return (
+      <EntryCard key={i}>
+        <EntryTitle>{item.nameOfProject}</EntryTitle>
+        <TableRow label={t("fields.type")} value={getVal(item.typeOfProject, isArabic)} />
+        <TableRow label={t("fields.role")} value={getVal(item.participationRole, isArabic)} />
+        <TableRow label={t("fields.financing")} value={item.financingAuthority} />
+        <Meta>{dateRange(item.startDate, item.endDate, isArabic)}</Meta>
+      </EntryCard>
+    );
+  }
+  if (k === "scientificWritings") {
+    return (
+      <EntryCard key={i}>
+        <EntryTitle>{item.title}</EntryTitle>
+        <TableRow label={t("fields.role")} value={getVal(item.authorRole, isArabic)} />
+        <TableRow label={t("fields.publishingHouse")} value={item.publishingHouse} />
+        <TableRow label={t("fields.isbn")} value={item.isbn} />
+        <Meta>{fmt(item.publishingDate, isArabic)}</Meta>
+      </EntryCard>
+    );
+  }
+  return null;
+}
+
 export default function CVTemplate3({ data, isArabic, t }) {
   if (!data) return null;
   const dir = isArabic ? "rtl" : "ltr";
+
+  const sections = buildSections(data, isArabic, t);
 
   return (
     <div
@@ -306,365 +370,21 @@ export default function CVTemplate3({ data, isArabic, t }) {
 
       {/* Body */}
       <div style={{ padding: "clamp(14px,2vw,32px)", background: LIGHT_GOLD }}>
-        {/* Academic Qualifications */}
-        {data.academicQualifications?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.academicQualifications")}
-            </SectionTitle>
-            {data.academicQualifications.map((aq, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>
-                  {getVal(aq.qualification, isArabic)}
-                  {aq.specialization ? ` — ${aq.specialization}` : ""}
-                </EntryTitle>
-                <TableRow
-                  label={t("fields.grade")}
-                  value={getVal(aq.grade, isArabic)}
-                />
-                <TableRow
-                  label={t("fields.dispatchType")}
-                  value={getVal(aq.dispatchType, isArabic)}
-                />
-                <TableRow
-                  label={t("fields.universityOrFaculty")}
-                  value={aq.universityOrFaculty}
-                />
-                <TableRow
-                  label={t("fields.countryOrCity")}
-                  value={aq.countryOrCity}
-                />
-                <TableRow
-                  label={t("fields.dateObtained")}
-                  value={fmt(aq.dateOfObtainingTheQualification, isArabic)}
-                />
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Job Ranks */}
-        {data.jobRanks?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.jobRanks")}
-            </SectionTitle>
-            {data.jobRanks.map((jr, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{getVal(jr.jobRank, isArabic)}</EntryTitle>
-                <Meta>{fmt(jr.dateOfJobRank, isArabic)}</Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Administrative Positions */}
-        {data.administrativePositions?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.administrativePositions")}
-            </SectionTitle>
-            {data.administrativePositions.map((ap, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{ap.position}</EntryTitle>
-                <Meta>{dateRange(ap.startDate, ap.endDate, isArabic)}</Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Experiences */}
-        {data.generalExperiences?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.generalExperiences")}
-            </SectionTitle>
-            {data.generalExperiences.map((ge, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{ge.experienceTitle}</EntryTitle>
-                <TableRow label={t("fields.authority")} value={ge.authority} />
-                <TableRow
-                  label={t("fields.countryOrCity")}
-                  value={ge.countryOrCity}
-                />
-                <Meta>{dateRange(ge.startDate, ge.endDate, isArabic)}</Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Teaching Experiences */}
-        {data.teachingExperiences?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.teachingExperiences")}
-            </SectionTitle>
-            {data.teachingExperiences.map((te, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{te.courseName}</EntryTitle>
-                <TableRow
-                  label={t("fields.academicLevel")}
-                  value={te.academicLevel}
-                />
-                <TableRow
-                  label={t("fields.universityOrFaculty")}
-                  value={te.universityOrFaculty}
-                />
-                <Meta>{dateRange(te.startDate, te.endDate, isArabic)}</Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Scientific Missions */}
-        {data.scientificMissions?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.scientificMissions")}
-            </SectionTitle>
-            {data.scientificMissions.map((sm, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{sm.missionName}</EntryTitle>
-                <Meta>
-                  {[
-                    sm.universityOrFaculty,
-                    sm.countryOrCity,
-                    dateRange(sm.startDate, sm.endDate, isArabic),
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Conferences */}
-        {data.conferencesAndSeminars?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.conferencesAndSeminars")}
-            </SectionTitle>
-            {data.conferencesAndSeminars.map((cs, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{cs.name}</EntryTitle>
-                <TableRow
-                  label={t("fields.role")}
-                  value={getVal(cs.roleOfParticipation, isArabic)}
-                />
-                <TableRow
-                  label={t("fields.authority")}
-                  value={cs.organizingAuthority}
-                />
-                <TableRow label={t("fields.venue")} value={cs.venue} />
-                <Meta>{dateRange(cs.startDate, cs.endDate, isArabic)}</Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Training Programs */}
-        {data.trainingPrograms?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.trainingPrograms")}
-            </SectionTitle>
-            {data.trainingPrograms.map((tp, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{tp.trainingProgramName}</EntryTitle>
-                <Meta>
-                  {[tp.venue, dateRange(tp.startDate, tp.endDate, isArabic)]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Projects */}
-        {data.projects?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.projects")}
-            </SectionTitle>
-            {data.projects.map((p, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{p.nameOfProject}</EntryTitle>
-                <TableRow
-                  label={t("fields.type")}
-                  value={getVal(p.typeOfProject, isArabic)}
-                />
-                <TableRow
-                  label={t("fields.role")}
-                  value={getVal(p.participationRole, isArabic)}
-                />
-                <TableRow
-                  label={t("fields.financing")}
-                  value={p.financingAuthority}
-                />
-                <Meta>{dateRange(p.startDate, p.endDate, isArabic)}</Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Scientific Writings */}
-        {data.scientificWritings?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.scientificWritings")}
-            </SectionTitle>
-            {data.scientificWritings.map((sw, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{sw.title}</EntryTitle>
-                <TableRow
-                  label={t("fields.role")}
-                  value={getVal(sw.authorRole, isArabic)}
-                />
-                <TableRow
-                  label={t("fields.publishingHouse")}
-                  value={sw.publishingHouse}
-                />
-                <TableRow label={t("fields.isbn")} value={sw.isbn} />
-                <Meta>{fmt(sw.publishingDate, isArabic)}</Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Patents */}
-        {data.patents?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.patents")}
-            </SectionTitle>
-            {data.patents.map((p, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{p.nameOfPatent}</EntryTitle>
-                <Meta>
-                  {[
-                    p.accreditingAuthorityOrCountry,
-                    fmt(p.accreditationDate, isArabic),
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Committees */}
-        {data.committeesAndAssociations?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.committeesAndAssociations")}
-            </SectionTitle>
-            {data.committeesAndAssociations.map((ca, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{ca.nameOfCommitteeOrAssociation}</EntryTitle>
-                <Meta>
-                  {[
-                    getVal(ca.typeOfCommitteeOrAssociation, isArabic),
-                    getVal(ca.degreeOfSubscription, isArabic),
-                    dateRange(ca.startDate, ca.endDate, isArabic),
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Prizes & Rewards */}
-        {data.prizesAndRewards?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.prizesAndRewards")}
-            </SectionTitle>
-            {data.prizesAndRewards.map((pr, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{getVal(pr.prize, isArabic)}</EntryTitle>
-                <Meta>
-                  {[pr.awardingAuthority, fmt(pr.dateReceived, isArabic)]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Manifestations */}
-        {data.manifestationsOfScientificAppreciation?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.manifestationsOfScientificAppreciation")}
-            </SectionTitle>
-            {data.manifestationsOfScientificAppreciation.map((m, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{m.titleOfAppreciation}</EntryTitle>
-                <Meta>
-                  {[m.issuingAuthority, fmt(m.dateOfAppreciation, isArabic)]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Contributions */}
-        {data.contributionsToCommunityService?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.contributionsToCommunityService")}
-            </SectionTitle>
-            {data.contributionsToCommunityService.map((c, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{c.contributionTitle}</EntryTitle>
-                <Meta>{fmt(c.dateOfContribution, isArabic)}</Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-        {data.contributionsToUniversity?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.contributionsToUniversity")}
-            </SectionTitle>
-            {data.contributionsToUniversity.map((c, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{c.contributionTitle}</EntryTitle>
-                <Meta>
-                  {[
-                    getVal(c.typeOfContribution, isArabic),
-                    fmt(c.dateOfContribution, isArabic),
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
-
-        {/* Quality Work */}
-        {data.participationInQualityWork?.length > 0 && (
-          <>
-            <SectionTitle isArabic={isArabic}>
-              {t("sections.participationInQualityWork")}
-            </SectionTitle>
-            {data.participationInQualityWork.map((pq, i) => (
-              <EntryCard key={i}>
-                <EntryTitle>{pq.participationTitle}</EntryTitle>
-                <Meta>{dateRange(pq.startDate, pq.endDate, isArabic)}</Meta>
-              </EntryCard>
-            ))}
-          </>
-        )}
+        {sections.map((sec) => (
+          <React.Fragment key={sec.key}>
+            <SectionTitle isArabic={isArabic}>{t(sec.titleKey)}</SectionTitle>
+            {DETAILED_KEYS.has(sec.key)
+              ? sec.items.map((item, i) =>
+                  renderDetailedCard(sec, item, i, t, isArabic)
+                )
+              : sec.items.map((item, i) => (
+                  <EntryCard key={i}>
+                    <EntryTitle>{sec.getTitle(item)}</EntryTitle>
+                    <Meta>{sec.getMeta(item)}</Meta>
+                  </EntryCard>
+                ))}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );
