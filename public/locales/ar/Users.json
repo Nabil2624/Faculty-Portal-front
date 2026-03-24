@@ -231,5 +231,13 @@
       "createAnother": "إنشاء مستخدم آخر",
       "goToUsers": "الذهاب إلى المستخدمين"
     }
+  },
+
+  "sort": {
+    "default": "بدون ترتيب",
+    "UsernameASC": "اسم المستخدم أ←ي",
+    "UsernameDESC": "اسم المستخدم ي←أ",
+    "NumberOfAcessedPermissionsASC": "الصلاحيات ↑",
+    "NumberOfAcessedPermissionsDESC": "الصلاحيات ↓"
   }
 }

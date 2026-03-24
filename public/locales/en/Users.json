@@ -233,5 +233,13 @@
       "grantError": "Failed to update permission.",
       "alreadyHasPermission": "The user already has this permission."
     }
+  },
+
+  "sort": {
+    "default": "Default",
+    "UsernameASC": "Username A→Z",
+    "UsernameDESC": "Username Z→A",
+    "NumberOfAcessedPermissionsASC": "Permissions ↑",
+    "NumberOfAcessedPermissionsDESC": "Permissions ↓"
   }
 }

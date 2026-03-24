@@ -722,7 +722,7 @@ export default function UsersPage() {
             >
               {USER_SORT_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
-                  {opt.label}
+                  {t(`sort.${opt.value || "default"}`)}
                 </option>
               ))}
             </select>
