@@ -366,7 +366,7 @@ function Pagination({ page, totalPages, onPage }) {
         className="rounded-lg p-1.5 border transition hover:bg-gray-100 disabled:opacity-40"
         style={{ borderColor: "#e5e7eb" }}
       >
-        <ChevronLeft
+        <ChevronRight
           style={{
             width: "clamp(14px, 1.2vw, 20px)",
             height: "clamp(14px, 1.2vw, 20px)",
@@ -396,7 +396,7 @@ function Pagination({ page, totalPages, onPage }) {
         className="rounded-lg p-1.5 border transition hover:bg-gray-100 disabled:opacity-40"
         style={{ borderColor: "#e5e7eb" }}
       >
-        <ChevronRight
+        <ChevronLeft
           style={{
             width: "clamp(14px, 1.2vw, 20px)",
             height: "clamp(14px, 1.2vw, 20px)",
@@ -605,11 +605,6 @@ export default function UsersPage() {
           </button>
         </div>
 
-        {/* ── Summary Widgets ── */}
-        {!loading && !error && (
-          <UsersSummaryWidgets counts={{ total: totalCount, ...roleCounts }} />
-        )}
-
         {/* ── Search + Role Filter ── */}
         <div
           className="bg-white rounded-2xl shadow-sm flex flex-wrap items-center gap-3"
@@ -814,22 +809,9 @@ export default function UsersPage() {
           </div>
         )}
 
-        {/* Count info + Pagination */}
+        {/* Pagination */}
         {!loading && !error && (
-          <>
-            <p
-              style={{
-                fontSize: "clamp(0.6rem, 0.8vw, 1.2rem)",
-                color: "#9ca3af",
-                textAlign: "center",
-              }}
-            >
-              {t("showing", { count: totalCount })}
-              {roleFilter ? ` · ${t("filteredBy", { role: roleFilter })}` : ""}
-              {search ? ` · ${t("matching", { query: search })}` : ""}
-            </p>
-            <Pagination page={page} totalPages={totalPages} onPage={setPage} />
-          </>
+          <Pagination page={page} totalPages={totalPages} onPage={setPage} />
         )}
       </div>
 
