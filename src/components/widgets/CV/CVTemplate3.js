@@ -1,6 +1,6 @@
 ﻿// Template 3 — Academic (gold top bar, split header, navy table-style sections)
 import React from "react";
-import { getVal, fmt, dateRange, buildSections } from "./CVShared";
+import { getVal, fmt, dateRange, buildSections, applyVisibility } from "./CVShared";
 
 const NAVY = "#19355a";
 const GOLD = "#b38e19";
@@ -193,8 +193,9 @@ function renderDetailedCard(sec, item, i, t, isArabic) {
   return null;
 }
 
-export default function CVTemplate3({ data, isArabic, t }) {
-  if (!data) return null;
+export default function CVTemplate3({ data: rawData, isArabic, t, visibility }) {
+  if (!rawData) return null;
+  const data = applyVisibility(rawData, visibility);
   const dir = isArabic ? "rtl" : "ltr";
 
   const sections = buildSections(data, isArabic, t);

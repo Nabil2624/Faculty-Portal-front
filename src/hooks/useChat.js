@@ -250,8 +250,11 @@ export default function useChat(ticket) {
       safeSetState(() => {
         setCurrentUser(data);
       });
+
+      return data;
     } catch (err) {
       console.warn("Could not fetch current user from:", CURRENT_USER_ENDPOINT);
+      return null;
     }
   }, [safeSetState]);
 
@@ -281,6 +284,11 @@ export default function useChat(ticket) {
 
       return data;
     } catch (err) {
+      // 404 means no conversation exists yet — not a real error
+      if (err?.response?.status === 404) {
+        return null;
+      }
+
       const msg =
         err?.response?.data?.ErrorMessage ||
         err?.message ||
@@ -444,63 +452,61 @@ export default function useChat(ticket) {
     };
   }, []);
 
- useEffect(() => {
-  const upsertMessage = (msg) => {
-    if (!msg || msg.conversationId !== initializedConversationIdRef.current) {
-      return;
-    }
+  useEffect(() => {
+    const upsertMessage = (msg) => {
+      if (!msg || msg.conversationId !== initializedConversationIdRef.current) {
+        return;
+      }
 
-    safeSetState(() =>
-      setMessages((prev) => {
-        const exists = prev.some((m) => m.id === msg.id);
+      safeSetState(() =>
+        setMessages((prev) => {
+          const exists = prev.some((m) => m.id === msg.id);
 
-        if (exists) {
-          return sortMessagesChronologically(
-            prev.map((m) => (m.id === msg.id ? { ...m, ...msg } : m)),
-          );
-        }
+          if (exists) {
+            return sortMessagesChronologically(
+              prev.map((m) => (m.id === msg.id ? { ...m, ...msg } : m)),
+            );
+          }
 
-        return sortMessagesChronologically(
-          dedupeMessages([...prev, msg]),
-        );
-      }),
-    );
-  };
+          return sortMessagesChronologically(dedupeMessages([...prev, msg]));
+        }),
+      );
+    };
 
-  const unsubReceive = onReceiveMessage(upsertMessage);
-  const unsubUpdated = onConversationUpdated(upsertMessage);
+    const unsubReceive = onReceiveMessage(upsertMessage);
+    const unsubUpdated = onConversationUpdated(upsertMessage);
 
-  const unsubDelivered = onMessageDelivered((msg) => {
-    if (!msg || msg.conversationId !== initializedConversationIdRef.current) {
-      return;
-    }
+    const unsubDelivered = onMessageDelivered((msg) => {
+      if (!msg || msg.conversationId !== initializedConversationIdRef.current) {
+        return;
+      }
 
-    safeSetState(() =>
-      setMessages((prev) =>
-        prev.map((m) => (m.id === msg.id ? { ...m, ...msg } : m)),
-      ),
-    );
-  });
+      safeSetState(() =>
+        setMessages((prev) =>
+          prev.map((m) => (m.id === msg.id ? { ...m, ...msg } : m)),
+        ),
+      );
+    });
 
-  const unsubRead = onMessageRead((msg) => {
-    if (!msg || msg.conversationId !== initializedConversationIdRef.current) {
-      return;
-    }
+    const unsubRead = onMessageRead((msg) => {
+      if (!msg || msg.conversationId !== initializedConversationIdRef.current) {
+        return;
+      }
 
-    safeSetState(() =>
-      setMessages((prev) =>
-        prev.map((m) => (m.id === msg.id ? { ...m, ...msg } : m)),
-      ),
-    );
-  });
+      safeSetState(() =>
+        setMessages((prev) =>
+          prev.map((m) => (m.id === msg.id ? { ...m, ...msg } : m)),
+        ),
+      );
+    });
 
-  return () => {
-    unsubReceive();
-    unsubUpdated();
-    unsubDelivered();
-    unsubRead();
-  };
-}, [safeSetState]);
+    return () => {
+      unsubReceive();
+      unsubUpdated();
+      unsubDelivered();
+      unsubRead();
+    };
+  }, [safeSetState]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -519,23 +525,65 @@ export default function useChat(ticket) {
           setNextCursor(null);
         });
 
-        const [, conv] = await Promise.all([
+        const [user, conv] = await Promise.all([
           fetchCurrentUser(),
           fetchConversation(),
         ]);
 
-        if (!conv?.id) {
+        let resolvedConv = conv;
+
+        if (!resolvedConv?.id && ticket?.assignedToId) {
+          // No conversation exists yet — create one
+          // Use senderId/assignedToId directly from the ticket to avoid
+          // relying on currentUser field name variations (userId vs id, etc.)
+          const now = new Date().toISOString();
+          const participants = [
+            {
+              userId: ticket.senderId,
+              username: ticket.senderUsername ?? "",
+              joinedAt: now,
+            },
+            {
+              userId: ticket.assignedToId,
+              username: ticket.assigneeUsername ?? "",
+              joinedAt: now,
+            },
+          ];
+
+          try {
+            const res = await axiosInstance.post("/Messaging/Conversation", {
+              type: "Direct",
+              title: ticket.title ?? "Ticket Conversation",
+              ticketId: ticket.id,
+              participants,
+            });
+            resolvedConv = res?.data ?? null;
+            safeSetState(() => setConversation(resolvedConv));
+          } catch (createErr) {
+            const msg =
+              createErr?.response?.data?.ErrorMessage ||
+              createErr?.message ||
+              "Failed to start conversation.";
+            safeSetState(() => {
+              setError(msg);
+              setLoadingInit(false);
+            });
+            return;
+          }
+        }
+
+        if (!resolvedConv?.id) {
           safeSetState(() => setLoadingInit(false));
           return;
         }
 
-        initializedConversationIdRef.current = conv.id;
+        initializedConversationIdRef.current = resolvedConv.id;
 
         const {
           msgs,
           nextCursor: nc,
           hasMore: hm,
-        } = await fetchMessages(conv.id);
+        } = await fetchMessages(resolvedConv.id);
 
         safeSetState(() => {
           setMessages(msgs);
@@ -545,7 +593,7 @@ export default function useChat(ticket) {
         });
 
         await startConnection();
-        await joinConversation(conv.id);
+        await joinConversation(resolvedConv.id);
       } catch (err) {
         console.error("Chat init error:", err);
         safeSetState(() => setLoadingInit(false));
@@ -564,7 +612,13 @@ export default function useChat(ticket) {
         initializedConversationIdRef.current = null;
       }
     };
-  }, [ticket?.id, fetchConversation, fetchCurrentUser, fetchMessages, safeSetState]);
+  }, [
+    ticket?.id,
+    fetchConversation,
+    fetchCurrentUser,
+    fetchMessages,
+    safeSetState,
+  ]);
 
   return {
     currentUser,

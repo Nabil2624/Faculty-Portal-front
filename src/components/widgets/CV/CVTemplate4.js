@@ -1,6 +1,6 @@
 ﻿// Template 4 — Professional (navy sidebar + white main content)
 import React from "react";
-import { getVal, fmtShort as fmt, buildSections } from "./CVShared";
+import { getVal, fmtShort as fmt, buildSections, applyVisibility } from "./CVShared";
 
 const NAVY = "#19355a";
 const GOLD = "#b38e19";
@@ -107,8 +107,9 @@ const SOCIAL_ENTRIES = [
   { label: "YouTube", key: "youTube" },
 ];
 
-export default function CVTemplate4({ data, isArabic, t }) {
-  if (!data) return null;
+export default function CVTemplate4({ data: rawData, isArabic, t, visibility }) {
+  if (!rawData) return null;
+  const data = applyVisibility(rawData, visibility);
   const dir = isArabic ? "rtl" : "ltr";
 
   const sections = buildSections(data, isArabic, t, fmt);
