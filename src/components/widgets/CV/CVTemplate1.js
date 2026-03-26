@@ -1,6 +1,6 @@
 ﻿// Template 1 — Modern (navy header, two-column body)
 import React from "react";
-import { getVal, fmt, buildSections } from "./CVShared";
+import { getVal, fmt, buildSections, applyVisibility } from "./CVShared";
 
 const NAVY = "#19355a";
 const GOLD = "#b38e19";
@@ -104,8 +104,9 @@ const CONTACT_FIELDS = [
   { key: "faxNumber", labelKey: "contact.fax" },
 ];
 
-export default function CVTemplate1({ data, isArabic, t }) {
-  if (!data) return null;
+export default function CVTemplate1({ data: rawData, isArabic, t, visibility }) {
+  if (!rawData) return null;
+  const data = applyVisibility(rawData, visibility);
 
   const dir = isArabic ? "rtl" : "ltr";
   const titleVal = getVal(data.title, isArabic);

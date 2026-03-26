@@ -1,6 +1,6 @@
 ﻿// Template 5 — Timeline (vertical timeline with gold dots and navy line)
 import React from "react";
-import { getVal, fmtShort as fmt, buildSections } from "./CVShared";
+import { getVal, fmtShort as fmt, buildSections, applyVisibility } from "./CVShared";
 
 const NAVY = "#19355a";
 const GOLD = "#b38e19";
@@ -132,8 +132,9 @@ function TimelineItem({ dateStr, title, meta, isArabic }) {
   );
 }
 
-export default function CVTemplate5({ data, isArabic, t }) {
-  if (!data) return null;
+export default function CVTemplate5({ data: rawData, isArabic, t, visibility }) {
+  if (!rawData) return null;
+  const data = applyVisibility(rawData, visibility);
   const dir = isArabic ? "rtl" : "ltr";
 
   const sections = buildSections(data, isArabic, t, fmt);

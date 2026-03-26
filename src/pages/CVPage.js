@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { Pencil, Printer, RefreshCw, FileText } from "lucide-react";
+import {
+  Printer,
+  RefreshCw,
+  FileText,
+  Settings2,
+} from "lucide-react";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import useCV from "../hooks/useCV";
+import useCVManage from "../hooks/useCVManage";
+
+// استيراد التمبليتات (تأكد من المسارات عندك)
 import CVTemplate1 from "../components/widgets/CV/CVTemplate1";
 import CVTemplate2 from "../components/widgets/CV/CVTemplate2";
 import CVTemplate3 from "../components/widgets/CV/CVTemplate3";
@@ -27,12 +34,355 @@ const TEMPLATE_COMPONENTS = {
   5: CVTemplate5,
 };
 
+// --- خريطة التحكم الرئيسية (Master Keys) ---
+const SECTION_MASTER = {
+  personalData: "showPersonalData",
+  contactInfo: "showContactInfo",
+  socialMedia: "showSocialMedia",
+  academicQualifications: "showAcademicQualifications",
+  jobRanks: "showJobRanks",
+  administrativePositions: "showAdministrativePositions",
+  conferencesAndSeminars: "showConferencesAndSeminars",
+  scientificMissions: "showScientificMissions",
+  trainingPrograms: "showTrainingPrograms",
+  committeesAndAssociations: "showCommitteesAndAssociations",
+  participationInMagazines: "showParticipationInMagazines",
+  reviewingArticles: "showReviewingArticles",
+  projects: "showProjects",
+  teachingExperiences: "showTeachingExperiences",
+  generalExperiences: "showGeneralExperiences",
+  scientificWritings: "showScientificWritings",
+  patents: "showPatents",
+  prizesAndRewards: "showPrizesAndRewards",
+  manifestationsOfScientificAppreciation:
+    "showManifestationsOfScientificAppreciation",
+  contributionsToCommunityService: "showContributionsToCommunityService",
+  contributionsToUniversity: "showContributionsToUniversity",
+  participationInQualityWork: "showparticipationsInQualityWork",
+};
+
+// --- مصفوفة السكاشن الكاملة (22 سكشن) ---
+const SECTIONS = [
+  {
+    key: "personalData",
+    fields: [
+      "showUniversity",
+      "showAuthority",
+      "showDepartment",
+      "showBirthDate",
+      "showProfilePicture",
+      "showSkills",
+    ],
+  },
+  {
+    key: "contactInfo",
+    fields: ["showMainPhone", "showWorkPhone", "showOfficialEmail", "showFax"],
+  },
+  {
+    key: "socialMedia",
+    fields: [
+      "showLinkedIn",
+      "showInstagram",
+      "showPersonalWebsite",
+      "showGoogleScholar",
+      "showScopus",
+      "showFacebook",
+      "showX",
+      "showYouTube",
+    ],
+  },
+  {
+    key: "academicQualifications",
+    fields: [
+      "showQualification",
+      "showSpecialization",
+      "showGrade",
+      "showDispatchType",
+      "showUniversityOrFaculty",
+      "showCountryOrCity",
+      "showDateOfObtainingTheQualification",
+    ],
+  },
+  { key: "jobRanks", fields: ["showJobRank", "showDateOfJobRank"] },
+  {
+    key: "administrativePositions",
+    fields: ["showPosition", "showPositionStartDate", "showPositionEndDate"],
+  },
+  {
+    key: "conferencesAndSeminars",
+    fields: [
+      "showConferenceOrSeminarName",
+      "showConferenceOrSeminarRoleOfParticipation",
+      "showConferenceOrSeminarOrganizingAuthority",
+      "showConferenceOrSeminarWebsite",
+      "showConferenceOrSeminarStartDate",
+      "showConferenceOrSeminarEndDate",
+      "showConferenceOrSeminarVenue",
+    ],
+  },
+  {
+    key: "scientificMissions",
+    fields: [
+      "showMissionName",
+      "showMissionStartDate",
+      "showMissionEndDate",
+      "showMissionUniversityOrFaculty",
+      "showMissionCountryOrCity",
+    ],
+  },
+  {
+    key: "trainingPrograms",
+    fields: [
+      "showTrainingProgramName",
+      "showTrainingProgramVenue",
+      "showTrainingProgramStartDate",
+      "showTrainingProgramEndDate",
+    ],
+  },
+  {
+    key: "committeesAndAssociations",
+    fields: [
+      "showNameOfCommitteeOrAssociation",
+      "showTypeOfCommitteeOrAssociation",
+      "showDegreeOfSubscription",
+      "showCommitteesAndAssociationsStartDate",
+      "showCommitteesAndAssociationsEndDate",
+    ],
+  },
+  {
+    key: "participationInMagazines",
+    fields: [
+      "showNameOfMagazine",
+      "showWebsiteOfMagazine",
+      "showTypeOfParticipation",
+    ],
+  },
+  {
+    key: "reviewingArticles",
+    fields: ["showTitleOfArticle", "showAuthority", "showReviewingDate"],
+  },
+  {
+    key: "projects",
+    fields: [
+      "showNameOfProject",
+      "showTypeOfProject",
+      "showParticipationRole",
+      "showFinancingAuthority",
+      "showProjectStartDate",
+      "showProjectEndDate",
+    ],
+  },
+  {
+    key: "teachingExperiences",
+    fields: [
+      "showCourseName",
+      "showAcademicLevel",
+      "showUniversityOrFaculty",
+      "showTeachingExperienceStartDate",
+      "showTeachingExperienceEndDate",
+    ],
+  },
+  {
+    key: "generalExperiences",
+    fields: [
+      "showExperienceTitle",
+      "showAuthority",
+      "showCountryOrCity",
+      "showStartDate",
+      "showEndDate",
+    ],
+  },
+  {
+    key: "scientificWritings",
+    fields: [
+      "showTitle",
+      "showAuthorRole",
+      "showISBN",
+      "showPublishingHouse",
+      "showPublishingDate",
+    ],
+  },
+  {
+    key: "patents",
+    fields: [
+      "showNameOfPatent",
+      "showAccreditingAuthorityOrCountry",
+      "showAccreditationDate",
+    ],
+  },
+  {
+    key: "prizesAndRewards",
+    fields: ["showPrizeName", "showawardingAuthority", "showDateReceived"],
+  },
+  {
+    key: "manifestationsOfScientificAppreciation",
+    fields: [
+      "showTitleOfAppreciation",
+      "showIssuingAuthority",
+      "showDateOfAppreciation",
+    ],
+  },
+  {
+    key: "contributionsToCommunityService",
+    fields: ["showContributionTitle", "showDateOfContribution"],
+  },
+  {
+    key: "contributionsToUniversity",
+    fields: [
+      "showContributionTitle",
+      "showTypeOfContribution",
+      "showDateOfContribution",
+    ],
+  },
+  {
+    key: "participationInQualityWork",
+    fields: [
+      "showparticipationTitle",
+      "showParticipationStartDate",
+      "showParticipationEndDate",
+    ],
+  },
+];
+
+// --- مكونات واجهة المستخدم (Checkbox & Card) ---
+function CheckboxItem({ checked, onChange, label, dimmed }) {
+  return (
+    <label
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "6px",
+        cursor: "pointer",
+        opacity: dimmed ? 0.45 : 1,
+        fontSize: "0.75rem",
+        color: "#334155",
+        padding: "3px 0",
+      }}
+    >
+      <div
+        onClick={(e) => {
+          e.preventDefault();
+          if (!dimmed) onChange();
+        }}
+        style={{
+          width: "16px",
+          height: "16px",
+          borderRadius: 4,
+          border: `2px solid ${checked ? "#b38e19" : "#cbd5e1"}`,
+          background: checked ? "#b38e19" : "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          transition: "0.15s",
+        }}
+      >
+        {checked && (
+          <svg width="8" height="6" viewBox="0 0 10 8" fill="none">
+            <path
+              d="M1 4L3.5 6.5L9 1"
+              stroke="white"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+      </div>
+      <span
+        style={{
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {label}
+      </span>
+    </label>
+  );
+}
+
+function SectionCard({ sectionKey, fields, visibility, toggle, t, isArabic }) {
+  const masterKey = SECTION_MASTER[sectionKey];
+  const sectionEnabled = visibility[sectionKey]?.[masterKey] ?? true;
+  return (
+    <div
+      style={{
+        background: "#fff",
+        borderRadius: "8px",
+        border: `1px solid #e2e8f0`,
+        overflow: "hidden",
+        marginBottom: "8px",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.02)",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "8px 10px",
+          background: sectionEnabled ? "#19355a" : "#94a3b8",
+          cursor: "pointer",
+        }}
+        onClick={() => toggle(sectionKey, masterKey)}
+      >
+        <span style={{ color: "#fff", fontWeight: 700, fontSize: "0.75rem" }}>
+          {t(`manage.sections.${sectionKey}`)}
+        </span>
+        <div
+          style={{
+            width: "26px",
+            height: "14px",
+            borderRadius: 99,
+            background: sectionEnabled ? "#b38e19" : "rgba(255,255,255,0.4)",
+            position: "relative",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              transform: "translateY(-50%)",
+              [isArabic ? "right" : "left"]: sectionEnabled ? "14px" : "2px",
+              width: "10px",
+              height: "10px",
+              borderRadius: "50%",
+              background: "#fff",
+              transition: "0.2s",
+            }}
+          />
+        </div>
+      </div>
+      {sectionEnabled && (
+        <div
+          style={{
+            padding: "6px 10px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {fields.map((field) => (
+            <CheckboxItem
+              key={field}
+              checked={visibility[sectionKey]?.[field] ?? true}
+              onChange={() => toggle(sectionKey, field)}
+              label={t(`manage.fields.${field}`)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function CVPage() {
   const { t, i18n } = useTranslation("CV");
   const isArabic = i18n.language === "ar";
-  const navigate = useNavigate();
   const [selectedTemplate, setSelectedTemplate] = useState(1);
+
   const { data, loading, error, reload } = useCV();
+  const { visibility, toggle } = useCVManage();
 
   const TemplateComponent = TEMPLATE_COMPONENTS[selectedTemplate];
 
@@ -40,20 +390,18 @@ export default function CVPage() {
     const area = document.getElementById("cv-print-area");
     if (!area) return;
     const content = area.outerHTML;
-    const win = window.open("", "_blank", "width=960,height=720");
+    const win = window.open("", "_blank", "width=1000,height=800");
     if (!win) return;
     win.document.write(`
       <!DOCTYPE html>
       <html dir="${isArabic ? "rtl" : "ltr"}">
       <head>
         <meta charset="UTF-8"/>
-        <title>CV</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com"/>
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
         <style>
+          @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@400;700&display=swap');
           *{box-sizing:border-box;margin:0;padding:0;}
-          body{font-family:${isArabic ? "'Cairo'" : "'Inter'"}, sans-serif;background:#fff;padding:clamp(10px,2vw,30px);}
-          @media print{body{padding:0;}@page{margin:12mm;}}
+          body{font-family:${isArabic ? "'Cairo'" : "'Inter'"}, sans-serif; padding: 20px;}
+          @media print { body { padding: 0; } @page { margin: 1cm; } }
         </style>
       </head>
       <body>${content}</body>
@@ -63,218 +411,203 @@ export default function CVPage() {
     setTimeout(() => {
       win.focus();
       win.print();
-    }, 600);
+    }, 500);
   };
 
   return (
     <ResponsiveLayoutProvider>
       <div
         dir={isArabic ? "rtl" : "ltr"}
-        style={{ padding: "clamp(8px,1vw,24px)" }}
+        style={{ padding: "20px", background: "#f8fafc", minHeight: "100vh" }}
       >
-        {/* Page header */}
+        {/* Header */}
         <div
-          className="flex flex-wrap items-center justify-between gap-3 mb-4"
-          style={{ marginBottom: "clamp(10px,1.2vw,20px)" }}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "20px",
+          }}
         >
-          <div className="flex items-center gap-2">
-            <FileText
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div
               style={{
-                color: "#19355a",
-                width: "clamp(20px,1.8vw,32px)",
-                height: "clamp(20px,1.8vw,32px)",
+                background: "#19355a",
+                p: "8px",
+                borderRadius: "8px",
+                display: "flex",
               }}
-            />
+            >
+              <FileText color="#fff" size={24} />
+            </div>
             <h1
               style={{
-                fontSize: "clamp(1rem,1.6vw,1.8rem)",
+                fontSize: "1.5rem",
                 fontWeight: 800,
                 color: "#19355a",
+                margin: 0,
               }}
             >
               {t("pageTitle")}
             </h1>
           </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => navigate("/manage-cv")}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "clamp(4px,0.4vw,8px)",
-                padding: "clamp(6px,0.6vw,10px) clamp(12px,1.2vw,20px)",
-                fontSize: "clamp(0.65rem,0.85vw,0.95rem)",
-                fontWeight: 600,
-                background: "#19355a",
-                color: "#fff",
-                border: "none",
-                borderRadius: "clamp(4px,0.4vw,8px)",
-                cursor: "pointer",
-              }}
-            >
-              <Pencil
-                style={{
-                  width: "clamp(14px,1.2vw,20px)",
-                  height: "clamp(14px,1.2vw,20px)",
-                }}
-              />
-              {t("editCV")}
-            </button>
-
+          <div style={{ display: "flex", gap: "10px" }}>
             <button
               onClick={handlePrint}
-              disabled={loading || !!error || !data}
+              disabled={loading || !data}
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "clamp(4px,0.4vw,8px)",
-                padding: "clamp(6px,0.6vw,10px) clamp(12px,1.2vw,20px)",
-                fontSize: "clamp(0.65rem,0.85vw,0.95rem)",
-                fontWeight: 600,
-                background: loading || error || !data ? "#94a3b8" : "#b38e19",
+                gap: "8px",
+                padding: "10px 18px",
+                background: "#b38e19",
                 color: "#fff",
                 border: "none",
-                borderRadius: "clamp(4px,0.4vw,8px)",
-                cursor: loading || error || !data ? "not-allowed" : "pointer",
+                borderRadius: "8px",
+                fontWeight: 600,
+                cursor: "pointer",
               }}
             >
-              <Printer
-                style={{
-                  width: "clamp(14px,1.2vw,20px)",
-                  height: "clamp(14px,1.2vw,20px)",
-                }}
-              />
-              {t("print")}
+              <Printer size={18} /> {t("print")}
             </button>
           </div>
         </div>
 
-        {/* Template selector */}
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "clamp(6px,0.7vw,12px)",
-            marginBottom: "clamp(12px,1.5vw,24px)",
-            background: "#f8fafc",
-            borderRadius: "clamp(6px,0.6vw,12px)",
-            padding: "clamp(8px,0.8vw,14px)",
-            border: "1px solid #e2e8f0",
-          }}
-        >
-          <span
-            style={{
-              alignSelf: "center",
-              fontSize: "clamp(0.62rem,0.78vw,0.85rem)",
-              fontWeight: 700,
-              color: "#64748b",
-              marginInlineEnd: "clamp(4px,0.4vw,8px)",
-            }}
-          >
-            {t("chooseTemplate")}:
-          </span>
-
-          {TEMPLATES.map((tpl) => (
-            <button
-              key={tpl.id}
-              onClick={() => setSelectedTemplate(tpl.id)}
+        {/* Main Flex Container (Aligned Start/Top) */}
+        <div style={{ display: "flex", gap: "24px", alignItems: "flex-start" }}>
+          {/* Main Area (Templates) */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {/* Tabs Selector */}
+            <div
               style={{
-                padding: "clamp(5px,0.55vw,9px) clamp(12px,1.2vw,20px)",
-                fontSize: "clamp(0.62rem,0.78vw,0.88rem)",
-                fontWeight: 600,
-                borderRadius: "clamp(4px,0.4vw,8px)",
-                border:
-                  selectedTemplate === tpl.id
-                    ? "2px solid #19355a"
-                    : "2px solid #e2e8f0",
-                background: selectedTemplate === tpl.id ? "#19355a" : "#fff",
-                color: selectedTemplate === tpl.id ? "#fff" : "#334155",
-                cursor: "pointer",
-                transition: "all 0.18s",
+                background: "#fff",
+                borderRadius: "12px",
+                padding: "12px",
+                border: "1px solid #e2e8f0",
+                marginBottom: "20px",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
+                alignItems: "center",
               }}
             >
-              {tpl.id}. {t(`templates.${tpl.key}`)}
-            </button>
-          ))}
-        </div>
+              <span
+                style={{
+                  fontWeight: 700,
+                  color: "#64748b",
+                  fontSize: "0.85rem",
+                  marginInlineEnd: "10px",
+                }}
+              >
+                {t("chooseTemplate")}:
+              </span>
+              {TEMPLATES.map((tpl) => (
+                <button
+                  key={tpl.id}
+                  onClick={() => setSelectedTemplate(tpl.id)}
+                  style={{
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+                    fontWeight: 700,
+                    fontSize: "0.85rem",
+                    cursor: "pointer",
+                    transition: "0.2s",
+                    background:
+                      selectedTemplate === tpl.id ? "#19355a" : "#fff",
+                    color: selectedTemplate === tpl.id ? "#fff" : "#19355a",
+                    border: `2px solid ${selectedTemplate === tpl.id ? "#19355a" : "#e2e8f0"}`,
+                  }}
+                >
+                  {tpl.id}. {t(`templates.${tpl.key}`)}
+                </button>
+              ))}
+            </div>
 
-        {/* CV display area */}
-        {loading && (
-          <div
-            className="flex justify-center items-center"
-            style={{
-              minHeight: "clamp(200px,30vw,400px)",
-              fontSize: "clamp(0.75rem,1vw,1rem)",
-              color: "#64748b",
-            }}
-          >
-            <div className="flex flex-col items-center gap-3">
+            {/* Template Render */}
+            {loading ? (
               <div
                 style={{
-                  width: "clamp(28px,3vw,48px)",
-                  height: "clamp(28px,3vw,48px)",
-                  borderRadius: "50%",
-                  border: "3px solid #e2e8f0",
-                  borderTopColor: "#19355a",
-                  animation: "spin 0.8s linear infinite",
+                  display: "flex",
+                  justifyContent: "center",
+                  p: "100px",
                 }}
-              />
-              <span>{t("loading")}</span>
+              >
+                <RefreshCw className="animate-spin" color="#19355a" size={40} />
+              </div>
+            ) : (
+              data && (
+                <div
+                  id="cv-print-area"
+                  style={{
+                    background: "#fff",
+                    boxShadow: "0 4px 25px rgba(0,0,0,0.06)",
+                    borderRadius: "10px",
+                    border: "1px solid #eee",
+                  }}
+                >
+                  <TemplateComponent
+                    data={data}
+                    isArabic={isArabic}
+                    t={t}
+                    visibility={visibility}
+                  />
+                </div>
+              )
+            )}
+          </div>
+
+          {/* Right Sidebar (Manage Sections) */}
+          <div style={{ width: "320px", position: "sticky", top: "20px" }}>
+            <div
+              style={{
+                background: "#fff",
+                border: "1px solid #e2e8f0",
+                borderRadius: "12px",
+                padding: "20px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  marginBottom: "20px",
+                }}
+              >
+                <Settings2 size={20} color="#19355a" />
+                <h3 style={{ fontWeight: 800, color: "#19355a", margin: 0 }}>
+                  {t("manage.pageTitle")}
+                </h3>
+              </div>
+
+              {/* Scrollable list of 22 sections */}
+              <div
+                style={{
+                  maxHeight: "calc(100vh - 220px)",
+                  overflowY: "auto",
+                  paddingRight: "6px",
+                }}
+              >
+                {SECTIONS.map((section) => (
+                  <SectionCard
+                    key={section.key}
+                    sectionKey={section.key}
+                    fields={section.fields}
+                    visibility={visibility}
+                    toggle={toggle}
+                    t={t}
+                    isArabic={isArabic}
+                  />
+                ))}
+              </div>
+
+
             </div>
           </div>
-        )}
-
-        {error && !loading && (
-          <div
-            className="flex justify-center items-center flex-col gap-3"
-            style={{ minHeight: "clamp(200px,25vw,300px)" }}
-          >
-            <p
-              style={{
-                color: "#b91c1c",
-                fontSize: "clamp(0.75rem,1vw,1rem)",
-              }}
-            >
-              {t("error")}
-            </p>
-            <button
-              onClick={reload}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "clamp(6px,0.6vw,10px) clamp(14px,1.4vw,22px)",
-                background: "#19355a",
-                color: "#fff",
-                border: "none",
-                borderRadius: 6,
-                cursor: "pointer",
-                fontSize: "clamp(0.65rem,0.82vw,0.9rem)",
-                fontWeight: 600,
-              }}
-            >
-              <RefreshCw
-                style={{
-                  width: "clamp(14px,1.2vw,18px)",
-                  height: "clamp(14px,1.2vw,18px)",
-                }}
-              />
-              {t("retry")}
-            </button>
-          </div>
-        )}
-
-        {!loading && !error && data && (
-          <div style={{ overflowX: "auto" }}>
-            <TemplateComponent data={data} isArabic={isArabic} t={t} />
-          </div>
-        )}
-
-        <style>{`
-          @keyframes spin { to { transform: rotate(360deg); } }
-        `}</style>
+        </div>
       </div>
+      <style>{`@keyframes spin { from {transform: rotate(0deg);} to {transform: rotate(360deg);} } .animate-spin { animation: spin 1s linear infinite; }`}</style>
     </ResponsiveLayoutProvider>
   );
 }

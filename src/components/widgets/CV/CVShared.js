@@ -267,3 +267,224 @@ export const buildSections = (data, isArabic, t, fmtFn) => {
     },
   ].filter((s) => s.items?.length > 0);
 };
+
+/**
+ * Returns a shallow copy of `data` with fields/sections hidden
+ * based on the `visibility` state from useCVManage.
+ * All templates call this before rendering so the CV updates in real-time.
+ */
+export const applyVisibility = (data, visibility) => {
+  if (!data || !visibility) return data;
+  const v = visibility;
+  const d = { ...data };
+
+  // Helper: apply master toggle + field-level masking to an array section
+  const maskItems = (items, secVis, masterKey, fieldMap) => {
+    if (!items) return [];
+    if (secVis?.[masterKey] === false) return [];
+    return items.map((item) => {
+      const masked = { ...item };
+      for (const [visKey, dataKey] of Object.entries(fieldMap)) {
+        if (secVis?.[visKey] === false) {
+          masked[dataKey] = Array.isArray(masked[dataKey]) ? [] : null;
+        }
+      }
+      return masked;
+    });
+  };
+
+  // --- personalData ---
+  if (v.personalData?.showPersonalData === false) {
+    d.university = null; d.authority = null; d.department = null;
+    d.birthDate = null; d.profilePicture = null; d.skills = [];
+  } else {
+    if (v.personalData?.showUniversity === false) d.university = null;
+    if (v.personalData?.showAuthority === false) d.authority = null;
+    if (v.personalData?.showDepartment === false) d.department = null;
+    if (v.personalData?.showBirthDate === false) d.birthDate = null;
+    if (v.personalData?.showProfilePicture === false) d.profilePicture = null;
+    if (v.personalData?.showSkills === false) d.skills = [];
+  }
+
+  // --- contactInfo ---
+  if (v.contactInfo?.showContactInfo === false) {
+    d.mainPhoneNumber = null; d.workPhoneNumber = null;
+    d.officialEmail = null; d.faxNumber = null;
+  } else {
+    if (v.contactInfo?.showMainPhone === false) d.mainPhoneNumber = null;
+    if (v.contactInfo?.showWorkPhone === false) d.workPhoneNumber = null;
+    if (v.contactInfo?.showOfficialEmail === false) d.officialEmail = null;
+    if (v.contactInfo?.showFax === false) d.faxNumber = null;
+  }
+
+  // --- socialMedia ---
+  if (v.socialMedia?.showSocialMedia === false) {
+    d.linkedIn = null; d.instagram = null; d.personalWebsite = null;
+    d.googleScholar = null; d.scopus = null; d.facebook = null;
+    d.x = null; d.youTube = null;
+  } else {
+    if (v.socialMedia?.showLinkedIn === false) d.linkedIn = null;
+    if (v.socialMedia?.showInstagram === false) d.instagram = null;
+    if (v.socialMedia?.showPersonalWebsite === false) d.personalWebsite = null;
+    if (v.socialMedia?.showGoogleScholar === false) d.googleScholar = null;
+    if (v.socialMedia?.showScopus === false) d.scopus = null;
+    if (v.socialMedia?.showFacebook === false) d.facebook = null;
+    if (v.socialMedia?.showX === false) d.x = null;
+    if (v.socialMedia?.showYouTube === false) d.youTube = null;
+  }
+
+  // --- academicQualifications ---
+  d.academicQualifications = maskItems(d.academicQualifications, v.academicQualifications, "showAcademicQualifications", {
+    showQualification: "qualification",
+    showSpecialization: "specialization",
+    showGrade: "grade",
+    showDispatchType: "dispatchType",
+    showUniversityOrFaculty: "universityOrFaculty",
+    showCountryOrCity: "countryOrCity",
+    showDateOfObtainingTheQualification: "dateOfObtainingTheQualification",
+  });
+
+  // --- jobRanks ---
+  d.jobRanks = maskItems(d.jobRanks, v.jobRanks, "showJobRanks", {
+    showJobRank: "jobRank",
+    showDateOfJobRank: "dateOfJobRank",
+  });
+
+  // --- administrativePositions ---
+  d.administrativePositions = maskItems(d.administrativePositions, v.administrativePositions, "showAdministrativePositions", {
+    showPosition: "position",
+    showPositionStartDate: "startDate",
+    showPositionEndDate: "endDate",
+  });
+
+  // --- conferencesAndSeminars ---
+  d.conferencesAndSeminars = maskItems(d.conferencesAndSeminars, v.conferencesAndSeminars, "showConferencesAndSeminars", {
+    showConferenceOrSeminarName: "name",
+    showConferenceOrSeminarRoleOfParticipation: "roleOfParticipation",
+    showConferenceOrSeminarOrganizingAuthority: "organizingAuthority",
+    showConferenceOrSeminarWebsite: "website",
+    showConferenceOrSeminarStartDate: "startDate",
+    showConferenceOrSeminarEndDate: "endDate",
+    showConferenceOrSeminarVenue: "venue",
+  });
+
+  // --- scientificMissions ---
+  d.scientificMissions = maskItems(d.scientificMissions, v.scientificMissions, "showScientificMissions", {
+    showMissionName: "missionName",
+    showMissionStartDate: "startDate",
+    showMissionEndDate: "endDate",
+    showMissionUniversityOrFaculty: "universityOrFaculty",
+    showMissionCountryOrCity: "countryOrCity",
+  });
+
+  // --- trainingPrograms ---
+  d.trainingPrograms = maskItems(d.trainingPrograms, v.trainingPrograms, "showTrainingPrograms", {
+    showTrainingProgramName: "trainingProgramName",
+    showTrainingProgramVenue: "venue",
+    showTrainingProgramStartDate: "startDate",
+    showTrainingProgramEndDate: "endDate",
+  });
+
+  // --- committeesAndAssociations ---
+  d.committeesAndAssociations = maskItems(d.committeesAndAssociations, v.committeesAndAssociations, "showCommitteesAndAssociations", {
+    showNameOfCommitteeOrAssociation: "nameOfCommitteeOrAssociation",
+    showTypeOfCommitteeOrAssociation: "typeOfCommitteeOrAssociation",
+    showDegreeOfSubscription: "degreeOfSubscription",
+    showCommitteesAndAssociationsStartDate: "startDate",
+    showCommitteesAndAssociationsEndDate: "endDate",
+  });
+
+  // --- participationInMagazines ---
+  d.participationInMagazines = maskItems(d.participationInMagazines, v.participationInMagazines, "showParticipationInMagazines", {
+    showNameOfMagazine: "nameOfMagazine",
+    showWebsiteOfMagazine: "websiteOfMagazine",
+    showTypeOfParticipation: "typeOfParticipation",
+  });
+
+  // --- reviewingArticles ---
+  d.reviewingArticles = maskItems(d.reviewingArticles, v.reviewingArticles, "showReviewingArticles", {
+    showTitleOfArticle: "titleOfArticle",
+    showAuthority: "authority",
+    showReviewingDate: "reviewingDate",
+  });
+
+  // --- projects ---
+  d.projects = maskItems(d.projects, v.projects, "showProjects", {
+    showNameOfProject: "nameOfProject",
+    showTypeOfProject: "typeOfProject",
+    showParticipationRole: "participationRole",
+    showFinancingAuthority: "financingAuthority",
+    showProjectStartDate: "startDate",
+    showProjectEndDate: "endDate",
+  });
+
+  // --- teachingExperiences ---
+  d.teachingExperiences = maskItems(d.teachingExperiences, v.teachingExperiences, "showTeachingExperiences", {
+    showCourseName: "courseName",
+    showAcademicLevel: "academicLevel",
+    showUniversityOrFaculty: "universityOrFaculty",
+    showTeachingExperienceStartDate: "startDate",
+    showTeachingExperienceEndDate: "endDate",
+  });
+
+  // --- generalExperiences ---
+  d.generalExperiences = maskItems(d.generalExperiences, v.generalExperiences, "showGeneralExperiences", {
+    showExperienceTitle: "experienceTitle",
+    showAuthority: "authority",
+    showCountryOrCity: "countryOrCity",
+    showStartDate: "startDate",
+    showEndDate: "endDate",
+  });
+
+  // --- scientificWritings ---
+  d.scientificWritings = maskItems(d.scientificWritings, v.scientificWritings, "showScientificWritings", {
+    showTitle: "title",
+    showAuthorRole: "authorRole",
+    showISBN: "isbn",
+    showPublishingHouse: "publishingHouse",
+    showPublishingDate: "publishingDate",
+  });
+
+  // --- patents ---
+  d.patents = maskItems(d.patents, v.patents, "showPatents", {
+    showNameOfPatent: "nameOfPatent",
+    showAccreditingAuthorityOrCountry: "accreditingAuthorityOrCountry",
+    showAccreditationDate: "accreditationDate",
+  });
+
+  // --- prizesAndRewards ---
+  d.prizesAndRewards = maskItems(d.prizesAndRewards, v.prizesAndRewards, "showPrizesAndRewards", {
+    showPrizeName: "prize",
+    showawardingAuthority: "awardingAuthority",
+    showDateReceived: "dateReceived",
+  });
+
+  // --- manifestationsOfScientificAppreciation ---
+  d.manifestationsOfScientificAppreciation = maskItems(d.manifestationsOfScientificAppreciation, v.manifestationsOfScientificAppreciation, "showManifestationsOfScientificAppreciation", {
+    showTitleOfAppreciation: "titleOfAppreciation",
+    showIssuingAuthority: "issuingAuthority",
+    showDateOfAppreciation: "dateOfAppreciation",
+  });
+
+  // --- contributionsToCommunityService ---
+  d.contributionsToCommunityService = maskItems(d.contributionsToCommunityService, v.contributionsToCommunityService, "showContributionsToCommunityService", {
+    showContributionTitle: "contributionTitle",
+    showDateOfContribution: "dateOfContribution",
+  });
+
+  // --- contributionsToUniversity ---
+  d.contributionsToUniversity = maskItems(d.contributionsToUniversity, v.contributionsToUniversity, "showContributionsToUniversity", {
+    showContributionTitle: "contributionTitle",
+    showTypeOfContribution: "typeOfContribution",
+    showDateOfContribution: "dateOfContribution",
+  });
+
+  // --- participationInQualityWork ---
+  d.participationInQualityWork = maskItems(d.participationInQualityWork, v.participationInQualityWork, "showparticipationsInQualityWork", {
+    showparticipationTitle: "participationTitle",
+    showParticipationStartDate: "startDate",
+    showParticipationEndDate: "endDate",
+  });
+
+  return d;
+};

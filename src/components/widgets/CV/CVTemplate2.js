@@ -1,6 +1,6 @@
 ﻿// Template 2 — Classic (single-column, minimal, traditional academic look)
 import React from "react";
-import { getVal, fmt, buildSections } from "./CVShared";
+import { getVal, fmt, buildSections, applyVisibility } from "./CVShared";
 
 const DARK = "#1a1a2e";
 const GRAY = "#64748b";
@@ -69,8 +69,9 @@ function InfoLine({ children }) {
   );
 }
 
-export default function CVTemplate2({ data, isArabic, t }) {
-  if (!data) return null;
+export default function CVTemplate2({ data: rawData, isArabic, t, visibility }) {
+  if (!rawData) return null;
+  const data = applyVisibility(rawData, visibility);
   const dir = isArabic ? "rtl" : "ltr";
 
   const sections = buildSections(data, isArabic, t);
