@@ -44,6 +44,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const navItems = [
     { key: "home", icon: <Home />, link: "/profile" },
     { key: "personalInfo", icon: <User />, link: "/personal-data" },
+    { key: "cv", icon: <User />, link: "/cv" },
     {
       key: "researchAndSupervision",
       icon: <BookOpenText />,

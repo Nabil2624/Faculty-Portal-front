@@ -104,7 +104,12 @@ const CONTACT_FIELDS = [
   { key: "faxNumber", labelKey: "contact.fax" },
 ];
 
-export default function CVTemplate1({ data: rawData, isArabic, t, visibility }) {
+export default function CVTemplate1({
+  data: rawData,
+  isArabic,
+  t,
+  visibility,
+}) {
   if (!rawData) return null;
   const data = applyVisibility(rawData, visibility);
 
@@ -180,6 +185,14 @@ export default function CVTemplate1({ data: rawData, isArabic, t, visibility }) 
           {uniVal && <span>{uniVal}</span>}
           {authVal && <span>·</span>}
           {authVal && <span>{authVal}</span>}
+          {data.birthDate && (
+            <>
+              {(deptVal || uniVal || authVal) && <span>·</span>}
+              <span>
+                {t("fields.date")}: {fmt(data.birthDate, isArabic)}
+              </span>
+            </>
+          )}
         </div>
       </div>
 
@@ -251,27 +264,6 @@ export default function CVTemplate1({ data: rawData, isArabic, t, visibility }) 
                   {data[f.key]}
                 </div>
               ))}
-            </div>
-          )}
-
-          {data.birthDate && (
-            <div style={{ marginBottom: 8 }}>
-              <div
-                style={{
-                  fontSize: "clamp(0.6rem,0.8vw,0.85rem)",
-                  color: "#64748b",
-                }}
-              >
-                {t("fields.date")}:
-              </div>
-              <div
-                style={{
-                  fontSize: "clamp(0.65rem,0.82vw,0.9rem)",
-                  color: "#1e293b",
-                }}
-              >
-                {fmt(data.birthDate, isArabic)}
-              </div>
             </div>
           )}
 
