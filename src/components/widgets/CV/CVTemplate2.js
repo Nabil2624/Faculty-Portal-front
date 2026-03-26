@@ -69,7 +69,12 @@ function InfoLine({ children }) {
   );
 }
 
-export default function CVTemplate2({ data: rawData, isArabic, t, visibility }) {
+export default function CVTemplate2({
+  data: rawData,
+  isArabic,
+  t,
+  visibility,
+}) {
   if (!rawData) return null;
   const data = applyVisibility(rawData, visibility);
   const dir = isArabic ? "rtl" : "ltr";
@@ -106,7 +111,8 @@ export default function CVTemplate2({ data: rawData, isArabic, t, visibility }) 
         >
           {data.name}
         </div>
-        {(getVal(data.title, isArabic) || getVal(data.department, isArabic)) && (
+        {(getVal(data.title, isArabic) ||
+          getVal(data.department, isArabic)) && (
           <div
             style={{
               fontSize: "clamp(0.8rem,1.1vw,1.1rem)",
@@ -120,7 +126,8 @@ export default function CVTemplate2({ data: rawData, isArabic, t, visibility }) 
               .join(" · ")}
           </div>
         )}
-        {(getVal(data.university, isArabic) || getVal(data.authority, isArabic)) && (
+        {(getVal(data.university, isArabic) ||
+          getVal(data.authority, isArabic)) && (
           <div
             style={{
               fontSize: "clamp(0.7rem,0.9vw,0.95rem)",
@@ -128,7 +135,10 @@ export default function CVTemplate2({ data: rawData, isArabic, t, visibility }) 
               marginTop: 4,
             }}
           >
-            {[getVal(data.university, isArabic), getVal(data.authority, isArabic)]
+            {[
+              getVal(data.university, isArabic),
+              getVal(data.authority, isArabic),
+            ]
               .filter(Boolean)
               .join(" · ")}
           </div>

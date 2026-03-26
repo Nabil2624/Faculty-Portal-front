@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Printer,
-  RefreshCw,
-  FileText,
-  Settings2,
-} from "lucide-react";
+import { Printer, RefreshCw, FileText, Settings2 } from "lucide-react";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import useCV from "../hooks/useCV";
@@ -601,8 +596,6 @@ export default function CVPage() {
                   />
                 ))}
               </div>
-
-
             </div>
           </div>
         </div>

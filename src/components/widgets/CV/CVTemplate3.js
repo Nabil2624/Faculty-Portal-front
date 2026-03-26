@@ -1,6 +1,12 @@
 ﻿// Template 3 — Academic (gold top bar, split header, navy table-style sections)
 import React from "react";
-import { getVal, fmt, dateRange, buildSections, applyVisibility } from "./CVShared";
+import {
+  getVal,
+  fmt,
+  dateRange,
+  buildSections,
+  applyVisibility,
+} from "./CVShared";
 
 const NAVY = "#19355a";
 const GOLD = "#b38e19";
@@ -129,11 +135,26 @@ function renderDetailedCard(sec, item, i, t, isArabic) {
           {getVal(item.qualification, isArabic)}
           {item.specialization ? ` — ${item.specialization}` : ""}
         </EntryTitle>
-        <TableRow label={t("fields.grade")} value={getVal(item.grade, isArabic)} />
-        <TableRow label={t("fields.dispatchType")} value={getVal(item.dispatchType, isArabic)} />
-        <TableRow label={t("fields.universityOrFaculty")} value={item.universityOrFaculty} />
-        <TableRow label={t("fields.countryOrCity")} value={item.countryOrCity} />
-        <TableRow label={t("fields.dateObtained")} value={fmt(item.dateOfObtainingTheQualification, isArabic)} />
+        <TableRow
+          label={t("fields.grade")}
+          value={getVal(item.grade, isArabic)}
+        />
+        <TableRow
+          label={t("fields.dispatchType")}
+          value={getVal(item.dispatchType, isArabic)}
+        />
+        <TableRow
+          label={t("fields.universityOrFaculty")}
+          value={item.universityOrFaculty}
+        />
+        <TableRow
+          label={t("fields.countryOrCity")}
+          value={item.countryOrCity}
+        />
+        <TableRow
+          label={t("fields.dateObtained")}
+          value={fmt(item.dateOfObtainingTheQualification, isArabic)}
+        />
       </EntryCard>
     );
   }
@@ -142,7 +163,10 @@ function renderDetailedCard(sec, item, i, t, isArabic) {
       <EntryCard key={i}>
         <EntryTitle>{item.experienceTitle}</EntryTitle>
         <TableRow label={t("fields.authority")} value={item.authority} />
-        <TableRow label={t("fields.countryOrCity")} value={item.countryOrCity} />
+        <TableRow
+          label={t("fields.countryOrCity")}
+          value={item.countryOrCity}
+        />
         <Meta>{dateRange(item.startDate, item.endDate, isArabic)}</Meta>
       </EntryCard>
     );
@@ -151,8 +175,14 @@ function renderDetailedCard(sec, item, i, t, isArabic) {
     return (
       <EntryCard key={i}>
         <EntryTitle>{item.courseName}</EntryTitle>
-        <TableRow label={t("fields.academicLevel")} value={item.academicLevel} />
-        <TableRow label={t("fields.universityOrFaculty")} value={item.universityOrFaculty} />
+        <TableRow
+          label={t("fields.academicLevel")}
+          value={item.academicLevel}
+        />
+        <TableRow
+          label={t("fields.universityOrFaculty")}
+          value={item.universityOrFaculty}
+        />
         <Meta>{dateRange(item.startDate, item.endDate, isArabic)}</Meta>
       </EntryCard>
     );
@@ -161,8 +191,14 @@ function renderDetailedCard(sec, item, i, t, isArabic) {
     return (
       <EntryCard key={i}>
         <EntryTitle>{item.name}</EntryTitle>
-        <TableRow label={t("fields.role")} value={getVal(item.roleOfParticipation, isArabic)} />
-        <TableRow label={t("fields.authority")} value={item.organizingAuthority} />
+        <TableRow
+          label={t("fields.role")}
+          value={getVal(item.roleOfParticipation, isArabic)}
+        />
+        <TableRow
+          label={t("fields.authority")}
+          value={item.organizingAuthority}
+        />
         <TableRow label={t("fields.venue")} value={item.venue} />
         <Meta>{dateRange(item.startDate, item.endDate, isArabic)}</Meta>
       </EntryCard>
@@ -172,9 +208,18 @@ function renderDetailedCard(sec, item, i, t, isArabic) {
     return (
       <EntryCard key={i}>
         <EntryTitle>{item.nameOfProject}</EntryTitle>
-        <TableRow label={t("fields.type")} value={getVal(item.typeOfProject, isArabic)} />
-        <TableRow label={t("fields.role")} value={getVal(item.participationRole, isArabic)} />
-        <TableRow label={t("fields.financing")} value={item.financingAuthority} />
+        <TableRow
+          label={t("fields.type")}
+          value={getVal(item.typeOfProject, isArabic)}
+        />
+        <TableRow
+          label={t("fields.role")}
+          value={getVal(item.participationRole, isArabic)}
+        />
+        <TableRow
+          label={t("fields.financing")}
+          value={item.financingAuthority}
+        />
         <Meta>{dateRange(item.startDate, item.endDate, isArabic)}</Meta>
       </EntryCard>
     );
@@ -183,8 +228,14 @@ function renderDetailedCard(sec, item, i, t, isArabic) {
     return (
       <EntryCard key={i}>
         <EntryTitle>{item.title}</EntryTitle>
-        <TableRow label={t("fields.role")} value={getVal(item.authorRole, isArabic)} />
-        <TableRow label={t("fields.publishingHouse")} value={item.publishingHouse} />
+        <TableRow
+          label={t("fields.role")}
+          value={getVal(item.authorRole, isArabic)}
+        />
+        <TableRow
+          label={t("fields.publishingHouse")}
+          value={item.publishingHouse}
+        />
         <TableRow label={t("fields.isbn")} value={item.isbn} />
         <Meta>{fmt(item.publishingDate, isArabic)}</Meta>
       </EntryCard>
@@ -193,7 +244,12 @@ function renderDetailedCard(sec, item, i, t, isArabic) {
   return null;
 }
 
-export default function CVTemplate3({ data: rawData, isArabic, t, visibility }) {
+export default function CVTemplate3({
+  data: rawData,
+  isArabic,
+  t,
+  visibility,
+}) {
   if (!rawData) return null;
   const data = applyVisibility(rawData, visibility);
   const dir = isArabic ? "rtl" : "ltr";
@@ -376,7 +432,7 @@ export default function CVTemplate3({ data: rawData, isArabic, t, visibility }) 
             <SectionTitle isArabic={isArabic}>{t(sec.titleKey)}</SectionTitle>
             {DETAILED_KEYS.has(sec.key)
               ? sec.items.map((item, i) =>
-                  renderDetailedCard(sec, item, i, t, isArabic)
+                  renderDetailedCard(sec, item, i, t, isArabic),
                 )
               : sec.items.map((item, i) => (
                   <EntryCard key={i}>

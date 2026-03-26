@@ -1,6 +1,11 @@
 ﻿// Template 4 — Professional (navy sidebar + white main content)
 import React from "react";
-import { getVal, fmtShort as fmt, buildSections, applyVisibility } from "./CVShared";
+import {
+  getVal,
+  fmtShort as fmt,
+  buildSections,
+  applyVisibility,
+} from "./CVShared";
 
 const NAVY = "#19355a";
 const GOLD = "#b38e19";
@@ -107,7 +112,12 @@ const SOCIAL_ENTRIES = [
   { label: "YouTube", key: "youTube" },
 ];
 
-export default function CVTemplate4({ data: rawData, isArabic, t, visibility }) {
+export default function CVTemplate4({
+  data: rawData,
+  isArabic,
+  t,
+  visibility,
+}) {
   if (!rawData) return null;
   const data = applyVisibility(rawData, visibility);
   const dir = isArabic ? "rtl" : "ltr";
@@ -199,17 +209,28 @@ export default function CVTemplate4({ data: rawData, isArabic, t, visibility }) 
         )}
 
         <div style={{ flex: 1, overflow: "visible" }}>
-          {(data.officialEmail || data.mainPhoneNumber || data.workPhoneNumber || data.faxNumber) && (
+          {(data.officialEmail ||
+            data.mainPhoneNumber ||
+            data.workPhoneNumber ||
+            data.faxNumber) && (
             <SidebarSection title={t("sections.contactInfo")}>
-              {data.officialEmail && <SidebarText>{data.officialEmail}</SidebarText>}
+              {data.officialEmail && (
+                <SidebarText>{data.officialEmail}</SidebarText>
+              )}
               {data.mainPhoneNumber && (
-                <SidebarText>{t("contact.phone")}: {data.mainPhoneNumber}</SidebarText>
+                <SidebarText>
+                  {t("contact.phone")}: {data.mainPhoneNumber}
+                </SidebarText>
               )}
               {data.workPhoneNumber && (
-                <SidebarText>{t("contact.workPhone")}: {data.workPhoneNumber}</SidebarText>
+                <SidebarText>
+                  {t("contact.workPhone")}: {data.workPhoneNumber}
+                </SidebarText>
               )}
               {data.faxNumber && (
-                <SidebarText>{t("contact.fax")}: {data.faxNumber}</SidebarText>
+                <SidebarText>
+                  {t("contact.fax")}: {data.faxNumber}
+                </SidebarText>
               )}
             </SidebarSection>
           )}
@@ -247,7 +268,8 @@ export default function CVTemplate4({ data: rawData, isArabic, t, visibility }) 
             <SidebarSection title={t("sections.socialMedia")}>
               {socialLinks.map((l, i) => (
                 <SidebarText key={i}>
-                  {l.label ? `${l.label}: ` : ""}{l.val}
+                  {l.label ? `${l.label}: ` : ""}
+                  {l.val}
                 </SidebarText>
               ))}
             </SidebarSection>
@@ -263,7 +285,8 @@ export default function CVTemplate4({ data: rawData, isArabic, t, visibility }) 
           overflowY: "auto",
         }}
       >
-        {(getVal(data.department, isArabic) || getVal(data.university, isArabic)) && (
+        {(getVal(data.department, isArabic) ||
+          getVal(data.university, isArabic)) && (
           <div
             style={{
               background: "#f0f4f8",

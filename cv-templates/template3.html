@@ -1,0 +1,681 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>السيرة الذاتية - قالب أكاديمي</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Cairo", "Segoe UI", sans-serif;
+        background: #f8fafc;
+        padding: 20px;
+        direction: rtl;
+      }
+
+      .cv-wrap {
+        background: #fff;
+        max-width: 900px;
+        margin: 0 auto;
+        box-shadow: 0 4px 32px rgba(25, 53, 90, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      /* ── GOLD TOP BAR ── */
+      .top-bar {
+        height: 10px;
+        background: #b38e19;
+      }
+
+      /* ── SPLIT HEADER ── */
+      .cv-header {
+        display: flex;
+        flex-wrap: wrap;
+        background: #19355a;
+      }
+      .header-left {
+        flex: 1 1 55%;
+        padding: 36px;
+        border-left: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .header-right {
+        flex: 0 1 42%;
+        padding: 36px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+      }
+      .cv-header .name {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 6px;
+      }
+      .cv-header .job-title {
+        color: #b38e19;
+        font-weight: 600;
+        font-size: 1.05rem;
+        margin-bottom: 8px;
+      }
+      .cv-header .bio-short {
+        color: #cbd5e1;
+        font-size: 0.84rem;
+        line-height: 1.6;
+        max-width: 480px;
+      }
+      .meta-field {
+        color: #e2e8f0;
+        font-size: 0.87rem;
+      }
+      .meta-field .label {
+        color: #b38e19;
+        font-weight: 700;
+      }
+      .contact-small {
+        color: #e2e8f0;
+        font-size: 0.84rem;
+      }
+      .birthdate-small {
+        color: #94a3b8;
+        font-size: 0.8rem;
+      }
+
+      /* ── SKILL PILLS (header) ── */
+      .header-skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 8px;
+      }
+      .header-skill-pill {
+        background: rgba(179, 142, 25, 0.2);
+        color: #b38e19;
+        border-radius: 99px;
+        padding: 2px 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border: 1px solid #b38e19;
+      }
+
+      /* ── BODY ── */
+      .cv-body {
+        padding: 28px;
+        background: #fdf8ec;
+      }
+
+      /* ── SECTION TITLE ── */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 24px;
+        margin-bottom: 14px;
+      }
+      .section-title .bar {
+        width: 32px;
+        height: 3px;
+        background: #b38e19;
+        flex-shrink: 0;
+      }
+      .section-title .line {
+        flex: 1;
+        height: 1px;
+        background: #e2e8f0;
+      }
+      .section-title span {
+        color: #19355a;
+        font-weight: 800;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+      }
+
+      /* ── ENTRY CARD ── */
+      .entry-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-right: 3px solid #b38e19;
+        border-radius: 6px;
+        padding: 14px;
+        margin-bottom: 10px;
+      }
+      .entry-title {
+        font-weight: 700;
+        color: #19355a;
+        font-size: 0.92rem;
+        margin-bottom: 4px;
+      }
+      .entry-meta {
+        color: #64748b;
+        font-size: 0.78rem;
+        line-height: 1.5;
+      }
+
+      /* ── TABLE ROW (inside card) ── */
+      .table-row {
+        display: flex;
+        gap: 14px;
+        font-size: 0.84rem;
+        padding: 4px 0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .table-row .t-label {
+        color: #b38e19;
+        font-weight: 700;
+        min-width: 110px;
+        flex-shrink: 0;
+      }
+      .table-row .t-value {
+        color: #1e293b;
+        line-height: 1.5;
+      }
+
+      /* ── PRINT ── */
+      @media print {
+        body {
+          padding: 0;
+          background: #fff;
+        }
+        .cv-wrap {
+          box-shadow: none;
+          border-radius: 0;
+        }
+        @page {
+          margin: 1cm;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cv-wrap">
+      <div class="top-bar"></div>
+
+      <!-- HEADER -->
+      <div class="cv-header">
+        <div class="header-left">
+          <div class="name">{{name}}</div>
+          {{#if title}}
+          <div class="job-title">{{title}}</div>
+          {{/if}} {{#if bioSummary}}
+          <div class="bio-short">{{bioSummary}}</div>
+          {{/if}}
+        </div>
+        <div class="header-right">
+          {{#if department}}
+          <div class="meta-field">
+            <span class="label">القسم: </span>{{department}}
+          </div>
+          {{/if}} {{#if university}}
+          <div class="meta-field">
+            <span class="label">الجامعة: </span>{{university}}
+          </div>
+          {{/if}} {{#if authority}}
+          <div class="meta-field">
+            <span class="label">الجهة: </span>{{authority}}
+          </div>
+          {{/if}} {{#if officialEmail}}
+          <div class="contact-small">{{officialEmail}}</div>
+          {{/if}} {{#if mainPhoneNumber}}
+          <div class="contact-small">{{mainPhoneNumber}}</div>
+          {{/if}} {{#if workPhoneNumber}}
+          <div class="contact-small">هاتف العمل: {{workPhoneNumber}}</div>
+          {{/if}} {{#if faxNumber}}
+          <div class="contact-small">فاكس: {{faxNumber}}</div>
+          {{/if}} {{#if birthDate}}
+          <div class="birthdate-small">تاريخ الميلاد: {{birthDate}}</div>
+          {{/if}} {{#if skills.length}}
+          <div class="header-skills">
+            {{#each skills}}<span class="header-skill-pill">{{this}}</span
+            >{{/each}}
+          </div>
+          {{/if}}
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="cv-body">
+        <!-- المؤهلات العلمية -->
+        {{#if academicQualifications.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>المؤهلات العلمية</span>
+          <div class="line"></div>
+        </div>
+        {{#each academicQualifications}}
+        <div class="entry-card">
+          <div class="entry-title">
+            {{qualification}}{{#if specialization}} — {{specialization}}{{/if}}
+          </div>
+          {{#if grade}}
+          <div class="table-row">
+            <span class="t-label">التقدير</span
+            ><span class="t-value">{{grade}}</span>
+          </div>
+          {{/if}} {{#if dispatchType}}
+          <div class="table-row">
+            <span class="t-label">نوع الابتعاث</span
+            ><span class="t-value">{{dispatchType}}</span>
+          </div>
+          {{/if}} {{#if universityOrFaculty}}
+          <div class="table-row">
+            <span class="t-label">الجامعة / الكلية</span
+            ><span class="t-value">{{universityOrFaculty}}</span>
+          </div>
+          {{/if}} {{#if countryOrCity}}
+          <div class="table-row">
+            <span class="t-label">البلد / المدينة</span
+            ><span class="t-value">{{countryOrCity}}</span>
+          </div>
+          {{/if}} {{#if dateOfObtainingTheQualification}}
+          <div class="table-row">
+            <span class="t-label">تاريخ الحصول</span
+            ><span class="t-value">{{dateOfObtainingTheQualification}}</span>
+          </div>
+          {{/if}}
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- الدرجات الوظيفية -->
+        {{#if jobRanks.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>الدرجات الوظيفية</span>
+          <div class="line"></div>
+        </div>
+        {{#each jobRanks}}
+        <div class="entry-card">
+          <div class="entry-title">{{jobRank}}</div>
+          <div class="entry-meta">{{dateOfJobRank}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المناصب الإدارية -->
+        {{#if administrativePositions.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>المناصب الإدارية</span>
+          <div class="line"></div>
+        </div>
+        {{#each administrativePositions}}
+        <div class="entry-card">
+          <div class="entry-title">{{position}}</div>
+          <div class="entry-meta">{{startDate}} – {{endDate}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- الخبرات العامة -->
+        {{#if generalExperiences.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>الخبرات العامة</span>
+          <div class="line"></div>
+        </div>
+        {{#each generalExperiences}}
+        <div class="entry-card">
+          <div class="entry-title">{{experienceTitle}}</div>
+          {{#if authority}}
+          <div class="table-row">
+            <span class="t-label">الجهة</span
+            ><span class="t-value">{{authority}}</span>
+          </div>
+          {{/if}} {{#if countryOrCity}}
+          <div class="table-row">
+            <span class="t-label">البلد / المدينة</span
+            ><span class="t-value">{{countryOrCity}}</span>
+          </div>
+          {{/if}}
+          <div class="entry-meta">{{startDate}} – {{endDate}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- الخبرات التدريسية -->
+        {{#if teachingExperiences.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>الخبرات التدريسية</span>
+          <div class="line"></div>
+        </div>
+        {{#each teachingExperiences}}
+        <div class="entry-card">
+          <div class="entry-title">{{courseName}}</div>
+          {{#if academicLevel}}
+          <div class="table-row">
+            <span class="t-label">المستوى الأكاديمي</span
+            ><span class="t-value">{{academicLevel}}</span>
+          </div>
+          {{/if}} {{#if universityOrFaculty}}
+          <div class="table-row">
+            <span class="t-label">الجامعة / الكلية</span
+            ><span class="t-value">{{universityOrFaculty}}</span>
+          </div>
+          {{/if}}
+          <div class="entry-meta">{{startDate}} – {{endDate}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المهمات العلمية -->
+        {{#if scientificMissions.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>المهمات العلمية</span>
+          <div class="line"></div>
+        </div>
+        {{#each scientificMissions}}
+        <div class="entry-card">
+          <div class="entry-title">{{missionName}}</div>
+          <div class="entry-meta">
+            {{universityOrFaculty}} · {{countryOrCity}} · {{startDate}} –
+            {{endDate}}
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المؤتمرات والندوات -->
+        {{#if conferencesAndSeminars.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>المؤتمرات والندوات</span>
+          <div class="line"></div>
+        </div>
+        {{#each conferencesAndSeminars}}
+        <div class="entry-card">
+          <div class="entry-title">{{name}}</div>
+          {{#if roleOfParticipation}}
+          <div class="table-row">
+            <span class="t-label">دور المشاركة</span
+            ><span class="t-value">{{roleOfParticipation}}</span>
+          </div>
+          {{/if}} {{#if organizingAuthority}}
+          <div class="table-row">
+            <span class="t-label">الجهة المنظِّمة</span
+            ><span class="t-value">{{organizingAuthority}}</span>
+          </div>
+          {{/if}} {{#if venue}}
+          <div class="table-row">
+            <span class="t-label">مكان الانعقاد</span
+            ><span class="t-value">{{venue}}</span>
+          </div>
+          {{/if}}
+          <div class="entry-meta">{{startDate}} – {{endDate}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- البرامج التدريبية -->
+        {{#if trainingPrograms.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>البرامج التدريبية</span>
+          <div class="line"></div>
+        </div>
+        {{#each trainingPrograms}}
+        <div class="entry-card">
+          <div class="entry-title">{{trainingProgramName}}</div>
+          <div class="entry-meta">{{venue}} · {{startDate}} – {{endDate}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المشاريع -->
+        {{#if projects.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>المشاريع</span>
+          <div class="line"></div>
+        </div>
+        {{#each projects}}
+        <div class="entry-card">
+          <div class="entry-title">{{nameOfProject}}</div>
+          {{#if typeOfProject}}
+          <div class="table-row">
+            <span class="t-label">النوع</span
+            ><span class="t-value">{{typeOfProject}}</span>
+          </div>
+          {{/if}} {{#if participationRole}}
+          <div class="table-row">
+            <span class="t-label">دور المشاركة</span
+            ><span class="t-value">{{participationRole}}</span>
+          </div>
+          {{/if}} {{#if financingAuthority}}
+          <div class="table-row">
+            <span class="t-label">جهة التمويل</span
+            ><span class="t-value">{{financingAuthority}}</span>
+          </div>
+          {{/if}}
+          <div class="entry-meta">{{startDate}} – {{endDate}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المؤلفات العلمية -->
+        {{#if scientificWritings.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>المؤلفات العلمية</span>
+          <div class="line"></div>
+        </div>
+        {{#each scientificWritings}}
+        <div class="entry-card">
+          <div class="entry-title">{{title}}</div>
+          {{#if authorRole}}
+          <div class="table-row">
+            <span class="t-label">دور المؤلف</span
+            ><span class="t-value">{{authorRole}}</span>
+          </div>
+          {{/if}} {{#if publishingHouse}}
+          <div class="table-row">
+            <span class="t-label">دار النشر</span
+            ><span class="t-value">{{publishingHouse}}</span>
+          </div>
+          {{/if}} {{#if isbn}}
+          <div class="table-row">
+            <span class="t-label">ISBN</span
+            ><span class="t-value">{{isbn}}</span>
+          </div>
+          {{/if}}
+          <div class="entry-meta">{{publishingDate}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- براءات الاختراع -->
+        {{#if patents.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>براءات الاختراع</span>
+          <div class="line"></div>
+        </div>
+        {{#each patents}}
+        <div class="entry-card">
+          <div class="entry-title">{{nameOfPatent}}</div>
+          <div class="entry-meta">
+            {{accreditingAuthorityOrCountry}} · {{accreditationDate}}
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- اللجان والجمعيات -->
+        {{#if committeesAndAssociations.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>اللجان والجمعيات</span>
+          <div class="line"></div>
+        </div>
+        {{#each committeesAndAssociations}}
+        <div class="entry-card">
+          <div class="entry-title">{{nameOfCommitteeOrAssociation}}</div>
+          <div class="entry-meta">
+            {{typeOfCommitteeOrAssociation}} · {{degreeOfSubscription}} ·
+            {{startDate}} – {{endDate}}
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المشاركة في المجلات -->
+        {{#if participationInMagazines.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>المشاركة في المجلات</span>
+          <div class="line"></div>
+        </div>
+        {{#each participationInMagazines}}
+        <div class="entry-card">
+          <div class="entry-title">{{nameOfMagazine}}</div>
+          <div class="entry-meta">
+            {{typeOfParticipation}} · {{websiteOfMagazine}}
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- تحكيم المقالات -->
+        {{#if reviewingArticles.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>تحكيم المقالات</span>
+          <div class="line"></div>
+        </div>
+        {{#each reviewingArticles}}
+        <div class="entry-card">
+          <div class="entry-title">{{titleOfArticle}}</div>
+          <div class="entry-meta">{{authority}} · {{reviewingDate}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- الجوائز والمكافآت -->
+        {{#if prizesAndRewards.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>الجوائز والمكافآت</span>
+          <div class="line"></div>
+        </div>
+        {{#each prizesAndRewards}}
+        <div class="entry-card">
+          <div class="entry-title">{{prize}}</div>
+          <div class="entry-meta">{{awardingAuthority}} · {{dateReceived}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- مظاهر التقدير العلمي -->
+        {{#if manifestationsOfScientificAppreciation.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>مظاهر التقدير العلمي</span>
+          <div class="line"></div>
+        </div>
+        {{#each manifestationsOfScientificAppreciation}}
+        <div class="entry-card">
+          <div class="entry-title">{{titleOfAppreciation}}</div>
+          <div class="entry-meta">
+            {{issuingAuthority}} · {{dateOfAppreciation}}
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المساهمات لخدمة المجتمع -->
+        {{#if contributionsToCommunityService.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>المساهمات لخدمة المجتمع</span>
+          <div class="line"></div>
+        </div>
+        {{#each contributionsToCommunityService}}
+        <div class="entry-card">
+          <div class="entry-title">{{contributionTitle}}</div>
+          <div class="entry-meta">{{dateOfContribution}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المساهمات الجامعية -->
+        {{#if contributionsToUniversity.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>المساهمات الجامعية</span>
+          <div class="line"></div>
+        </div>
+        {{#each contributionsToUniversity}}
+        <div class="entry-card">
+          <div class="entry-title">{{contributionTitle}}</div>
+          <div class="entry-meta">
+            {{typeOfContribution}} · {{dateOfContribution}}
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المشاركة في أعمال الجودة -->
+        {{#if participationInQualityWork.length}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>المشاركة في أعمال الجودة</span>
+          <div class="line"></div>
+        </div>
+        {{#each participationInQualityWork}}
+        <div class="entry-card">
+          <div class="entry-title">{{participationTitle}}</div>
+          <div class="entry-meta">{{startDate}} – {{endDate}}</div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- التواصل الاجتماعي -->
+        {{#if hasSocial}}
+        <div class="section-title">
+          <div class="bar"></div>
+          <span>التواصل الاجتماعي</span>
+          <div class="line"></div>
+        </div>
+        <div class="entry-card">
+          {{#if linkedIn}}
+          <div class="table-row">
+            <span class="t-label">LinkedIn</span
+            ><span class="t-value">{{linkedIn}}</span>
+          </div>
+          {{/if}} {{#if googleScholar}}
+          <div class="table-row">
+            <span class="t-label">Google Scholar</span
+            ><span class="t-value">{{googleScholar}}</span>
+          </div>
+          {{/if}} {{#if scopus}}
+          <div class="table-row">
+            <span class="t-label">Scopus</span
+            ><span class="t-value">{{scopus}}</span>
+          </div>
+          {{/if}} {{#if personalWebsite}}
+          <div class="table-row">
+            <span class="t-label">الموقع الشخصي</span
+            ><span class="t-value">{{personalWebsite}}</span>
+          </div>
+          {{/if}} {{#if instagram}}
+          <div class="table-row">
+            <span class="t-label">Instagram</span
+            ><span class="t-value">{{instagram}}</span>
+          </div>
+          {{/if}} {{#if facebook}}
+          <div class="table-row">
+            <span class="t-label">Facebook</span
+            ><span class="t-value">{{facebook}}</span>
+          </div>
+          {{/if}} {{#if x}}
+          <div class="table-row">
+            <span class="t-label">X</span><span class="t-value">{{x}}</span>
+          </div>
+          {{/if}} {{#if youTube}}
+          <div class="table-row">
+            <span class="t-label">YouTube</span
+            ><span class="t-value">{{youTube}}</span>
+          </div>
+          {{/if}}
+        </div>
+        {{/if}}
+      </div>
+      <!-- /cv-body -->
+    </div>
+    <!-- /cv-wrap -->
+  </body>
+</html>

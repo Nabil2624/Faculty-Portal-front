@@ -1,0 +1,742 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>السيرة الذاتية - قالب جدول زمني</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Cairo", "Segoe UI", sans-serif;
+        background: #f8fafc;
+        padding: 20px;
+        direction: rtl;
+      }
+
+      .cv-wrap {
+        background: #fff;
+        max-width: 900px;
+        margin: 0 auto;
+        box-shadow: 0 4px 32px rgba(25, 53, 90, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      /* ── HEADER ── */
+      .cv-header {
+        background: #19355a;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+      }
+      /* Decorative circles */
+      .deco1 {
+        position: absolute;
+        top: -40px;
+        left: -40px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(179, 142, 25, 0.08);
+        pointer-events: none;
+      }
+      .deco2 {
+        position: absolute;
+        bottom: -60px;
+        right: -60px;
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        background: rgba(179, 142, 25, 0.06);
+        pointer-events: none;
+      }
+      .header-inner {
+        position: relative;
+        z-index: 1;
+      }
+      .cv-header .name {
+        font-size: 2.4rem;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 6px;
+      }
+      .cv-header .job-title {
+        color: #b38e19;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 14px;
+      }
+      .stats-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .stat-pill {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        padding: 6px 16px;
+        color: #e2e8f0;
+        font-size: 0.82rem;
+      }
+
+      /* ── BODY ── */
+      .cv-body {
+        padding: 28px;
+        background: #f8fafc;
+      }
+
+      /* Bio card */
+      .bio-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 18px 22px;
+        margin-bottom: 20px;
+        border-right: 4px solid #b38e19;
+        font-size: 0.88rem;
+        color: #374151;
+        line-height: 1.75;
+      }
+
+      /* Skills card */
+      .skills-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin-bottom: 18px;
+      }
+      .skills-card-title {
+        color: #19355a;
+        font-weight: 700;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 8px;
+      }
+      .skills-inner {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .skill-pill {
+        background: #f0f4f8;
+        color: #19355a;
+        border-radius: 99px;
+        padding: 2px 10px;
+        font-size: 0.72rem;
+        font-weight: 600;
+      }
+
+      /* ── SECTION TITLE ── */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: 32px;
+        margin-bottom: 18px;
+      }
+      .st-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #b38e19;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 3px rgba(179, 142, 25, 0.25);
+      }
+      .st-text {
+        color: #19355a;
+        font-weight: 800;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .st-line {
+        flex: 1;
+        height: 2px;
+        background: #e2e8f0;
+      }
+
+      /* ── TIMELINE ITEM ── */
+      .tl-item {
+        display: flex;
+        gap: 18px;
+        margin-bottom: 18px;
+        position: relative;
+      }
+      /* Date column */
+      .tl-date {
+        flex: 0 0 110px;
+        text-align: left;
+        padding-top: 2px;
+      }
+      .tl-date span {
+        color: #b38e19;
+        font-weight: 700;
+        font-size: 0.78rem;
+        white-space: nowrap;
+      }
+      /* Dot + vertical line */
+      .tl-line-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 0 0 22px;
+      }
+      .tl-node {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #19355a;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 2px #19355a;
+        flex-shrink: 0;
+        margin-top: 3px;
+      }
+      .tl-vline {
+        flex: 1;
+        width: 2px;
+        background: #e2e8f0;
+        margin-top: 2px;
+      }
+      /* Content */
+      .tl-content {
+        flex: 1;
+        padding-bottom: 10px;
+      }
+      .tl-title {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #1e293b;
+        margin-bottom: 3px;
+      }
+      .tl-meta {
+        color: #64748b;
+        font-size: 0.78rem;
+        line-height: 1.5;
+      }
+
+      /* ── PRINT ── */
+      @media print {
+        body {
+          padding: 0;
+          background: #fff;
+        }
+        .cv-wrap {
+          box-shadow: none;
+          border-radius: 0;
+        }
+        @page {
+          margin: 1cm;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cv-wrap">
+      <!-- HEADER -->
+      <div class="cv-header">
+        <div class="deco1"></div>
+        <div class="deco2"></div>
+        <div class="header-inner">
+          <div class="name">{{name}}</div>
+          {{#if title}}
+          <div class="job-title">{{title}}</div>
+          {{/if}}
+          <div class="stats-row">
+            {{#if department}}
+            <div class="stat-pill">{{department}}</div>
+            {{/if}} {{#if university}}
+            <div class="stat-pill">{{university}}</div>
+            {{/if}} {{#if authority}}
+            <div class="stat-pill">{{authority}}</div>
+            {{/if}} {{#if officialEmail}}
+            <div class="stat-pill">{{officialEmail}}</div>
+            {{/if}} {{#if mainPhoneNumber}}
+            <div class="stat-pill">{{mainPhoneNumber}}</div>
+            {{/if}} {{#if workPhoneNumber}}
+            <div class="stat-pill">هاتف العمل: {{workPhoneNumber}}</div>
+            {{/if}} {{#if faxNumber}}
+            <div class="stat-pill">فاكس: {{faxNumber}}</div>
+            {{/if}} {{#if birthDate}}
+            <div class="stat-pill">تاريخ الميلاد: {{birthDate}}</div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+
+      <!-- BODY -->
+      <div class="cv-body">
+        {{#if bioSummary}}
+        <div class="bio-card">{{bioSummary}}</div>
+        {{/if}} {{#if skills.length}}
+        <div class="skills-card">
+          <div class="skills-card-title">المهارات</div>
+          <div class="skills-inner">
+            {{#each skills}}<span class="skill-pill">{{this}}</span>{{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        <!-- المؤهلات العلمية -->
+        {{#if academicQualifications.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">المؤهلات العلمية</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each academicQualifications}}
+        <div class="tl-item">
+          <div class="tl-date">
+            <span>{{dateOfObtainingTheQualification}}</span>
+          </div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">
+              {{qualification}}{{#if specialization}} —
+              {{specialization}}{{/if}}
+            </div>
+            <div class="tl-meta">
+              {{grade}} · {{universityOrFaculty}} · {{countryOrCity}}
+            </div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- الدرجات الوظيفية -->
+        {{#if jobRanks.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">الدرجات الوظيفية</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each jobRanks}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{dateOfJobRank}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{jobRank}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المناصب الإدارية -->
+        {{#if administrativePositions.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">المناصب الإدارية</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each administrativePositions}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{startDate}} – {{endDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{position}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- الخبرات العامة -->
+        {{#if generalExperiences.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">الخبرات العامة</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each generalExperiences}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{startDate}} – {{endDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{experienceTitle}}</div>
+            <div class="tl-meta">{{authority}} · {{countryOrCity}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- الخبرات التدريسية -->
+        {{#if teachingExperiences.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">الخبرات التدريسية</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each teachingExperiences}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{startDate}} – {{endDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{courseName}}</div>
+            <div class="tl-meta">
+              {{academicLevel}} · {{universityOrFaculty}}
+            </div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المهمات العلمية -->
+        {{#if scientificMissions.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">المهمات العلمية</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each scientificMissions}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{startDate}} – {{endDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{missionName}}</div>
+            <div class="tl-meta">
+              {{universityOrFaculty}} · {{countryOrCity}}
+            </div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المؤتمرات والندوات -->
+        {{#if conferencesAndSeminars.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">المؤتمرات والندوات</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each conferencesAndSeminars}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{startDate}} – {{endDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{name}}</div>
+            <div class="tl-meta">
+              {{roleOfParticipation}} · {{organizingAuthority}} · {{venue}}
+            </div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- البرامج التدريبية -->
+        {{#if trainingPrograms.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">البرامج التدريبية</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each trainingPrograms}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{startDate}} – {{endDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{trainingProgramName}}</div>
+            <div class="tl-meta">{{venue}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المشاريع -->
+        {{#if projects.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">المشاريع</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each projects}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{startDate}} – {{endDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{nameOfProject}}</div>
+            <div class="tl-meta">
+              {{typeOfProject}} · {{financingAuthority}}
+            </div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المؤلفات العلمية -->
+        {{#if scientificWritings.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">المؤلفات العلمية</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each scientificWritings}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{publishingDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{title}}</div>
+            <div class="tl-meta">
+              {{authorRole}} · {{publishingHouse}} · {{isbn}}
+            </div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- براءات الاختراع -->
+        {{#if patents.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">براءات الاختراع</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each patents}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{accreditationDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{nameOfPatent}}</div>
+            <div class="tl-meta">{{accreditingAuthorityOrCountry}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- اللجان والجمعيات -->
+        {{#if committeesAndAssociations.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">اللجان والجمعيات</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each committeesAndAssociations}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{startDate}} – {{endDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{nameOfCommitteeOrAssociation}}</div>
+            <div class="tl-meta">
+              {{typeOfCommitteeOrAssociation}} · {{degreeOfSubscription}}
+            </div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المشاركة في المجلات -->
+        {{#if participationInMagazines.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">المشاركة في المجلات</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each participationInMagazines}}
+        <div class="tl-item">
+          <div class="tl-date"><span></span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{nameOfMagazine}}</div>
+            <div class="tl-meta">{{typeOfParticipation}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- تحكيم المقالات -->
+        {{#if reviewingArticles.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">تحكيم المقالات</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each reviewingArticles}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{reviewingDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{titleOfArticle}}</div>
+            <div class="tl-meta">{{authority}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- الجوائز والمكافآت -->
+        {{#if prizesAndRewards.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">الجوائز والمكافآت</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each prizesAndRewards}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{dateReceived}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{prize}}</div>
+            <div class="tl-meta">{{awardingAuthority}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- مظاهر التقدير العلمي -->
+        {{#if manifestationsOfScientificAppreciation.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">مظاهر التقدير العلمي</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each manifestationsOfScientificAppreciation}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{dateOfAppreciation}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{titleOfAppreciation}}</div>
+            <div class="tl-meta">{{issuingAuthority}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المساهمات لخدمة المجتمع -->
+        {{#if contributionsToCommunityService.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">المساهمات لخدمة المجتمع</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each contributionsToCommunityService}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{dateOfContribution}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{contributionTitle}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المساهمات الجامعية -->
+        {{#if contributionsToUniversity.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">المساهمات الجامعية</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each contributionsToUniversity}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{dateOfContribution}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{contributionTitle}}</div>
+            <div class="tl-meta">{{typeOfContribution}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- المشاركة في أعمال الجودة -->
+        {{#if participationInQualityWork.length}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">المشاركة في أعمال الجودة</span>
+          <div class="st-line"></div>
+        </div>
+        {{#each participationInQualityWork}}
+        <div class="tl-item">
+          <div class="tl-date"><span>{{startDate}} – {{endDate}}</span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            <div class="tl-title">{{participationTitle}}</div>
+          </div>
+        </div>
+        {{/each}} {{/if}}
+
+        <!-- التواصل الاجتماعي -->
+        {{#if hasSocial}}
+        <div class="section-title">
+          <div class="st-dot"></div>
+          <span class="st-text">التواصل الاجتماعي</span>
+          <div class="st-line"></div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date"><span></span></div>
+          <div class="tl-line-col">
+            <div class="tl-node"></div>
+            <div class="tl-vline"></div>
+          </div>
+          <div class="tl-content">
+            {{#if linkedIn}}
+            <div class="tl-meta">LinkedIn: {{linkedIn}}</div>
+            {{/if}} {{#if googleScholar}}
+            <div class="tl-meta">Google Scholar: {{googleScholar}}</div>
+            {{/if}} {{#if scopus}}
+            <div class="tl-meta">Scopus: {{scopus}}</div>
+            {{/if}} {{#if personalWebsite}}
+            <div class="tl-meta">الموقع: {{personalWebsite}}</div>
+            {{/if}} {{#if instagram}}
+            <div class="tl-meta">Instagram: {{instagram}}</div>
+            {{/if}} {{#if facebook}}
+            <div class="tl-meta">Facebook: {{facebook}}</div>
+            {{/if}} {{#if x}}
+            <div class="tl-meta">X: {{x}}</div>
+            {{/if}} {{#if youTube}}
+            <div class="tl-meta">YouTube: {{youTube}}</div>
+            {{/if}}
+          </div>
+        </div>
+        {{/if}}
+      </div>
+      <!-- /cv-body -->
+    </div>
+    <!-- /cv-wrap -->
+  </body>
+</html>
