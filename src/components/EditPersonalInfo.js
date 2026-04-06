@@ -86,7 +86,7 @@ export default function EditPersonalInfo() {
   const handleSave = async () => {
     const entityId = personalInfo.id;
     const oldAttachmentId = personalInfo.profilePicture?.id || null;
-
+console.log(personalInfo.id)
     if (!entityId) {
       setErr("User ID is missing.");
       return;

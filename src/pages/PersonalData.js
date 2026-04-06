@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import subPicture from "../assets/profileImage.png";
+import subPicture from "../assets/prof.jpg";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import usePersonalData from "../hooks/usePersonalData";
