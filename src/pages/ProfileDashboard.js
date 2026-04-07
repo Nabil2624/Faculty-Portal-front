@@ -31,7 +31,7 @@ const [profileImg, setProfileImg] = useState(profileImage);
 
   // ================= DATA MAPPING =================
   const title = isArabic ? safe(data.title?.valueAr) : safe(data.title?.valueEn);
-  const name = safe(data.name);
+  const name = safe(data.nameEn);
   const fullName = `${title} ${name}`.trim();
   const university = isArabic ? safe(data.university?.valueAr) : safe(data.university?.valueEn);
   const department = isArabic ? safe(data.department?.valueAr) : safe(data.department?.valueEn);

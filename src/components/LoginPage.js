@@ -1,3 +1,4 @@
+// LoginPage.jsx
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -13,18 +14,20 @@ import {
 } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
 import helwanImage from "../assets/helwan-university.jpeg";
-import LoadingSpinner from "../components/LoadingSpinner";
+import { useAuth } from "../context/AuthContext"; // 1. استيراد الهوك
 
 export default function LoginPage() {
   const { t, i18n } = useTranslation("Login");
   const navigate = useNavigate();
+  const { handleLoginSuccess } = useAuth(); // 2. الحصول على دالة النجاح
+
   const [showPassword, setShowPassword] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
-  const redirectTo =
-    new URLSearchParams(window.location.search).get("redirect") || "/";
+  
+  const redirectTo = new URLSearchParams(window.location.search).get("redirect") || "/";
   const isArabic = i18n.language === "ar";
 
   const handleLogin = async (e) => {
@@ -38,7 +41,7 @@ export default function LoginPage() {
         {
           skipGlobalErrorHandler: true,
           withCredentials: true,
-        },
+        }
       );
 
       const roles = loginResponse?.data?.roles || [];
@@ -61,7 +64,6 @@ export default function LoginPage() {
     } catch (err) {
       if (err.response) {
         const { status } = err.response;
-
         if (status === 400 || status === 401) {
           setError(t("invalidCredentials"));
         } else {
@@ -77,18 +79,17 @@ export default function LoginPage() {
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#050b14]">
-      {/* الخلفية: صورة واضحة مع Filter داكن لتقليل البياض */}
+      {/* Background Section */}
       <div className="absolute inset-0 z-0">
         <img
           src={helwanImage}
           alt="Capital University"
           className="w-full h-full object-cover opacity-50"
         />
-        {/* Overlay كحلي متدرج ليعطي عمق وفخامة */}
         <div className="absolute inset-0 bg-gradient-to-tr from-[#050b14] via-[#19355a]/40 to-[#050b14]/80" />
       </div>
 
-      {/* التوجل: عربي / English فقط ومثبت بعيداً عن أي تداخل */}
+      {/* Language Toggle */}
       <div className={`fixed top-6 ${isArabic ? "left-6" : "right-6"} z-[100]`}>
         <button
           onClick={() => i18n.changeLanguage(isArabic ? "en" : "ar")}
@@ -102,10 +103,8 @@ export default function LoginPage() {
       </div>
 
       <main className="relative z-10 w-full max-w-[1200px] flex flex-col lg:flex-row items-center justify-between px-6 gap-10">
-        {/* نصوص ترحيبية: ذهبية وبيضاء فوق الخلفية الداكنة */}
-        <div
-          className={`w-full lg:w-1/2 ${isArabic ? "text-right" : "text-left"} hidden lg:block`}
-        >
+        {/* Welcome Text */}
+        <div className={`w-full lg:w-1/2 ${isArabic ? "text-right" : "text-left"} hidden lg:block`}>
           <div className="flex items-center gap-3 mb-4">
             <div className="h-1 w-12 bg-[#b38e19] rounded-full" />
             <span className="text-[#b38e19] font-black uppercase tracking-[5px] text-[clamp(0.6rem,1.2vw,1rem)] ">
@@ -122,13 +121,11 @@ export default function LoginPage() {
           </p>
         </div>
 
+        {/* Login Form Card */}
         <div className="w-full lg:w-[440px] relative">
           <div className="absolute inset-0 bg-[#b38e19]/10 blur-[80px] rounded-full" />
-
           <div className="relative bg-[#19355a]/20 backdrop-blur-[40px] border border-white/10 rounded-[2.5rem] p-10 md:p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
-            <header
-              className={`mb-10 ${isArabic ? "text-right" : "text-left"}`}
-            >
+            <header className={`mb-10 ${isArabic ? "text-right" : "text-left"}`}>
               <div className="w-14 h-14 bg-[#19355a] border border-[#b38e19]/30 rounded-2xl flex items-center justify-center mb-6 shadow-2xl">
                 <ShieldCheck className="text-[#b38e19]" size={32} />
               </div>
@@ -147,18 +144,19 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {/* Username */}
+              {/* Username Input */}
               <div className="group space-y-2">
-                <label className="text-[clamp(0.65rem,1vw,0.9rem)]  font-black uppercase tracking-widest text-white/30 px-1">
+                <label className="text-[clamp(0.65rem,1vw,0.9rem)] font-black uppercase tracking-widest text-white/30 px-1">
                   {t("username")}
                 </label>
                 <div className="relative">
                   <User
-                    className={`absolute top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
+                    className={`absolute top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
                     size={18}
                   />
                   <input
                     type="text"
+                    required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className={`w-full bg-white/5 border border-white/10 focus:border-[#b38e19]/50 focus:bg-white/10 text-white py-4 ${isArabic ? "pr-12 pl-4" : "pl-12 pr-4"} rounded-2xl outline-none transition-all font-bold placeholder:text-white/10`}
@@ -167,18 +165,19 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Password */}
+              {/* Password Input */}
               <div className="group space-y-2">
                 <label className="text-[clamp(0.65rem,1vw,0.9rem)] font-black uppercase tracking-widest text-white/30 px-1">
                   {t("password")}
                 </label>
                 <div className="relative">
                   <Lock
-                    className={`absolute top-1/2 -translate-y-1/2 text-black/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
+                    className={`absolute top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
                     size={18}
                   />
                   <input
                     type={showPassword ? "text" : "password"}
+                    required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className={`w-full bg-white/5 border border-white/10 focus:border-[#b38e19]/50 focus:bg-white/10 text-white py-4 ${isArabic ? "pr-12 pl-4" : "pl-12 pr-4"} rounded-2xl outline-none transition-all font-bold placeholder:text-white/10`}
@@ -209,15 +208,14 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full relative overflow-hidden bg-[#19355a] text-white py-5 rounded-2xl font-black text-[clamp(0.7rem,0.9vw,0.85rem)] uppercase tracking-[4px] shadow-2xl hover:shadow-[#19355a]/40 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-3 group"
               >
-                <>
-                  <span>{t("loginButton")}</span>
-                  {isArabic ? (
-                    <ArrowLeft size={16} />
-                  ) : (
-                    <ArrowRight size={16} />
-                  )}
-                </>
-
+                {loading ? (
+                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <span>{t("loginButton")}</span>
+                    {isArabic ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+                  </>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#b38e19]/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               </button>
             </form>

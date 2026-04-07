@@ -131,7 +131,8 @@ export default function useCreateUser() {
     else if (f.password.length < 8) errors.password = "passwordTooShort";
     else if (!/[A-Z]/.test(f.password)) errors.password = "passwordNoUppercase";
     else if (!/[0-9]/.test(f.password)) errors.password = "passwordNoDigit";
-    else if (!/[^A-Za-z0-9]/.test(f.password)) errors.password = "passwordNoSpecial";
+    else if (!/[^A-Za-z0-9]/.test(f.password))
+      errors.password = "passwordNoSpecial";
     if (f.password && f.password !== f.confirmPassword)
       errors.confirmPassword = "passwordMismatch";
     if (!f.roles || f.roles.length === 0) errors.roles = "roleRequired";

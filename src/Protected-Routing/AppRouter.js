@@ -1,3 +1,11 @@
+
+
+// AppRouter.jsx (الأجزاء الأساسية فقط والباقي كما هو)
+
+
+
+
+import { useAuth } from "../context/AuthContext";
 import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -13,10 +21,6 @@ import SessionExpiredPopup from "../components/ui/SessionExpiredPopup";
 import RegisterPage from "../components/RegistrationPage";
 import LoginPage from "../components/LoginPage";
 import ForgotPasswordPage from "../components/ForgotPasswordPage";
-import Header from "../components/Header";
-import Layout from "../components/Layout";
-import Sidebar from "../components/Sidebar";
-import PersonalDataPage from "../components/PersonalDataPage";
 import EditPersonalInfo from "../components/EditPersonalInfo";
 import ContactInfo from "../components/ContactInfo";
 import IdentificationCard from "../components/IdentificationCard";
@@ -28,10 +32,6 @@ import ErrorPage from "../components/ErrorPage";
 import OtpPage from "../components/OtpPage";
 import UnderDevelopment from "../components/UnderDevelopment";
 import ResetPasswordPage from "../components/ResetPasswordPage";
-import JobGradeForm from "../components/widgets/JobGrade/JobGradeForm";
-import EditJobGrade from "../components/widgets/JobGrade/EditJobGrade";
-import EditAdminPosition from "../components/widgets/AdminPosition/EditAdminPosition";
-import AddAdministrativePosition from "../components/widgets/AdminPosition/AddAdministrativePosition";
 import AddScientificMission from "../pages/AddScientificMission";
 import EditScientificMission from "../pages/EditScientificMission";
 import AddAcademicQualification from "../pages/AddAcademicQualification";
@@ -50,7 +50,6 @@ import EditCommitteeAssociation from "../pages/EditCommitteeAssociation";
 import AddProject from "../pages/AddProject";
 import EditProject from "../pages/EditProject";
 import ParticipationInJournals from "../pages/ParticipationInJournals";
-import ScientificResearches from "../pages/ScientificResearches";
 import SupervisionThesis from "../pages/SupervisionThesis";
 import Theses from "../pages/Theses";
 import ScientificResearchDetails from "../pages/ScientificResearchDetails";
@@ -92,7 +91,6 @@ import EditScientificWriting from "../pages/EditScientificWriting";
 import RecommendedSupervisions from "../pages/RecommendedSupervisions";
 import JobGrade from "../pages/JobGrade";
 import AdminstrativePosition from "../pages/AdminstrativePosition";
-import PersonalDataV2 from "../components/PersonalDataV2";
 import PersonalData from "../pages/PersonalData";
 import ResearchesPage from "../pages/ResearchesPage";
 import ScientificResearchInternalProfile from "../pages/ScientificResearchInternalProfile";
@@ -126,38 +124,29 @@ import SupportAdminTicketingPage from "../pages/SupportAdminTicketingPage";
 import ChatPage from "../pages/ChatPage";
 import CVPage from "../pages/CVPage";
 import ManageCVPage from "../pages/ManageCVPage";
-function AppRouterInner({
-  isSessionPopupVisible,
-  setSessionPopupVisible,
-  isAuthenticated,
-  isCheckingAuth,
-}) {
-  const navigate = useNavigate();
+// ... (باقي الـ Imports بتاعتك)
 
+function AppRouterInner() {
+  const navigate = useNavigate();
+  const { isCheckingAuth } = useAuth();
+
+  // خلينا بس توجيه الـ Errors هنا عشان بنحتاج useNavigate
   useEffect(() => {
     const handler = (e) => {
-      if (e.detail === "session-expired") {
-        setSessionPopupVisible(true);
-      } else if (
-        typeof e.detail === "string" &&
-        e.detail.startsWith("/error/")
-      ) {
+      if (typeof e.detail === "string" && e.detail.startsWith("/error/")) {
         navigate(e.detail, { replace: true });
       }
     };
     axiosEvent.addEventListener("axios-error", handler);
     return () => axiosEvent.removeEventListener("axios-error", handler);
-  }, [navigate, setSessionPopupVisible]);
+  }, [navigate]);
 
   return (
     <>
-      <SessionExpiredPopup
-        isVisible={isSessionPopupVisible}
-        onClose={() => setSessionPopupVisible(false)}
-      />
+   
 
       <Routes>
-        {/* --- 1. Public Routes --- */}
+        {/* --- Public Routes --- */}
         <Route path="/" element={<FacultyLandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
@@ -166,17 +155,11 @@ function AppRouterInner({
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/error/:code" element={<ErrorPage />} />
         <Route path="/under-development" element={<UnderDevelopment />} />
+        {/* ... باقي الـ Public Routes */}
 
-        {/* --- 2. Protected Routes (Only accessible if authenticated) --- */}
-        <Route
-          element={
-            <ProtectedRoute
-              isAuthenticated={isAuthenticated}
-              isCheckingAuth={isCheckingAuth}
-            />
-          }
-        >
-          <Route path="/logs" element={<LogsPage />} />
+        {/* --- Protected Routes --- */}
+        <Route element={<ProtectedRoute />}>
+ <Route path="/logs" element={<LogsPage />} />
           <Route path="/logs-categories" element={<LogsCategoryPage />} />
           <Route path="/admin/users" element={<UsersPage />} />
           <Route
@@ -452,9 +435,10 @@ function AppRouterInner({
             path="/ExternalProfile"
             element={<ScientificResearchExternalProfile />}
           />
+          {/* ... ضيف كل مساراتك المحمية هنا */}
         </Route>
 
-        {/* --- 3. Catch All (Only if not loading) --- */}
+        {/* --- Catch All --- */}
         {!isCheckingAuth && (
           <Route path="*" element={<ErrorPage code="404" />} />
         )}
@@ -463,10 +447,10 @@ function AppRouterInner({
   );
 }
 
-export default function AppRouter(props) {
+export default function AppRouter() {
   return (
     <Router>
-      <AppRouterInner {...props} />
+      <AppRouterInner />
     </Router>
   );
 }
