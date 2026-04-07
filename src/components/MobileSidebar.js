@@ -16,6 +16,7 @@ import {
   LifeBuoy,
   Headset,
   Settings,
+  IdCard,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import logo from "../assets/helwan-logo.png";
@@ -32,6 +33,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
   const navItems = [
     { key: "home", icon: <Home size={20} />, link: "/profile" },
     { key: "personalInfo", icon: <User size={20} />, link: "/personal-data" },
+    { key: "cv", icon: <IdCard  />, link: "/cv" },
     {
       key: "researchAndSupervision",
       icon: <BookOpenText size={20} />,

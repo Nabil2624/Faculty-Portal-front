@@ -3,17 +3,18 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LogOut, ShieldAlert } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
-export default function SessionExpiredPopup({ isVisible, onClose }) {
+export default function SessionExpiredPopup() {
   const { t } = useTranslation("session-popup");
   const navigate = useNavigate();
+  // استدعاء الحالة والدوال من الكونتكست
+  const { isSessionPopupVisible, handleLogout } = useAuth();
 
-  if (!isVisible) return null;
+  if (!isSessionPopupVisible) return null;
 
   const handleLoginRedirect = () => {
-    onClose();
-    // مسح أي بيانات محلية إذا وجدت (مثل الدور)
-    localStorage.clear();
+    handleLogout(); // بيقفل البوب اب وبيعمل reset لـ isAuthenticated
     navigate("/login", { replace: true });
   };
 

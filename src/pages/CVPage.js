@@ -413,7 +413,7 @@ export default function CVPage() {
     <ResponsiveLayoutProvider>
       <div
         dir={isArabic ? "rtl" : "ltr"}
-        style={{ padding: "20px", background: "#f8fafc", minHeight: "100vh" }}
+        style={{ padding: "12px", background: "#f8fafc", minHeight: "100vh" }}
       >
         {/* Header */}
         <div

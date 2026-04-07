@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Home, User, BookOpenText, University, Goal, FolderKanban, 
   Briefcase, BookMarkedIcon, HelpingHand, Award,
-  ShieldCheck, LifeBuoy, Headset // أضفت الأيقونات الناقصة للـ Roles التانية
+  ShieldCheck, LifeBuoy, Headset , IdCard 
 } from "lucide-react";
 import logo from "../assets/Capital.png";
 
@@ -44,7 +44,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const navItems = [
     { key: "home", icon: <Home />, link: "/profile" },
     { key: "personalInfo", icon: <User />, link: "/personal-data" },
-    { key: "cv", icon: <User />, link: "/cv" },
+    { key: "cv", icon: <IdCard  />, link: "/cv" },
     {
       key: "researchAndSupervision",
       icon: <BookOpenText />,
@@ -199,7 +199,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
                 return (
                   <li key={subItem.key} className={`relative ${isArabic ? "mr-[clamp(1rem,1vw,4rem)]" : "ml-[clamp(1rem,1vw,4rem)]"}`}>
                     <Link to={subItem.link} onClick={(e) => e.stopPropagation()}
-                      className={`block py-[clamp(0.1rem,0.15vw,0.4rem)] px-3 text-[clamp(0.75rem,0.9vw,8rem)] rounded-sm transition-all
+                      className={`block py-[clamp(0.1rem,0.15vw,0.4rem)] px-3 text-[clamp(0.75rem,0.85vw,8rem)] rounded-sm transition-all
                         ${location.pathname === subItem.link ? "text-[#B38e19] font-medium bg-white/5" : "text-white/40 hover:text-white hover:bg-white/5"}`}
                     >
                       {t(subItem.key)}
