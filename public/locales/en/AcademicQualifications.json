@@ -9,7 +9,7 @@
   "areYouSureDelete": "Are you sure you want to delete",
   "fetchError": "Failed to fetch academic qualifications.",
   "deleteError": "Failed to delete this qualification.",
-  "empty": "No academic qualifications found.",
+  "empty": "No data available",
   "previous": "Previous",
   "next": "Next",
   "page": "Page",

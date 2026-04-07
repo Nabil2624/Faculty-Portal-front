@@ -4,7 +4,7 @@
   "accept": "Accept",
   "reject": "Reject",
   "view": "View",
-  "empty": "No nominated research found",
+  "empty": "No data available",
   "fetchError": "Failed to load nominated research",
   "previous": "Previous",
   "next": "Next",

@@ -68,9 +68,7 @@ export default function EditSocialNetworking() {
     { label: t("PersonalWebsite"), key: "personalWebsite" },
     { label: t("Facebook"), key: "facebook" },
     { label: t("Twitter"), key: "x" },
-    { label: t("GoogleScholar"), key: "googleScholar" },
     { label: t("LinkedIn"), key: "linkedIn" },
-    { label: t("Scopus"), key: "scopus" },
     { label: t("Instagram"), key: "instagram" },
     { label: t("YouTube"), key: "youTube" },
   ];
@@ -133,7 +131,7 @@ export default function EditSocialNetworking() {
 
         {/* Main Grid Section */}
         <div className="flex-grow bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 dynamic-grid">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 dynamic-grid">
             {socialNetworkingFields.map((item) => (
               <div key={item.key} className="flex flex-col">
                 <label className="fluid-label font-black text-[#19355a]/50 mb-1 px-1 uppercase tracking-tight">

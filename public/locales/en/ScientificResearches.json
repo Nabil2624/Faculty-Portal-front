@@ -1,7 +1,7 @@
 {
   "title": "Scientific Research",
   "add": "Add",
-  "empty": "No research found",
+  "empty": "No data available",
   "journal": "Journal / Magazine",
   "year": "Year",
   "fetchError": "No scientific research found.",

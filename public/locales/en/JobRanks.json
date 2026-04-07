@@ -14,7 +14,7 @@
   "pageTitle": "Job Grades",
   "fetchError": "Failed to fetch job grades",
   "deleteError": "Failed to delete job grade",
-  "empty": "No job grades found",
+  "empty": "No data available",
   "add": "Add",
   "previous": "Previous",
   "next": "Next",

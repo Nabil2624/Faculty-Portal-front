@@ -4,7 +4,7 @@
   "accept": "Accept",
   "reject": "Reject",
   "view": "View",
-  "empty": "No recommended supervisions found",
+  "empty": "No data available",
   "fetchError": "Failed to load recommended supervisions",
   "previous": "Previous",
   "next": "Next",

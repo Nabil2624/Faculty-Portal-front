@@ -31,7 +31,7 @@ const [profileImg, setProfileImg] = useState(profileImage);
 
   // ================= DATA MAPPING =================
   const title = isArabic ? safe(data.title?.valueAr) : safe(data.title?.valueEn);
-  const name = safe(data.nameEn);
+  const name = isArabic ? safe(data.nameAr) : safe(data.nameEn) ;
   const fullName = `${title} ${name}`.trim();
   const university = isArabic ? safe(data.university?.valueAr) : safe(data.university?.valueEn);
   const department = isArabic ? safe(data.department?.valueAr) : safe(data.department?.valueEn);
@@ -129,7 +129,7 @@ if (loading) return <LoadingSpinner />;
             <ResearchWidget count={safe(data.researchCount, 0)} isArabic={isArabic} />
           </div>
 
-          {/* 4. CV Image - تم تصليح السنترة والظهور عند الهوفر */}
+
           <div
             className={`${cardBase} group relative col-span-2 h-[500px] lg:h-auto lg:row-start-3 lg:row-span-2 lg:col-start-1 lg:col-span-1 order-10 lg:order-none shadow-lg`}
             style={{

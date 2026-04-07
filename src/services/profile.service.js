@@ -28,3 +28,7 @@ export const updateBioSummary = async (bioSummary) => {
     { skipGlobalErrorHandler: true },
   );
 };
+export const getCVPreview = async () => {
+  const response = await axiosInstance.get("/CV/Preview");
+  return response.data; // الـ API بيرجع الـ HTML كـ string
+};

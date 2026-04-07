@@ -7,33 +7,24 @@ import LoadingSpinner from "./LoadingSpinner";
 import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
 import subPicture from "../assets/prof.jpg";
 
-// --- Upload function تدعم array ---
 export const handleProfilePictureUpload = (entityId, oldAttachmentId, files) => {
   if (!files || files.length === 0) return Promise.resolve();
-
   const formData = new FormData();
-  const fileToSend = files[0]; // أول ملف فقط
+  const fileToSend = files[0];
 
   if (oldAttachmentId) {
-    // تعديل صورة موجودة → newAttachment
     formData.append("newAttachment", fileToSend);
-
-    return axiosInstance.put(
-      `/Attachments/${entityId}/${oldAttachmentId}?context=3`,
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
+    return axiosInstance.put(`/Attachments/${entityId}/${oldAttachmentId}?context=3`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   } else {
-    // رفع صورة جديدة → files
     formData.append("files", fileToSend);
-
-    return axiosInstance.post(
-      `/Attachments/${entityId}?context=3`,
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
+    return axiosInstance.post(`/Attachments/${entityId}?context=3`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   }
 };
+
 export default function EditPersonalInfo() {
   const { t, i18n } = useTranslation("PersonalData");
   const isArabic = i18n.language === "ar";
@@ -43,12 +34,11 @@ export default function EditPersonalInfo() {
 
   const [personalInfo, setPersonalInfo] = useState({});
   const [profileImage, setProfileImage] = useState(subPicture);
-  const [imageFiles, setImageFiles] = useState([]); // array من الصور
+  const [imageFiles, setImageFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const dateInputRef = useRef(null);
 
-  // --- Fetch data on mount ---
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -58,11 +48,8 @@ export default function EditPersonalInfo() {
           data = res.data;
         }
         setPersonalInfo(data || {});
-
         if (data?.profilePicture?.id) {
-          setProfileImage(
-            `${axiosInstance.defaults.baseURL}/Attachments/${data.id}/${data.profilePicture.id}?context=3`
-          );
+          setProfileImage(`${axiosInstance.defaults.baseURL}/Attachments/${data.id}/${data.profilePicture.id}?context=3`);
         }
       } catch (err) {
         console.error("Fetch error:", err);
@@ -73,61 +60,55 @@ export default function EditPersonalInfo() {
     fetchData();
   }, [routerData]);
 
-  const handleChange = (key, value) =>
-    setPersonalInfo((prev) => ({ ...prev, [key]: value }));
+  const handleChange = (key, value) => setPersonalInfo((prev) => ({ ...prev, [key]: value }));
 
   const handlePhotoChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const filesArray = Array.from(e.target.files);
       setImageFiles(filesArray);
-      setProfileImage(URL.createObjectURL(filesArray[0])); // عرض أول صورة مؤقتًا
+      setProfileImage(URL.createObjectURL(filesArray[0]));
     }
   };
+
   const handleSave = async () => {
     const entityId = personalInfo.id;
     const oldAttachmentId = personalInfo.profilePicture?.id || null;
-console.log(personalInfo.id)
     if (!entityId) {
       setErr("User ID is missing.");
       return;
     }
-
     setLoading(true);
     setErr("");
-
     try {
-      
       if (imageFiles.length > 0) {
         await handleProfilePictureUpload(entityId, oldAttachmentId, imageFiles);
       }
-
-      // تحديث البيانات الشخصية
       await axiosInstance.put("/FacultyMemberData/UpdatePersonalData", personalInfo);
-
       navigate("/personal-data");
     } catch (error) {
-      console.error("Save error:", error.response?.data || error.message);
       setErr(t("updateFailed") || "Update failed.");
     } finally {
       setLoading(false);
     }
   };
 
+  // المصفوفة المحدثة لتشمل الاسم بالعربي وبالانجليزي و الـ Placeholders
   const orderedKeys = [
-    { key: "name" },
-    { key: "nationalNumber", disabled: true },
-    { key: "nameInComposition" },
-    { key: "birthDate", type: "date" },
-    { key: "birthPlace" },
-    { key: "gender", disabled: true },
-    { key: "maritalStatus" },
-    { key: "title" },
-    { key: "university" },
-    { key: "department" },
-    { key: "authority" },
-    { key: "field" },
-    { key: "generalSpecialization" },
-    { key: "accurateSpecialization" },
+    { key: "nameAr", placeholderAr: "أدخل الاسم الرباعي بالعربية", placeholderEn: "Enter full name in Arabic" },
+    { key: "nameEn", placeholderAr: "أدخل الاسم الرباعي بالإنجليزية", placeholderEn: "Enter full name in English" },
+    { key: "nationalNumber", disabled: true, placeholderAr: "الرقم القومي", placeholderEn: "National ID" },
+    { key: "nameInComposition", placeholderAr: "الاسم في المؤلفات", placeholderEn: "Name in publications" },
+    { key: "birthDate", type: "date", placeholderAr: "تاريخ الميلاد", placeholderEn: "Birth Date" },
+    { key: "birthPlace", placeholderAr: "محل الميلاد", placeholderEn: "Birth Place" },
+    { key: "gender", disabled: true, placeholderAr: "النوع", placeholderEn: "Gender" },
+    { key: "maritalStatus", placeholderAr: "الحالة الاجتماعية", placeholderEn: "Marital Status" },
+    { key: "title", placeholderAr: "اللقب العلمي", placeholderEn: "Academic Title" },
+    { key: "university", placeholderAr: "الجامعة", placeholderEn: "University" },
+    { key: "department", placeholderAr: "القسم", placeholderEn: "Department" },
+    { key: "authority", placeholderAr: "الجهة", placeholderEn: "Authority" },
+    { key: "field", placeholderAr: "المجال", placeholderEn: "Field" },
+    { key: "generalSpecialization", placeholderAr: "التخصص العام", placeholderEn: "General Specialization" },
+    { key: "accurateSpecialization", placeholderAr: "التخصص الدقيق", placeholderEn: "Accurate Specialization" },
   ];
 
   if (loading) return <LoadingSpinner />;
@@ -138,11 +119,6 @@ console.log(personalInfo.id)
         input[type="date"]::-webkit-calendar-picker-indicator { display: none; }
         .no-scroll-textarea::-webkit-scrollbar { width: 4px; }
         .no-scroll-textarea::-webkit-scrollbar-thumb { background: #b38e19; border-radius: 10px; }
-        :root {
-          --fluid-text-xs: clamp(0.75rem, 0.7vw + 0.5rem, 0.875rem);
-          --fluid-h2: clamp(1.125rem, 1.5vw + 0.5rem, 1.5rem);
-          --fluid-gap: clamp(0.625rem, 1.2vw, 1.70rem);
-        }
       `}</style>
 
       <div className={`min-h-[90vh] w-full bg-[#fcfcfc] flex flex-col p-3 ${isArabic ? "rtl text-right" : "ltr text-left"}`}>
@@ -153,12 +129,12 @@ console.log(personalInfo.id)
               <img src={profileImage} className="w-full h-full object-cover" alt="Profile" />
               <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center cursor-pointer">
                 <FiUpload className="text-white text-lg" />
-                <input type="file" className="hidden" onChange={handlePhotoChange} accept="image/*" multiple />
+                <input type="file" className="hidden" onChange={handlePhotoChange} accept="image/*" />
               </label>
             </div>
             <div>
               <h2 className="text-[#19355a] font-semibold text-xl leading-tight">{t("editPersonalData")}</h2>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{isArabic ? "البيانات الشخصية" : "Personal Data"}</p>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{isArabic ? "تعديل الملف الشخصي" : "Edit Profile Info"}</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -171,7 +147,7 @@ console.log(personalInfo.id)
           </div>
         </div>
 
-        {/* Main Form */}
+        {/* Form Container */}
         <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
           {err && <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-xs font-bold">{err}</div>}
 
@@ -179,11 +155,17 @@ console.log(personalInfo.id)
             {orderedKeys.map((item) => {
               const isObj = ["title", "gender", "maritalStatus", "university", "department", "authority", "field"].includes(item.key);
               const val = isObj ? (isArabic ? personalInfo[item.key]?.valueAr : personalInfo[item.key]?.valueEn) : personalInfo[item.key];
+              
+              // تحديد الـ Placeholder بناءً على اللغة الحالية للواجهة
+              const currentPlaceholder = isArabic ? item.placeholderAr : item.placeholderEn;
 
               return (
                 <div key={item.key} className="flex flex-col">
                   <label className="text-[10px] font-black text-[#19355a]/50 mb-1 px-1 uppercase tracking-tight">
-                    {t(item.key)}
+                    {/* هنا نتأكد من ترجمة الليبل، في حالة nameEn قد تحتاج لإضافتها لملفات الترجمة */}
+                    {item.key === "nameAr" ? (isArabic ? "الاسم الرباعي (عربي)" : "Full Name (Arabic)") : 
+                     item.key === "nameEn" ? (isArabic ? "الاسم الرباعي (إنجليزي)" : "Full Name (English)") : 
+                     t(item.key)}
                   </label>
                   <div className="relative">
                     <input
@@ -191,6 +173,7 @@ console.log(personalInfo.id)
                       ref={item.type === "date" ? dateInputRef : null}
                       disabled={item.disabled}
                       value={val || ""}
+                      placeholder={currentPlaceholder}
                       onChange={(e) => handleChange(item.key, e.target.value)}
                       className={`w-full h-10 px-3 rounded-xl border-2 transition-all outline-none text-sm text-center ${
                         item.disabled ? "bg-gray-50 border-gray-100 text-gray-300" : "bg-white border-gray-100 focus:border-[#b38e19] focus:ring-2 focus:ring-[#b38e19]/5"
@@ -216,7 +199,7 @@ console.log(personalInfo.id)
                 value={personalInfo.compositionTopics || ""}
                 onChange={(e) => handleChange("compositionTopics", e.target.value)}
                 className="w-full min-h-[100px] p-3 rounded-2xl border-2 border-gray-100 bg-gray-50/30 focus:border-[#b38e19] focus:bg-white outline-none resize-none no-scroll-textarea transition-all text-sm"
-                placeholder="..."
+                placeholder={isArabic ? "اكتب نبذة عن المؤلفات هنا..." : "Write about compositions here..."}
               />
             </div>
           </div>
@@ -224,4 +207,4 @@ console.log(personalInfo.id)
       </div>
     </ResponsiveLayoutProvider>
   );
-} 
+}

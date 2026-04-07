@@ -1,10 +1,4 @@
-
-
-// AppRouter.jsx (الأجزاء الأساسية فقط والباقي كما هو)
-
-
-
-
+import ScrollToTop from "../components/ui/ScrollToTop";
 import { useAuth } from "../context/AuthContext";
 import React, { useEffect } from "react";
 import {
@@ -124,6 +118,8 @@ import SupportAdminTicketingPage from "../pages/SupportAdminTicketingPage";
 import ChatPage from "../pages/ChatPage";
 import CVPage from "../pages/CVPage";
 import ManageCVPage from "../pages/ManageCVPage";
+import Login from "../components/Login";
+import FullCVPage from "../pages/FullCVPage";
 // ... (باقي الـ Imports بتاعتك)
 
 function AppRouterInner() {
@@ -155,6 +151,7 @@ function AppRouterInner() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/error/:code" element={<ErrorPage />} />
         <Route path="/under-development" element={<UnderDevelopment />} />
+        <Route path="/L" element={<Login />} />
         {/* ... باقي الـ Public Routes */}
 
         {/* --- Protected Routes --- */}
@@ -417,6 +414,12 @@ function AppRouterInner() {
             path="/participation-in-quality-work"
             element={<ParticipationInQualityWorks />}
           />
+
+          <Route
+            path="/full-cv"
+            element={<FullCVPage />}
+          />
+          
           <Route
             path="/add-participation-quality-work"
             element={<AddParticipationInQualityWork />}
@@ -450,6 +453,7 @@ function AppRouterInner() {
 export default function AppRouter() {
   return (
     <Router>
+      <ScrollToTop />
       <AppRouterInner />
     </Router>
   );
