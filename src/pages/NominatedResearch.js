@@ -4,8 +4,7 @@ import axios from "axios";
 import { FileBadge2 } from "lucide-react";
 // Components
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import LoadingSpinner from "../components/LoadingSpinner";
-import PageHeaderWithFilter from "../components/ui/PageHeaderWithFilter";
+
 import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
 import ModalWrapper from "../components/ui/ModalWrapper";
 import CustomizeResultsModal from "../components/ui/CustomizeResultsPopup";

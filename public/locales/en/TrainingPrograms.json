@@ -9,7 +9,7 @@
   "areYouSureDelete": "Are you sure you want to delete",
   "fetchError": "No training programs to display",
   "deleteError": "Failed to delete program",
-  "empty": "No training programs available",
+  "empty": "No data available",
 
   "type": "Program Type",
   "participationType": "Participation Type",

@@ -22,7 +22,7 @@ export default function EditIdentificationCard() {
     try {
       const res = await axiosInstance.get(
         "/FacultyMemberData/IdentificationCard",
-        { skipGlobalErrorHandler: true },
+        { skipGlobalErrorHandler: true }
       );
       setData(res.data || {});
     } catch (err) {
@@ -45,11 +45,11 @@ export default function EditIdentificationCard() {
     try {
       await axiosInstance.put(
         "/FacultyMemberData/UpdateIdentificationCard",
-        data,
+        data
       );
       navigate("/personal-data");
     } catch (err) {
-     
+      console.error("Save failed", err);
     }
   };
 
@@ -63,12 +63,50 @@ export default function EditIdentificationCard() {
     }));
   };
 
+  // المصفوفة المحدثة مع الحقول الجديدة والـ Placeholders
   const identificationFields = [
-    { label: t("ORCID-ID"), key: "orcid" },
-    { label: t("ResearchGateProfile"), key: "researcherGate" },
-    { label: t("Academia.Eduprofile"), key: "academiaEdu" },
-    { label: t("ResearcherID"), key: "researcherId" },
-    { label: t("EBK"), key: "ekb" },
+    { 
+      label: t("ORCID-ID"), 
+      key: "orcid", 
+      phAr: "مثال: 0000-0002-1825-0097", 
+      phEn: "e.g. 0000-0002-1825-0097" 
+    },
+    { 
+      label: t("GoogleScholar"), 
+      key: "googleScholar", 
+      phAr: "رابط ملف الباحث العلمي", 
+      phEn: "Google Scholar Profile Link" 
+    },
+    { 
+      label: t("Scopus"), 
+      key: "scopus", 
+      phAr: "رابط أو معرف Scopus", 
+      phEn: "Scopus Author ID / Link" 
+    },
+    { 
+      label: t("ResearchGateProfile"), 
+      key: "researcherGate", 
+      phAr: "رابط ResearchGate", 
+      phEn: "ResearchGate Profile Link" 
+    },
+    { 
+      label: t("Academia.Eduprofile"), 
+      key: "academiaEdu", 
+      phAr: "رابط Academia.edu", 
+      phEn: "Academia.edu Profile Link" 
+    },
+    { 
+      label: t("ResearcherID"), 
+      key: "researcherId", 
+      phAr: "معرف الباحث (Web of Science)", 
+      phEn: "ResearcherID (WoS)" 
+    },
+    { 
+      label: t("EBK"), 
+      key: "ekb", 
+      phAr: "حساب بنك المعرفة المصري", 
+      phEn: "Egyptian Knowledge Bank Account" 
+    },
   ];
 
   if (loading || data === null) return <LoadingSpinner />;
@@ -81,7 +119,6 @@ export default function EditIdentificationCard() {
           --fluid-h2: clamp(1.125rem, 1.5vw + 0.5rem, 1.5rem);
           --fluid-gap: clamp(0.625rem, 1.2vw, 1.70rem);
         }
-
         .dynamic-container { padding: clamp(0.5rem, 1.5vw, 1.5rem); }
         .dynamic-grid { gap: var(--fluid-gap); }
         .fluid-label { font-size: clamp(0.65rem, 0.5vw + 0.4rem, 0.75rem); }
@@ -107,14 +144,14 @@ export default function EditIdentificationCard() {
                 {t("editIdentificationCard")}
               </h2>
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider opacity-70">
-                {isArabic ? "بطاقات التعريف" : "Academic Identifiers"}
+                {isArabic ? "إدارة المعرفات الأكاديمية" : "Manage Academic Identifiers"}
               </p>
             </div>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => navigate("/Personal-data")}
-              className="px-7 py-2 text-xs text-gray-400 hover:text-gray-600 font-bold rounded-xl flex shadow-md items-center gap-1.5 transition-all border border-[#b38e19] bg-white"
+              className="px-7 py-2 text-xs text-gray-400 hover:text-gray-600 font-bold rounded-xl flex shadow-md items-center gap-1.5 transition-all border border-gray-200 bg-white"
             >
               <FiX size={16} /> {t("cancel")}
             </button>
@@ -139,8 +176,9 @@ export default function EditIdentificationCard() {
                   <input
                     type="text"
                     value={data[item.key] || ""}
+                    placeholder={isArabic ? item.phAr : item.phEn}
                     onChange={(e) => handleChange(item.key, e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border-2 transition-all outline-none fluid-input text-center bg-white border-gray-100 focus:border-[#b38e19] focus:ring-[4px] focus:ring-[#b38e19]/5 shadow-sm font-medium"
+                    className="w-full h-11 px-3 rounded-xl border-2 transition-all outline-none fluid-input text-center bg-white border-gray-100 focus:border-[#b38e19] focus:ring-[4px] focus:ring-[#b38e19]/5 shadow-sm font-medium"
                   />
                   <FiLink
                     className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? "left-3" : "right-3"} text-gray-200 group-focus-within:text-[#b38e19] transition-colors`}

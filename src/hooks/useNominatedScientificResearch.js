@@ -23,15 +23,13 @@ export default function useNominatedScientificResearch(
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const pageSize = 4; // 4 cards per page
+  const pageSize = 4;
 
-  const loadData = async () => {
+  const loadData = async (pageNumber, isReset = false) => {
     setLoading(true);
-    setError("");
-
     try {
       const response = await fetchNominatedResearches({
-        currentPage,
+        currentPage: pageNumber, // نستخدم رقم الصفحة الممرر مباشرة للدالة
         pageSize,
         sort: sortValue,
         PublisherType: publisherType,
@@ -41,60 +39,55 @@ export default function useNominatedScientificResearch(
       });
 
       const result = response.data;
+      const newMappedItems = result?.data || [];
 
-      const mapped =
-        result?.data?.map((item) => ({
-          ...item,
-        })) || [];
+      setItems((prev) => {
+        if (pageNumber === 1 || isReset) {
+          return newMappedItems;
+        }
+        // دمج مباشر بدون شروط معقدة للتأكد من العرض أولاً
+        // إذا اشتغلت، سنضيف شرط منع التكرار لاحقاً
+        return [...prev, ...newMappedItems];
+      });
 
-      setItems(mapped);
+      const total = Math.max(1, Math.ceil((result?.totalCount || 0) / pageSize));
+      setTotalPages(total);
 
-      const calculatedTotalPages = Math.max(
-        1,
-        Math.ceil((result?.totalCount || 0) / pageSize),
-      );
-
-      setTotalPages(calculatedTotalPages);
-
-      if (mapped.length === 0) {
-        setError(t("empty"));
-      }
     } catch (err) {
-      setItems([]);
-      setError(err?.response?.data?.errorMessage || t("fetchError"));
+      console.error("Error loading researches:", err);
+      setError(t("fetchError"));
     } finally {
       setLoading(false);
     }
   };
 
-  //  reload when page changes
+  // 1. عند تغيير الفلاتر: نصفر كل شيء ونطلب الصفحة 1
   useEffect(() => {
-    loadData();
-  }, [
-    currentPage,
-    sortValue,
-    publisherType,
-    PublicationType,
-    source,
-    derivedFrom,
-  ]);
+    setCurrentPage(1);
+    loadData(1, true); 
+  }, [sortValue, publisherType, PublicationType, source, derivedFrom]);
+
+  // 2. عند تغيير الصفحة فقط (عن طريق View More):
+  useEffect(() => {
+    if (currentPage > 1) {
+      loadData(currentPage, false);
+    }
+  }, [currentPage]);
 
   const handleApprove = async (item) => {
     try {
-      await approveNominatedResearch(item.id);
-      loadData(); // refresh current page after approve
+      await approveNominatedResearch(item.id || item.ID); // دعم الحالتين
+      setItems((prev) => prev.filter((i) => (i.id || i.ID) !== (item.id || item.ID)));
     } catch (err) {
-      alert("Failed to approve research");
+      alert("Failed to approve");
     }
   };
 
   const handleReject = async (item) => {
     try {
-      await rejectNominatedResearch(item.id);
-      loadData(); // refresh page after reject
-    } catch (err) {
-      // alert("Failed to reject research");
-    }
+      await rejectNominatedResearch(item.id || item.ID);
+      setItems((prev) => prev.filter((i) => (i.id || i.ID) !== (item.id || item.ID)));
+    } catch (err) {}
   };
 
   return {
@@ -108,6 +101,9 @@ export default function useNominatedScientificResearch(
     setCurrentPage,
     handleApprove,
     handleReject,
-    reload: loadData,
+    reload: () => {
+      setCurrentPage(1);
+      loadData(1, true);
+    },
   };
 }

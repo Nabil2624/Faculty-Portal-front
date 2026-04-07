@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
+import CoAuthorsList from "../components/widgets/Researches/CoAuthorsList";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import LoadingSpinner from "../components/LoadingSpinner";
 import PageHeader from "../components/ui/PageHeader";

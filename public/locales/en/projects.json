@@ -20,7 +20,7 @@
   "page": "Page",
   "of": "of",
   "noData": "No projects recorded",
-  "empty": "No projects found",
+  "empty": "No data available",
   "errors": {
     "loadFailed": "An error occurred while loading data",
     "deleteFailed": "Failed to delete the item"

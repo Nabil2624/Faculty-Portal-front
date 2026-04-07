@@ -45,7 +45,7 @@ export default function ResearchesPage() {
   const [allResearches, setAllResearches] = useState([]);
   const [page, setPage] = useState(1);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
-  
+
   // التعديل: تحويل المعرف الواحد إلى مصفوفة
   const [selectedIds, setSelectedIds] = useState([]);
 
@@ -153,7 +153,7 @@ export default function ResearchesPage() {
       for (const id of selectedIds) {
         await deleteScientificResearch(id);
       }
-      
+
       setShowDeleteModal(false);
       setSelectedIds([]);
       setPage(1);
@@ -165,7 +165,11 @@ export default function ResearchesPage() {
 
   const handleEditAction = () => {
     // التعديل مسموح فقط لبحث واحد ومن مصدر داخلي
-    if (selectedIds.length === 1 && selectedResearch && selectedResearch.source === "Internal") {
+    if (
+      selectedIds.length === 1 &&
+      selectedResearch &&
+      selectedResearch.source === "Internal"
+    ) {
       navigate("/edit-scientific-research", {
         state: { research: selectedResearch },
       });
@@ -224,19 +228,6 @@ export default function ResearchesPage() {
     },
   ];
 
-  const dummyCoAuthors = [
-    { id: 1, name: "Dr. Ahmed Ali", avatar: "https://i.pravatar.cc/150?u=2" },
-    {
-      id: 2,
-      name: "Prof. Sarah Johnson",
-      avatar: "https://i.pravatar.cc/150?u=1",
-    },
-    {
-      id: 3,
-      name: "Dr. Laila Hassan",
-      avatar: "https://i.pravatar.cc/150?u=3",
-    },
-  ];
 
   if (profileLoading && page === 1) return <LoadingSpinner />;
 
@@ -287,7 +278,15 @@ export default function ResearchesPage() {
         </div>
       </ResponsiveLayoutProvider>
     );
+const cleanLink = (url) => {
+  if (!url) return "#";
 
+  const match = url.match(/user=([a-zA-Z0-9_-]+)/);
+
+  return match
+    ? `https://scholar.google.com/citations?user=${match[1]}`
+    : url;
+};
   return (
     <ResponsiveLayoutProvider>
       <div
@@ -408,23 +407,35 @@ export default function ResearchesPage() {
                   (isArabic ? "المؤلفون المشاركون" : "Co-authors")}
               </h3>
               <div className="flex flex-col gap-4 w-full">
-                {dummyCoAuthors.map((author) => (
-                  <div
-                    key={author.id}
-                    className="flex items-center gap-3 group cursor-pointer"
+                {researcher?.coAuthors?.map((author, index) => (
+                  <a
+                    key={index}
+                    href={cleanLink(author.scholarProfileLink)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-3 group"
                   >
+                    {/* الصورة */}
                     <img
-                      src={author.avatar}
-                      alt={author.name}
-                      className="rounded-full w-9 h-9 object-cover border border-gray-100 shadow-sm group-hover:border-[#B38E19] transition-colors"
+                      src={author.scholarProfileImageURL}
+                      alt={author.academicName}
+                      className="w-10 h-10 rounded-full object-cover"
+                      onError={(e) =>
+                        (e.target.src = "https://via.placeholder.com/150")
+                      }
                     />
-                    <span
-                      className="text-gray-600 font-medium group-hover:text-[#19355A] transition-colors text-sm"
-                      style={{ fontSize: "clamp(0.4rem, 0.9vw, 1.4rem)" }}
-                    >
-                      {author.name}
-                    </span>
-                  </div>
+
+                    {/* 👇 الاسم + التايتل تحت بعض */}
+                    <div className="flex flex-col leading-tight">
+                      <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                        {author.academicName}
+                      </span>
+
+                      <span className="text-xs text-gray-500">
+                        {author.jobTitle || "No title"}
+                      </span>
+                    </div>
+                  </a>
                 ))}
               </div>
             </div>
@@ -434,7 +445,7 @@ export default function ResearchesPage() {
         {showDeleteModal && (
           <DeleteResearchModal
             // نمرر أول عنصر مختار للعرض في الرسالة التأكيدية، أو نعدل المودال ليظهر عدد العناصر
-            item={selectedResearch} 
+            item={selectedResearch}
             t={t}
             onConfirm={handleDeleteAction}
             onCancel={() => setShowDeleteModal(false)}

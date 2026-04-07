@@ -92,11 +92,11 @@ export default function PersonalData() {
       value: getValue(personalData?.title),
     },
     {
-      label: t("name", { ns: "PersonalData" }),
+      label: t("nameEn", { ns: "PersonalData" }),
       value: getValue(personalData?.nameEn),
     },
     {
-      label: t("name", { ns: "PersonalData" }),
+      label: t("nameAr", { ns: "PersonalData" }),
       value: getValue(personalData?.nameAr),
     },
 
@@ -202,14 +202,14 @@ export default function PersonalData() {
       label: t("X/Twitter", { ns: "socialnetworkingpages" }),
       value: socialData.x,
     },
-    {
-      label: t("GoogleScholar", { ns: "socialnetworkingpages" }),
-      value: socialData.googleScholar,
-    },
 
     {
       label: t("Instagram", { ns: "socialnetworkingpages" }),
       value: socialData.instagram,
+    },
+    {
+      label: t("LinkedIn", { ns: "socialnetworkingpages" }),
+      value: identificationData.linkedIn,
     },
     {
       label: t("YouTube Channel", { ns: "socialnetworkingpages" }),
@@ -234,20 +234,23 @@ export default function PersonalData() {
       label: t("ResearcherID", { ns: "identification" }),
       value: identificationData?.researcherId,
     },
-    {
-      label: t("LinkedIn", { ns: "socialnetworkingpages" }),
-      value: identificationData.linkedIn,
-    },
+
     {
       label: t("Scopus", { ns: "socialnetworkingpages" }),
       value: identificationData.scopus,
+    },
+    {
+      label: t("GoogleScholar", { ns: "socialnetworkingpages" }),
+      value: socialData.googleScholar,
     },
     {
       label: t("EBK", { ns: "identification" }),
       value: identificationData?.ekb,
     },
   ];
-
+  const name = isArabic
+    ? getValue(personalData?.nameAr)
+    : getValue(personalData?.nameEn);
   if (loading) return <LoadingSpinner />;
 
   return (
@@ -301,7 +304,7 @@ export default function PersonalData() {
               />
             </div>
             <h6 className="font-bold mt-4 text-center text-[clamp(1rem,1.2vw,1.3rem)]">
-              {getValue(personalData?.title)} {getValue(personalData?.nameEn)}
+              {getValue(personalData?.title)} {name}
             </h6>
             <button
               onClick={() => {

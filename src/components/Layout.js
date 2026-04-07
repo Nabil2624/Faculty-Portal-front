@@ -15,7 +15,7 @@ export default function Layout({ children }) {
     : "clamp(2.7rem, 4vw, 8.5rem)";
 
   return (
-    <div className={`flex h-screen w-full ${isArabic ? "rtl" : "ltr"}`}>
+    <div id="main-scroll" className={` flex h-screen w-full ${isArabic ? "rtl" : "ltr"}`}>
       {/* Sidebar */}
       <Sidebar
         lang={i18n.language}

@@ -151,7 +151,7 @@ export default function LoginPage() {
                 </label>
                 <div className="relative">
                   <User
-                    className={`absolute top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
+                    className={`absolute top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
                     size={18}
                   />
                   <input
@@ -172,7 +172,7 @@ export default function LoginPage() {
                 </label>
                 <div className="relative">
                   <Lock
-                    className={`absolute top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
+                    className={`absolute top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#b38e19] transition-colors ${isArabic ? "right-4" : "left-4"}`}
                     size={18}
                   />
                   <input

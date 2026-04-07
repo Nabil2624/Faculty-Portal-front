@@ -12,7 +12,7 @@
   "cancel": "إلغاء",
   "areYouSureDelete": "هل أنت متأكد من الحذف؟",
 
-  "empty": "لا توجد لجان أو جمعيات",
+  "empty": "لا توجد بيانات",
   "fetchError": "فشل في تحميل البيانات",
   "deleteError": "فشل في حذف العنصر",
   "committees": {
