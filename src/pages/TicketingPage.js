@@ -30,6 +30,10 @@ import {
   TICKET_STATUSES,
   TICKET_SORTS,
 } from "../services/ticketing.service";
+import {
+  getTicketConversation,
+  initConversation,
+} from "../services/messaging.service";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -75,6 +79,7 @@ const STATUS_CONFIG = {
 };
 
 const PRIORITY_CONFIG = {
+  Unspecified: { bg: "#f3f4f6", text: "#6b7280", border: "#9ca3af" },
   Low: { bg: "#d1fae5", text: "#065f46", border: "#10b981" },
   Medium: { bg: "#dbeafe", text: "#1d4ed8", border: "#3b82f6" },
   High: { bg: "#fef3c7", text: "#b45309", border: "#f59e0b" },
@@ -998,6 +1003,7 @@ export default function TicketingPage() {
   const [confirmAction, setConfirmAction] = useState(null); // { type: 'revoke'|'reopen', ticket }
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState("");
+  const [chatLoadingId, setChatLoadingId] = useState(null);
 
   // ── Debounce Search ───────────────────────────────────────────────────────────
   useEffect(() => {
@@ -1053,6 +1059,43 @@ export default function TicketingPage() {
     setActionError("");
     setConfirmAction({ type: "reopen", ticket });
   };
+
+  const handleChat = useCallback(
+    async (ticket) => {
+      setChatLoadingId(ticket.id);
+      try {
+        await getTicketConversation(ticket.id);
+      } catch (err) {
+        if (err?.response?.status === 204) {
+          try {
+            const now = new Date().toISOString();
+            await initConversation({
+              title: ticket.title ?? "Ticket Conversation",
+              ticketId: ticket.id,
+              participants: [
+                {
+                  userId: ticket.senderId,
+                  username: ticket.senderUsername ?? "",
+                  joinedAt: now,
+                },
+                {
+                  userId: ticket.assignedToId,
+                  username: ticket.assigneeUsername ?? "",
+                  joinedAt: now,
+                },
+              ],
+            });
+          } catch {
+            // ignore — ChatPage will handle init on load
+          }
+        }
+      } finally {
+        setChatLoadingId(null);
+        navigate("/chat", { state: { ticket } });
+      }
+    },
+    [navigate],
+  );
 
   const handleConfirmAction = async () => {
     if (!confirmAction) return;
@@ -1641,10 +1684,11 @@ export default function TicketingPage() {
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      navigate("/chat", { state: { ticket } });
+                                      handleChat(ticket);
                                     }}
+                                    disabled={chatLoadingId === ticket.id}
                                     title={t("actions.chat")}
-                                    className="rounded-md transition hover:bg-[#19355a]/10"
+                                    className="rounded-md transition hover:bg-[#19355a]/10 disabled:opacity-50 disabled:cursor-not-allowed"
                                     style={{
                                       padding: "clamp(0.15rem, 0.3vw, 0.35rem)",
                                       color: "#19355a",

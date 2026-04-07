@@ -468,6 +468,12 @@ export default function UsersPage() {
   const handleEditAction = ({ type, canUpdate }) => {
     if (type === "UserAccount" && canUpdate) {
       openEditModal(permSelectorTarget);
+    } else if (type === "FacultyMemberData") {
+      const target = permSelectorTarget;
+      closePermSelector();
+      navigate("/admin/faculty-data", {
+        state: { user: target, subModule: "personalData" },
+      });
     } else if (MODULE_SUBMODULES[type]) {
       // Cache the target before closing the permission selector (which clears it in the hook)
       setCachedTarget(permSelectorTarget);

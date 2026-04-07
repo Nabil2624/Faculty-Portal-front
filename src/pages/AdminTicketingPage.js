@@ -68,6 +68,7 @@ const STATUS_CONFIG = {
 };
 
 const PRIORITY_CONFIG = {
+  Unspecified: { bg: "#f3f4f6", text: "#6b7280", border: "#9ca3af" },
   Low: { bg: "#d1fae5", text: "#065f46", border: "#10b981" },
   Medium: { bg: "#dbeafe", text: "#1d4ed8", border: "#3b82f6" },
   High: { bg: "#fef3c7", text: "#b45309", border: "#f59e0b" },

@@ -1,12 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { UserCheck, X, RefreshCw, AlertCircle, Mail } from "lucide-react";
+import { TICKET_PRIORITIES } from "../../../services/ticketing.service";
+
+const PRIORITY_COLORS = {
+  Low: {
+    bg: "#d1fae5",
+    text: "#065f46",
+    border: "#10b981",
+    activeBg: "#065f46",
+  },
+  Medium: {
+    bg: "#dbeafe",
+    text: "#1d4ed8",
+    border: "#3b82f6",
+    activeBg: "#1d4ed8",
+  },
+  High: {
+    bg: "#fef3c7",
+    text: "#b45309",
+    border: "#f59e0b",
+    activeBg: "#b45309",
+  },
+  Critical: {
+    bg: "#fee2e2",
+    text: "#b91c1c",
+    border: "#ef4444",
+    activeBg: "#b91c1c",
+  },
+};
 
 export default function AssignTicketModal({
   open,
   ticket,
   onClose,
-  onConfirm, // async ({ assignedToId, assigneeUsername }) => void
+  onConfirm, // async ({ priority, assignedToId, assigneeUsername }) => void
   fetchSuitableAdmins,
   isArabic,
 }) {
@@ -15,12 +43,18 @@ export default function AssignTicketModal({
   const [loadingAdmins, setLoadingAdmins] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [selectedAdmin, setSelectedAdmin] = useState(null);
+  const [selectedPriority, setSelectedPriority] = useState("Unspecified");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     if (!open || !ticket) return;
     setSelectedAdmin(null);
+    setSelectedPriority(
+      ticket.priority && ticket.priority !== "Unspecified"
+        ? ticket.priority
+        : "Low",
+    );
     setSubmitError("");
     setLoadError("");
     setAdmins([]);
@@ -43,6 +77,7 @@ export default function AssignTicketModal({
     setSubmitError("");
     try {
       await onConfirm({
+        priority: selectedPriority,
         assignedToId: selectedAdmin.id,
         assigneeUsername: selectedAdmin.userName,
       });
@@ -134,6 +169,55 @@ export default function AssignTicketModal({
             className="flex-1 overflow-y-auto"
             style={{ padding: "clamp(0.8rem, 1.5vw, 1.5rem)" }}
           >
+            {/* Priority selector */}
+            <div style={{ marginBottom: "clamp(0.8rem, 1.4vw, 1.4rem)" }}>
+              <p
+                className="font-semibold text-[#19355a]"
+                style={{
+                  fontSize: "clamp(0.65rem, 0.9vw, 0.95rem)",
+                  marginBottom: "clamp(0.4rem, 0.6vw, 0.6rem)",
+                }}
+              >
+                {t("filterSections.priority")}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {TICKET_PRIORITIES.filter((p) => p !== "Unspecified").map(
+                  (p) => {
+                    const active = selectedPriority === p;
+                    const clr = PRIORITY_COLORS[p] || {
+                      bg: "#f3f4f6",
+                      text: "#374151",
+                      border: "#9ca3af",
+                      activeBg: "#374151",
+                    };
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => setSelectedPriority(p)}
+                        className="rounded-full border transition-all"
+                        style={{
+                          padding:
+                            "clamp(0.2rem, 0.4vw, 0.4rem) clamp(0.5rem, 0.9vw, 1rem)",
+                          fontSize: "clamp(0.6rem, 0.85vw, 0.9rem)",
+                          backgroundColor: active ? clr.activeBg : clr.bg,
+                          color: active ? "white" : clr.text,
+                          borderColor: clr.border,
+                          fontWeight: active ? 600 : 400,
+                          boxShadow: active
+                            ? `0 0 0 2px ${clr.border}`
+                            : "none",
+                        }}
+                      >
+                        {t(`priorities.${p}`, { defaultValue: p })}
+                      </button>
+                    );
+                  },
+                )}
+              </div>
+            </div>
+
+            {/* Admin list */}
             {loadingAdmins ? (
               <div className="flex items-center justify-center gap-2 py-10 text-gray-500">
                 <RefreshCw

@@ -58,6 +58,6 @@
   "logsCategories": "فئات وإجراءات السجلات",
   "systemUsers": "مستخدمو النظام",
   "createUser": "إنشاء مستخدم جديد",
-  "managementTickets": "إدارة التذاكر",
-  "supportAdminTickets": "تذاكري"
+  "managementTickets": "إدارة الشكاوى",
+  "supportAdminTickets": "شكاوى الدعم الخاصة بي"
 }

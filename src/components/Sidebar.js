@@ -14,6 +14,7 @@ import {
   Award,
   ShieldCheck,
   LifeBuoy,
+  IdCard,
   Headset, // أضفت الأيقونات الناقصة للـ Roles التانية
 } from "lucide-react";
 import logo from "../assets/Capital.png";
