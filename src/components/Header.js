@@ -2,25 +2,26 @@ import React from "react";
 import { Bell, Mail, Search, LogOut, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {logout} from "../services/auth.service"
+import { logout } from "../services/auth.service";
 
 export default function Header({ isExpanded }) {
   const { t, i18n } = useTranslation("headerandsidebar");
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
-  const userRole = localStorage.getItem("userRole");
-  const isSupportAdmin = userRole === "SupportAdmin";
+  const userRoles = JSON.parse(localStorage.getItem("userRoles") || "[]");
+  const isSupportAdmin = userRoles.includes("SupportAdmin");
 
   const handleLanguageChange = () => {
     i18n.changeLanguage(isArabic ? "en" : "ar");
   };
 
-const handleLogout = async () => {
+  const handleLogout = async () => {
     try {
-      await logout(); 
-      navigate("/login", { replace: true })
-    } catch (error) {  
-      alert(t("logoutError")); 
+      await logout();
+      localStorage.removeItem("userRoles");
+      navigate("/login", { replace: true });
+    } catch (error) {
+      alert(t("logoutError"));
     }
   };
 
@@ -38,11 +39,17 @@ const handleLogout = async () => {
       {/* 1. Icons Section (Notification & Mail) */}
       <div className="flex items-center gap-1 shrink-0">
         <button className="p-2.5 hover:bg-white/10 rounded-xl transition-all relative group">
-          <Bell size={20} className="text-white/40 group-hover:text-white transition-colors" />
+          <Bell
+            size={20}
+            className="text-white/40 group-hover:text-white transition-colors"
+          />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#b38e19] rounded-full border border-[#19355a]"></span>
         </button>
         <button className="p-2.5 hover:bg-white/10 rounded-xl transition-all group">
-          <Mail size={20} className="text-white/40 group-hover:text-white transition-colors" />
+          <Mail
+            size={20}
+            className="text-white/40 group-hover:text-white transition-colors"
+          />
         </button>
       </div>
 
@@ -58,7 +65,6 @@ const handleLogout = async () => {
 
       {/* 3. Controls Section (Language & Logout) */}
       <div className="flex items-center gap-5 ms-auto shrink-0">
-        
         {/* المقلد من صفحة الـ Login: Glassmorphism Language Toggle */}
         <button
           onClick={handleLanguageChange}
@@ -79,9 +85,11 @@ const handleLogout = async () => {
             {t("logout")}
           </span>
           <div className="w-[1px] h-4 bg-white/10 group-hover:bg-[#b38e19]/30 transition-colors"></div>
-          <LogOut size={18} className="transition-transform group-hover:translate-x-1" />
+          <LogOut
+            size={18}
+            className="transition-transform group-hover:translate-x-1"
+          />
         </button>
-
       </div>
     </header>
   );

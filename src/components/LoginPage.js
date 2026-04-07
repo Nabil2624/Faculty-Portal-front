@@ -44,22 +44,20 @@ export default function LoginPage() {
         }
       );
 
-      const userData = loginResponse?.data;
-      const userType = userData?.role;
+      const roles = loginResponse?.data?.roles || [];
 
-      // 3. تحديث حالة الأوث في التطبيق بالكامل
-      // ده هيقفل بوب اب "انتهت الجلسة" فوراً ويسمح بدخول الـ Protected Routes
-      handleLoginSuccess(userData);
+      // Persist roles array for sidebar/access control
+      localStorage.setItem("userRoles", JSON.stringify(roles));
+      // Remove legacy single-role key if present
+      localStorage.removeItem("userRole");
 
-      if (userType) localStorage.setItem("userRole", userType);
-
-      // Role-based navigation
-      if (userType === "Faculty Member") {
-        navigate("/profile");
-      } else if (userType === "ManagementAdmin") {
+      // Role-based navigation: ManagementAdmin > SupportAdmin > Faculty Member
+      if (roles.includes("ManagementAdmin")) {
         navigate("/admin/users");
-      } else if (userType === "SupportAdmin") {
+      } else if (roles.includes("SupportAdmin")) {
         navigate("/support-admin");
+      } else if (roles.includes("Faculty Member")) {
+        navigate("/profile");
       } else {
         navigate(redirectTo);
       }

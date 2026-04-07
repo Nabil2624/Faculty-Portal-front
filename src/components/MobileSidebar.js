@@ -27,7 +27,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
   const isArabic = lang === "ar";
-  const userRole = localStorage.getItem("userRole");
+  const userRoles = JSON.parse(localStorage.getItem("userRoles") || "[]");
 
   // القائمة الكاملة من كود الـ PC
   const navItems = [
@@ -171,7 +171,8 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
     return (
       <div className="relative flex flex-col gap-1">
         {items.map((item) => {
-          if (item.roles && !item.roles.includes(userRole)) return null;
+          if (item.roles && !item.roles.some((r) => userRoles.includes(r)))
+            return null;
 
           const hasSub = item.sub && item.sub.length > 0;
           const isOpenMenu = openMenus[level] === item.key;
@@ -203,7 +204,10 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
                   className={`relative mt-1 mb-2 ${isArabic ? "mr-6 border-r" : "ml-6 border-l"} border-white/10 flex flex-col gap-1`}
                 >
                   {item.sub.map((subItem) => {
-                    if (subItem.roles && !subItem.roles.includes(userRole))
+                    if (
+                      subItem.roles &&
+                      !subItem.roles.some((r) => userRoles.includes(r))
+                    )
                       return null;
                     return (
                       <Link
@@ -259,8 +263,10 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
         <nav className="flex-1 overflow-y-auto no-scrollbar px-4 py-2">
           {renderMenu(
             navItems.filter((item) => {
-              if (item.roles) return item.roles.includes(userRole);
-              if (userRole === "SupportAdmin") return false;
+              if (item.roles)
+                return item.roles.some((r) => userRoles.includes(r));
+              // Items without a roles restriction are Faculty Member items
+              if (!userRoles.includes("Faculty Member")) return false;
               return true;
             }),
           )}

@@ -173,6 +173,7 @@
 
     "role": {
       "title": "Assign Role",
+      "multiHint": "Select one or more roles",
       "FacultyMember": "Faculty Member",
       "ManagementAdmin": "Management Admin",
       "SupportAdmin": "Support Admin"
@@ -190,12 +191,15 @@
 
     "validation": {
       "userNameRequired": "Username is required.",
+      "userNameNoSpaces": "Username cannot contain spaces.",
       "emailRequired": "Email is required.",
       "emailInvalid": "Please enter a valid email address.",
       "nationalNumberRequired": "National ID number is required.",
       "passwordRequired": "Password is required.",
+      "passwordTooShort": "Password must be at least 8 characters.",
       "passwordNoUppercase": "Password must contain at least one uppercase letter (A–Z).",
       "passwordNoDigit": "Password must contain at least one numeric digit (0–9).",
+      "passwordNoSpecial": "Password must contain at least one special character.",
       "passwordMismatch": "Passwords do not match.",
       "roleRequired": "Please select a role."
     },

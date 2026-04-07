@@ -191,6 +191,8 @@ export default function CreateUserPage() {
   const {
     form,
     setField,
+    toggleRole,
+    hasAdminRole,
     formErrors,
     allPermissions,
     permissionsLoading,
@@ -366,9 +368,9 @@ export default function CreateUserPage() {
                   formErrors={formErrors}
                 />
                 <RoleSelectorWidget
-                  selectedRole={form.role}
-                  onSelect={(role) => setField("role", role)}
-                  error={formErrors.role}
+                  selectedRoles={form.roles}
+                  onToggle={toggleRole}
+                  error={formErrors.roles}
                 />
               </div>
 
@@ -390,7 +392,7 @@ export default function CreateUserPage() {
                   permissionsError={permissionsError}
                   retryPermissions={retryPermissions}
                   totalSelected={totalSelected}
-                  locked={form.role === "Faculty Member"}
+                  locked={!hasAdminRole}
                 />
               </div>
             </div>

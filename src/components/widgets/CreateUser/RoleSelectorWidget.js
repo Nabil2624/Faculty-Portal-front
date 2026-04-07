@@ -32,7 +32,7 @@ const ROLE_CONFIG = {
   },
 };
 
-export default function RoleSelectorWidget({ selectedRole, onSelect, error }) {
+export default function RoleSelectorWidget({ selectedRoles, onToggle, error }) {
   const { t } = useTranslation("Users");
 
   return (
@@ -48,17 +48,28 @@ export default function RoleSelectorWidget({ selectedRole, onSelect, error }) {
       }}
     >
       {/* Card title */}
-      <h2
-        style={{
-          fontSize: "clamp(0.85rem, 1.1vw, 1.7rem)",
-          fontWeight: 700,
-          color: "#1e3a5f",
-          paddingBottom: "clamp(0.5rem, 0.6vw, 0.9rem)",
-          borderBottom: "1px solid #e5e7eb",
-        }}
-      >
-        {t("createUser.role.title")}
-      </h2>
+      <div>
+        <h2
+          style={{
+            fontSize: "clamp(0.85rem, 1.1vw, 1.7rem)",
+            fontWeight: 700,
+            color: "#1e3a5f",
+            paddingBottom: "clamp(0.35rem, 0.45vw, 0.7rem)",
+            borderBottom: "1px solid #e5e7eb",
+          }}
+        >
+          {t("createUser.role.title")}
+        </h2>
+        <p
+          style={{
+            fontSize: "clamp(0.6rem, 0.78vw, 1.1rem)",
+            color: "#6b7280",
+            marginTop: "clamp(0.3rem, 0.4vw, 0.6rem)",
+          }}
+        >
+          {t("createUser.role.multiHint")}
+        </p>
+      </div>
 
       {/* Role cards */}
       <div
@@ -72,13 +83,13 @@ export default function RoleSelectorWidget({ selectedRole, onSelect, error }) {
         {CREATE_USER_ROLES.map(({ value, key }) => {
           const cfg = ROLE_CONFIG[key];
           const Icon = cfg.icon;
-          const isActive = selectedRole === value;
+          const isActive = selectedRoles.includes(value);
 
           return (
             <button
               key={key}
               type="button"
-              onClick={() => onSelect(value)}
+              onClick={() => onToggle(value)}
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -92,8 +103,31 @@ export default function RoleSelectorWidget({ selectedRole, onSelect, error }) {
                 cursor: "pointer",
                 transition: "all 0.18s",
                 outline: "none",
+                position: "relative",
               }}
             >
+              {/* Checkmark badge */}
+              {isActive && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "clamp(4px, 0.4vw, 7px)",
+                    right: "clamp(4px, 0.4vw, 7px)",
+                    width: "clamp(12px, 1vw, 18px)",
+                    height: "clamp(12px, 1vw, 18px)",
+                    borderRadius: "50%",
+                    background: "rgba(255,255,255,0.3)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "clamp(8px, 0.7vw, 12px)",
+                    color: "#fff",
+                    fontWeight: 800,
+                  }}
+                >
+                  ✓
+                </span>
+              )}
               <Icon
                 style={{
                   width: "clamp(1.1rem, 1.6vw, 2.6rem)",
