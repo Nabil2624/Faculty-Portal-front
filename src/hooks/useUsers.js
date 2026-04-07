@@ -21,7 +21,7 @@ export default function useUsers() {
 
   // ─── Filters / sorting / pagination ──────────────────────────────────────
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState([]);
   const [sort, setSort] = useState("");
   const [page, setPage] = useState(0); // 0-based, matches API
 
@@ -62,11 +62,10 @@ export default function useUsers() {
     setLoading(true);
     setError(null);
     try {
-      const roles = roleFilter ? [roleFilter] : [];
       const result = await getUsers({
         sort,
         search,
-        roles,
+        roles: roleFilter,
         pageIndex: page,
         pageSize: PAGE_SIZE,
       });
@@ -88,10 +87,11 @@ export default function useUsers() {
       const res = await getUsers({ pageSize: 500 });
       const counts = { FacultyMember: 0, ManagementAdmin: 0, SupportAdmin: 0 };
       res.data.forEach((u) => {
-        const role = u.role?.name;
-        if (role && Object.prototype.hasOwnProperty.call(counts, role)) {
-          counts[role]++;
-        }
+        (u.roles || []).forEach((role) => {
+          if (Object.prototype.hasOwnProperty.call(counts, role)) {
+            counts[role]++;
+          }
+        });
       });
       setRoleCounts(counts);
     } catch {
