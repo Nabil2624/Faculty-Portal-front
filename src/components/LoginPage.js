@@ -41,18 +41,20 @@ export default function LoginPage() {
         },
       );
 
-      const userType = loginResponse?.data?.role;
+      const roles = loginResponse?.data?.roles || [];
 
-      // Persist role for sidebar/access control
-      if (userType) localStorage.setItem("userRole", userType);
+      // Persist roles array for sidebar/access control
+      localStorage.setItem("userRoles", JSON.stringify(roles));
+      // Remove legacy single-role key if present
+      localStorage.removeItem("userRole");
 
-      // Role-based navigation
-      if (userType === "Faculty Member") {
-        navigate("/profile");
-      } else if (userType === "ManagementAdmin") {
+      // Role-based navigation: ManagementAdmin > SupportAdmin > Faculty Member
+      if (roles.includes("ManagementAdmin")) {
         navigate("/admin/users");
-      } else if (userType === "SupportAdmin") {
+      } else if (roles.includes("SupportAdmin")) {
         navigate("/support-admin");
+      } else if (roles.includes("Faculty Member")) {
+        navigate("/profile");
       } else {
         navigate(redirectTo);
       }

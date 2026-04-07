@@ -192,6 +192,7 @@
 
     "role": {
       "title": "تعيين الدور",
+      "multiHint": "اختر دوراً واحداً أو أكثر",
       "FacultyMember": "عضو هيئة التدريس",
       "ManagementAdmin": "مدير الإدارة",
       "SupportAdmin": "مدير الدعم"
@@ -209,12 +210,15 @@
 
     "validation": {
       "userNameRequired": "اسم المستخدم مطلوب.",
+      "userNameNoSpaces": "لا يمكن أن يحتوي اسم المستخدم على مسافات.",
       "emailRequired": "البريد الإلكتروني مطلوب.",
       "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح.",
       "nationalNumberRequired": "الرقم القومي مطلوب.",
       "passwordRequired": "كلمة المرور مطلوبة.",
+      "passwordTooShort": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.",
       "passwordNoUppercase": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل (A–Z).",
       "passwordNoDigit": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل (0–9).",
+      "passwordNoSpecial": "يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل.",
       "passwordMismatch": "كلمتا المرور غير متطابقتين.",
       "roleRequired": "يرجى اختيار دور."
     },

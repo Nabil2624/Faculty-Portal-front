@@ -18,7 +18,7 @@ const INITIAL_FORM = {
   nationalNumber: "",
   password: "",
   confirmPassword: "",
-  role: "",
+  roles: [], // array of role value strings
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -66,17 +66,32 @@ export default function useCreateUser() {
     loadPermissions();
   }, [loadPermissions]);
 
-  // ─── Clear permissions when Faculty Member role is selected ─────────────────
+  // ─── Clear permissions when only Faculty Member role is selected ─────────────
+  const hasAdminRole = form.roles.some(
+    (r) => r === "ManagementAdmin" || r === "SupportAdmin",
+  );
   useEffect(() => {
-    if (form.role === "Faculty Member") {
+    if (!hasAdminRole) {
       setSelectedPermissionIds(new Set());
     }
-  }, [form.role]);
+  }, [hasAdminRole]);
 
   // ─── Field setter ──────────────────────────────────────────────────────────
   const setField = useCallback((key, value) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
     setFormErrors((prev) => ({ ...prev, [key]: undefined }));
+  }, []);
+
+  // ─── Toggle a role in/out of the roles array ───────────────────────────────
+  const toggleRole = useCallback((roleValue) => {
+    setFormState((prev) => {
+      const already = prev.roles.includes(roleValue);
+      const next = already
+        ? prev.roles.filter((r) => r !== roleValue)
+        : [...prev.roles, roleValue];
+      return { ...prev, roles: next };
+    });
+    setFormErrors((prev) => ({ ...prev, roles: undefined }));
   }, []);
 
   // ─── Toggle single permission ──────────────────────────────────────────────
@@ -106,17 +121,20 @@ export default function useCreateUser() {
   const validate = (f) => {
     const errors = {};
     if (!f.userName.trim()) errors.userName = "userNameRequired";
+    else if (/\s/.test(f.userName)) errors.userName = "userNameNoSpaces";
     if (!f.email.trim()) errors.email = "emailRequired";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim()))
       errors.email = "emailInvalid";
     if (!f.nationalNumber.trim())
       errors.nationalNumber = "nationalNumberRequired";
     if (!f.password.trim()) errors.password = "passwordRequired";
+    else if (f.password.length < 8) errors.password = "passwordTooShort";
     else if (!/[A-Z]/.test(f.password)) errors.password = "passwordNoUppercase";
     else if (!/[0-9]/.test(f.password)) errors.password = "passwordNoDigit";
+    else if (!/[^A-Za-z0-9]/.test(f.password)) errors.password = "passwordNoSpecial";
     if (f.password && f.password !== f.confirmPassword)
       errors.confirmPassword = "passwordMismatch";
-    if (!f.role) errors.role = "roleRequired";
+    if (!f.roles || f.roles.length === 0) errors.roles = "roleRequired";
     return errors;
   };
 
@@ -140,7 +158,7 @@ export default function useCreateUser() {
         nationalNumber: form.nationalNumber,
         password: form.password,
         permissions: selectedPerms,
-        role: { name: form.role },
+        roles: form.roles.map((r) => ({ name: r })),
       });
       setSuccess(true);
       showToast("success", "success");
@@ -188,6 +206,8 @@ export default function useCreateUser() {
     // form
     form,
     setField,
+    toggleRole,
+    hasAdminRole,
     formErrors,
     // permissions data
     allPermissions,

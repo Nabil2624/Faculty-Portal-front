@@ -132,7 +132,7 @@ export async function createUser({
   nationalNumber,
   password,
   permissions,
-  role,
+  roles,
 }) {
   const res = await axiosInstance.post("/Admin/User", {
     userName,
@@ -140,7 +140,7 @@ export async function createUser({
     nationalNumber,
     password,
     permissions: permissions || [],
-    role,
+    roles: roles || [],
   });
   return res.data;
 }

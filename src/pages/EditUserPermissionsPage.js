@@ -90,8 +90,10 @@ export default function EditUserPermissionsPage() {
   const userPermissions = userState?.permissions || [];
 
   // Management admins cannot grant ticket permissions (assigned automatically by backend)
-  const currentUserRole = localStorage.getItem("userRole");
-  const hideTickets = currentUserRole === "ManagementAdmin";
+  const currentUserRoles = JSON.parse(
+    localStorage.getItem("userRoles") || "[]",
+  );
+  const hideTickets = currentUserRoles.includes("ManagementAdmin");
 
   const {
     loadingPerms,
