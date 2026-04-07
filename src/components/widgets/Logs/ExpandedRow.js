@@ -1,8 +1,12 @@
 import { Info, XCircle } from "lucide-react";
 
+const isPresent = (val) => val && val !== "null";
+
 export function ExpandedRow({ log, colSpan, t }) {
   const hasException =
-    log.exception || log.exceptionMessage || log.exceptionDetail;
+    isPresent(log.exception) ||
+    isPresent(log.exceptionMessage) ||
+    isPresent(log.exceptionDetail);
 
   return (
     <tr>
@@ -39,7 +43,7 @@ export function ExpandedRow({ log, colSpan, t }) {
                 {t("expanded.exception")}
               </p>
 
-              {log.exception && (
+              {isPresent(log.exception) && (
                 <div style={{ marginBottom: "clamp(0.4rem, 0.6vw, 0.6rem)" }}>
                   <span
                     className="text-gray-500 block"
@@ -59,7 +63,7 @@ export function ExpandedRow({ log, colSpan, t }) {
                 </div>
               )}
 
-              {log.exceptionMessage && (
+              {isPresent(log.exceptionMessage) && (
                 <div style={{ marginBottom: "clamp(0.4rem, 0.6vw, 0.6rem)" }}>
                   <span
                     className="text-gray-500 block"
@@ -79,7 +83,7 @@ export function ExpandedRow({ log, colSpan, t }) {
                 </div>
               )}
 
-              {log.exceptionDetail && (
+              {isPresent(log.exceptionDetail) && (
                 <div>
                   <span
                     className="text-gray-500 block"

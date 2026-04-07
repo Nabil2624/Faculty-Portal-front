@@ -13,19 +13,19 @@ import ExperiencesWidget from "../components/widgets/Profile/ExperiencesWidget";
 import SkillsWidget from "../components/widgets/Profile/SkillsWidget";
 import useProfile from "../hooks/useProfile";
 import { updateBioSummary } from "../services/profile.service";
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import LoadingSpinner from "../components/LoadingSpinner";
 import profileImage from "../assets/prof.jpg";
-
+import axiosInstance from "../utils/axiosInstance";
 export default function GridLayoutFullScreen() {
   const { i18n } = useTranslation();
   const { data: rawData, loading } = useProfile();
-
+const [profileImg, setProfileImg] = useState(profileImage);
   const data = rawData ?? {}; 
   const isArabic = i18n.language === "ar";
   const [bio, setBio] = useState("");
 
-  if (loading) return <LoadingSpinner />;
+  
 
   const safe = (value, fallback = "") => value ?? fallback;
 
@@ -35,7 +35,24 @@ export default function GridLayoutFullScreen() {
   const fullName = `${title} ${name}`.trim();
   const university = isArabic ? safe(data.university?.valueAr) : safe(data.university?.valueEn);
   const department = isArabic ? safe(data.department?.valueAr) : safe(data.department?.valueEn);
-
+  useEffect(() => {
+    const loadProfileImage = async () => {
+      try {
+        if (data?.profilePictureId) {
+          const url = `/Attachments/${data.personalDataId}/${data.profilePictureId}?context=3`;
+          const response = await axiosInstance.get(url, { responseType: "blob" });
+          const imageBlob = response.data;
+          const imageUrl = URL.createObjectURL(imageBlob);
+          setProfileImg(imageUrl);
+        } else {
+          setProfileImg(profileImage);
+        }
+      } catch (err) {
+        setProfileImg(profileImage);
+      }
+    };
+    loadProfileImage();
+  }, [data]);
   const socials = [
     { type: "facebook", url: safe(data.facebook) },
     { type: "linkedin", url: safe(data.linkedIn) },
@@ -69,7 +86,7 @@ export default function GridLayoutFullScreen() {
   };
 
   const cardBase = "bg-white border-[clamp(1.5px,0.3vw,3px)] border-[#19355A] rounded-[clamp(14px,1vw,20px)] flex flex-col overflow-hidden transition-all duration-300";
-
+if (loading) return <LoadingSpinner />;
   return (
     <ResponsiveLayoutProvider>
       <div className="rtl w-full h-auto lg:h-[90vh] p-2 bg-gray-50/50">
@@ -81,7 +98,7 @@ export default function GridLayoutFullScreen() {
               fullName={fullName}
               college={university}
               jobTitle={department}
-              profileImage={profileImage}
+              profileImage={profileImg}
               socials={socials}
               isArabic={isArabic}
             />

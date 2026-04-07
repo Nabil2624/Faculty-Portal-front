@@ -94,7 +94,7 @@ function Toast({ message, type, onDismiss }) {
 function RoleFilterChip({ label, value, active, onClick }) {
   return (
     <button
-      onClick={() => onClick(active ? "" : value)}
+      onClick={() => onClick(value)}
       className="rounded-full font-medium transition"
       style={{
         padding: "clamp(0.25rem, 0.4vw, 0.7rem) clamp(0.7rem, 1vw, 1.6rem)",
@@ -679,15 +679,31 @@ export default function UsersPage() {
                 flexShrink: 0,
               }}
             />
-            {ROLE_CHIPS.map((chip) => (
-              <RoleFilterChip
-                key={chip.value}
-                label={chip.label}
-                value={chip.value}
-                active={roleFilter === chip.value}
-                onClick={setRoleFilter}
-              />
-            ))}
+            {ROLE_CHIPS.map((chip) => {
+              const isAll = chip.value === "";
+              const active = isAll
+                ? roleFilter.length === 0
+                : roleFilter.includes(chip.value);
+              return (
+                <RoleFilterChip
+                  key={chip.value}
+                  label={chip.label}
+                  value={chip.value}
+                  active={active}
+                  onClick={(val) => {
+                    if (val === "") {
+                      setRoleFilter([]);
+                    } else {
+                      setRoleFilter((prev) =>
+                        prev.includes(val)
+                          ? prev.filter((r) => r !== val)
+                          : [...prev, val],
+                      );
+                    }
+                  }}
+                />
+              );
+            })}
           </div>
 
           {/* Sort */}

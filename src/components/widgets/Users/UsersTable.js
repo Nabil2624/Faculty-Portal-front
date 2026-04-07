@@ -55,8 +55,8 @@ export default function UsersTable({
     { key: "name", label: t("table.name"), width: "26%" },
     { key: "email", label: t("table.email"), width: "27%" },
     { key: "nationalId", label: t("table.nationalId"), width: "19%" },
-    { key: "role", label: t("table.role"), width: "14%" },
-    { key: "actions", label: t("table.actions"), width: "10%" },
+    { key: "role", label: t("table.role"), width: "20%" },
+    { key: "actions", label: t("table.actions"), width: "8%" },
   ];
 
   return (
@@ -266,7 +266,14 @@ export default function UsersTable({
 
                 {/* Role */}
                 <td style={{ padding: CELL_PAD, verticalAlign: "middle" }}>
-                  <RoleBadge roleName={user.role.name} />
+                  <div className="flex flex-wrap gap-1">
+                    {(user.roles && user.roles.length > 0
+                      ? user.roles
+                      : [user.role?.name].filter(Boolean)
+                    ).map((roleName) => (
+                      <RoleBadge key={roleName} roleName={roleName} />
+                    ))}
+                  </div>
                 </td>
 
                 {/* Actions */}

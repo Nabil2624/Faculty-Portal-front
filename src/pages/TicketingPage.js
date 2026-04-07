@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import ReactDOM from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
@@ -342,6 +343,151 @@ function ConfirmModal({
   );
 }
 
+// ─── Type Dropdown (portal-based, always opens downward) ─────────────────────
+
+function TypeDropdown({
+  value,
+  onChange,
+  options,
+  placeholder,
+  t,
+  inputBase,
+  isArabic,
+}) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef(null);
+  const listRef = useRef(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0 });
+
+  const openDropdown = () => {
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+    setOpen(true);
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e) => {
+      if (
+        triggerRef.current &&
+        !triggerRef.current.contains(e.target) &&
+        listRef.current &&
+        !listRef.current.contains(e.target)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  const selectedLabel = value
+    ? t(`types.${value}`, { defaultValue: value })
+    : placeholder;
+
+  return (
+    <div style={{ position: "relative" }}>
+      <button
+        type="button"
+        ref={triggerRef}
+        onClick={() => (open ? setOpen(false) : openDropdown())}
+        style={{
+          ...inputBase,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          cursor: "pointer",
+          textAlign: isArabic ? "right" : "left",
+          color: value ? "#111827" : "#9ca3af",
+          borderColor: open ? "#b38e19" : "#d1d5db",
+        }}
+      >
+        <span
+          style={{
+            flex: 1,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {selectedLabel}
+        </span>
+        <ChevronDown
+          style={{
+            width: "clamp(0.75rem, 1vw, 1.1rem)",
+            height: "clamp(0.75rem, 1vw, 1.1rem)",
+            marginInlineStart: "0.5rem",
+            flexShrink: 0,
+            color: "#6b7280",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.2s",
+          }}
+        />
+      </button>
+
+      {open &&
+        ReactDOM.createPortal(
+          <ul
+            ref={listRef}
+            style={{
+              position: "absolute",
+              top: coords.top,
+              left: coords.left,
+              width: coords.width,
+              zIndex: 9999,
+              background: "white",
+              border: "1px solid #d1d5db",
+              borderRadius: "0.5rem",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.13)",
+              maxHeight: "220px",
+              overflowY: "auto",
+              padding: "0.25rem 0",
+              margin: 0,
+              listStyle: "none",
+              fontSize: "clamp(0.75rem, 1vw, 1rem)",
+            }}
+          >
+            {options.map((opt) => (
+              <li
+                key={opt}
+                onMouseDown={() => {
+                  onChange(opt);
+                  setOpen(false);
+                }}
+                style={{
+                  padding:
+                    "clamp(0.4rem, 0.7vw, 0.7rem) clamp(0.6rem, 1vw, 1rem)",
+                  cursor: "pointer",
+                  backgroundColor:
+                    value === opt ? "rgba(25,53,90,0.08)" : "transparent",
+                  color: value === opt ? "#19355a" : "#111827",
+                  fontWeight: value === opt ? 600 : 400,
+                }}
+                onMouseEnter={(e) => {
+                  if (value !== opt)
+                    e.currentTarget.style.backgroundColor = "#f9fafb";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor =
+                    value === opt ? "rgba(25,53,90,0.08)" : "transparent";
+                }}
+              >
+                {t(`types.${opt}`, { defaultValue: opt })}
+              </li>
+            ))}
+          </ul>,
+          document.body,
+        )}
+    </div>
+  );
+}
+
 // ─── Create Ticket Modal ──────────────────────────────────────────────────────
 
 function CreateTicketModal({ open, onClose, onSuccess, isArabic, t }) {
@@ -349,13 +495,12 @@ function CreateTicketModal({ open, onClose, onSuccess, isArabic, t }) {
     title: "",
     description: "",
     type: "",
-    priority: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   const resetForm = () => {
-    setForm({ title: "", description: "", type: "", priority: "" });
+    setForm({ title: "", description: "", type: "" });
     setError("");
   };
 
@@ -366,7 +511,7 @@ function CreateTicketModal({ open, onClose, onSuccess, isArabic, t }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.title.trim() || !form.type || !form.priority) {
+    if (!form.title.trim() || !form.type) {
       setError(t("createModal.required"));
       return;
     }
@@ -509,52 +654,15 @@ function CreateTicketModal({ open, onClose, onSuccess, isArabic, t }) {
                 {t("createModal.typeLabel")}{" "}
                 <span className="text-red-500">*</span>
               </label>
-              <select
+              <TypeDropdown
                 value={form.type}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, type: e.target.value }))
-                }
-                style={inputBase}
-                onFocus={(e) => (e.target.style.borderColor = "#b38e19")}
-                onBlur={(e) => (e.target.style.borderColor = "#d1d5db")}
-              >
-                <option value="">{t("createModal.selectType")}</option>
-                {TICKET_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {t(`types.${type}`, { defaultValue: type })}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Priority */}
-            <div style={{ marginBottom: "clamp(0.8rem, 1.4vw, 1.4rem)" }}>
-              <label
-                className="block font-semibold text-gray-700"
-                style={{
-                  fontSize: "clamp(0.7rem, 0.95vw, 1rem)",
-                  marginBottom: "clamp(0.2rem, 0.4vw, 0.4rem)",
-                }}
-              >
-                {t("createModal.priorityLabel")}{" "}
-                <span className="text-red-500">*</span>
-              </label>
-              <select
-                value={form.priority}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, priority: e.target.value }))
-                }
-                style={inputBase}
-                onFocus={(e) => (e.target.style.borderColor = "#b38e19")}
-                onBlur={(e) => (e.target.style.borderColor = "#d1d5db")}
-              >
-                <option value="">{t("createModal.selectPriority")}</option>
-                {TICKET_PRIORITIES.map((p) => (
-                  <option key={p} value={p}>
-                    {t(`priorities.${p}`, { defaultValue: p })}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setForm((p) => ({ ...p, type: val }))}
+                options={TICKET_TYPES}
+                placeholder={t("createModal.selectType")}
+                t={t}
+                inputBase={inputBase}
+                isArabic={isArabic}
+              />
             </div>
 
             {error && (
