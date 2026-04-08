@@ -1,32 +1,35 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Printer, RefreshCw, FileText, Settings2 } from "lucide-react";
+import {
+  Download,
+  RefreshCw,
+  FileText,
+  Settings2,
+  Save,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import useCV from "../hooks/useCV";
 import useCVManage from "../hooks/useCVManage";
+import { downloadCV } from "../services/cv.service";
 
 // استيراد التمبليتات (تأكد من المسارات عندك)
 import CVTemplate1 from "../components/widgets/CV/CVTemplate1";
-import CVTemplate2 from "../components/widgets/CV/CVTemplate2";
 import CVTemplate3 from "../components/widgets/CV/CVTemplate3";
 import CVTemplate4 from "../components/widgets/CV/CVTemplate4";
-import CVTemplate5 from "../components/widgets/CV/CVTemplate5";
 
 const TEMPLATES = [
   { id: 1, key: "modern" },
-  { id: 2, key: "classic" },
-  { id: 3, key: "academic" },
-  { id: 4, key: "professional" },
-  { id: 5, key: "timeline" },
+  { id: 2, key: "academic" },
+  { id: 3, key: "professional" },
 ];
 
 const TEMPLATE_COMPONENTS = {
   1: CVTemplate1,
-  2: CVTemplate2,
-  3: CVTemplate3,
-  4: CVTemplate4,
-  5: CVTemplate5,
+  2: CVTemplate3,
+  3: CVTemplate4,
 };
 
 // --- خريطة التحكم الرئيسية (Master Keys) ---
@@ -55,6 +58,11 @@ const SECTION_MASTER = {
   contributionsToUniversity: "showContributionsToUniversity",
   participationInQualityWork: "showparticipationsInQualityWork",
 };
+
+// --- خريطة التحكم العامة (Public Master Keys) ---
+const SECTION_MASTER_PUBLIC = Object.fromEntries(
+  Object.entries(SECTION_MASTER).map(([k, v]) => [k, v + "ForPublic"]),
+);
 
 // --- مصفوفة السكاشن الكاملة (22 سكشن) ---
 const SECTIONS = [
@@ -239,73 +247,133 @@ const SECTIONS = [
   },
 ];
 
-// --- مكونات واجهة المستخدم (Checkbox & Card) ---
-function CheckboxItem({ checked, onChange, label, dimmed }) {
+// --- مكونات واجهة المستخدم ---
+function MiniCheckbox({ checked, onChange, dimmed, color }) {
   return (
-    <label
+    <div
+      onClick={dimmed ? undefined : onChange}
+      style={{
+        width: "15px",
+        height: "15px",
+        borderRadius: 3,
+        border: `2px solid ${checked && !dimmed ? color : "#cbd5e1"}`,
+        background: checked && !dimmed ? color : "#fff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        cursor: dimmed ? "default" : "pointer",
+        opacity: dimmed ? 0.38 : 1,
+        flexShrink: 0,
+        transition: "0.15s",
+      }}
+    >
+      {checked && !dimmed && (
+        <svg width="8" height="6" viewBox="0 0 10 8" fill="none">
+          <path
+            d="M1 4L3.5 6.5L9 1"
+            stroke="white"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+    </div>
+  );
+}
+
+function MiniToggle({ checked, onChange, color }) {
+  return (
+    <div
+      onClick={onChange}
+      style={{
+        width: "26px",
+        height: "14px",
+        borderRadius: 99,
+        background: checked ? color : "rgba(255,255,255,0.3)",
+        position: "relative",
+        cursor: "pointer",
+        flexShrink: 0,
+        transition: "0.2s",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          transform: "translateY(-50%)",
+          left: checked ? "13px" : "2px",
+          width: "10px",
+          height: "10px",
+          borderRadius: "50%",
+          background: "#fff",
+          transition: "0.2s",
+        }}
+      />
+    </div>
+  );
+}
+
+function DualFieldRow({
+  fieldKey,
+  sectionKey,
+  visibility,
+  toggle,
+  t,
+  privDisabled,
+  pubDisabled,
+}) {
+  const privChecked = visibility[sectionKey]?.[fieldKey] ?? true;
+  const pubChecked = visibility[sectionKey]?.[fieldKey + "ForPublic"] ?? true;
+  return (
+    <div
       style={{
         display: "flex",
         alignItems: "center",
         gap: "6px",
-        cursor: "pointer",
-        opacity: dimmed ? 0.45 : 1,
-        fontSize: "0.75rem",
-        color: "#334155",
         padding: "3px 0",
       }}
     >
-      <div
-        onClick={(e) => {
-          e.preventDefault();
-          if (!dimmed) onChange();
-        }}
-        style={{
-          width: "16px",
-          height: "16px",
-          borderRadius: 4,
-          border: `2px solid ${checked ? "#b38e19" : "#cbd5e1"}`,
-          background: checked ? "#b38e19" : "#fff",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-          transition: "0.15s",
-        }}
-      >
-        {checked && (
-          <svg width="8" height="6" viewBox="0 0 10 8" fill="none">
-            <path
-              d="M1 4L3.5 6.5L9 1"
-              stroke="white"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        )}
-      </div>
       <span
         style={{
-          whiteSpace: "nowrap",
+          flex: 1,
+          fontSize: "0.72rem",
+          color: "#334155",
           overflow: "hidden",
           textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
         }}
       >
-        {label}
+        {t(`manage.fields.${fieldKey}`)}
       </span>
-    </label>
+      <MiniCheckbox
+        checked={privChecked}
+        onChange={() => toggle(sectionKey, fieldKey)}
+        dimmed={privDisabled}
+        color="#b38e19"
+      />
+      <MiniCheckbox
+        checked={pubChecked}
+        onChange={() => toggle(sectionKey, fieldKey + "ForPublic")}
+        dimmed={pubDisabled}
+        color="#0ea5e9"
+      />
+    </div>
   );
 }
 
 function SectionCard({ sectionKey, fields, visibility, toggle, t, isArabic }) {
-  const masterKey = SECTION_MASTER[sectionKey];
-  const sectionEnabled = visibility[sectionKey]?.[masterKey] ?? true;
+  const masterPrivKey = SECTION_MASTER[sectionKey];
+  const masterPubKey = SECTION_MASTER_PUBLIC[sectionKey];
+  const privEnabled = visibility[sectionKey]?.[masterPrivKey] ?? true;
+  const pubEnabled = visibility[sectionKey]?.[masterPubKey] ?? true;
+  const eitherEnabled = privEnabled || pubEnabled;
   return (
     <div
       style={{
         background: "#fff",
         borderRadius: "8px",
-        border: `1px solid #e2e8f0`,
+        border: "1px solid #e2e8f0",
         overflow: "hidden",
         marginBottom: "8px",
         boxShadow: "0 1px 2px rgba(0,0,0,0.02)",
@@ -315,54 +383,118 @@ function SectionCard({ sectionKey, fields, visibility, toggle, t, isArabic }) {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
-          padding: "8px 10px",
-          background: sectionEnabled ? "#19355a" : "#94a3b8",
-          cursor: "pointer",
+          padding: "7px 10px",
+          background: eitherEnabled ? "#19355a" : "#94a3b8",
+          gap: "8px",
         }}
-        onClick={() => toggle(sectionKey, masterKey)}
       >
-        <span style={{ color: "#fff", fontWeight: 700, fontSize: "0.75rem" }}>
+        <span
+          style={{
+            color: "#fff",
+            fontWeight: 700,
+            fontSize: "0.72rem",
+            flex: 1,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
           {t(`manage.sections.${sectionKey}`)}
         </span>
         <div
           style={{
-            width: "26px",
-            height: "14px",
-            borderRadius: 99,
-            background: sectionEnabled ? "#b38e19" : "rgba(255,255,255,0.4)",
-            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2px",
           }}
         >
-          <div
+          <span
             style={{
-              position: "absolute",
-              top: "50%",
-              transform: "translateY(-50%)",
-              [isArabic ? "right" : "left"]: sectionEnabled ? "14px" : "2px",
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              background: "#fff",
-              transition: "0.2s",
+              color: "#f0c040",
+              fontSize: "0.55rem",
+              fontWeight: 700,
+              lineHeight: 1,
             }}
+          >
+            {isArabic ? "خاص" : "Priv"}
+          </span>
+          <MiniToggle
+            checked={privEnabled}
+            onChange={() => toggle(sectionKey, masterPrivKey)}
+            color="#b38e19"
+          />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2px",
+          }}
+        >
+          <span
+            style={{
+              color: "#7dd3fc",
+              fontSize: "0.55rem",
+              fontWeight: 700,
+              lineHeight: 1,
+            }}
+          >
+            {isArabic ? "عام" : "Pub"}
+          </span>
+          <MiniToggle
+            checked={pubEnabled}
+            onChange={() => toggle(sectionKey, masterPubKey)}
+            color="#0ea5e9"
           />
         </div>
       </div>
-      {sectionEnabled && (
-        <div
-          style={{
-            padding: "6px 10px",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+      {eitherEnabled && (
+        <div style={{ padding: "4px 10px 6px 10px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "6px",
+              marginBottom: "3px",
+              paddingBottom: "3px",
+              borderBottom: "1px solid #f1f5f9",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "0.6rem",
+                color: "#b38e19",
+                fontWeight: 700,
+                width: "15px",
+                textAlign: "center",
+              }}
+            >
+              🔒
+            </span>
+            <span
+              style={{
+                fontSize: "0.6rem",
+                color: "#0ea5e9",
+                fontWeight: 700,
+                width: "15px",
+                textAlign: "center",
+              }}
+            >
+              🌐
+            </span>
+          </div>
           {fields.map((field) => (
-            <CheckboxItem
+            <DualFieldRow
               key={field}
-              checked={visibility[sectionKey]?.[field] ?? true}
-              onChange={() => toggle(sectionKey, field)}
-              label={t(`manage.fields.${field}`)}
+              fieldKey={field}
+              sectionKey={sectionKey}
+              visibility={visibility}
+              toggle={toggle}
+              t={t}
+              privDisabled={!privEnabled}
+              pubDisabled={!pubEnabled}
             />
           ))}
         </div>
@@ -377,36 +509,39 @@ export default function CVPage() {
   const [selectedTemplate, setSelectedTemplate] = useState(1);
 
   const { data, loading, error, reload } = useCV();
-  const { visibility, toggle } = useCVManage();
+  const {
+    visibility,
+    toggle,
+    save,
+    loading: saveLoading,
+    success,
+    setSuccess,
+    error: saveError,
+  } = useCVManage();
+  const [downloading, setDownloading] = useState(false);
 
   const TemplateComponent = TEMPLATE_COMPONENTS[selectedTemplate];
 
-  const handlePrint = () => {
-    const area = document.getElementById("cv-print-area");
-    if (!area) return;
-    const content = area.outerHTML;
-    const win = window.open("", "_blank", "width=1000,height=800");
-    if (!win) return;
-    win.document.write(`
-      <!DOCTYPE html>
-      <html dir="${isArabic ? "rtl" : "ltr"}">
-      <head>
-        <meta charset="UTF-8"/>
-        <style>
-          @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@400;700&display=swap');
-          *{box-sizing:border-box;margin:0;padding:0;}
-          body{font-family:${isArabic ? "'Cairo'" : "'Inter'"}, sans-serif; padding: 20px;}
-          @media print { body { padding: 0; } @page { margin: 1cm; } }
-        </style>
-      </head>
-      <body>${content}</body>
-      </html>
-    `);
-    win.document.close();
-    setTimeout(() => {
-      win.focus();
-      win.print();
-    }, 500);
+  const handleDownload = async () => {
+    const templateKey =
+      TEMPLATES.find((tpl) => tpl.id === selectedTemplate)?.key ?? "modern";
+    setDownloading(true);
+    try {
+      const response = await downloadCV(templateKey, false);
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `cv-${templateKey}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download failed", err);
+    } finally {
+      setDownloading(false);
+    }
   };
 
   return (
@@ -448,22 +583,27 @@ export default function CVPage() {
           </div>
           <div style={{ display: "flex", gap: "10px" }}>
             <button
-              onClick={handlePrint}
-              disabled={loading || !data}
+              onClick={handleDownload}
+              disabled={loading || !data || downloading}
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: "8px",
                 padding: "10px 18px",
-                background: "#b38e19",
+                background: downloading ? "#94a3b8" : "#b38e19",
                 color: "#fff",
                 border: "none",
                 borderRadius: "8px",
                 fontWeight: 600,
-                cursor: "pointer",
+                cursor: downloading ? "not-allowed" : "pointer",
               }}
             >
-              <Printer size={18} /> {t("print")}
+              {downloading ? (
+                <RefreshCw size={18} className="animate-spin" />
+              ) : (
+                <Download size={18} />
+              )}{" "}
+              {t("download", "Download CV")}
             </button>
           </div>
         </div>
@@ -552,7 +692,7 @@ export default function CVPage() {
           </div>
 
           {/* Right Sidebar (Manage Sections) */}
-          <div style={{ width: "320px", position: "sticky", top: "20px" }}>
+          <div style={{ width: "360px", position: "sticky", top: "20px" }}>
             <div
               style={{
                 background: "#fff",
@@ -567,19 +707,87 @@ export default function CVPage() {
                   display: "flex",
                   alignItems: "center",
                   gap: "10px",
-                  marginBottom: "20px",
+                  marginBottom: "12px",
                 }}
               >
                 <Settings2 size={20} color="#19355a" />
-                <h3 style={{ fontWeight: 800, color: "#19355a", margin: 0 }}>
+                <h3
+                  style={{
+                    fontWeight: 800,
+                    color: "#19355a",
+                    margin: 0,
+                    flex: 1,
+                  }}
+                >
                   {t("manage.pageTitle")}
                 </h3>
               </div>
 
+              {/* Save Button */}
+              <button
+                onClick={save}
+                disabled={saveLoading}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                  padding: "8px 14px",
+                  background: saveLoading ? "#94a3b8" : "#19355a",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  cursor: saveLoading ? "not-allowed" : "pointer",
+                  fontSize: "0.82rem",
+                  width: "100%",
+                  marginBottom: "8px",
+                }}
+              >
+                {saveLoading ? (
+                  <RefreshCw size={14} className="animate-spin" />
+                ) : (
+                  <Save size={14} />
+                )}
+                {saveLoading ? t("manage.saving") : t("manage.save")}
+              </button>
+              {success && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    color: "#16a34a",
+                    fontSize: "0.77rem",
+                    marginBottom: "8px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setSuccess(false)}
+                >
+                  <CheckCircle size={14} />
+                  {t("manage.saveSuccess")}
+                </div>
+              )}
+              {saveError && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    color: "#dc2626",
+                    fontSize: "0.77rem",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <AlertCircle size={14} />
+                  {t("manage.saveError")}
+                </div>
+              )}
+
               {/* Scrollable list of 22 sections */}
               <div
                 style={{
-                  maxHeight: "calc(100vh - 220px)",
+                  maxHeight: "calc(100vh - 320px)",
                   overflowY: "auto",
                   paddingRight: "6px",
                 }}

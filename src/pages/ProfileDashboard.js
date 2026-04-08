@@ -13,34 +13,40 @@ import ExperiencesWidget from "../components/widgets/Profile/ExperiencesWidget";
 import SkillsWidget from "../components/widgets/Profile/SkillsWidget";
 import useProfile from "../hooks/useProfile";
 import { updateBioSummary } from "../services/profile.service";
-import { useState , useEffect } from "react";
+import { useState, useEffect } from "react";
 import LoadingSpinner from "../components/LoadingSpinner";
 import profileImage from "../assets/prof.jpg";
 import axiosInstance from "../utils/axiosInstance";
 export default function GridLayoutFullScreen() {
   const { i18n } = useTranslation();
   const { data: rawData, loading } = useProfile();
-const [profileImg, setProfileImg] = useState(profileImage);
-  const data = rawData ?? {}; 
+  const [profileImg, setProfileImg] = useState(profileImage);
+  const data = rawData ?? {};
   const isArabic = i18n.language === "ar";
   const [bio, setBio] = useState("");
-
-  
 
   const safe = (value, fallback = "") => value ?? fallback;
 
   // ================= DATA MAPPING =================
-  const title = isArabic ? safe(data.title?.valueAr) : safe(data.title?.valueEn);
-  const name = isArabic ? safe(data.nameAr) : safe(data.nameEn) ;
+  const title = isArabic
+    ? safe(data.title?.valueAr)
+    : safe(data.title?.valueEn);
+  const name = isArabic ? safe(data.nameAr) : safe(data.nameEn);
   const fullName = `${title} ${name}`.trim();
-  const university = isArabic ? safe(data.university?.valueAr) : safe(data.university?.valueEn);
-  const department = isArabic ? safe(data.department?.valueAr) : safe(data.department?.valueEn);
+  const university = isArabic
+    ? safe(data.university?.valueAr)
+    : safe(data.university?.valueEn);
+  const department = isArabic
+    ? safe(data.department?.valueAr)
+    : safe(data.department?.valueEn);
   useEffect(() => {
     const loadProfileImage = async () => {
       try {
         if (data?.profilePictureId) {
           const url = `/Attachments/${data.personalDataId}/${data.profilePictureId}?context=3`;
-          const response = await axiosInstance.get(url, { responseType: "blob" });
+          const response = await axiosInstance.get(url, {
+            responseType: "blob",
+          });
           const imageBlob = response.data;
           const imageUrl = URL.createObjectURL(imageBlob);
           setProfileImg(imageUrl);
@@ -58,23 +64,28 @@ const [profileImg, setProfileImg] = useState(profileImage);
     { type: "linkedin", url: safe(data.linkedIn) },
   ].filter((s) => s.url);
 
-  const experiences = data.topExperiences?.map((exp) => ({
-    jobDegree: safe(exp?.title),
-    city: safe(exp?.organization),
-    startDate: safe(exp?.startDate, null),
-    endDate: safe(exp?.endDate, null),
-  })) ?? [];
+  const experiences =
+    data.topExperiences?.map((exp) => ({
+      jobDegree: safe(exp?.title),
+      city: safe(exp?.organization),
+      startDate: safe(exp?.startDate, null),
+      endDate: safe(exp?.endDate, null),
+    })) ?? [];
 
-  const qualifications = data.topAcademicQualifications?.map((q) => ({
-    title: isArabic ? safe(q?.qualification?.valueAr) : safe(q?.qualification?.valueEn),
-    organization: safe(q?.universityOrFaculty),
-    startDate: safe(q?.dateOfObtainingTheQualification, null),
-  })) ?? [];
+  const qualifications =
+    data.topAcademicQualifications?.map((q) => ({
+      title: isArabic
+        ? safe(q?.qualification?.valueAr)
+        : safe(q?.qualification?.valueEn),
+      organization: safe(q?.universityOrFaculty),
+      startDate: safe(q?.dateOfObtainingTheQualification, null),
+    })) ?? [];
 
-  const skills = data.skills?.map((skill, index) => ({
-    id: index,
-    text: safe(skill),
-  })) ?? [];
+  const skills =
+    data.skills?.map((skill, index) => ({
+      id: index,
+      text: safe(skill),
+    })) ?? [];
 
   const handleBioSave = async (newBio) => {
     try {
@@ -85,15 +96,17 @@ const [profileImg, setProfileImg] = useState(profileImage);
     }
   };
 
-  const cardBase = "bg-white border-[clamp(1.5px,0.3vw,3px)] border-[#19355A] rounded-[clamp(14px,1vw,20px)] flex flex-col overflow-hidden transition-all duration-300";
-if (loading) return <LoadingSpinner />;
+  const cardBase =
+    "bg-white border-[clamp(1.5px,0.3vw,3px)] border-[#19355A] rounded-[clamp(14px,1vw,20px)] flex flex-col overflow-hidden transition-all duration-300";
+  if (loading) return <LoadingSpinner />;
   return (
     <ResponsiveLayoutProvider>
       <div className="rtl w-full h-auto lg:h-[90vh] p-2 bg-gray-50/50">
         <div className="grid grid-cols-2 lg:grid-cols-6 lg:grid-rows-4 gap-3 lg:gap-[clamp(4px,0.5vw,16px)] w-full lg:h-full">
-          
           {/* 1. Profile Card */}
-          <div className={`${cardBase} border-[#b38e19] col-span-2 lg:col-span-1 lg:row-span-2 order-1 lg:order-none items-center justify-center p-4`}>
+          <div
+            className={`${cardBase} border-[#b38e19] col-span-2 lg:col-span-1 lg:row-span-2 order-1 lg:order-none items-center justify-center p-4`}
+          >
             <ProfileContent
               fullName={fullName}
               college={university}
@@ -105,7 +118,9 @@ if (loading) return <LoadingSpinner />;
           </div>
 
           {/* 2. Intro */}
-          <div className={`${cardBase} col-span-2 lg:col-start-2 lg:col-span-5 order-2 lg:order-none justify-center`}>
+          <div
+            className={`${cardBase} col-span-2 lg:col-start-2 lg:col-span-5 order-2 lg:order-none justify-center`}
+          >
             <Intro
               content={bio || safe(data.bioSummary)}
               onSave={handleBioSave}
@@ -113,22 +128,46 @@ if (loading) return <LoadingSpinner />;
           </div>
 
           {/* 3. Stats Section */}
-          <div className={`${cardBase} col-span-1 lg:col-start-2 lg:row-start-2 order-3 lg:order-none items-center justify-center min-h-[110px]`}>
-            <ContributionsWidget count={safe(data.contributionsCount, 0)} isArabic={isArabic} />
+          <div
+            className={`${cardBase} col-span-1 lg:col-start-2 lg:row-start-2 order-3 lg:order-none items-center justify-center min-h-[110px]`}
+          >
+            <ContributionsWidget
+              count={safe(data.contributionsCount, 0)}
+              isArabic={isArabic}
+            />
           </div>
-          <div className={`${cardBase} col-span-1 lg:col-start-3 lg:row-start-2 order-4 lg:order-none items-center justify-center min-h-[110px]`}>
-            <ProjectsWidget count={safe(data.projectsCount, 0)} isArabic={isArabic} />
+          <div
+            className={`${cardBase} col-span-1 lg:col-start-3 lg:row-start-2 order-4 lg:order-none items-center justify-center min-h-[110px]`}
+          >
+            <ProjectsWidget
+              count={safe(data.projectsCount, 0)}
+              isArabic={isArabic}
+            />
           </div>
-          <div className={`${cardBase} col-span-1 lg:col-start-4 lg:row-start-2 order-5 lg:order-none items-center justify-center min-h-[110px]`}>
-            <PublicationsAndPatentsWidget count={safe(data.scientificWritingsCount, 0)} isArabic={isArabic} />
+          <div
+            className={`${cardBase} col-span-1 lg:col-start-4 lg:row-start-2 order-5 lg:order-none items-center justify-center min-h-[110px]`}
+          >
+            <PublicationsAndPatentsWidget
+              count={safe(data.scientificWritingsCount, 0)}
+              isArabic={isArabic}
+            />
           </div>
-          <div className={`${cardBase} col-span-1 lg:col-start-5 lg:row-start-2 order-6 lg:order-none items-center justify-center min-h-[110px]`}>
-            <PrizesWidget count={safe(data.prizesAndRewardsCount, 0)} isArabic={isArabic} />
+          <div
+            className={`${cardBase} col-span-1 lg:col-start-5 lg:row-start-2 order-6 lg:order-none items-center justify-center min-h-[110px]`}
+          >
+            <PrizesWidget
+              count={safe(data.prizesAndRewardsCount, 0)}
+              isArabic={isArabic}
+            />
           </div>
-          <div className={`${cardBase} col-span-2 lg:col-span-1 lg:col-start-6 lg:row-start-2 order-7 lg:order-none items-center justify-center min-h-[110px]`}>
-            <ResearchWidget count={safe(data.researchCount, 0)} isArabic={isArabic} />
+          <div
+            className={`${cardBase} col-span-2 lg:col-span-1 lg:col-start-6 lg:row-start-2 order-7 lg:order-none items-center justify-center min-h-[110px]`}
+          >
+            <ResearchWidget
+              count={safe(data.researchCount, 0)}
+              isArabic={isArabic}
+            />
           </div>
-
 
           <div
             className={`${cardBase} group relative col-span-2 h-[500px] lg:h-auto lg:row-start-3 lg:row-span-2 lg:col-start-1 lg:col-span-1 order-10 lg:order-none shadow-lg`}
@@ -150,19 +189,24 @@ if (loading) return <LoadingSpinner />;
           </div>
 
           {/* 5. Qualifications & Experiences */}
-          <div className={`${cardBase} col-span-2 lg:row-start-3 lg:row-span-2 lg:col-start-2 lg:col-span-2 order-8 lg:order-none`}>
+          <div
+            className={`${cardBase} col-span-2 lg:row-start-3 lg:row-span-2 lg:col-start-2 lg:col-span-2 order-8 lg:order-none`}
+          >
             <QualificationsWidget data={qualifications} />
           </div>
 
-          <div className={`${cardBase} col-span-2 lg:row-start-3 lg:row-span-2 lg:col-start-4 lg:col-span-2 order-9 lg:order-none`}>
+          <div
+            className={`${cardBase} col-span-2 lg:row-start-3 lg:row-span-2 lg:col-start-4 lg:col-span-2 order-9 lg:order-none`}
+          >
             <ExperiencesWidget data={experiences} />
           </div>
 
           {/* 6. Skills */}
-          <div className={`${cardBase} col-span-2 lg:col-span-1 lg:row-start-3 lg:row-span-2 lg:col-start-6 order-11 lg:order-none`}>
+          <div
+            className={`${cardBase} col-span-2 lg:col-span-1 lg:row-start-3 lg:row-span-2 lg:col-start-6 order-11 lg:order-none`}
+          >
             <SkillsWidget data={skills} />
           </div>
-
         </div>
       </div>
     </ResponsiveLayoutProvider>
