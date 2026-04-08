@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { getCVData } from "../services/cv.service";
+import axiosInstance from "../utils/axiosInstance";
 
 export default function useCV() {
   const [data, setData] = useState(null);
@@ -11,7 +12,29 @@ export default function useCV() {
     setError(null);
     try {
       const res = await getCVData();
-      setData(res.data);
+      const raw = res.data;
+
+      // Normalize name: backend sends nameAr; use it as the display name
+      const normalized = {
+        ...raw,
+        name: raw.nameAr || raw.nameEn || "",
+        profilePicture: null,
+      };
+
+      // Fetch profile picture as a blob URL if the ID is present
+      if (raw.profilePictureId && raw.personalDataId) {
+        try {
+          const picRes = await axiosInstance.get(
+            `/Attachments/${raw.personalDataId}/${raw.profilePictureId}?context=3`,
+            { responseType: "blob" },
+          );
+          normalized.profilePicture = URL.createObjectURL(picRes.data);
+        } catch {
+          // profile picture unavailable – leave as null
+        }
+      }
+
+      setData(normalized);
     } catch {
       setError(true);
     } finally {
