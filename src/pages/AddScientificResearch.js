@@ -226,6 +226,9 @@ console.log("Current PublisherType State:", publisherType);
                     handleFetchContributor={handleFetchContributor}
                     placeholder={t("participantsPlaceholder")}
                     error={errors.participants}
+                    setParentError={(msg) =>
+                      setErrors((prev) => ({ ...prev, participants: msg }))
+                    }
                     t={t}
                     isArabic={isArabic}
                   />
