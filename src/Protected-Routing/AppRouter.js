@@ -119,7 +119,7 @@ import ChatPage from "../pages/ChatPage";
 import CVPage from "../pages/CVPage";
 import ManageCVPage from "../pages/ManageCVPage";
 import Login from "../components/Login";
-import FullCVPage from "../pages/FullCVPage";
+
 // ... (باقي الـ Imports بتاعتك)
 
 function AppRouterInner() {
@@ -415,10 +415,7 @@ function AppRouterInner() {
             element={<ParticipationInQualityWorks />}
           />
 
-          <Route
-            path="/full-cv"
-            element={<FullCVPage />}
-          />
+
           
           <Route
             path="/add-participation-quality-work"
