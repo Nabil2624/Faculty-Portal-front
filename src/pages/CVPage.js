@@ -508,7 +508,7 @@ export default function CVPage() {
   const isArabic = i18n.language === "ar";
   const [selectedTemplate, setSelectedTemplate] = useState(1);
 
-  const { data, loading, error, reload } = useCV();
+  const { data, loading, error, notFound, reload } = useCV();
   const {
     visibility,
     toggle,
@@ -668,6 +668,25 @@ export default function CVPage() {
                 }}
               >
                 <RefreshCw className="animate-spin" color="#19355a" size={40} />
+              </div>
+            ) : notFound ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: "60px 20px",
+                  background: "#fff",
+                  borderRadius: "10px",
+                  border: "1px solid #eee",
+                  color: "#64748b",
+                  fontSize: "1rem",
+                  fontWeight: 600,
+                }}
+              >
+                {isArabic
+                  ? "لا توجد بيانات شخصية لإنشاء السيرة الذاتية"
+                  : "No personal data to generate CV"}
               </div>
             ) : (
               data && (
