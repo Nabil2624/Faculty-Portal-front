@@ -39,14 +39,13 @@ export default function useResearcherProfile() {
         if (response.status === 204) {
           try {
             const linksResponse = await axios.get(
-              "http://127.0.0.1:8000/api/fetch-researcher-links/",
+              "http://localhost/Researches/api/fetch-researcher-links/",
               {
                 params: { national_number: currentNationalNumber },
               }
             );
 
             if (linksResponse.status === 200) {
-              // Python started scraping
               setWaiting(true);
             }
           } catch (err) {
