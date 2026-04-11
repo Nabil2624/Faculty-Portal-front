@@ -22,10 +22,11 @@ import DeleteConfirmModal from "../components/widgets/AdminFacultyData/DeleteCon
 import AdminResearcherProfilePanel from "../components/widgets/AdminFacultyData/AdminResearcherProfilePanel";
 import AdminResearchesPanel from "../components/widgets/AdminFacultyData/AdminResearchesPanel";
 import AdminThesesPanel from "../components/widgets/AdminFacultyData/AdminThesesPanel";
+import AdminPersonalDataPanel from "../components/widgets/AdminFacultyData/AdminPersonalDataPanel";
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
 
-function Toast({ messageKey, type, onDismiss }) {
+function Toast({ messageKey, type, onDismiss, isArabic }) {
   const { t } = useTranslation("AdminFacultyData");
 
   useEffect(() => {
@@ -42,8 +43,10 @@ function Toast({ messageKey, type, onDismiss }) {
     <div
       className="fixed z-[70] flex items-center gap-2 rounded-xl border shadow-lg"
       style={{
-        top: "clamp(1rem, 2vw, 2.5rem)",
-        right: "clamp(1rem, 2vw, 2.5rem)",
+        top: "clamp(1rem, 2vw, 1.5rem)",
+        ...(isArabic
+          ? { right: "clamp(4rem, 5vw, 5rem)" }
+          : { left: "clamp(4rem, 5vw, 5rem)" }),
         backgroundColor: colors.bg,
         borderColor: colors.border,
         color: colors.text,
@@ -154,6 +157,7 @@ export default function AdminFacultyDataPage() {
     "researches",
     "recommendedResearches",
     "theses",
+    "personalData",
   ].includes(subModule);
 
   // Sub-modules that hide the "Add New" button
@@ -161,6 +165,7 @@ export default function AdminFacultyDataPage() {
     "researcherProfile",
     "recommendedResearches",
     "recommendedThesesSupervisings",
+    "personalData",
   ].includes(subModule);
 
   const BackIcon = isAr ? ArrowRight : ArrowLeft;
@@ -169,7 +174,7 @@ export default function AdminFacultyDataPage() {
     <ResponsiveLayoutProvider>
       {/* Toast */}
       {toast && (
-        <Toast messageKey={toast.key} type={toast.type} onDismiss={() => {}} />
+        <Toast messageKey={toast.key} type={toast.type} onDismiss={() => {}} isArabic={isAr} />
       )}
 
       {/* Add modal */}
@@ -457,6 +462,9 @@ export default function AdminFacultyDataPage() {
           <AdminResearchesPanel user={user} subModule={subModule} />
         )}
         {subModule === "theses" && <AdminThesesPanel user={user} />}
+        {subModule === "personalData" && (
+          <AdminPersonalDataPanel user={user} />
+        )}
 
         {/* ── Generic table ── */}
         {!isSpecialPanel && !loading && !error && (

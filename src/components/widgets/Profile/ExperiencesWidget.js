@@ -6,7 +6,7 @@ export default function ExperiencesWidget({ data = [] }) {
   const isArabic = i18n.language === "ar";
 
   const hasData = Array.isArray(data) && data.length > 0;
-  const maxItems = 3;
+  const maxItems = 4;
 
   function formatDate(dateString) {
     if (!dateString) return isArabic ? "الآن" : "Present";
@@ -22,8 +22,14 @@ export default function ExperiencesWidget({ data = [] }) {
       {/* Header */}
       <div className="flex justify-between items-center mb-[clamp(8px,1vw,16px)] shrink-0">
         <div className="flex items-center gap-2">
-          <div className="bg-[#19355A] p-1.5 rounded-lg shadow-sm">
-            <Briefcase className="text-[#b38e19] w-[clamp(14px,1vw,20px)] h-[clamp(14px,1vw,20px)]" />
+          <div className="bg-[#fff] p-1.5 rounded-lg shadow-sm">
+            <Briefcase
+              className="text-[#19355A]"
+              style={{
+                width: "clamp(25px,1.2vw,24px)",
+                height: "clamp(25px,1.2vw,24px)",
+              }}
+            />
           </div>
           <h3 className="text-[#19355A] font-bold text-[clamp(14px,1.2vw,22px)]">
             {t("Experiences")}
@@ -54,7 +60,7 @@ export default function ExperiencesWidget({ data = [] }) {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-[clamp(8px,0.6vw,12px)] overflow-hidden">
+          <div className="flex flex-col gap-[clamp(8px,0.6vw,12px)] overflow-y-auto max-h-full pr-1">
             {data.slice(0, maxItems).map((item, index) => (
               <div
                 key={index}

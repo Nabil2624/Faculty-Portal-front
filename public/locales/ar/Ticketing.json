@@ -57,6 +57,7 @@
   },
 
   "priorities": {
+    "Unspecified": "غير محددة",
     "Low": "منخفضة",
     "Medium": "متوسطة",
     "High": "عالية",

@@ -42,6 +42,10 @@ import {
   TICKET_STATUSES,
   TICKET_SORTS,
 } from "../services/ticketing.service";
+import {
+  getTicketConversation,
+  initConversation,
+} from "../services/messaging.service";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -784,6 +788,7 @@ export default function SupportAdminTicketingPage() {
   const [foundUser, setFoundUser] = useState(null);
   const [editUserOpen, setEditUserOpen] = useState(false);
   const [savingUser, setSavingUser] = useState(false);
+  const [chatLoadingId, setChatLoadingId] = useState(null);
 
   const {
     tickets,
@@ -859,8 +864,38 @@ export default function SupportAdminTicketingPage() {
 
   // ── Chat ───────────────────────────────────────────────────────────────────
   const handleChat = useCallback(
-    (ticket) => {
-      navigate("/chat", { state: { ticket } });
+    async (ticket) => {
+      setChatLoadingId(ticket.id);
+      try {
+        await getTicketConversation(ticket.id);
+      } catch (err) {
+        if (err?.response?.status === 204) {
+          try {
+            const now = new Date().toISOString();
+            await initConversation({
+              title: ticket.title ?? "Ticket Conversation",
+              ticketId: ticket.id,
+              participants: [
+                {
+                  userId: ticket.senderId,
+                  username: ticket.senderUsername ?? "",
+                  joinedAt: now,
+                },
+                {
+                  userId: ticket.assignedToId,
+                  username: ticket.assigneeUsername ?? "",
+                  joinedAt: now,
+                },
+              ],
+            });
+          } catch {
+            // ignore — ChatPage will handle init on load
+          }
+        }
+      } finally {
+        setChatLoadingId(null);
+        navigate("/chat", { state: { ticket } });
+      }
     },
     [navigate],
   );
@@ -907,11 +942,10 @@ export default function SupportAdminTicketingPage() {
       }
 
       if (moduleType === "FacultyMemberData") {
-        // Option is selectable now; backend integration comes later.
         navigate("/admin/faculty-data", {
           state: {
             user: foundUser,
-            subModule: "facultyMemberData",
+            subModule: "personalData",
             returnTo: "/support-admin",
           },
         });
@@ -1345,7 +1379,8 @@ export default function SupportAdminTicketingPage() {
                               <button
                                 title={t("support.chat")}
                                 onClick={() => handleChat(ticket)}
-                                className="inline-flex items-center justify-center rounded-lg transition hover:bg-[#19355a]/10"
+                                disabled={chatLoadingId === ticket.id}
+                                className="inline-flex items-center justify-center rounded-lg transition hover:bg-[#19355a]/10 disabled:opacity-50 disabled:cursor-not-allowed"
                                 style={{
                                   padding: "clamp(0.25rem, 0.4vw, 0.4rem)",
                                   color: "#19355a",

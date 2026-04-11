@@ -157,7 +157,7 @@ export default function CVTemplate4({
           flexDirection: "column",
         }}
       >
-        {/* Avatar placeholder */}
+        {/* Avatar */}
         <div
           style={{
             width: "clamp(60px,7vw,100px)",
@@ -170,17 +170,26 @@ export default function CVTemplate4({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            overflow: "hidden",
           }}
         >
-          <span
-            style={{
-              color: GOLD,
-              fontWeight: 900,
-              fontSize: "clamp(1.2rem,2vw,2.2rem)",
-            }}
-          >
-            {data.name?.charAt(0) || "?"}
-          </span>
+          {data.profilePicture ? (
+            <img
+              src={data.profilePicture}
+              alt=""
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <span
+              style={{
+                color: GOLD,
+                fontWeight: 900,
+                fontSize: "clamp(1.2rem,2vw,2.2rem)",
+              }}
+            >
+              {data.name?.charAt(0) || "?"}
+            </span>
+          )}
         </div>
 
         <div

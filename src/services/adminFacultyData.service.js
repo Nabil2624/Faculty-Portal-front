@@ -1017,3 +1017,81 @@ export const adminGetUniversitiesLookup = () =>
   axiosInstance.get(`/LookUpItems/Universities`, {
     skipGlobalErrorHandler: true,
   });
+
+// ─── Personal Data ────────────────────────────────────────────────────────────
+
+export const adminGetPersonalData = (email) =>
+  axiosInstance.get(`/Admin/FacultyMember/PersonalData`, {
+    params: { facultyMemberEmail: email },
+    skipGlobalErrorHandler: true,
+  });
+
+export const adminUpdatePersonalData = (email, data) =>
+  axiosInstance.put(`/Admin/FacultyMember/PersonalData`, data, {
+    params: { facultyMemberEmail: email },
+    skipGlobalErrorHandler: true,
+  });
+
+export const adminGetAdminContactData = (email) =>
+  axiosInstance.get(`/Admin/FacultyMember/ContactData`, {
+    params: { facultyMemberEmail: email },
+    skipGlobalErrorHandler: true,
+  });
+
+export const adminUpdateAdminContactData = (email, data) =>
+  axiosInstance.put(`/Admin/FacultyMember/ContactData`, data, {
+    params: { facultyMemberEmail: email },
+    skipGlobalErrorHandler: true,
+  });
+
+export const adminGetIdentificationCard = (email) =>
+  axiosInstance.get(`/Admin/FacultyMember/IdentificationCard`, {
+    params: { facultyMemberEmail: email },
+    skipGlobalErrorHandler: true,
+  });
+
+export const adminUpdateIdentificationCard = (email, data) =>
+  axiosInstance.put(`/Admin/FacultyMember/IdentificationCard`, data, {
+    params: { facultyMemberEmail: email },
+    skipGlobalErrorHandler: true,
+  });
+
+export const adminGetAdminSocialMediaPlatforms = (email) =>
+  axiosInstance.get(`/Admin/FacultyMember/SocialMediaPlatforms`, {
+    params: { facultyMemberEmail: email },
+    skipGlobalErrorHandler: true,
+  });
+
+export const adminUpdateAdminSocialMediaPlatforms = (email, data) =>
+  axiosInstance.put(`/Admin/FacultyMember/SocialMediaPlatforms`, data, {
+    params: { facultyMemberEmail: email },
+    skipGlobalErrorHandler: true,
+  });
+
+// ─── Personal Data Lookups ────────────────────────────────────────────────────
+
+export const adminGetTitlesLookup = () =>
+  axiosInstance.get(`/LookUpItems/Titles`, { skipGlobalErrorHandler: true });
+
+export const adminGetGendersLookup = () =>
+  axiosInstance.get(`/LookUpItems/Genders`, { skipGlobalErrorHandler: true });
+
+export const adminGetSocialStatesLookup = () =>
+  axiosInstance.get(`/LookUpItems/SocialStates`, {
+    skipGlobalErrorHandler: true,
+  });
+
+export const adminGetDepartmentsLookup = () =>
+  axiosInstance.get(`/LookUpItems/Departments`, {
+    skipGlobalErrorHandler: true,
+  });
+
+export const adminGetStudyFieldsLookup = () =>
+  axiosInstance.get(`/LookUpItems/StudyFields`, {
+    skipGlobalErrorHandler: true,
+  });
+
+export const adminGetFacultiesLookup = () =>
+  axiosInstance.get(`/LookUpItems/Faculties`, {
+    skipGlobalErrorHandler: true,
+  });

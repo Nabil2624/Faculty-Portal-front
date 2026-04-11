@@ -206,6 +206,9 @@ export default function EditScientificResearch() {
                     setParticipants={setParticipants}
                     t={t}
                     isArabic={isArabic}
+                    setParentError={(msg) =>
+                      setErrors((prev) => ({ ...prev, participants: msg }))
+                    }
                   />
                 </div>
 

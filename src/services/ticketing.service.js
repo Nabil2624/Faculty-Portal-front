@@ -16,7 +16,13 @@ export const TICKET_TYPES = [
   "RoleAssignmentRequest",
 ];
 
-export const TICKET_PRIORITIES = ["Low", "Medium", "High", "Critical"];
+export const TICKET_PRIORITIES = [
+  "Unspecified",
+  "Low",
+  "Medium",
+  "High",
+  "Critical",
+];
 
 export const TICKET_STATUSES = [
   "Opened",

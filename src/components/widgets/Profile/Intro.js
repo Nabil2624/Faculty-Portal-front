@@ -60,13 +60,13 @@ export default function Intro({ content, onSave }) {
         ) : (
           <div className="w-full text-start h-full">
             <div className="flex items-center gap-2 mb-[clamp(8px,1vw,16px)] sticky top-0 bg-white z-10 border-b border-gray-100">
-                <div className="bg-[#19355A] p-[clamp(4px,0.4vw,8px)] rounded-md">
-                    <UserCircle className="text-[#b38e19] w-[clamp(14px,1.2vw,20px)] h-[clamp(14px,1.2vw,20px)]" />
+                <div className="bg-[#fff] p-[clamp(4px,0.4vw,8px)] rounded-md border-1 border-[#19355A]">
+                    <UserCircle className="text-[#19355A]" style={{ width: "clamp(25px,1.2vw,24px)", height: "clamp(25px,1.2vw,24px)" }} />
                 </div>
                 <h3 className="text-[#19355A] font-bold text-[clamp(14px,1.3vw,22px)]">
                     {t("Intro")}
                 </h3>
-                <Edit3 className="w-[clamp(12px,1vw,16px)] h-[clamp(12px,1vw,16px)] text-[#b38e19] ms-auto" />
+                <Edit3 className="w-[clamp(12px,1vw,16px)] h-[clamp(12px,1vw,16px)] text-[#19355A] ms-auto" />
             </div>
             <p className="text-gray-700 text-[clamp(12px,1.05vw,17px)] break-words text-justify leading-relaxed px-1">
               {content}
@@ -86,8 +86,8 @@ export default function Intro({ content, onSave }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3 mb-[clamp(12px,1.5vw,20px)] border-b pb-3">
-               <div className="bg-[#19355A] p-[clamp(6px,0.6vw,10px)] rounded-lg">
-                  <Edit3 className="text-[#b38e19] w-[clamp(18px,1.5vw,24px)] h-[clamp(18px,1.5vw,24px)]" />
+               <div className="bg-[#b38e19] p-[clamp(6px,0.6vw,10px)] rounded-lg border border-[#19355A]">
+                  <Edit3 className="text-[#19355A] w-[clamp(18px,1.5vw,24px)] h-[clamp(18px,1.5vw,24px)]" />
                </div>
                <h3 className="text-[#19355A] font-bold text-[clamp(16px,1.4vw,26px)]">
                  {t("WriteyourIntro")}

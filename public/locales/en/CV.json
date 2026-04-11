@@ -2,6 +2,7 @@
   "pageTitle": "My CV",
   "editCV": "Edit CV Visibility",
   "print": "Print",
+  "download": "Download CV",
   "chooseTemplate": "Choose Template",
   "loading": "Loading your CV...",
   "error": "Failed to load CV data",
