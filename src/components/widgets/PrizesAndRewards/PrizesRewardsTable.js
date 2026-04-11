@@ -336,37 +336,29 @@ const PrizesRewardsTable = ({
                   LH_TIGHT={LH_TIGHT}
                 />
 
-                <div className="col-span-full">
-                  <div className="flex items-center gap-2 mb-4 opacity-60">
-                    <FileText size={16} />
-                    <span
-                      className="uppercase font-semibold"
-                      style={{ fontSize: "0.7rem" }}
+                {selectedItem.attachments?.length > 0 && (
+                  <div className="col-span-full border p-4 rounded-xl bg-amber-50/20">
+                    <p
+                      className="flex items-center gap-2 font-bold mb-3"
+                      style={{ fontSize: FS_SM, color: THEME_COLOR }}
                     >
-                      {t("attachments")}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-4">
-                    {selectedItem.attachments?.length > 0 ? (
-                      selectedItem.attachments.map((a) => (
+                      <Download size={20} /> {t("attachments")}
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      {selectedItem.attachments.map((a) => (
                         <button
                           key={a.id}
+                          // التعديل هنا: نمرر المرفق 'a' فقط للدالة
                           onClick={() => handleDownload(a)}
-                          className="flex items-center gap-3 px-4 py-2 border rounded-xl hover:bg-gray-50 transition-all group"
+                          className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:border-[#b38e19] transition-all shadow-sm flex items-center gap-2"
                         >
-                          <Download size={16} className="text-[#b38e19]" />
-                          <span className="text-sm font-medium underline decoration-[#b38e19]/30">
-                            {a.fileName}
-                          </span>
+                          <FileText size={14} className="text-gray-400" />
+                          <span className="font-medium">{a.fileName}</span>
                         </button>
-                      ))
-                    ) : (
-                      <span className="text-gray-400 italic text-sm">
-                        {t("noAttachments")}
-                      </span>
-                    )}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div
                   className="col-span-full mt-8 bg-gray-50 rounded-2xl border-s-4 shadow-sm"

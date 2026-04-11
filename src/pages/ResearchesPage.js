@@ -40,7 +40,7 @@ export default function ResearchesPage() {
   const [publicationType, setPublicationType] = useState([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+  const [errorMsg, setErrorMsg] = useState("");
   // --- States التحكم في القائمة والاختيار ---
   const [allResearches, setAllResearches] = useState([]);
   const [page, setPage] = useState(1);
@@ -228,7 +228,6 @@ export default function ResearchesPage() {
     },
   ];
 
-
   if (profileLoading && page === 1) return <LoadingSpinner />;
 
   if (waiting) {
@@ -247,17 +246,34 @@ export default function ResearchesPage() {
     return (
       <ResponsiveLayoutProvider>
         <div className="p-6">
+          {errorMsg && (
+            <div className="mb-4 p-4 rounded-xl bg-red-100 text-red-700 font-semibold text-sm">
+              {errorMsg}
+            </div>
+          )}
+
           <MissingScholarCard
             onSave={async (data) => {
-              await axios.post(
-                "http://127.0.0.1:8000/api/fetch-research-using-scholar-profile-link/",
-                {
-                  researcherNationalNumber: nationalNumber,
-                  ORCID: data.orcid,
-                  scholarProfileLink: data.scholarLink,
-                },
-              );
-              window.location.reload();
+              try {
+                setErrorMsg(""); // امسح أي error قديم
+
+                await axios.post(
+                  "http://127.0.0.1:8000/api/fetch-research-using-scholar-profile-link/",
+                  {
+                    researcherNationalNumber: nationalNumber,
+                    ORCID: data.orcid,
+                    scholarProfileLink: data.scholarLink,
+                  },
+                );
+
+                window.location.reload();
+              } catch (error) {
+                if (error.response?.status === 429) {
+                  setErrorMsg(t("ScientificResearches:tooManyRequests"));
+                } else {
+                  setErrorMsg("Something went wrong, please try again.");
+                }
+              }
             }}
           />
         </div>
@@ -266,7 +282,11 @@ export default function ResearchesPage() {
   }
 
   if (error)
-    return <div className="text-red-500 text-center mt-6">{error}</div>;
+    return (
+      <ResponsiveLayoutProvider>
+        <div className="text-red-500 text-center mt-6">{error}</div>
+      </ResponsiveLayoutProvider>
+    );
 
   if (!researcher && !waiting)
     return (
@@ -278,15 +298,15 @@ export default function ResearchesPage() {
         </div>
       </ResponsiveLayoutProvider>
     );
-const cleanLink = (url) => {
-  if (!url) return "#";
+  const cleanLink = (url) => {
+    if (!url) return "#";
 
-  const match = url.match(/user=([a-zA-Z0-9_-]+)/);
+    const match = url.match(/user=([a-zA-Z0-9_-]+)/);
 
-  return match
-    ? `https://scholar.google.com/citations?user=${match[1]}`
-    : url;
-};
+    return match
+      ? `https://scholar.google.com/citations?user=${match[1]}`
+      : url;
+  };
   return (
     <ResponsiveLayoutProvider>
       <div

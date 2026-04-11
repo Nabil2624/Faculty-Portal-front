@@ -45,8 +45,7 @@ export default function useNominatedScientificResearch(
         if (pageNumber === 1 || isReset) {
           return newMappedItems;
         }
-        // دمج مباشر بدون شروط معقدة للتأكد من العرض أولاً
-        // إذا اشتغلت، سنضيف شرط منع التكرار لاحقاً
+
         return [...prev, ...newMappedItems];
       });
 

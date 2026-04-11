@@ -26,8 +26,9 @@ export default function LoginPage() {
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
-  
-  const redirectTo = new URLSearchParams(window.location.search).get("redirect") || "/";
+
+  const redirectTo =
+    new URLSearchParams(window.location.search).get("redirect") || "/";
   const isArabic = i18n.language === "ar";
 
   const handleLogin = async (e) => {
@@ -41,7 +42,7 @@ export default function LoginPage() {
         {
           skipGlobalErrorHandler: true,
           withCredentials: true,
-        }
+        },
       );
 
       const roles = loginResponse?.data?.roles || [];
@@ -104,7 +105,9 @@ export default function LoginPage() {
 
       <main className="relative z-10 w-full max-w-[1200px] flex flex-col lg:flex-row items-center justify-between px-6 gap-10">
         {/* Welcome Text */}
-        <div className={`w-full lg:w-1/2 ${isArabic ? "text-right" : "text-left"} hidden lg:block`}>
+        <div
+          className={`w-full lg:w-1/2 ${isArabic ? "text-right" : "text-left"} hidden lg:block`}
+        >
           <div className="flex items-center gap-3 mb-4">
             <div className="h-1 w-12 bg-[#b38e19] rounded-full" />
             <span className="text-[#b38e19] font-black uppercase tracking-[5px] text-[clamp(0.6rem,1.2vw,1rem)] ">
@@ -125,7 +128,9 @@ export default function LoginPage() {
         <div className="w-full lg:w-[440px] relative">
           <div className="absolute inset-0 bg-[#b38e19]/10 blur-[80px] rounded-full" />
           <div className="relative bg-[#19355a]/20 backdrop-blur-[40px] border border-white/10 rounded-[2.5rem] p-10 md:p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
-            <header className={`mb-10 ${isArabic ? "text-right" : "text-left"}`}>
+            <header
+              className={`mb-10 ${isArabic ? "text-right" : "text-left"}`}
+            >
               <div className="w-14 h-14 bg-[#19355a] border border-[#b38e19]/30 rounded-2xl flex items-center justify-center mb-6 shadow-2xl">
                 <ShieldCheck className="text-[#b38e19]" size={32} />
               </div>
@@ -206,17 +211,29 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full relative overflow-hidden bg-[#19355a] text-white py-5 rounded-2xl font-black text-[clamp(0.7rem,0.9vw,0.85rem)] uppercase tracking-[4px] shadow-2xl hover:shadow-[#19355a]/40 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-3 group"
+                className={`w-full relative overflow-hidden py-5 rounded-2xl font-black text-[clamp(0.7rem,0.9vw,0.85rem)] uppercase tracking-[4px] shadow-2xl flex items-center justify-center gap-3 group transition-all
+  ${
+    loading
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-[#19355a] text-white hover:shadow-[#19355a]/40 hover:-translate-y-0.5 active:scale-95"
+  }`}
               >
                 {loading ? (
-                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>{t("loading")}</span>
                 ) : (
                   <>
                     <span>{t("loginButton")}</span>
-                    {isArabic ? <ArrowLeft size={16} /> : <ArrowRight size={16} />}
+                    {isArabic ? (
+                      <ArrowLeft size={16} />
+                    ) : (
+                      <ArrowRight size={16} />
+                    )}
                   </>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#b38e19]/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+
+                {!loading && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#b38e19]/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                )}
               </button>
             </form>
 

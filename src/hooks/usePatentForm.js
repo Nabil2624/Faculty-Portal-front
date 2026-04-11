@@ -6,7 +6,7 @@ import {
 
 export default function usePatentForm(t, initialData = null) {
   const [form, setForm] = useState({
-    localOrInternational: "",
+    localOrInternational: 1,
     nameOfPatent: "",
     accreditingAuthorityOrCountry: "",
     applyingDate: "",

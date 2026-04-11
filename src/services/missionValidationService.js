@@ -2,7 +2,7 @@
 export const missionValidationService = (data, t) => {
   const errors = {};
 
-  if (!data.name?.trim()) {
+  if (!data.missionName?.trim()) {
     errors.missionName = t("required_task_name");
   }
   if (!data.countryOrCity?.trim()) {

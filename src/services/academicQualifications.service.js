@@ -76,7 +76,6 @@ export const uploadAcademicQualificationAttachment = async (entityId, file) => {
   });
 };
 
-// Delete Attachment
 export const deleteAcademicQualificationAttachment = async (
   entityId,
   attachmentId,

@@ -16,7 +16,7 @@ export default function EditThesis() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const thesisData = location.state?.thesis;
-  
+
   const [attachments, setAttachments] = useState([]);
   const [initialAttachments, setInitialAttachments] = useState([]);
 
@@ -51,9 +51,8 @@ export default function EditThesis() {
 
   return (
     <>
-      
       <ThesisForm
-        formTitle={t("editThesis")} 
+        formTitle={t("editThesis")}
         values={values}
         setters={setters}
         helpers={helpers}
@@ -61,6 +60,7 @@ export default function EditThesis() {
         loading={loading}
         attachments={attachments}
         setAttachments={setAttachments}
+        initialAttachments={initialAttachments} // ✅ إضافة
         onCancel={() => navigate("/theses")}
       />
 

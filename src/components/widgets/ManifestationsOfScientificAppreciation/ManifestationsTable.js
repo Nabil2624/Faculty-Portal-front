@@ -28,75 +28,96 @@ function formatDate(dateString, i18n, t) {
 }
 
 // --- 2. مكون الهيدر (Memoized) ---
-const TableHeader = memo(({ searchTerm, onSearchChange, onAdd, onFilterClick, t, THEME_COLOR, FS_SM, ICON_SM }) => {
-  return (
-    <div className="p-3 border-b bg-gray-50 flex items-center justify-between gap-4 shrink-0">
-      <div className="flex-1 max-w-md relative group">
-        <div className="relative flex items-center">
-          <div className="absolute start-3 z-10 text-gray-400 group-focus-within:text-[#b38e19] transition-colors">
-            <Search style={{ width: "18px", height: "18px" }} />
+const TableHeader = memo(
+  ({
+    searchTerm,
+    onSearchChange,
+    onAdd,
+    onFilterClick,
+    t,
+    THEME_COLOR,
+    FS_SM,
+    ICON_SM,
+  }) => {
+    return (
+      <div className="p-3 border-b bg-gray-50 flex items-center justify-between gap-4 shrink-0">
+        <div className="flex-1 max-w-md relative group">
+          <div className="relative flex items-center">
+            <div className="absolute start-3 z-10 text-gray-400 group-focus-within:text-[#b38e19] transition-colors">
+              <Search style={{ width: "18px", height: "18px" }} />
+            </div>
+            <input
+              type="text"
+              value={searchTerm || ""}
+              onChange={(e) => onSearchChange?.(e.target.value)}
+              placeholder={t("search") || "Search..."}
+              style={{
+                paddingInlineStart: "clamp(2.2rem, 2vw, 3rem)",
+                paddingBlock: "clamp(0.5rem, 0.5vw, 0.6rem)",
+                width: "clamp(200px, 26.8vw, 412px)",
+              }}
+              className="bg-white border border-gray-200 rounded-lg outline-none focus:border-[#b38e19] focus:ring-1 focus:ring-[#b38e19]/20 transition-all text-sm"
+            />
           </div>
-          <input
-            type="text"
-            value={searchTerm || ""}
-            onChange={(e) => onSearchChange?.(e.target.value)}
-            placeholder={t("search") || "Search..."}
-            style={{
-              paddingInlineStart: "clamp(2.2rem, 2vw, 3rem)",
-              paddingBlock: "clamp(0.5rem, 0.5vw, 0.6rem)",
-              width: "clamp(200px, 26.8vw, 412px)",
-            }}
-            className="bg-white border border-gray-200 rounded-lg outline-none focus:border-[#b38e19] focus:ring-1 focus:ring-[#b38e19]/20 transition-all text-sm"
-          />
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onFilterClick}
+            className="p-3 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-[#b38e19] hover:border-[#b38e19] transition-all shadow-sm active:scale-95"
+            title={t("filter")}
+          >
+            <Filter style={{ width: ICON_SM, height: ICON_SM }} />
+          </button>
+          <button
+            onClick={onAdd}
+            style={{ backgroundColor: THEME_COLOR, fontSize: FS_SM }}
+            className="flex items-center gap-2 px-6 py-3 text-white rounded-lg hover:opacity-90 transition-all shadow-sm font-bold shrink-0 active:scale-95"
+          >
+            <Plus style={{ width: ICON_SM, height: ICON_SM }} />
+            <span className="hidden md:inline">{t("add")}</span>
+          </button>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <button
-          onClick={onFilterClick}
-          className="p-3 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-[#b38e19] hover:border-[#b38e19] transition-all shadow-sm active:scale-95"
-          title={t("filter")}
-        >
-          <Filter style={{ width: ICON_SM, height: ICON_SM }} />
-        </button>
-        <button
-          onClick={onAdd}
-          style={{ backgroundColor: THEME_COLOR, fontSize: FS_SM }}
-          className="flex items-center gap-2 px-6 py-3 text-white rounded-lg hover:opacity-90 transition-all shadow-sm font-bold shrink-0 active:scale-95"
-        >
-          <Plus style={{ width: ICON_SM, height: ICON_SM }} />
-          <span className="hidden md:inline">{t("add")}</span>
-        </button>
-      </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 // --- 3. مكون الفوتر (Memoized) ---
-const TableFooter = memo(({ currentPage, totalPages, onPageChange, isArabic, FS_BASE, ICON_SM }) => {
-  return (
-    <div className="p-6 border-t bg-gray-50 flex items-center justify-end gap-10 shrink-0">
-      <div style={{ fontSize: FS_BASE }} className="font-black">
-        {currentPage} / {totalPages}
+const TableFooter = memo(
+  ({ currentPage, totalPages, onPageChange, isArabic, FS_BASE, ICON_SM }) => {
+    return (
+      <div className="p-6 border-t bg-gray-50 flex items-center justify-end gap-10 shrink-0">
+        <div style={{ fontSize: FS_BASE }} className="font-black">
+          {currentPage} / {totalPages}
+        </div>
+        <div className="flex gap-4">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => onPageChange(currentPage - 1)}
+            className="hover:scale-110 transition-transform disabled:opacity-30"
+          >
+            {isArabic ? (
+              <ChevronRight style={{ width: ICON_SM, height: ICON_SM }} />
+            ) : (
+              <ChevronLeft style={{ width: ICON_SM, height: ICON_SM }} />
+            )}
+          </button>
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => onPageChange(currentPage + 1)}
+            className="hover:scale-110 transition-transform disabled:opacity-30"
+          >
+            {isArabic ? (
+              <ChevronLeft style={{ width: ICON_SM, height: ICON_SM }} />
+            ) : (
+              <ChevronRight style={{ width: ICON_SM, height: ICON_SM }} />
+            )}
+          </button>
+        </div>
       </div>
-      <div className="flex gap-4">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
-          className="hover:scale-110 transition-transform disabled:opacity-30"
-        >
-          {isArabic ? <ChevronRight style={{ width: ICON_SM, height: ICON_SM }} /> : <ChevronLeft style={{ width: ICON_SM, height: ICON_SM }} />}
-        </button>
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
-          className="hover:scale-110 transition-transform disabled:opacity-30"
-        >
-          {isArabic ? <ChevronLeft style={{ width: ICON_SM, height: ICON_SM }} /> : <ChevronRight style={{ width: ICON_SM, height: ICON_SM }} />}
-        </button>
-      </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 // --- 4. المكون الرئيسي ---
 const ManifestationsTable = ({
@@ -111,7 +132,9 @@ const ManifestationsTable = ({
   searchTerm,
   onSearchChange,
 }) => {
-  const { t, i18n } = useTranslation("manifestations-of-scientific-appreciation");
+  const { t, i18n } = useTranslation(
+    "manifestations-of-scientific-appreciation",
+  );
   const isArabic = i18n.language === "ar";
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -140,7 +163,10 @@ const ManifestationsTable = ({
 
   const handleDownload = async (attachment) => {
     try {
-      const response = await downloadManifestationAttachment(selectedItem.id, attachment.id);
+      const response = await downloadManifestationAttachment(
+        selectedItem.id,
+        attachment.id,
+      );
       const blob = new Blob([response.data], { type: attachment.contentType });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -186,7 +212,10 @@ const ManifestationsTable = ({
           style={{ width: selectedItem ? MASTER_WIDTH : "100%" }}
         >
           {data.length === 0 ? (
-            <div className="p-10 text-center text-gray-400 italic" style={{ fontSize: FS_SM }}>
+            <div
+              className="p-10 text-center text-gray-400 italic"
+              style={{ fontSize: FS_SM }}
+            >
               {t("empty")}
             </div>
           ) : (
@@ -199,13 +228,28 @@ const ManifestationsTable = ({
                 }`}
                 style={{ padding: "clamp(0.8rem, 1vw, 1.5rem)" }}
               >
-                {selectedItem?.id === item.id && <div className="absolute inset-y-0 start-0 w-1" style={{ backgroundColor: THEME_COLOR }} />}
-                <h4 className="font-semibold text-gray-800 break-words line-clamp-2" style={{ fontSize: FS_BASE, lineHeight: LH_TIGHT }}>
+                {selectedItem?.id === item.id && (
+                  <div
+                    className="absolute inset-y-0 start-0 w-1"
+                    style={{ backgroundColor: THEME_COLOR }}
+                  />
+                )}
+                <h4
+                  className="font-semibold text-gray-800 break-words line-clamp-2"
+                  style={{ fontSize: FS_BASE, lineHeight: LH_TIGHT }}
+                >
                   {item.titleOfAppreciation}
                 </h4>
-                <div className="flex justify-between items-center mt-3 opacity-70 font-semibold" style={{ fontSize: FS_XS }}>
-                  <span className="truncate flex-1">{item.issuingAuthority}</span>
-                  <span className="shrink-0 bg-gray-100 px-3 py-1 rounded italic">{formatDate(item.dateOfAppreciation, i18n, t)}</span>
+                <div
+                  className="flex justify-between items-center mt-3 opacity-70 font-semibold"
+                  style={{ fontSize: FS_XS }}
+                >
+                  <span className="truncate flex-1">
+                    {item.issuingAuthority}
+                  </span>
+                  <span className="shrink-0 bg-gray-100 px-3 py-1 rounded italic">
+                    {formatDate(item.dateOfAppreciation, i18n, t)}
+                  </span>
                 </div>
               </div>
             ))
@@ -215,7 +259,9 @@ const ManifestationsTable = ({
         {/* Detail View */}
         <div
           className={`flex-1 overflow-y-auto custom-gold-scrollbar transition-all duration-300 ${
-            !selectedItem ? "hidden md:flex items-center justify-center bg-gray-50/20" : "block"
+            !selectedItem
+              ? "hidden md:flex items-center justify-center bg-gray-50/20"
+              : "block"
           }`}
         >
           {selectedItem ? (
@@ -225,28 +271,46 @@ const ManifestationsTable = ({
                 className="md:hidden flex items-center gap-2 mb-8 font-bold text-[#b38e19]"
                 style={{ fontSize: FS_SM }}
               >
-                <ArrowLeft style={{ width: ICON_SM, height: ICON_SM }} className={isArabic ? "rotate-180" : ""} />
+                <ArrowLeft
+                  style={{ width: ICON_SM, height: ICON_SM }}
+                  className={isArabic ? "rotate-180" : ""}
+                />
                 {t("backToList")}
               </button>
 
               <div className="flex flex-col md:flex-row justify-between gap-8 mb-12 border-b pb-10">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-4 mb-4" style={{ color: THEME_COLOR }}>
+                  <div
+                    className="flex items-center gap-4 mb-4"
+                    style={{ color: THEME_COLOR }}
+                  >
                     <Award style={{ width: ICON_MD, height: ICON_MD }} />
-                    <span style={{ fontSize: "clamp(22px, 1.5vw, 30px)" }} className="font-semibold uppercase tracking-widest">
+                    <span
+                      style={{ fontSize: "clamp(22px, 1.5vw, 30px)" }}
+                      className="font-semibold uppercase tracking-widest"
+                    >
                       {t("details") || "Details"}
                     </span>
                   </div>
-                  <h3 className="font-semibold text-gray-800 break-words" style={{ fontSize: FS_LG, lineHeight: LH_TIGHT }}>
+                  <h3
+                    className="font-semibold text-gray-800 break-words"
+                    style={{ fontSize: FS_LG, lineHeight: LH_TIGHT }}
+                  >
                     {selectedItem.titleOfAppreciation}
                   </h3>
                 </div>
-                <ActionIcons item={selectedItem} onEdit={onEdit} onDelete={onDelete} />
+                <ActionIcons
+                  item={selectedItem}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
                 <DetailRow
-                  icon={<Calendar style={{ width: ICON_SM, height: ICON_SM }} />}
+                  icon={
+                    <Calendar style={{ width: ICON_SM, height: ICON_SM }} />
+                  }
                   label={t("dateOfAppreciation")}
                   value={formatDate(selectedItem.dateOfAppreciation, i18n, t)}
                   color={THEME_COLOR}
@@ -255,7 +319,9 @@ const ManifestationsTable = ({
                   LH_TIGHT={LH_TIGHT}
                 />
                 <DetailRow
-                  icon={<Building2 style={{ width: ICON_SM, height: ICON_SM }} />}
+                  icon={
+                    <Building2 style={{ width: ICON_SM, height: ICON_SM }} />
+                  }
                   label={t("issuingAuthority")}
                   value={selectedItem.issuingAuthority}
                   color={THEME_COLOR}
@@ -264,39 +330,47 @@ const ManifestationsTable = ({
                   LH_TIGHT={LH_TIGHT}
                 />
 
-                <div className="col-span-full">
-                  <div className="flex items-center gap-2 mb-4 opacity-60">
-                    <FileText size={16} />
-                    <span className="uppercase font-semibold" style={{ fontSize: "0.7rem" }}>
-                      {t("attachments")}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-4">
-                    {selectedItem.attachments?.length > 0 ? (
-                      selectedItem.attachments.map((a) => (
+                {selectedItem.attachments?.length > 0 && (
+                  <div className="col-span-full border p-4 rounded-xl bg-amber-50/20">
+                    <p
+                      className="flex items-center gap-2 font-bold mb-3"
+                      style={{ fontSize: FS_SM, color: THEME_COLOR }}
+                    >
+                      <Download size={20} /> {t("attachments")}
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      {selectedItem.attachments.map((a) => (
                         <button
                           key={a.id}
+                          // التعديل هنا: نمرر المرفق 'a' فقط للدالة
                           onClick={() => handleDownload(a)}
-                          className="flex items-center gap-3 px-4 py-2 border rounded-xl hover:bg-gray-50 transition-all group"
+                          className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:border-[#b38e19] transition-all shadow-sm flex items-center gap-2"
                         >
-                          <Download size={16} className="text-[#b38e19]" />
-                          <span className="text-sm font-medium underline decoration-[#b38e19]/30">{a.fileName}</span>
+                          <FileText size={14} className="text-gray-400" />
+                          <span className="font-medium">{a.fileName}</span>
                         </button>
-                      ))
-                    ) : (
-                      <span className="text-gray-400 italic text-sm">{t("noAttachments") || "No attachments"}</span>
-                    )}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div
                   className="col-span-full mt-8 bg-gray-50 rounded-2xl border-s-4 shadow-sm"
-                  style={{ borderInlineStartColor: THEME_COLOR, padding: "clamp(1rem, 1.2vw, 2rem)" }}
+                  style={{
+                    borderInlineStartColor: THEME_COLOR,
+                    padding: "clamp(1rem, 1.2vw, 2rem)",
+                  }}
                 >
-                  <label className="block uppercase mb-3 tracking-widest font-black" style={{ fontSize: FS_SM }}>
+                  <label
+                    className="block uppercase mb-3 tracking-widest font-black"
+                    style={{ fontSize: FS_SM }}
+                  >
                     {t("description") || "Description"}
                   </label>
-                  <p className="text-gray-700 italic break-words whitespace-pre-wrap" style={{ fontSize: FS_SM, lineHeight: LH_NORMAL }}>
+                  <p
+                    className="text-gray-700 italic break-words whitespace-pre-wrap"
+                    style={{ fontSize: FS_SM, lineHeight: LH_NORMAL }}
+                  >
                     {selectedItem.description || t("noDescriptionAdded")}
                   </p>
                 </div>
@@ -304,7 +378,10 @@ const ManifestationsTable = ({
             </div>
           ) : (
             <div className="text-center opacity-10 select-none">
-              <Award style={{ width: ICON_LG, height: ICON_LG }} className="mx-auto mb-8" />
+              <Award
+                style={{ width: ICON_LG, height: ICON_LG }}
+                className="mx-auto mb-8"
+              />
               <p className="font-black uppercase" style={{ fontSize: FS_LG }}>
                 {t("selectItemToPreview")}
               </p>
@@ -331,15 +408,25 @@ function DetailRow({ icon, label, value, color, FS_XS, FS_SM, LH_TIGHT }) {
     <div className="flex items-start gap-5 min-w-0">
       <div
         className="flex items-center justify-center rounded-xl bg-white border shadow-sm shrink-0"
-        style={{ color, width: "clamp(42px,3.5vw,52px)", height: "clamp(42px,3.5vw,52px)" }}
+        style={{
+          color,
+          width: "clamp(42px,3.5vw,52px)",
+          height: "clamp(42px,3.5vw,52px)",
+        }}
       >
         {icon}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="uppercase mb-2 font-semibold opacity-60" style={{ fontSize: "0.7rem" }}>
+        <p
+          className="uppercase mb-2 font-semibold opacity-60"
+          style={{ fontSize: "0.7rem" }}
+        >
           {label}
         </p>
-        <p className="font-semibold text-gray-800 break-words" style={{ fontSize: FS_SM, lineHeight: LH_TIGHT }}>
+        <p
+          className="font-semibold text-gray-800 break-words"
+          style={{ fontSize: FS_SM, lineHeight: LH_TIGHT }}
+        >
           {value || "---"}
         </p>
       </div>

@@ -11,8 +11,8 @@ export default function RadioGroup({
   return (
     <div className="w-full flex flex-col justify-between">
       {label && (
-        <div className="text-[clamp(14px,1.2vw,25px)] mb-2 font-semibold text-gray-700">
-          {label} <span className="text-red-500">*</span>
+        <div className="text-[clamp(14px,1.2vw,25px)] mb-2 text-gray-700">
+          {label} <span className="text-[#b38e19]">*</span>
         </div>
       )}
 

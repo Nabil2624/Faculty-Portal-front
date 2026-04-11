@@ -9,7 +9,7 @@ import PageHeaderNoAction from "../../ui/PageHeaderNoAction";
 import AttachmentUploader from "../../ui/AttachmentUploader";
 import CommitteeMembersCard from "../AddThesis/CommitteeMembersCard";
 import RelatedResearchCard from "../AddThesis/RelatedResearchCard";
-import { GraduationCap, Newspaper } from "lucide-react";
+import { Newspaper } from "lucide-react";
 import ResponsiveLayoutProvider from "../../ResponsiveLayoutProvider";
 
 export default function ThesisForm({
@@ -20,6 +20,7 @@ export default function ThesisForm({
   loading = false,
   attachments,
   setAttachments,
+  initialAttachments = [],
   formTitle,
   onCancel,
 }) {
@@ -46,9 +47,7 @@ export default function ThesisForm({
         <main className="flex-1 p-[clamp(0.5rem,0.6vw,2.5rem)] flex items-center justify-center">
           <div className="w-full max-w-[clamp(85%,95%,1600px)] bg-white rounded-[clamp(1rem,1.5vw,2rem)] shadow-xl border border-gray-100 flex flex-col relative overflow-visible">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(1.5rem,4vw,5rem)] p-[clamp(1.5rem,2vw,4rem)] relative z-20">
-              {/* القسـم الأيسـر: بيانات الرسالة الأساسية */}
               <div className="space-y-[clamp(1rem,1.8vw,2.5rem)]">
-                {/* نوع الرسالة */}
                 <RadioGroup
                   label={t("thesisType")}
                   value={values.thesisType}
@@ -60,7 +59,6 @@ export default function ThesisForm({
                   ]}
                 />
 
-                {/* عنوان الرسالة مع الـ Placeholder */}
                 <InputField
                   label={t("thesisTitle")}
                   value={values.thesisTitle}
@@ -176,7 +174,9 @@ export default function ThesisForm({
                 <div className="min-w-[clamp(140px,8vw,220px)]">
                   <FormButton
                     variant="primary"
-                    onClick={() => helpers.handleSave(attachments)}
+                    onClick={() =>
+                      helpers.handleSave(attachments, initialAttachments)
+                    }
                     disabled={loading}
                     className="w-full !h-[clamp(45px,3vw,60px)] !text-[clamp(1rem,1.1vw,1.3rem)]"
                   >

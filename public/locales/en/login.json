@@ -12,5 +12,7 @@
   "forgotPassword": "Forgot Password?",
   "invalidCredentials": "Invalid username or password.",
   "unexpectedError": "An unexpected error occurred. Please try again later.",
-  "networkError": "Unable to connect to the server."
+  "networkError": "Unable to connect to the server.",
+  "loading":"Loading...."
+
 }

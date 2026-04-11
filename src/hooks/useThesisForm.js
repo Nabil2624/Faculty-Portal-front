@@ -10,6 +10,7 @@ import {
   getUniversities,
   searchResearchByTitle,
   uploadThesisAttachments,
+  deleteThesisAttachments, // ✅ إضافة
 } from "../services/theses.services";
 
 export function useThesisForm({
@@ -184,8 +185,7 @@ export function useThesisForm({
       newErrors.enrollmentDate = `${t("enrollmentDate")} ${t("required")}`;
     if (!thesisTitle)
       newErrors.thesisTitle = `${t("thesisTitle")} ${t("required")}`;
-    if (!degreeId)
-      newErrors.degreeId = `${t("degree")} ${t("required")}`;
+    if (!degreeId) newErrors.degreeId = `${t("degree")} ${t("required")}`;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -262,6 +262,7 @@ export function useThesisForm({
         await updateThesis(thesisId, payload);
 
         // ================= ATTACHMENTS =================
+        // ================= ATTACHMENTS =================
         const attachmentsToDelete = initialAttachments.filter(
           (initial) =>
             !attachments.some((current) => current.id === initial.id),
@@ -269,12 +270,16 @@ export function useThesisForm({
 
         const attachmentsToAdd = attachments.filter((file) => !file.id);
 
-        for (const file of attachmentsToDelete) {
-          await axiosInstance.delete(
-            `/Attachments/${thesisId}/${file.id}?context=2`,
+        // حذف المرفقات دفعة واحدة
+        if (attachmentsToDelete.length > 0) {
+          await Promise.all(
+            attachmentsToDelete.map((file) =>
+              deleteThesisAttachments(thesisId, file.id),
+            ),
           );
         }
 
+        // رفع المرفقات الجديدة
         if (attachmentsToAdd.length > 0) {
           await uploadThesisAttachments(thesisId, attachmentsToAdd);
         }
@@ -293,8 +298,7 @@ export function useThesisForm({
 
         const response = await addThesis(payload);
 
-        const entityId =
-          response?.data?.id || response?.data || response?.id;
+        const entityId = response?.data?.id || response?.data || response?.id;
 
         if (attachments.length > 0) {
           await uploadThesisAttachments(entityId, attachments);
@@ -305,9 +309,7 @@ export function useThesisForm({
     } catch (err) {
       if (err.response?.status === 403) {
         setModalMessage(
-          isArabic
-            ? "لا يمكنك تعديل هذا العضو"
-            : "You can't edit this member",
+          isArabic ? "لا يمكنك تعديل هذا العضو" : "You can't edit this member",
         );
         setIsModalOpen(true);
       } else {

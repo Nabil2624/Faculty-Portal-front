@@ -84,7 +84,6 @@ export default function EditScientificResearch() {
   };
 
   const handleSave = async () => {
-    // يمكنك إضافة validate هنا لو أردت كما في صفحة الإضافة
     await saveHook(navigate);
   };
 
