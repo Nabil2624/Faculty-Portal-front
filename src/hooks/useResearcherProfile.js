@@ -39,7 +39,7 @@ export default function useResearcherProfile() {
         if (response.status === 204) {
           try {
             const linksResponse = await axios.get(
-              "http://localhost/Researches/api/fetch-researcher-links/",
+              "http://localhost/Researches/fetch-researcher-links/",
               {
                 params: { national_number: currentNationalNumber },
               }

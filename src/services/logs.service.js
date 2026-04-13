@@ -5,7 +5,7 @@ import qs from "qs";
 
 const logsAxios = axios.create({
   //baseURL: "https://localhost:7172/api",
-  baseURL: "http://localhost/admin/api",
+  baseURL: "http://localhost/admin",
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
