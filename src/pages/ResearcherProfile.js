@@ -42,7 +42,7 @@ export default function ResearcherProfile() {
           <MissingScholarCard
             onSave={async (data) => {
               await axios.post(
-                "http://127.0.0.1:8000/api/fetch-research-using-scholar-profile-link/",
+                "http://localhost/Researches/api/fetch-research-using-scholar-profile-link/",
                 {
                   researcherNationalNumber: nationalNumber,
                   ORCID: data.orcid,
