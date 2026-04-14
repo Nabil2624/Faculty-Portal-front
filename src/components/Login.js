@@ -19,7 +19,7 @@ import { useAuth } from "../context/AuthContext";
 import boardroomImage from "../assets/Magles.jpeg";
 
 export default function Login() {
-  const { t, i18n } = useTranslation("Login");
+  const { t, i18n } = useTranslation("login");
   const navigate = useNavigate();
 
 

@@ -17,7 +17,7 @@ import helwanImage from "../assets/helwan-university.jpeg";
 import { useAuth } from "../context/AuthContext"; // 1. استيراد الهوك
 
 export default function LoginPage() {
-  const { t, i18n } = useTranslation("Login");
+  const { t, i18n } = useTranslation("login");
   const navigate = useNavigate();
   const { handleLoginSuccess } = useAuth(); // 2. الحصول على دالة النجاح
 
