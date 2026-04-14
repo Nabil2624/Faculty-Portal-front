@@ -7,7 +7,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function SocialNetworkingPages() {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation("socialnetworkingpages");
+  const { t, i18n } = useTranslation("socialNetworkingPages");
   const isArabic = i18n.language === "ar";
 
   const noDataText = isArabic ? "لا يوجد" : "none";

@@ -14,7 +14,7 @@ import { UserRound } from "lucide-react";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 import CommitteeMasterDetailTable from "../components/widgets/CommitteeAndAssociation/CommitteeMasterDetailTable";
 export default function CommitteesAndAssociationsPage() {
-  const { t, i18n } = useTranslation("CommitteesAssociations");
+  const { t, i18n } = useTranslation("CommitteesAndAssociationsPage");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
