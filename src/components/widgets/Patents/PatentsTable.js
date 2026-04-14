@@ -376,12 +376,12 @@ const PatentsTable = ({
 
                 {selectedItem.attachments?.length > 0 && (
                   <div className="col-span-full bg-amber-50/30 p-6 rounded-xl border border-amber-100 mt-4">
-                    <label
-                      className="flex items-center gap-2 mb-4 font-bold uppercase tracking-wider"
-                      style={{ fontSize: FS_SM }}
+                    <p
+                      className="flex items-center gap-2 font-bold mb-3"
+                      style={{ fontSize: FS_SM, color: THEME_COLOR }}
                     >
-                      <FileText size={18} /> {t("attachments")}
-                    </label>
+                      <Download size={20} /> {t("attachments")}
+                    </p>
                     <div className="flex flex-wrap gap-3">
                       {selectedItem.attachments.map((file) => (
                         <button

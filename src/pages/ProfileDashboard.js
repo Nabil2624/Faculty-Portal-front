@@ -260,7 +260,7 @@ export default function GridLayoutFullScreen() {
   if (loading) return <LoadingSpinner />;
   return (
     <ResponsiveLayoutProvider>
-      <div className="rtl w-full h-auto lg:h-[90vh] p-2 bg-gray-50/50">
+      <div className="rtl w-full h-auto lg:h-[88vh] p-2 bg-gray-50/50">
         <div className="grid grid-cols-2 lg:grid-cols-6 lg:grid-rows-4 gap-3 lg:gap-[clamp(4px,0.5vw,16px)] w-full lg:h-full">
           {/* 1. Profile Card */}
           <div

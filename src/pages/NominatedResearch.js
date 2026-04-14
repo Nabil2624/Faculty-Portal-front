@@ -205,7 +205,7 @@ export default function NominatedScientificResearch() {
           icon={FileBadge2}
         />
 
-        {/* الجدول الجديد مع كل الخصائص المطلوبة */}
+      
         <NominatedResearchesTable
           researches={filteredItems}
           loading={loading}
@@ -214,7 +214,7 @@ export default function NominatedScientificResearch() {
           isSelectionMode={isSelectionMode}
           toggleSelectionMode={() => {
             setIsSelectionMode(!isSelectionMode);
-            setSelectedIds([]); // تصغير القائمة عند إغلاق الوضع
+            setSelectedIds([]); 
           }}
           selectedIds={selectedIds}
           setSelectedIds={setSelectedIds}

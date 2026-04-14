@@ -6,10 +6,12 @@ export default function useCV() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notFound, setNotFound] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setNotFound(false);
     try {
       const res = await getCVData();
       const raw = res.data;
@@ -35,8 +37,12 @@ export default function useCV() {
       }
 
       setData(normalized);
-    } catch {
-      setError(true);
+    } catch (err) {
+      if (err?.response?.status === 404) {
+        setNotFound(true);
+      } else {
+        setError(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -46,5 +52,5 @@ export default function useCV() {
     load();
   }, [load]);
 
-  return { data, loading, error, reload: load };
+  return { data, loading, error, notFound, reload: load };
 }

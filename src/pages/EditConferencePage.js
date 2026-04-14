@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import ConferenceForm from "../components/widgets/SeminarAndConferences/ConferenceForm";
 
 export default function EditConferencePage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation("add-conference");
   const location = useLocation();
   const itemData = location.state?.item; // البيانات اللي جاية من الجدول
 

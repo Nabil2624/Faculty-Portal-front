@@ -105,7 +105,14 @@ export const uploadThesisAttachments = async (entityId, files) => {
   );
 };
 
-
+export const deleteThesisAttachments = async (
+  entityId,
+  attachmentId
+) => {
+  return axiosInstance.delete(
+    `/Attachments/${entityId}/${attachmentId}?context=2`
+  );
+};
 
 // Download attachment for a thesis entity
 export const downloadThesisAttachment = async (

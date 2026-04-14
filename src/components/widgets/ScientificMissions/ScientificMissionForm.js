@@ -36,7 +36,7 @@ export default function ScientificMissionForm({
   /* ================= submit ================= */
   const handleSubmit = () => {
     const payload = {
-      name: missionName.trim(),
+      missionName: missionName.trim(),
       countryOrCity: countryOrCity.trim(),
       universityOrFaculty: universityOrFaculty.trim(),
       startDate,

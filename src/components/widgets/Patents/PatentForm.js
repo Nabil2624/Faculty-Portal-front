@@ -35,16 +35,16 @@ export default function PatentForm({
       <PageHeaderNoAction title={title || t("title")} icon={Award} />
 
       {/* 2. Main Container */}
-      <main className="flex-1 p-[clamp(0.2rem,0.3vw,2.5rem)] flex items-center justify-center">
+      <main className="flex-1 flex items-center justify-center">
         <div className="w-full max-w-[clamp(80%,92%,1600px)] bg-white rounded-[clamp(1rem,1.5vw,2rem)] shadow-xl border border-gray-100 flex flex-col relative">
           
           <form 
-            className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(1.5rem,4vw,5rem)] p-[clamp(1.5rem,1.8vw,4rem)] relative z-20"
+            className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(1.5rem,4vw,5rem)] p-[clamp(1.5rem,1.6vw,4rem)] relative z-20"
             onSubmit={(e) => e.preventDefault()} // منع الفورم من عمل Refresh
           >
             
             {/* القسـم الأيسـر */}
-            <div className="space-y-[clamp(1rem,1.8vw,2.5rem)]">
+            <div className="space-y-[clamp(1rem,1.4vw,2.5rem)]">
               <RadioGroup
                 label={t("fields.type")}
                 // نربط الـ value بالقيمة النصية عشان الـ UI يلقط الاختيار
@@ -93,7 +93,7 @@ export default function PatentForm({
             </div>
 
             {/* القسـم الأيمـن */}
-            <div className="space-y-[clamp(1rem,1.8vw,2.5rem)] lg:border-s lg:ps-[clamp(1.5rem,4vw,5rem)] border-gray-100 flex flex-col">
+            <div className="space-y-[clamp(1rem,1.4vw,2.5rem)] lg:border-s lg:ps-[clamp(1.5rem,4vw,5rem)] border-gray-100 flex flex-col">
               <DateField
                 label={t("fields.accreditationDate")}
                 value={form.accreditationDate}

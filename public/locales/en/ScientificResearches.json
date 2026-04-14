@@ -10,14 +10,14 @@
   "page": "Page",
   "of": "of",
   "areYouSureDelete": "Are you sure you want to delete this scientific research?",
-
+  "tooManyRequests": "Please wait one hour before trying again.",
   "deleteError": "Failed to delete research.",
-  "edit":"Edit",
-  "select":"Select",
+  "edit": "Edit",
+  "select": "Select",
   "delete": "Delete",
   "cancel": "Cancel",
-  "citedBy":"Cited by",
-  "showMore":"Show more",
-  "titleText":"Title",
+  "citedBy": "Cited by",
+  "showMore": "Show more",
+  "titleText": "Title",
   "coAuthors": "Co-authors"
 }

@@ -76,7 +76,6 @@ export const uploadAcademicQualificationAttachment = async (entityId, file) => {
   });
 };
 
-// Delete Attachment
 export const deleteAcademicQualificationAttachment = async (
   entityId,
   attachmentId,
@@ -107,5 +106,5 @@ export const academicService = {
   },
 
   deleteAttachment: (entityId, attachmentId) => 
-    axiosInstance.delete(`/Attachments/Delete/${entityId}/${attachmentId}?context=7`)
+    axiosInstance.delete(`/Attachments/${entityId}/${attachmentId}?context=AcademicQualification`)
 };

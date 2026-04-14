@@ -62,7 +62,9 @@ export default function RegisterPage() {
         setError(err.response?.data?.message || t("invalidNationalID"));
       } else if (err.response?.status === 409) {
         setError(t("alreadyRegistered"));
-      } else if (err.response?.status >= 500) {
+      }  else if (err.response?.status === 404) {
+        setError(t("notFound"));
+      }  else if (err.response?.status >= 500) {
         window.location.href = "/error/500";
       } else {
         setError(t("unexpectedError"));
@@ -169,17 +171,29 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full relative overflow-hidden bg-[#19355a] text-white py-5 rounded-2xl font-black text-[clamp(0.7rem,0.9vw,0.85rem)] uppercase tracking-[4px] shadow-2xl hover:shadow-[#19355a]/40 hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-3 group"
+                className={`w-full relative overflow-hidden py-5 rounded-2xl font-black text-[clamp(0.7rem,0.9vw,0.85rem)] uppercase tracking-[4px] shadow-2xl flex items-center justify-center gap-3 group transition-all
+  ${
+    loading
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-[#19355a] text-white hover:shadow-[#19355a]/40 hover:-translate-y-0.5 active:scale-95"
+  }`}
               >
-                <>
-                  <span>{t("signUp")}</span>
-                  {isArabic ? (
-                    <ArrowLeft size={16} />
-                  ) : (
-                    <ArrowRight size={16} />
-                  )}
-                </>
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#b38e19]/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                {loading ? (
+                  <span>{t("loading")}</span>
+                ) : (
+                  <>
+                    <span>{t("signUp")}</span>
+                    {isArabic ? (
+                      <ArrowLeft size={16} />
+                    ) : (
+                      <ArrowRight size={16} />
+                    )}
+                  </>
+                )}
+
+                {!loading && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#b38e19]/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                )}
               </button>
             </form>
 

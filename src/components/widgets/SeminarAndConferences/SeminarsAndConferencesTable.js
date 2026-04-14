@@ -191,7 +191,6 @@ const SeminarsAndConferencesTable = ({
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Download failed:", error);
     }
   };
 

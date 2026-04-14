@@ -188,7 +188,7 @@ export default function useEditScientificResearch(researchData, attachments) {
         await uploadResearchAttachments(researchId, newAttachments);
       }
 
-      if (navigate) navigate("/scientific-researches");
+      if (navigate) navigate("/ResearchesPage");
     } catch (err) {
       console.error(err);
       setSaveError(t("saveFailed"));
