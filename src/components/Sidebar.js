@@ -20,7 +20,7 @@ import {
 import logo from "../assets/Capital.png";
 
 export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
-  const { t } = useTranslation("headerandsidebar");
+  const { t } = useTranslation("HeaderAndSideBar");
   const [openMenus, setOpenMenus] = useState({});
   const sidebarRef = useRef(null);
   const navigate = useNavigate();

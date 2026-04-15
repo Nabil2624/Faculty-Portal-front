@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../services/auth.service";
 
 export default function Header({ isExpanded }) {
-  const { t, i18n } = useTranslation("headerandsidebar");
+  const { t, i18n } = useTranslation("HeaderAndSideBar");
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
   const userRoles = JSON.parse(localStorage.getItem("userRoles") || "[]");
