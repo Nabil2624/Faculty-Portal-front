@@ -1,9 +1,8 @@
 import axiosInstance from "../utils/axiosInstance";
 
-const BASE_URL = "https://localhost:7184";
+const BASE_URL = window.location.origin;
 
-export const MESSAGING_HUB_URL = `${BASE_URL}/hubs/chatHub`;
-
+export const MESSAGING_HUB_URL = `${BASE_URL}/core/hubs/chatHub`;
 // ─── Current User ─────────────────────────────────────────────────────────────
 
 export async function getCurrentUser() {
