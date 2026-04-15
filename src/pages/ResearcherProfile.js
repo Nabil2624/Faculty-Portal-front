@@ -8,10 +8,10 @@ import CitationsWidgetExtended from "../components/widgets/ResearcherProfile/Cit
 import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
 import useResearcherProfile from "../hooks/useResearcherProfile";
 import axios from "axios";
+
 export default function ResearcherProfile() {
   const { t, i18n } = useTranslation("ResearcherProfile");
   const isArabic = i18n.language === "ar";
-
 
   const {
     researcher,
@@ -21,6 +21,15 @@ export default function ResearcherProfile() {
     missingScholar,
     nationalNumber,
   } = useResearcherProfile();
+
+  // --- دالة استخراج الـ ORCID من الرابط أو النص ---
+  const extractOrcid = (input) => {
+    if (!input) return "";
+    // يبحث عن نمط الـ 16 رقم الخاص بـ ORCID (مثال: 0000-0002-1825-0097)
+    const match = input.match(/\d{4}-\d{4}-\d{4}-\d{3}[\dX]/);
+    return match ? match[0] : input.trim();
+  };
+
   if (loading) return <LoadingSpinner />;
 
   if (waiting) {
@@ -41,24 +50,39 @@ export default function ResearcherProfile() {
         <div className="p-6">
           <MissingScholarCard
             onSave={async (data) => {
-              await axios.post(
-                "http://localhost/Researches/api/fetch-research-using-scholar-profile-link/",
-                {
-                  researcherNationalNumber: nationalNumber,
-                  ORCID: data.orcid,
-                  scholarProfileLink: data.scholarLink,
-                },
-              );
+              // 1. التحقق من أن الحقل مطلوب (Required)
+              if (!data.orcid || data.orcid.trim() === "") {
+                alert(isArabic ? "برجاء إدخال رقم ORCID" : "ORCID ID is required");
+                return;
+              }
 
-              window.location.reload();
+              // 2. استخراج الرقم الصافي في حال أدخل المستخدم رابطاً
+              const cleanOrcid = extractOrcid(data.orcid);
+
+              try {
+                await axios.post(
+                  "http://localhost/Researches/api/fetch-research-using-scholar-profile-link/",
+                  {
+                    researcherNationalNumber: nationalNumber,
+                    ORCID: cleanOrcid,
+                    scholarProfileLink: data.scholarLink,
+                  },
+                );
+                window.location.reload();
+              } catch (err) {
+                console.error("Save error:", err);
+                alert(isArabic ? "حدث خطأ أثناء الحفظ" : "An error occurred while saving");
+              }
             }}
           />
         </div>
       </ResponsiveLayoutProvider>
     );
   }
+
   if (error)
     return <div className="text-red-500 text-center mt-6">{error}</div>;
+
   if (!researcher && !waiting)
     return (
       <ResponsiveLayoutProvider>
