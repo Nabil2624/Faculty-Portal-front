@@ -20,12 +20,14 @@ export default function AcademicQualificationModal({
   currentFilters,
   handleResetFilters,
 }) {
+ 
+  
   return (
     <>
       {showDelete && selectedItem && (
         <ModalWrapper onClose={() => setShowDelete(false)}>
           <AcademicQualificationDeleteModal
-            item={selectedItem}
+            selectedItem={selectedItem}
             t={t}
             onConfirm={onDelete}
             onCancel={() => setShowDelete(false)}

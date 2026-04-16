@@ -14,7 +14,7 @@ export default function Spinner() {
           width="w-56"
           height="h-56"
           borderColor="border-gray-300"
-          borderTopColor="border-t-[#B38E19]" // ✅ gold spinner color
+          borderTopColor="border-t-[#B38E19]" 
         />
         <Logo width="w-36" height="h-36" />
       </div>

@@ -213,7 +213,7 @@ const AcademicQualificationsTable = ({
               className="p-10 text-center text-gray-400 italic"
               style={{ fontSize: FS_SM }}
             >
-              {t("noDataAvailable")}
+              {t("empty")}
             </div>
           ) : (
             data.map((item) => (
