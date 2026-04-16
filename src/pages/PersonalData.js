@@ -14,7 +14,7 @@ export default function PersonalData() {
   const { t, i18n } = useTranslation([
     "PersonalData",
     "contactinfo",
-    "socialnetworkingpages",
+    "socialNetworkingPages",
     "identification",
   ]);
   const isArabic = i18n.language === "ar";

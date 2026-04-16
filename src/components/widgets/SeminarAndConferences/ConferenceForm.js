@@ -28,38 +28,38 @@ export default function ConferenceForm({
   const isArabic = i18n.language === "ar";
   const dir = isArabic ? "rtl" : "ltr";
 
-const {
-  formData,
-  setFormData,
-  roles,
-  loading,
-  save,
-  attachments,
-  setAttachments,
-  markAttachmentForDeletion,
-} = useConferenceForm(initialData);
-
+  const {
+    formData,
+    setFormData,
+    roles,
+    loading,
+    save,
+    attachments,
+    setAttachments,
+    markAttachmentForDeletion,
+  } = useConferenceForm(initialData);
 
   const [errors, setErrors] = useState({});
 
   // تحويل المرفقات القادمة من الباك إند لشكل يفهمه الـ Uploader
   useEffect(() => {
     if (initialData?.attachments) {
-      setAttachments(initialData.attachments.map(file => ({
-        id: file.id,
-        name: file.fileName,
-        size: file.size,
-        type: file.contentType,
-        isExisting: true, // علامة لتمييزها عن الملفات الجديدة
-      })));
+      setAttachments(
+        initialData.attachments.map((file) => ({
+          id: file.id,
+          name: file.fileName,
+          size: file.size,
+          type: file.contentType,
+          isExisting: true, // علامة لتمييزها عن الملفات الجديدة
+        }))
+      );
     }
-  }, [initialData]);
+  }, [initialData, setAttachments]);
 
-  // منطق الحذف (كلم الباك إند لو الملف موجود فعلاً)
-const handleRemoveFile = (file) => {
-  markAttachmentForDeletion(file);
-};
-
+  // منطق الحذف
+  const handleRemoveFile = (file) => {
+    markAttachmentForDeletion(file);
+  };
 
   const roleOptions = roles.map((r) => ({
     id: r.id,
@@ -81,12 +81,11 @@ const handleRemoveFile = (file) => {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleSave = async () => {
-  if (!validate()) return;
-
-  const success = await save(initialData?.id);
-  if (success) navigate("/seminars-and-conferences");
-};
+  const handleSave = async () => {
+    if (!validate()) return;
+    const success = await save(initialData?.id);
+    if (success) navigate("/seminars-and-conferences");
+  };
 
   if (loading && roles.length === 0) return <LoadingSpinner />;
 
@@ -98,7 +97,10 @@ const handleSave = async () => {
         <main className="flex-1 p-[clamp(0.5rem,0.6vw,2.5rem)] flex items-center justify-center">
           <div className="w-full max-w-[clamp(80%,92%,1600px)] bg-white rounded-[clamp(1rem,1.5vw,2rem)] shadow-xl border border-gray-100 flex flex-col relative overflow-hidden">
             
-            <form className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(1.5rem,4vw,5rem)] p-[clamp(1.5rem,2vw,4rem)] overflow-y-auto" onSubmit={(e) => e.preventDefault()}>
+            <form 
+              className="grid grid-cols-1 lg:grid-cols-2 gap-[clamp(1.5rem,4vw,5rem)] p-[clamp(1.5rem,2vw,4rem)] overflow-y-auto" 
+              onSubmit={(e) => e.preventDefault()}
+            >
               
               {/* البيانات الأساسية */}
               <div className="space-y-[clamp(1rem,1.8vw,2.5rem)]">
@@ -107,13 +109,19 @@ const handleSave = async () => {
                     label={t("fields.type")}
                     value={formData.type}
                     onChange={(val) => setFormData({ ...formData, type: val })}
-                    options={[{ value: 1, label: t("fields.seminar") }, { value: 2, label: t("fields.conference") }]}
+                    options={[
+                      { value: 1, label: t("fields.seminar") },
+                      { value: 2, label: t("fields.conference") },
+                    ]}
                   />
                   <RadioGroup
                     label={t("fields.localOrInternational")}
                     value={formData.localOrInternational}
                     onChange={(val) => setFormData({ ...formData, localOrInternational: val })}
-                    options={[{ value: 1, label: t("fields.local") }, { value: 2, label: t("fields.international") }]}
+                    options={[
+                      { value: 1, label: t("fields.local") },
+                      { value: 2, label: t("fields.international") },
+                    ]}
                   />
                 </div>
 
@@ -149,20 +157,44 @@ const handleSave = async () => {
                 />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <InputField label={t("fields.website")} value={formData.website} onChange={(e) => setFormData({ ...formData, website: e.target.value })} />
-                  <InputField label={t("fields.city")} value={formData.venue} onChange={(e) => setFormData({ ...formData, venue: e.target.value })} />
+                  <InputField 
+                    label={t("fields.website")} 
+                    placeholder={t("placeholders.website")} 
+                    value={formData.website} 
+                    onChange={(e) => setFormData({ ...formData, website: e.target.value })} 
+                  />
+                  <InputField 
+                    label={t("fields.city")} 
+                    placeholder={t("placeholders.city")} 
+                    value={formData.venue} 
+                    onChange={(e) => setFormData({ ...formData, venue: e.target.value })} 
+                  />
                 </div>
               </div>
 
               {/* التاريخ والمرفقات */}
               <div className="space-y-[clamp(1rem,1.8vw,2.5rem)] lg:border-s lg:ps-[clamp(1.5rem,4vw,5rem)] border-gray-100">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <DateField label={t("fields.startDate")} value={formData.startDate} onChange={(val) => setFormData({ ...formData, startDate: val })} isArabic={isArabic} />
-                  <DateField label={t("fields.endDate")} value={formData.endDate} onChange={(val) => setFormData({ ...formData, endDate: val })} isArabic={isArabic} error={errors.endDate} />
+                  <DateField 
+                    label={t("fields.startDate")} 
+                    value={formData.startDate} 
+                    placeholder={t("placeholders.startDate")}
+                    onChange={(val) => setFormData({ ...formData, startDate: val })} 
+                    isArabic={isArabic} 
+                  />
+                  <DateField 
+                    label={t("fields.endDate")} 
+                    value={formData.endDate} 
+                    placeholder={t("placeholders.endDate")}
+                    onChange={(val) => setFormData({ ...formData, endDate: val })} 
+                    isArabic={isArabic} 
+                    error={errors.endDate} 
+                  />
                 </div>
 
                 <InputField 
                   label={t("fields.description")} 
+                  placeholder={t("placeholders.description")}
                   value={formData.notes} 
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })} 
                   textarea 
@@ -175,7 +207,7 @@ const handleSave = async () => {
                   buttonLabel={t("uploadAttachments")}
                   files={attachments}
                   setFiles={setAttachments}
-                  onRemove={handleRemoveFile} // تمرير الدالة هنا للربط مع الباك إند
+                  onRemove={handleRemoveFile}
                   multiple
                 />
               </div>

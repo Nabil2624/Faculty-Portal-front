@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
   fetchNominatedResearches,
@@ -20,17 +20,16 @@ export default function useNominatedScientificResearch(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  // تغيير الـ States لتدعم الـ Cursor Pagination
+  const [nextCursor, setNextCursor] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
-  const pageSize = 4;
-
-  const loadData = async (pageNumber, isReset = false) => {
+  const loadData = async (cursorValue = 0, isReset = false) => {
     setLoading(true);
     try {
       const response = await fetchNominatedResearches({
-        currentPage: pageNumber, // نستخدم رقم الصفحة الممرر مباشرة للدالة
-        pageSize,
+        take: 9,
+        cursor: cursorValue, // نبعت الكيرسور للباك إند (تأكد من اسم البارامتر المطلوب في الـ API عندك)
         sort: sortValue,
         PublisherType: publisherType,
         PublicationType: PublicationType,
@@ -39,18 +38,19 @@ export default function useNominatedScientificResearch(
       });
 
       const result = response.data;
-      const newMappedItems = result?.data || [];
+      // بناءً على الـ JSON المرفق، الداتا راجعة جوة "items"
+      const newMappedItems = result?.items || [];
 
       setItems((prev) => {
-        if (pageNumber === 1 || isReset) {
+        if (cursorValue === 0 || isReset) {
           return newMappedItems;
         }
-
         return [...prev, ...newMappedItems];
       });
 
-      const total = Math.max(1, Math.ceil((result?.totalCount || 0) / pageSize));
-      setTotalPages(total);
+      // تحديث حالة الكيرسور وهل في داتا تانية ولا لأ
+      setNextCursor(result?.nextCursor || 0);
+      setHasMore(result?.hasMore || false);
 
     } catch (err) {
       console.error("Error loading researches:", err);
@@ -60,23 +60,33 @@ export default function useNominatedScientificResearch(
     }
   };
 
-  // 1. عند تغيير الفلاتر: نصفر كل شيء ونطلب الصفحة 1
+  // 1. عند تغيير الفلاتر: نصفر كل حاجة ونطلب من الـ Cursor 0
   useEffect(() => {
-    setCurrentPage(1);
-    loadData(1, true); 
+    setNextCursor(0);
+    setHasMore(true);
+    loadData(0, true);
   }, [sortValue, publisherType, PublicationType, source, derivedFrom]);
 
-  // 2. عند تغيير الصفحة فقط (عن طريق View More):
-  useEffect(() => {
-    if (currentPage > 1) {
-      loadData(currentPage, false);
+  // دالة مخصصة لزرار Show More
+  const loadMore = useCallback(() => {
+    if (!loading && hasMore) {
+      loadData(nextCursor, false);
     }
-  }, [currentPage]);
+  }, [loading, hasMore, nextCursor]);
+
+  // 2. الحل السحري للمشكلة: لو الليستة فضيت (عملنا Accept للكل) ولسه في داتا، هاتها أوتوماتيك
+  useEffect(() => {
+    // نتأكد إن مفيش عناصر، وإن لسه فيه داتا في السيرفر، ومش بيعمل تحميل حاليا، والكيرسور مش صفر
+    if (items.length === 0 && hasMore && !loading && nextCursor !== 0) {
+      loadMore();
+    }
+  }, [items.length, hasMore, loading, nextCursor, loadMore]);
 
   const handleApprove = async (item) => {
     try {
-      await approveNominatedResearch(item.id || item.ID); // دعم الحالتين
-      setItems((prev) => prev.filter((i) => (i.id || i.ID) !== (item.id || item.ID)));
+      const itemId = item.id || item.ID; // دعم الحالتين
+      await approveNominatedResearch(itemId);
+      setItems((prev) => prev.filter((i) => (i.id || i.ID) !== itemId));
     } catch (err) {
       alert("Failed to approve");
     }
@@ -84,8 +94,9 @@ export default function useNominatedScientificResearch(
 
   const handleReject = async (item) => {
     try {
-      await rejectNominatedResearch(item.id || item.ID);
-      setItems((prev) => prev.filter((i) => (i.id || i.ID) !== (item.id || item.ID)));
+      const itemId = item.id || item.ID;
+      await rejectNominatedResearch(itemId);
+      setItems((prev) => prev.filter((i) => (i.id || i.ID) !== itemId));
     } catch (err) {}
   };
 
@@ -95,14 +106,13 @@ export default function useNominatedScientificResearch(
     items,
     loading,
     error,
-    currentPage,
-    totalPages,
-    setCurrentPage,
+    hasMore, // هنستخدمها عشان نظهر أو نخفي زرار "Show More" في الـ UI
+    loadMore, // هنربطها بـ onClick بتاع زرار "Show More"
     handleApprove,
     handleReject,
     reload: () => {
-      setCurrentPage(1);
-      loadData(1, true);
+      setNextCursor(0);
+      loadData(0, true);
     },
   };
 }

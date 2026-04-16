@@ -1,0 +1,22 @@
+{
+  "missingScholar": {
+    "labels": {
+      "scholarLink": "Google Scholar Link",
+      "orcid": "ORCID ID"
+    },
+    "placeholders": {
+      "scholarLink": "Enter your Google Scholar profile link",
+      "orcid": "Enter your ORCID ID or link"
+    },
+    "hints": {
+      "orcidExample": "Example: 0000-0002-1825-0097"
+    },
+    "errors": {
+      "required": "Both Google Scholar link and ORCID are required to proceed.",
+      "invalidOrcid": "Invalid ORCID ID. Please check the number and try again."
+    },
+    "buttons": {
+      "save": "Save Data"
+    }
+  }
+}
