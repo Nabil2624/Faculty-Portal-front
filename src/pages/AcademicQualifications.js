@@ -91,7 +91,6 @@ export default function AcademicQualificationsPage() {
         },
       ]
     : [];
-
   const sortOptions = [
     { value: 2, label: "newestFirst" },
     { value: 1, label: "oldestFirst" },
@@ -135,12 +134,12 @@ export default function AcademicQualificationsPage() {
         <PageHeaderNoAction
           title={t("academicQualifications")}
           icon={GraduationCap}
-
         />
 
         {!loading && error && (
           <div className="text-center text-red-500 mb-4">{error}</div>
         )}
+        
         <div className="flex-1 overflow-hidden">
           <AcademicQualificationsTable
             data={qualifications}
@@ -148,6 +147,7 @@ export default function AcademicQualificationsPage() {
               setSelectedItem(item);
               setShowDelete(true);
               setDeleteError(false);
+              
             }}
             onEdit={(item) =>
               navigate("/edit-academic-qualification", { state: { item } })
@@ -162,6 +162,7 @@ export default function AcademicQualificationsPage() {
             t={t}
           />
         </div>
+
 
         <AcademicQualificationsModal
           showDelete={showDelete}

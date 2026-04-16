@@ -9,6 +9,7 @@ export default function AcademicQualificationDeleteModal({
   const { t, i18n } = useTranslation("AcademicQualifications");
   const isArabic = i18n.language === "ar";
 
+
   return (
     <div
       className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
