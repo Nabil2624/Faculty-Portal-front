@@ -148,8 +148,6 @@ export default function ResearchesPage() {
   const handleDeleteAction = async () => {
     if (selectedIds.length === 0) return;
     try {
-      // ملاحظة: إذا كان الـ API يدعم حذف واحد فقط، نكرر الطلب أو نعدل الـ API
-      // حالياً سنقوم بحذف العناصر المختارة واحداً تلو الآخر (أو العنصر الأول فقط حسب إعدادات السيرفر لديك)
       for (const id of selectedIds) {
         await deleteScientificResearch(id);
       }
@@ -164,7 +162,6 @@ export default function ResearchesPage() {
   };
 
   const handleEditAction = () => {
-    // التعديل مسموح فقط لبحث واحد ومن مصدر داخلي
     if (
       selectedIds.length === 1 &&
       selectedResearch &&

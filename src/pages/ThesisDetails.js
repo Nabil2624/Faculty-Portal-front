@@ -127,7 +127,7 @@ export default function ThesesDetails() {
             </h3>
           </div>
 
-          <div className="flex flex-nowrap lg:justify-between gap-8 min-w-max lg:min-w-0 px-2">
+          <div className="flex flex-nowrap justify-center lg:grid lg:grid-cols-5 items-center justify-items-center gap-8 min-w-max lg:min-w-0 px-2">
             <MiniDetail
               label={isArabic ? "تاريخ القيد" : "Enrollment Date"}
               value={thesis.enrollmentDate}
@@ -139,12 +139,12 @@ export default function ThesesDetails() {
               icon={<FiCalendar />}
             />
             <MiniDetail
-              label={isArabic ? "تاريخ التقدير الداخلي" : "Internal Grade Date"}
+              label={isArabic ? "تاريخ منح الدرجة الداخلية" : "Internal Grade Date"}
               value={thesis.internalGradeDate}
               icon={<FiCheckCircle />}
             />
             <MiniDetail
-              label={isArabic ? "تأكيد الإشراف" : "Supervision Confirmation"}
+              label={isArabic ? "تاريخ منح الدرجة إشراف مشترك" : "Supervision Confirmation"}
               value={thesis.supervisionConfirmationDate}
               icon={<FiBriefcase />}
             />

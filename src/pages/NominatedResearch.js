@@ -8,7 +8,7 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
 import ModalWrapper from "../components/ui/ModalWrapper";
 import CustomizeResultsModal from "../components/ui/CustomizeResultsPopup";
-import NominatedResearchesTable from "../components/widgets/NominatedResearch/NominatedResearchesTable"; // الجدول الجديد
+import NominatedResearchesTable from "../components/widgets/NominatedResearch/NominatedResearchesTable"; 
 
 // Hooks
 import useNominatedScientificResearch from "../hooks/useNominatedScientificResearch";
@@ -32,15 +32,14 @@ export default function NominatedScientificResearch() {
   const [publisherType, setPublisherType] = useState([]);
   const [publicationType, setPublicationType] = useState([]);
 
-  // Nominated researches hook
+  // التعديل هنا: استخدام hasMore و loadMore بدل الصفحات
   const {
     t,
     isArabic,
     items,
     loading,
-    currentPage,
-    totalPages,
-    setCurrentPage,
+    hasMore,
+    loadMore,
     handleApprove,
     handleReject,
     reload,
@@ -72,7 +71,6 @@ export default function NominatedScientificResearch() {
 
   // -- Handlers للجراحة الجماعية (Bulk Actions) --
   const handleBulkApprove = async () => {
-    // تصفية العناصر المختارة من القائمة الأساسية
     const selectedItems = items.filter((item) => selectedIds.includes(item.id));
     for (const item of selectedItems) {
       await handleApprove(item);
@@ -137,7 +135,7 @@ export default function NominatedScientificResearch() {
     setDerivedFrom(filters?.DerivedFrom || []);
     setPublisherType(filters?.PublisherType || []);
     setPublicationType(filters?.PublicationType || []);
-    setCurrentPage(1);
+    // تم إزالة setCurrentPage(1)
   };
 
   const handleResetFilters = () => {
@@ -147,10 +145,8 @@ export default function NominatedScientificResearch() {
     setPublisherType([]);
     setPublicationType([]);
     setFiltersState({});
-    setCurrentPage(1);
+    // تم إزالة setCurrentPage(1)
   };
-
-  // ================= RENDER LOGIC =================
 
   if (items.length === 0 && waiting) {
     return (
@@ -186,26 +182,18 @@ export default function NominatedScientificResearch() {
     );
   }
 
-  // تصفية الأبحاث بناءً على كلمة البحث (Search Term)
   const filteredItems = items.filter((item) =>
     item.title?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
     <ResponsiveLayoutProvider>
-      <div
-        className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}
-      >
+      <div className={`${isArabic ? "rtl" : "ltr"} p-3 flex flex-col min-h-[90vh]`}>
         <PageHeaderNoAction
-          title={
-            isArabic
-              ? "الأبحاث العلمية المرشحة"
-              : "Nominated Scientific Researches"
-          }
+          title={isArabic ? "الأبحاث العلمية المرشحة" : "Nominated Scientific Researches"}
           icon={FileBadge2}
         />
 
-      
         <NominatedResearchesTable
           researches={filteredItems}
           loading={loading}
@@ -223,15 +211,14 @@ export default function NominatedScientificResearch() {
           handleApprove={handleApprove}
           handleReject={handleReject}
           setShowFilterModal={setShowFilterModal}
-          page={currentPage}
-          totalPages={totalPages}
-          setPage={setCurrentPage}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
+          // التعديل هنا: تمرير hasMore و loadMore
+          hasMore={hasMore}
+          loadMore={loadMore}
         />
       </div>
 
-      {/* مودال الفلترة */}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
           <CustomizeResultsModal

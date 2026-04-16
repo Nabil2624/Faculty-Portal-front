@@ -25,11 +25,11 @@ const NominatedResearchesTable = ({
   handleApprove,
   handleReject,
   setShowFilterModal,
-  page,
-  totalPages,
-  setPage,
   searchTerm,
   setSearchTerm,
+  // التعديل هنا
+  hasMore,
+  loadMore,
 }) => {
   const navigate = useNavigate();
 
@@ -155,7 +155,8 @@ const NominatedResearchesTable = ({
 
       {/* List Content */}
       <div className="flex flex-col w-full min-h-[200px] relative">
-        {loading && page === 1 ? (
+        {/* التعديل هنا: التأكد من عدم وجود بيانات لظهور مؤشر التحميل */}
+        {loading && researches.length === 0 ? (
           <div className="flex justify-center py-20"></div>
         ) : researches.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center border-2 border-dashed border-gray-100 rounded-xl my-4">
@@ -263,10 +264,11 @@ const NominatedResearchesTable = ({
       </div>
 
       {/* Show More Button */}
+      {/* التعديل هنا: التاكد من hasMore بدلاً من مقارنة الصفحات، وتنفيذ loadMore */}
       <div className="mt-8 flex flex-col items-center">
-        {!loading && page < totalPages && researches.length > 0 && (
+        {!loading && hasMore && researches.length > 0 && (
           <button
-            onClick={(e) => { e.stopPropagation(); setPage((prev) => prev + 1); }}
+            onClick={(e) => { e.stopPropagation(); loadMore(); }}
             className="px-10 py-2 border-2 border-[#19355A] text-[#19355A] rounded-full font-black hover:bg-[#19355A] hover:text-white transition-all text-xs cursor-pointer uppercase tracking-widest"
           >
             {isArabic ? "عرض المزيد" : "Show More"}

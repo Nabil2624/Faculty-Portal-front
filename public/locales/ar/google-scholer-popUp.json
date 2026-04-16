@@ -1,0 +1,22 @@
+{
+    "missingScholar": {
+    "labels": {
+      "scholarLink": "رابط جوجل سكولار",
+      "orcid": "رقم ORCID"
+    },
+    "placeholders": {
+      "scholarLink": "أدخل رابط جوجل سكولار الخاص بك",
+      "orcid": "أدخل رقم أو رابط الـ ORCID"
+    },
+    "hints": {
+      "orcidExample": "مثال: 0000-0002-1825-0097"
+    },
+    "errors": {
+      "required": "رابط جوجل سكولار و ORCID مطلوبان لإكمال العملية.",
+      "invalidOrcid": "رقم ORCID غير صحيح، يرجى التأكد من الرقم والمحاولة مرة أخرى."
+    },
+    "buttons": {
+      "save": "حفظ البيانات"
+    }
+  }
+}

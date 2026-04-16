@@ -15,7 +15,7 @@ import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 import { Layers } from "lucide-react";
 import ProjectsTable from "../components/widgets/Projects/ProjectsTable";
 export default function ProjectsPage() {
-  const { t, i18n } = useTranslation("Projects");
+  const { t, i18n } = useTranslation("projects");
   const isArabic = i18n.language === "ar";
   const navigate = useNavigate();
 

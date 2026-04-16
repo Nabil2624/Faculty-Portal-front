@@ -14,7 +14,7 @@ export default function PersonalData() {
   const { t, i18n } = useTranslation([
     "PersonalData",
     "contactinfo",
-    "socialnetworkingpages",
+    "socialNetworkingPages",
     "identification",
   ]);
   const isArabic = i18n.language === "ar";
@@ -191,28 +191,28 @@ export default function PersonalData() {
 
   const socialRows = mapRows([
     {
-      label: t("PersonalWebsite", { ns: "socialnetworkingpages" }),
+      label: t("PersonalWebsite", { ns: "socialNetworkingPages" }),
       value: socialData.personalWebsite,
     },
     {
-      label: t("Facebook", { ns: "socialnetworkingpages" }),
+      label: t("Facebook", { ns: "socialNetworkingPages" }),
       value: socialData.facebook,
     },
     {
-      label: t("X/Twitter", { ns: "socialnetworkingpages" }),
+      label: t("X/Twitter", { ns: "socialNetworkingPages" }),
       value: socialData.x,
     },
 
     {
-      label: t("Instagram", { ns: "socialnetworkingpages" }),
+      label: t("Instagram", { ns: "socialNetworkingPages" }),
       value: socialData.instagram,
     },
     {
-      label: t("LinkedIn", { ns: "socialnetworkingpages" }),
+      label: t("LinkedIn", { ns: "socialNetworkingPages" }),
       value: identificationData.linkedIn,
     },
     {
-      label: t("YouTube Channel", { ns: "socialnetworkingpages" }),
+      label: t("YouTube Channel", { ns: "socialNetworkingPages" }),
       value: socialData.youTube,
     },
   ]);
@@ -236,11 +236,11 @@ export default function PersonalData() {
     },
 
     {
-      label: t("Scopus", { ns: "socialnetworkingpages" }),
+      label: t("Scopus", { ns: "socialNetworkingPages" }),
       value: identificationData.scopus,
     },
     {
-      label: t("GoogleScholar", { ns: "socialnetworkingpages" }),
+      label: t("GoogleScholar", { ns: "socialNetworkingPages" }),
       value: socialData.googleScholar,
     },
     {
@@ -278,7 +278,7 @@ export default function PersonalData() {
                     ? t("contactInfo", { ns: "contactinfo" })
                     : tab === "social"
                       ? t("socialNetworkingPages", {
-                          ns: "socialnetworkingpages",
+                          ns: "socialNetworkingPages",
                         })
                       : t("IdentificationCard", { ns: "identification" })}
                 {activeTab === tab && (
@@ -327,7 +327,7 @@ export default function PersonalData() {
                     : activeTab === "contact"
                       ? "contactinfo"
                       : activeTab === "social"
-                        ? "socialnetworkingpages"
+                        ? "socialNetworkingPages"
                         : "identification",
               })}
             </button>
