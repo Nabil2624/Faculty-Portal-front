@@ -61,7 +61,7 @@ export default function ResearcherProfile() {
 
               try {
                 await axios.post(
-                  "http://localhost/Researches/api/fetch-research-using-scholar-profile-link/",
+                  "http://172.1.50.98/Researches/api/fetch-research-using-scholar-profile-link/",
                   {
                     researcherNationalNumber: nationalNumber,
                     ORCID: cleanOrcid,

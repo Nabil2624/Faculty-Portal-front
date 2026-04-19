@@ -167,7 +167,7 @@ export default function NominatedScientificResearch() {
           <MissingScholarCard
             onSave={async (data) => {
               await axios.post(
-                "http://127.0.0.1:8000/api/fetch-research-using-scholar-profile-link/",
+                "http://172.1.50.98/Researches/api/fetch-research-using-scholar-profile-link/",
                 {
                   researcherNationalNumber: nationalNumber,
                   ORCID: data.orcid,
