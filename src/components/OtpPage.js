@@ -13,7 +13,7 @@ import helwanImage from "../assets/helwan-university.jpeg";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function OtpPage() {
-  const { t, i18n } = useTranslation("otp");
+  const { t, i18n } = useTranslation("OTP");
   const navigate = useNavigate();
   const location = useLocation();
   const inputRefs = useRef([]);
