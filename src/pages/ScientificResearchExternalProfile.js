@@ -106,7 +106,6 @@ export default function ScientificResearchExternalProfile() {
               onClick={() => navigate(-1)}
               className="group h-[clamp(2.5rem,3.2vw,3rem)] flex items-center justify-center gap-3 bg-white border border-gray-200 text-gray-600 px-6 rounded-xl font-bold text-[clamp(11px,0.85vw,14px)] uppercase tracking-wider hover:border-[#19355A]/30 hover:text-[#19355A] hover:bg-gray-50/50 hover:shadow-md active:scale-95 transition-all duration-300"
             >
-              {/* الأيقونة بتتحرك حركة بسيطة عند الهوفر */}
               <span
                 className={`transition-transform duration-300 ${isArabic ? "group-hover:translate-x-1" : "group-hover:-translate-x-1"}`}
               >
@@ -176,9 +175,9 @@ export default function ScientificResearchExternalProfile() {
           </div>
         </div>
 
-        {/* 3. Publication Info */}
-        <div className="bg-gray-50/50 rounded-[1.5rem] p-8 border border-gray-100 mb-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        {/* 3. Publication Info - Modified for Alignment */}
+        <div className="bg-gray-50/50 rounded-[1.5rem] p-6 border border-gray-100 mb-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-8 items-center justify-items-center ">
             <HorizontalInfo
               label={isArabic ? "المصدر" : "Source"}
               value={displaySource}
@@ -212,8 +211,8 @@ export default function ScientificResearchExternalProfile() {
           </div>
         </div>
 
-        {/* 4. Research Team: رجعت الـ Hover Scale هنا */}
-        <div className="bg-white rounded-[1.5rem] p-8 border border-gray-100 shadow-sm">
+        {/* 4. Research Team */}
+        <div className="bg-white rounded-[1.5rem] p-6 border border-gray-100 shadow-sm">
           <div className="flex items-center gap-2 mb-6">
             <FiUsers className="text-[#B38E19] text-[clamp(18px,1.5vw,25px)]" />
             <h3 className="text-[#19355A] font-black text-[clamp(13px,0.9vw,20px)] uppercase tracking-[2.5px]">
@@ -257,17 +256,22 @@ export default function ScientificResearchExternalProfile() {
   );
 }
 
+// المكون المعدل لضمان المحاذاة
 function HorizontalInfo({ label, value, icon }) {
   if (!value || value === "0" || value === "-") return null;
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-1.5 text-[#B38E19] opacity-80">
-        <span className="shrink-0">{icon}</span>
-        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 truncate">
+    <div className="flex flex-col h-full group">
+      <div className="flex items-center gap-1.5 text-[#B38E19] mb-2 min-h-[35px]">
+        <span className="flex items-center justify-center shrink-0 text-[1.1em]">
+          {icon}
+        </span>
+        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-[1.2]">
           {label}
         </span>
       </div>
-      <div className="text-[clamp(12px,0.8vw,14px)] font-bold text-[#19355A] leading-tight break-words">
+      
+      {/* منطقة القيمة */}
+      <div className="text-[clamp(12px,0.8vw,14px)] font-bold text-[#19355A] leading-tight break-words pt-1 border-t border-transparent group-hover:border-[#B38E19]/10 transition-colors">
         {value}
       </div>
     </div>

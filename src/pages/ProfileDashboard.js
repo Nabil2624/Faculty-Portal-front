@@ -237,7 +237,7 @@ export default function GridLayoutFullScreen() {
         ? safe(q?.qualification?.valueAr)
         : safe(q?.qualification?.valueEn),
       organization: safe(q?.universityOrFaculty),
-      startDate: safe(q?.dateOfObtainingTheQualification, null),
+      dateOfObtainingTheQualification: safe(q?.dateOfObtainingTheQualification, null),
     })) ?? [];
 
   const skills =

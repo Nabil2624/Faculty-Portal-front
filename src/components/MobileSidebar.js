@@ -33,7 +33,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
   const navItems = [
     { key: "home", icon: <Home size={20} />, link: "/profile" },
     { key: "personalInfo", icon: <User size={20} />, link: "/personal-data" },
-    { key: "cv", icon: <IdCard  />, link: "/cv" },
+
     {
       key: "researchAndSupervision",
       icon: <BookOpenText size={20} />,
@@ -116,6 +116,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
         },
       ],
     },
+    { key: "cv", icon: <IdCard />, link: "/cv" },
     {
       key: "support",
       icon: <LifeBuoy size={20} />,

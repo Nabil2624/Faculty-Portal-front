@@ -60,7 +60,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const navItems = [
     { key: "home", icon: <Home />, link: "/profile" },
     { key: "personalInfo", icon: <User />, link: "/personal-data" },
-    { key: "cv", icon: <IdCard  />, link: "/cv" },
+
     {
       key: "researchAndSupervision",
       icon: <BookOpenText />,
@@ -68,9 +68,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         { key: "researches", link: "/ResearchesPage" },
         { key: "supervisionThesis", link: "/supervision-thesis" },
         { key: "theses", link: "/theses" },
-        // { key: "researcherProfile", link: "/researcher-profile" },
         { key: "nominatedResearches", link: "/nominated-research" },
-        // { key: "recommendedSupervisions", link: "/recommended-supervisions" },
       ],
     },
     {
@@ -143,6 +141,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         },
       ],
     },
+    { key: "cv", icon: <IdCard />, link: "/cv" },
     // إضافة العناصر الخاصة بالـ Roles الأخرى بنفس ستايلك
     {
       key: "support",

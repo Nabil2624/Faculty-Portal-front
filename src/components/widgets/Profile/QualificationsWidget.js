@@ -90,7 +90,7 @@ export default function QualificationsWidget({ data = [] }) {
                 <div className="flex items-center gap-1.5 mt-3 text-gray-400">
                   <Calendar className="w-3 h-3 text-[#b38e19]" />
                   <p className="text-[clamp(10px,0.75vw,13px)] font-semibold">
-                    {formatDate(item.startDate)} — {formatDate(item.endDate)}
+                    {formatDate(item.dateOfObtainingTheQualification)}
                   </p>
                 </div>
               </div>

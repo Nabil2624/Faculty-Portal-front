@@ -119,6 +119,8 @@ import ChatPage from "../pages/ChatPage";
 import CVPage from "../pages/CVPage";
 import ManageCVPage from "../pages/ManageCVPage";
 import Login from "../components/Login";
+import UsersList from "../pages/UsersList";
+import Dashboard from "../pages/Dashboard";
 
 // ... (باقي الـ Imports بتاعتك)
 
@@ -163,6 +165,8 @@ function AppRouterInner() {
             path="/admin/add-user-permission"
             element={<AddUserPermissionPage />}
           />
+          <Route path="/users" element={<UsersList/>} />
+          <Route path="/Dashboard" element={<Dashboard/>} />
           <Route
             path="/admin/edit-user-permissions"
             element={<EditUserPermissionsPage />}
