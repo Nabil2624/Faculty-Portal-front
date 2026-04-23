@@ -8,6 +8,7 @@ import {
   Save,
   CheckCircle,
   AlertCircle,
+  X,
 } from "lucide-react";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
@@ -519,6 +520,14 @@ export default function CVPage() {
     error: saveError,
   } = useCVManage();
   const [downloading, setDownloading] = useState(false);
+  const [showPanel, setShowPanel] = useState(true);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
 
   const TemplateComponent = TEMPLATE_COMPONENTS[selectedTemplate];
 
@@ -581,30 +590,59 @@ export default function CVPage() {
               {t("pageTitle")}
             </h1>
           </div>
-          <div style={{ display: "flex", gap: "10px" }}>
-            <button
-              onClick={handleDownload}
-              disabled={loading || !data || downloading}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 18px",
-                background: downloading ? "#94a3b8" : "#b38e19",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                fontWeight: 600,
-                cursor: downloading ? "not-allowed" : "pointer",
-              }}
-            >
-              {downloading ? (
-                <RefreshCw size={18} className="animate-spin" />
-              ) : (
-                <Download size={18} />
-              )}{" "}
-              {t("download", "Download CV")}
-            </button>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            {!notFound && !showPanel && (
+              <button
+                onClick={() => setShowPanel(true)}
+                title={t("manage.pageTitle")}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: isMobile ? "7px 10px" : "10px 14px",
+                  background: "#19355a",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontSize: isMobile ? "0.75rem" : "0.85rem",
+                }}
+              >
+                <Settings2 size={isMobile ? 15 : 18} />
+                {!isMobile && t("manage.pageTitle")}
+              </button>
+            )}
+            {!notFound && (
+              <button
+                onClick={handleDownload}
+                disabled={loading || !data || downloading}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: isMobile ? "5px" : "8px",
+                  padding: isMobile ? "7px 10px" : "10px 18px",
+                  background: downloading ? "#94a3b8" : "#b38e19",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  cursor: downloading ? "not-allowed" : "pointer",
+                  fontSize: isMobile ? "0.75rem" : "1rem",
+                }}
+              >
+                {downloading ? (
+                  <RefreshCw
+                    size={isMobile ? 14 : 18}
+                    className="animate-spin"
+                  />
+                ) : (
+                  <Download size={isMobile ? 14 : 18} />
+                )}{" "}
+                {!isMobile && t("download", "Download CV")}
+                {isMobile && t("download", "Download")}
+              </button>
+            )}
           </div>
         </div>
 
@@ -636,26 +674,51 @@ export default function CVPage() {
               >
                 {t("chooseTemplate")}:
               </span>
-              {TEMPLATES.map((tpl) => (
-                <button
-                  key={tpl.id}
-                  onClick={() => setSelectedTemplate(tpl.id)}
+              {isMobile ? (
+                <select
+                  value={selectedTemplate}
+                  onChange={(e) => setSelectedTemplate(Number(e.target.value))}
                   style={{
-                    padding: "8px 16px",
+                    flex: 1,
+                    padding: "8px 12px",
                     borderRadius: "8px",
+                    border: "2px solid #19355a",
                     fontWeight: 700,
                     fontSize: "0.85rem",
+                    color: "#19355a",
+                    background: "#fff",
                     cursor: "pointer",
-                    transition: "0.2s",
-                    background:
-                      selectedTemplate === tpl.id ? "#19355a" : "#fff",
-                    color: selectedTemplate === tpl.id ? "#fff" : "#19355a",
-                    border: `2px solid ${selectedTemplate === tpl.id ? "#19355a" : "#e2e8f0"}`,
+                    outline: "none",
                   }}
                 >
-                  {tpl.id}. {t(`templates.${tpl.key}`)}
-                </button>
-              ))}
+                  {TEMPLATES.map((tpl) => (
+                    <option key={tpl.id} value={tpl.id}>
+                      {tpl.id}. {t(`templates.${tpl.key}`)}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                TEMPLATES.map((tpl) => (
+                  <button
+                    key={tpl.id}
+                    onClick={() => setSelectedTemplate(tpl.id)}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      fontWeight: 700,
+                      fontSize: "0.85rem",
+                      cursor: "pointer",
+                      transition: "0.2s",
+                      background:
+                        selectedTemplate === tpl.id ? "#19355a" : "#fff",
+                      color: selectedTemplate === tpl.id ? "#fff" : "#19355a",
+                      border: `2px solid ${selectedTemplate === tpl.id ? "#19355a" : "#e2e8f0"}`,
+                    }}
+                  >
+                    {tpl.id}. {t(`templates.${tpl.key}`)}
+                  </button>
+                ))
+              )}
             </div>
 
             {/* Template Render */}
@@ -711,120 +774,141 @@ export default function CVPage() {
           </div>
 
           {/* Right Sidebar (Manage Sections) */}
-          <div style={{ width: "360px", position: "sticky", top: "20px" }}>
-            <div
-              style={{
-                background: "#fff",
-                border: "1px solid #e2e8f0",
-                borderRadius: "12px",
-                padding: "20px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
-              }}
-            >
+          {!notFound && showPanel && (
+            <div style={{ width: "360px", position: "sticky", top: "20px" }}>
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  marginBottom: "12px",
+                  background: "#fff",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "12px",
+                  padding: "20px",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.03)",
                 }}
               >
-                <Settings2 size={20} color="#19355a" />
-                <h3
+                <div
                   style={{
-                    fontWeight: 800,
-                    color: "#19355a",
-                    margin: 0,
-                    flex: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    marginBottom: "12px",
                   }}
                 >
-                  {t("manage.pageTitle")}
-                </h3>
-              </div>
+                  <Settings2 size={20} color="#19355a" />
+                  <h3
+                    style={{
+                      fontWeight: 800,
+                      color: "#19355a",
+                      margin: 0,
+                      flex: 1,
+                    }}
+                  >
+                    {t("manage.pageTitle")}
+                  </h3>
+                  <button
+                    onClick={() => setShowPanel(false)}
+                    title="Close panel"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "transparent",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: "6px",
+                      padding: "4px",
+                      cursor: "pointer",
+                      color: "#64748b",
+                      flexShrink: 0,
+                      transition: "0.15s",
+                    }}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
 
-              {/* Save Button */}
-              <button
-                onClick={save}
-                disabled={saveLoading}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "6px",
-                  padding: "8px 14px",
-                  background: saveLoading ? "#94a3b8" : "#19355a",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontWeight: 600,
-                  cursor: saveLoading ? "not-allowed" : "pointer",
-                  fontSize: "0.82rem",
-                  width: "100%",
-                  marginBottom: "8px",
-                }}
-              >
-                {saveLoading ? (
-                  <RefreshCw size={14} className="animate-spin" />
-                ) : (
-                  <Save size={14} />
+                {/* Save Button */}
+                <button
+                  onClick={save}
+                  disabled={saveLoading}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                    padding: "8px 14px",
+                    background: saveLoading ? "#94a3b8" : "#19355a",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontWeight: 600,
+                    cursor: saveLoading ? "not-allowed" : "pointer",
+                    fontSize: "0.82rem",
+                    width: "100%",
+                    marginBottom: "8px",
+                  }}
+                >
+                  {saveLoading ? (
+                    <RefreshCw size={14} className="animate-spin" />
+                  ) : (
+                    <Save size={14} />
+                  )}
+                  {saveLoading ? t("manage.saving") : t("manage.save")}
+                </button>
+                {success && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      color: "#16a34a",
+                      fontSize: "0.77rem",
+                      marginBottom: "8px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => setSuccess(false)}
+                  >
+                    <CheckCircle size={14} />
+                    {t("manage.saveSuccess")}
+                  </div>
                 )}
-                {saveLoading ? t("manage.saving") : t("manage.save")}
-              </button>
-              {success && (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    color: "#16a34a",
-                    fontSize: "0.77rem",
-                    marginBottom: "8px",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => setSuccess(false)}
-                >
-                  <CheckCircle size={14} />
-                  {t("manage.saveSuccess")}
-                </div>
-              )}
-              {saveError && (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    color: "#dc2626",
-                    fontSize: "0.77rem",
-                    marginBottom: "8px",
-                  }}
-                >
-                  <AlertCircle size={14} />
-                  {t("manage.saveError")}
-                </div>
-              )}
+                {saveError && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      color: "#dc2626",
+                      fontSize: "0.77rem",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    <AlertCircle size={14} />
+                    {t("manage.saveError")}
+                  </div>
+                )}
 
-              {/* Scrollable list of 22 sections */}
-              <div
-                style={{
-                  maxHeight: "calc(100vh - 320px)",
-                  overflowY: "auto",
-                  paddingRight: "6px",
-                }}
-              >
-                {SECTIONS.map((section) => (
-                  <SectionCard
-                    key={section.key}
-                    sectionKey={section.key}
-                    fields={section.fields}
-                    visibility={visibility}
-                    toggle={toggle}
-                    t={t}
-                    isArabic={isArabic}
-                  />
-                ))}
+                {/* Scrollable list of 22 sections */}
+                <div
+                  style={{
+                    maxHeight: "calc(100vh - 320px)",
+                    overflowY: "auto",
+                    paddingRight: "6px",
+                  }}
+                >
+                  {SECTIONS.map((section) => (
+                    <SectionCard
+                      key={section.key}
+                      sectionKey={section.key}
+                      fields={section.fields}
+                      visibility={visibility}
+                      toggle={toggle}
+                      t={t}
+                      isArabic={isArabic}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       <style>{`@keyframes spin { from {transform: rotate(0deg);} to {transform: rotate(360deg);} } .animate-spin { animation: spin 1s linear infinite; }`}</style>
