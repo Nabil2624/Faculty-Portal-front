@@ -167,7 +167,7 @@ function CVTemplatePlaceholder({ template }) {
 
 export default function GridLayoutFullScreen() {
   const { i18n } = useTranslation();
-  const { data: rawData, loading } = useProfile();
+  const { data: rawData, loading, personalDataNotFound } = useProfile();
   const [profileImg, setProfileImg] = useState(profileImage);
   const [cvTemplate, setCvTemplate] = useState("modern");
   const data = rawData ?? {};
@@ -237,7 +237,10 @@ export default function GridLayoutFullScreen() {
         ? safe(q?.qualification?.valueAr)
         : safe(q?.qualification?.valueEn),
       organization: safe(q?.universityOrFaculty),
-      dateOfObtainingTheQualification: safe(q?.dateOfObtainingTheQualification, null),
+      dateOfObtainingTheQualification: safe(
+        q?.dateOfObtainingTheQualification,
+        null,
+      ),
     })) ?? [];
 
   const skills =
@@ -335,24 +338,26 @@ export default function GridLayoutFullScreen() {
             <CVTemplatePlaceholder template={cvTemplate} />
             {/* Overlay with buttons on hover */}
             <div className="absolute inset-0 bg-transparent flex flex-col items-center justify-center gap-3">
-              <button
-                onClick={async () => {
-                  try {
-                    const tpl = cvTemplate || "modern";
-                    const res = await axiosInstance.get("/CV/Preview", {
-                      params: { template: tpl },
-                    });
-                    const win = window.open("", "_blank");
-                    if (win) {
-                      win.document.write(res.data);
-                      win.document.close();
-                    }
-                  } catch {}
-                }}
-                className="bg-[#19355A] text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-2xl border border-white/30"
-              >
-                {isArabic ? "عرض السيرة الذاتية" : "View CV"}
-              </button>
+              {!personalDataNotFound && (
+                <button
+                  onClick={async () => {
+                    try {
+                      const tpl = cvTemplate || "modern";
+                      const res = await axiosInstance.get("/CV/Preview", {
+                        params: { template: tpl },
+                      });
+                      const win = window.open("", "_blank");
+                      if (win) {
+                        win.document.write(res.data);
+                        win.document.close();
+                      }
+                    } catch {}
+                  }}
+                  className="bg-[#19355A] text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-2xl border border-white/30"
+                >
+                  {isArabic ? "عرض السيرة الذاتية" : "View CV"}
+                </button>
+              )}
 
               <button
                 onClick={() => navigate("/cv")}
