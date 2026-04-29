@@ -16,7 +16,7 @@ export default function SessionExpiredPopup() {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/60" />
 
       <div className="relative bg-[#19355a] border border-white/10 w-full max-w-md rounded-2xl p-8 shadow-2xl text-center">
         <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6">

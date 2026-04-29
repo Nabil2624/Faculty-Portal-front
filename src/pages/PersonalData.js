@@ -27,6 +27,21 @@ export default function PersonalData() {
 
   const emptyText = isArabic ? "لا يوجد" : "none";
 
+  // ---------------- Logic to check if Edit button should be disabled ----------------
+  const isTabDisabled = () => {
+    if (activeTab === "personal") {
+      // إذا كانت البيانات فارغة أو غير موجودة (404)
+      return !personalData || Object.keys(personalData).length === 0;
+    }
+    if (activeTab === "social") {
+      // نتحقق مما إذا كانت البيانات فارغة أو كل القيم بداخلها null/undefined
+      return !socialData || Object.values(socialData).every((val) => !val);
+    }
+    return false; // الأقسام الأخرى تظل مفعلة بشكل طبيعي
+  };
+
+  const isDisabled = isTabDisabled();
+
   // ---------------- LOAD PROFILE IMAGE USING axiosInstance ----------------
   useEffect(() => {
     const loadProfileImage = async () => {
@@ -85,68 +100,25 @@ export default function PersonalData() {
     return rows;
   };
 
-  // ---------------- DATA ----------------
+  // ---------------- DATA MAPPING ----------------
   const personalInfo = [
-    {
-      label: t("title", { ns: "PersonalData" }),
-      value: getValue(personalData?.title),
-    },
-    {
-      label: t("nameEn", { ns: "PersonalData" }),
-      value: getValue(personalData?.nameEn),
-    },
-    {
-      label: t("nameAr", { ns: "PersonalData" }),
-      value: getValue(personalData?.nameAr),
-    },
-
-    {
-      label: t("nationalNumber", { ns: "PersonalData" }),
-      value: getValue(personalData?.nationalNumber),
-    },
-    {
-      label: t("gender", { ns: "PersonalData" }),
-      value: getValue(personalData?.gender),
-    },
-    {
-      label: t("maritalStatus", { ns: "PersonalData" }),
-      value: getValue(personalData?.maritalStatus),
-    },
-    {
-      label: t("birthDate", { ns: "PersonalData" }),
-      value: getValue(personalData?.birthDate),
-    },
+    { label: t("title", { ns: "PersonalData" }), value: getValue(personalData?.title) },
+    { label: t("nameEn", { ns: "PersonalData" }), value: getValue(personalData?.nameEn) },
+    { label: t("nameAr", { ns: "PersonalData" }), value: getValue(personalData?.nameAr) },
+    { label: t("nationalNumber", { ns: "PersonalData" }), value: getValue(personalData?.nationalNumber) },
+    { label: t("gender", { ns: "PersonalData" }), value: getValue(personalData?.gender) },
+    { label: t("maritalStatus", { ns: "PersonalData" }), value: getValue(personalData?.maritalStatus) },
+    { label: t("birthDate", { ns: "PersonalData" }), value: getValue(personalData?.birthDate) },
   ];
 
   const workInfo = [
-    {
-      label: t("birthPlace", { ns: "PersonalData" }),
-      value: getValue(personalData?.birthPlace),
-    },
-    {
-      label: t("university", { ns: "PersonalData" }),
-      value: getValue(personalData?.university),
-    },
-    {
-      label: t("department", { ns: "PersonalData" }),
-      value: getValue(personalData?.department),
-    },
-    {
-      label: t("authority", { ns: "PersonalData" }),
-      value: getValue(personalData?.authority),
-    },
-    {
-      label: t("field", { ns: "PersonalData" }),
-      value: getValue(personalData?.field),
-    },
-    {
-      label: t("generalSpecialization", { ns: "PersonalData" }),
-      value: getValue(personalData?.generalSpecialization),
-    },
-    {
-      label: t("exactSpecialization", { ns: "PersonalData" }),
-      value: getValue(personalData?.accurateSpecialization),
-    },
+    { label: t("birthPlace", { ns: "PersonalData" }), value: getValue(personalData?.birthPlace) },
+    { label: t("university", { ns: "PersonalData" }), value: getValue(personalData?.university) },
+    { label: t("department", { ns: "PersonalData" }), value: getValue(personalData?.department) },
+    { label: t("authority", { ns: "PersonalData" }), value: getValue(personalData?.authority) },
+    { label: t("field", { ns: "PersonalData" }), value: getValue(personalData?.field) },
+    { label: t("generalSpecialization", { ns: "PersonalData" }), value: getValue(personalData?.generalSpecialization) },
+    { label: t("exactSpecialization", { ns: "PersonalData" }), value: getValue(personalData?.accurateSpecialization) },
   ];
 
   const personalRows = Array.from(
@@ -155,102 +127,39 @@ export default function PersonalData() {
   );
 
   const contactRows = mapRows([
-    {
-      label: t("officialEmail", { ns: "contactinfo" }),
-      value: getValue(contactData?.officialEmail),
-    },
-    {
-      label: t("mainMobile", { ns: "contactinfo" }),
-      value: getValue(contactData?.mainPhoneNumber),
-    },
-    {
-      label: t("fax", { ns: "contactinfo" }),
-      value: getValue(contactData?.faxNumber),
-    },
-    {
-      label: t("personalEmail", { ns: "contactinfo" }),
-      value: getValue(contactData?.personalEmail),
-    },
-    {
-      label: t("homePhone", { ns: "contactinfo" }),
-      value: getValue(contactData?.homePhoneNumber),
-    },
-    {
-      label: t("address", { ns: "contactinfo" }),
-      value: getValue(contactData?.address),
-    },
-    {
-      label: t("alternativeEmail", { ns: "contactinfo" }),
-      value: getValue(contactData?.alternativeEmail),
-    },
-    {
-      label: t("workPhone", { ns: "contactinfo" }),
-      value: getValue(contactData?.workPhoneNumber),
-    },
+    { label: t("officialEmail", { ns: "contactinfo" }), value: getValue(contactData?.officialEmail) },
+    { label: t("mainMobile", { ns: "contactinfo" }), value: getValue(contactData?.mainPhoneNumber) },
+    { label: t("fax", { ns: "contactinfo" }), value: getValue(contactData?.faxNumber) },
+    { label: t("personalEmail", { ns: "contactinfo" }), value: getValue(contactData?.personalEmail) },
+    { label: t("homePhone", { ns: "contactinfo" }), value: getValue(contactData?.homePhoneNumber) },
+    { label: t("address", { ns: "contactinfo" }), value: getValue(contactData?.address) },
+    { label: t("alternativeEmail", { ns: "contactinfo" }), value: getValue(contactData?.alternativeEmail) },
+    { label: t("workPhone", { ns: "contactinfo" }), value: getValue(contactData?.workPhoneNumber) },
   ]);
 
   const socialRows = mapRows([
-    {
-      label: t("PersonalWebsite", { ns: "socialNetworkingPages" }),
-      value: socialData.personalWebsite,
-    },
-    {
-      label: t("Facebook", { ns: "socialNetworkingPages" }),
-      value: socialData.facebook,
-    },
-    {
-      label: t("X/Twitter", { ns: "socialNetworkingPages" }),
-      value: socialData.x,
-    },
-
-    {
-      label: t("Instagram", { ns: "socialNetworkingPages" }),
-      value: socialData.instagram,
-    },
-    {
-      label: t("LinkedIn", { ns: "socialNetworkingPages" }),
-      value: identificationData.linkedIn,
-    },
-    {
-      label: t("YouTube Channel", { ns: "socialNetworkingPages" }),
-      value: socialData.youTube,
-    },
+    { label: t("PersonalWebsite", { ns: "socialNetworkingPages" }), value: socialData?.personalWebsite },
+    { label: t("Facebook", { ns: "socialNetworkingPages" }), value: socialData?.facebook },
+    { label: t("X/Twitter", { ns: "socialNetworkingPages" }), value: socialData?.x },
+    { label: t("Instagram", { ns: "socialNetworkingPages" }), value: socialData?.instagram },
+    { label: t("LinkedIn", { ns: "socialNetworkingPages" }), value: identificationData?.linkedIn },
+    { label: t("YouTube Channel", { ns: "socialNetworkingPages" }), value: socialData?.youTube },
   ]);
 
   const identificationList = [
-    {
-      label: t("ORCID-ID", { ns: "identification" }),
-      value: identificationData?.orcid,
-    },
-    {
-      label: t("ResearchGateProfile", { ns: "identification" }),
-      value: identificationData?.researcherGate,
-    },
-    {
-      label: t("Academia.Eduprofile", { ns: "identification" }),
-      value: identificationData?.academiaEdu,
-    },
-    {
-      label: t("ResearcherID", { ns: "identification" }),
-      value: identificationData?.researcherId,
-    },
-
-    {
-      label: t("Scopus", { ns: "socialNetworkingPages" }),
-      value: identificationData.scopus,
-    },
-    {
-      label: t("GoogleScholar", { ns: "socialNetworkingPages" }),
-      value: socialData.googleScholar,
-    },
-    {
-      label: t("EBK", { ns: "identification" }),
-      value: identificationData?.ekb,
-    },
+    { label: t("ORCID-ID", { ns: "identification" }), value: identificationData?.orcid },
+    { label: t("ResearchGateProfile", { ns: "identification" }), value: identificationData?.researcherGate },
+    { label: t("Academia.Eduprofile", { ns: "identification" }), value: identificationData?.academiaEdu },
+    { label: t("ResearcherID", { ns: "identification" }), value: identificationData?.researcherId },
+    { label: t("Scopus", { ns: "socialNetworkingPages" }), value: identificationData?.scopus },
+    { label: t("GoogleScholar", { ns: "socialNetworkingPages" }), value: identificationData?.googleScholar },
+    { label: t("EBK", { ns: "identification" }), value: identificationData?.ekb },
   ];
+
   const name = isArabic
     ? getValue(personalData?.nameAr)
     : getValue(personalData?.nameEn);
+
   if (loading) return <LoadingSpinner />;
 
   return (
@@ -277,9 +186,7 @@ export default function PersonalData() {
                   : tab === "contact"
                     ? t("contactInfo", { ns: "contactinfo" })
                     : tab === "social"
-                      ? t("socialNetworkingPages", {
-                          ns: "socialNetworkingPages",
-                        })
+                      ? t("socialNetworkingPages", { ns: "socialNetworkingPages" })
                       : t("IdentificationCard", { ns: "identification" })}
                 {activeTab === tab && (
                   <motion.div
@@ -306,8 +213,12 @@ export default function PersonalData() {
             <h6 className="font-bold mt-4 text-center text-[clamp(1rem,1.2vw,1.3rem)]">
               {getValue(personalData?.title)} {name}
             </h6>
+            
+            {/* EDIT BUTTON WITH DISABLE LOGIC */}
             <button
+              disabled={isDisabled}
               onClick={() => {
+                if (isDisabled) return;
                 const path =
                   activeTab === "personal"
                     ? "/editpersonal"
@@ -318,7 +229,11 @@ export default function PersonalData() {
                         : "/edit-identification-card";
                 navigate(path);
               }}
-              className="mt-6 bg-[#b38e19] text-white px-6 py-2 rounded-md hover:opacity-90 text-[clamp(0.85rem,1vw,1rem)]"
+              className={`mt-6 px-6 py-2 rounded-md text-[clamp(0.85rem,1vw,1rem)] transition-all ${
+                isDisabled 
+                  ? "bg-gray-400 cursor-not-allowed opacity-60 text-white" 
+                  : "bg-[#b38e19] text-white hover:opacity-90"
+              }`}
             >
               {t("edit", {
                 ns:
@@ -379,12 +294,12 @@ export default function PersonalData() {
                             <div className={labelClass}>{row.left.label}</div>
                             <div
                               className={`${valueClass} ${
-                                activeTab === "social"
+                                activeTab === "social" || activeTab === "identification"
                                   ? "cursor-pointer text-black hover:text-[#b38e19] transition-colors"
                                   : ""
                               }`}
                               onClick={() =>
-                                activeTab === "social" &&
+                                (activeTab === "social" || activeTab === "identification") &&
                                 row.left?.value &&
                                 isURL(row.left.value) &&
                                 window.open(row.left.value, "_blank")
@@ -406,12 +321,12 @@ export default function PersonalData() {
                             <div className={labelClass}>{row.right.label}</div>
                             <div
                               className={`${valueClass} ${
-                                activeTab === "social"
+                                activeTab === "social" || activeTab === "identification"
                                   ? "cursor-pointer text-black hover:text-[#b38e19] transition-colors"
                                   : ""
                               }`}
                               onClick={() =>
-                                activeTab === "social" &&
+                                (activeTab === "social" || activeTab === "identification") &&
                                 row.right?.value &&
                                 isURL(row.right.value) &&
                                 window.open(row.right.value, "_blank")

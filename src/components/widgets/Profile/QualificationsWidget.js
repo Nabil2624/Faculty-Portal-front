@@ -60,14 +60,14 @@ export default function QualificationsWidget({ data = [] }) {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-[clamp(8px,0.6vw,12px)] overflow-y-auto max-h-full pr-1">
+          <div className="flex flex-col gap-[clamp(2px,0.3vw,12px)] overflow-y-auto max-h-full pr-1">
             {data.slice(0, maxItems).map((item, index) => (
               <div
                 key={index}
                 className={`group relative bg-[#F8F9FA] border border-gray-200 hover:border-[#b38e19] hover:shadow-md transition-all duration-300
                   rounded-[clamp(10px,1vw,15px)]
-                  px-[clamp(10px,1.2vw,16px)]
-                  py-[clamp(8px,1vw,14px)]
+                  px-[clamp(10px,1vw,16px)]
+                  py-[clamp(8px,0.8vw,14px)]
                   ${
                     isArabic
                       ? /* المارجن الكلامب العريض هنا */
@@ -90,7 +90,7 @@ export default function QualificationsWidget({ data = [] }) {
                 <div className="flex items-center gap-1.5 mt-3 text-gray-400">
                   <Calendar className="w-3 h-3 text-[#b38e19]" />
                   <p className="text-[clamp(10px,0.75vw,13px)] font-semibold">
-                    {formatDate(item.startDate)} — {formatDate(item.endDate)}
+                    {formatDate(item.dateOfObtainingTheQualification)}
                   </p>
                 </div>
               </div>

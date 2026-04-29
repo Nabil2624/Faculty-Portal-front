@@ -1,0 +1,10 @@
+{
+  "NumberOfResearchersPerCollege": "عدد الباحثين لكل كلية",
+  "NumberOfResearchesPerCollege": "عدد الابحاث لكل كلية",
+  "selectCollegeLabel": "اختر الكلية من القائمة:",
+  "selectOption": "اختر الكلية",
+  "TotalNumber": "إجمالي الأقسام",
+  "loadingData": "جاري جلب البيانات...",
+  "studentUnit": "طالب",
+  "statisticalInsight": "نظرة إحصائية"
+}

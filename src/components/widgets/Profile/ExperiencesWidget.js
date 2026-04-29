@@ -60,14 +60,14 @@ export default function ExperiencesWidget({ data = [] }) {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-[clamp(8px,0.6vw,12px)] overflow-y-auto max-h-full pr-1">
+          <div className="flex flex-col gap-[clamp(2px,0.4vw,12px)] overflow-y-auto max-h-full pr-1">
             {data.slice(0, maxItems).map((item, index) => (
               <div
                 key={index}
                 className={`group relative bg-[#F8F9FA] border border-gray-200 hover:border-[#b38e19] hover:shadow-md transition-all duration-300
                   rounded-[clamp(10px,1vw,15px)]
-                  px-[clamp(10px,1.2vw,16px)]
-                  py-[clamp(8px,1vw,14px)]
+                  px-[clamp(10px,1vw,16px)]
+                  py-[clamp(8px,0.8vw,14px)]
                   ${
                     isArabic
                       ? "border-r-[clamp(8px,1.5vw,20px)] border-r-[#19355A]"

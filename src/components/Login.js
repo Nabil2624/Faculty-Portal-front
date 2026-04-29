@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ShieldCheck, User, Lock, ArrowRight, ArrowLeft, Globe } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, User, Lock, Globe } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
 import { useAuth } from "../context/AuthContext";
 import boardroomImage from "../assets/Magles.jpeg";
@@ -23,16 +23,21 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    
     try {
-      // عدل الـ Endpoint حسب الباك اند عندك
+      // 1. تنفيذ الـ Login ريكويست
       const response = await axiosInstance.post("/auth/login", { username, password });
+      console.log("Step 1: Login Success");
+
+      // 2. الانتظار "إجبارياً" حتى تنتهي الـ authme داخل الـ Context
+      await handleLoginSuccess(response.data.user || response.data);
+      console.log("Step 2: AuthMe Success - Safe to navigate");
       
-      // تحديث الحالة وقفل البوب اب
-      handleLoginSuccess(response.data.user || response.data);
-      
-      // التوجه للرئيسية
+      // 3. الآن فقط ننتقل للـ Dashboard
       navigate("/dashboard"); 
+      
     } catch (err) {
+      console.error("Login Step Failed:", err);
       setError(err.response?.data?.message || "Login failed. Please check your credentials.");
     } finally {
       setLoading(false);

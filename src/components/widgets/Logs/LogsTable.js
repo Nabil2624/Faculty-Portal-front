@@ -309,7 +309,9 @@ export function LogsTable({
                           }}
                         >
                           {log.userName ?? (
-                            <span className="text-gray-300">—</span>
+                            <span className="text-gray-400 italic">
+                              {isArabic ? "لا يوجد" : "Not Found"}
+                            </span>
                           )}
                         </td>
 
@@ -324,7 +326,9 @@ export function LogsTable({
                           }}
                         >
                           {log.userIp ?? (
-                            <span className="text-gray-300">—</span>
+                            <span className="text-gray-400 italic">
+                              {isArabic ? "لا يوجد" : "Not Found"}
+                            </span>
                           )}
                         </td>
 

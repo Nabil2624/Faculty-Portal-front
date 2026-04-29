@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback
+} from "react";
+
 import { checkAuthMe } from "../services/auth.service";
 import { axiosEvent } from "../utils/axiosInstance";
 
@@ -10,30 +17,54 @@ export const AuthProvider = ({ children }) => {
   const [isSessionPopupVisible, setSessionPopupVisible] = useState(false);
   const [user, setUser] = useState(null);
 
-  const verifySession = useCallback(async () => {
+  const verifySession = useCallback(async (showPopupOnError = true) => {
     setIsCheckingAuth(true);
+
     try {
       const response = await checkAuthMe();
+
       setUser(response.data);
       setIsAuthenticated(true);
       setSessionPopupVisible(false);
+
+      return true;
+
     } catch (error) {
       setUser(null);
       setIsAuthenticated(false);
-      if (error.response && error.response.status === 401) {
-        if (window.location.pathname !== "/login") {
-          setSessionPopupVisible(true);
-        }
+
+      if (
+        showPopupOnError &&
+        error.response?.status === 401 &&
+        window.location.pathname !== "/login"
+      ) {
+        setSessionPopupVisible(true);
       }
+
+      return false;
+
     } finally {
       setIsCheckingAuth(false);
     }
   }, []);
 
-  const handleLoginSuccess = (userData) => {
+  const handleLoginSuccess = async (userData) => {
     setUser(userData);
     setIsAuthenticated(true);
-    setSessionPopupVisible(false);
+
+    console.log("Waiting before AuthMe...");
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, 300)
+    );
+
+    const ok = await verifySession(false);
+
+    if (!ok) {
+      throw new Error("AuthMe failed after login");
+    }
+
+    console.log("AuthMe finished!");
   };
 
   const handleLogout = () => {
@@ -43,24 +74,31 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (window.location.pathname === "/login") {
-      setSessionPopupVisible(false);
-    }
 
-    verifySession();
+    if (window.location.pathname !== "/login") {
+      verifySession(false);
+    }
 
     const handleGlobalErrors = (event) => {
       if (event.detail === "session-expired") {
-        setIsAuthenticated((prev) => {
-          if (prev === true) setSessionPopupVisible(true);
-          return false;
-        });
+        setIsAuthenticated(false);
         setUser(null);
+        setSessionPopupVisible(true);
       }
     };
 
-    axiosEvent.addEventListener("axios-error", handleGlobalErrors);
-    return () => axiosEvent.removeEventListener("axios-error", handleGlobalErrors);
+    axiosEvent.addEventListener(
+      "axios-error",
+      handleGlobalErrors
+    );
+
+    return () => {
+      axiosEvent.removeEventListener(
+        "axios-error",
+        handleGlobalErrors
+      );
+    };
+
   }, [verifySession]);
 
   return (
@@ -73,7 +111,7 @@ export const AuthProvider = ({ children }) => {
         setSessionPopupVisible,
         verifySession,
         handleLoginSuccess,
-        handleLogout,
+        handleLogout
       }}
     >
       {children}
@@ -81,8 +119,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);
