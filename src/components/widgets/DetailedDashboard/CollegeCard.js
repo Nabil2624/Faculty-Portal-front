@@ -1,55 +1,65 @@
-import React, { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { ChevronDown, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useFaculties } from "../../../hooks/useFaculties";
 
-const CollegeCard = ({ title }) => {
-  const [colleges, setColleges] = useState([]);
-  const [selectedCollegeId, setSelectedCollegeId] = useState("");
-  const [departments, setDepartments] = useState([]);
-  const [loading, setLoading] = useState(false);
-  
-  // استدعاء t للترجمة و i18n لمعرفة اللغة الحالية
-  const { t, i18n } = useTranslation("admin-dashboard");
+const CollegeCard = ({
+  title,
+  onSelectionChange,
+  subData = [], // البيانات المتوقع وصولها بصيغة الباك اند الجديد
+  labels = {
+    selectLabel: "اختر الكلية",
+    totalLabel: "الإجمالي",
+    loadingText: "جاري التحميل...",
+    unitText: "بحث",
+    footerText: "إحصائيات 2026",
+  },
+}) => {
+  const [selectedId, setSelectedId] = useState("");
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-  const isRtl = i18n.language === "ar";
+  const { t, i18n } = useTranslation();
+  const isArabic = i18n.language === "ar";
+  const { faculties, loading } = useFaculties();
 
   const colors = {
     primary: "#19355A",
     secondary: "#B38E19",
   };
 
-  // محاكاة جلب البيانات (يفضل أن تأتي الأسماء من السيرفر حسب اللغة)
   useEffect(() => {
-    setColleges([
-      { id: 1, name: isRtl ? "كلية الهندسة" : "Faculty of Engineering" },
-      { id: 2, name: isRtl ? "كلية الحاسبات" : "Faculty of Computers" },
-      { id: 3, name: isRtl ? "كلية التجارة" : "Faculty of Commerce" },
-    ]);
-  }, [isRtl]); // تحديث القائمة عند تغيير اللغة
+    if (faculties.length > 0 && !selectedId) {
+      const firstId = faculties[0].id;
+      setSelectedId(firstId);
+      if (onSelectionChange) onSelectionChange(firstId);
+    }
+  }, [faculties, selectedId, onSelectionChange]);
 
   useEffect(() => {
-    if (selectedCollegeId) {
-      setLoading(true);
-      setTimeout(() => {
-        const mockData = [
-          { id: 101, name: isRtl ? "قسم البرمجيات" : "Software Dept", count: 120 },
-          { id: 102, name: isRtl ? "الذكاء الاصطناعي" : "AI Dept", count: 85 },
-          { id: 103, name: isRtl ? "نظم المعلومات" : "IS Dept", count: 200 },
-        ];
-        setDepartments(mockData);
-        setLoading(false);
-      }, 500);
-    }
-  }, [selectedCollegeId, isRtl]);
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelect = (id) => {
+    setSelectedId(id);
+    setOpen(false);
+    if (onSelectionChange) onSelectionChange(id);
+  };
 
   return (
     <div
-      dir={isRtl ? "rtl" : "ltr"}
-      className="w-full h-full overflow-hidden bg-white border border-gray-100 shadow-2xl rounded-2xl flex flex-col transition-all duration-300"
+      dir={isArabic ? "rtl" : "ltr"}
+      className="w-full h-full overflow-hidden bg-white border border-gray-100 shadow-2xl rounded-2xl flex flex-col transition-all duration-300 select-none"
     >
       {/* Header */}
       <div
-        className="px-6 py-4 text-white font-bold text-lg shrink-0"
+        className="px-6 py-4 text-white font-black text-lg shrink-0"
         style={{ backgroundColor: colors.primary }}
       >
         {title}
@@ -57,70 +67,99 @@ const CollegeCard = ({ title }) => {
 
       {/* Body */}
       <div className="p-6 flex-grow">
-        <label className="block mb-2 text-sm font-medium text-gray-700">
-          {t("selectCollegeLabel")}
+        <label className="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+          {labels.selectLabel}
         </label>
 
-        <div className="relative mb-6 group">
-          <select
-            value={selectedCollegeId}
-            onChange={(e) => setSelectedCollegeId(e.target.value)}
-            className={`w-full p-3 ${isRtl ? 'pr-4 pl-10' : 'pl-4 pr-10'} bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-[#B38E19] focus:border-[#B38E19] block transition-all appearance-none cursor-pointer outline-none`}
-            style={{ 
-                borderRight: isRtl ? `4px solid ${colors.secondary}` : '1px solid #d1d5db',
-                borderLeft: !isRtl ? `4px solid ${colors.secondary}` : '1px solid #d1d5db' 
-            }}
-          >
-            <option value="">-- {t("selectOption")} --</option>
-            {colleges.map((col) => (
-              <option key={col.id} value={col.id}>
-                {col.name}
-              </option>
-            ))}
-          </select>
+        {/* Dropdown */}
+        <div className="relative mb-6" ref={dropdownRef}>
+          {loading ? (
+            <div className="w-full h-[40px] bg-gray-50 animate-pulse rounded-xl"></div>
+          ) : (
+            <>
+              <div
+                onClick={() => setOpen(!open)}
+                className="w-full px-3 py-2 flex justify-between items-center bg-white border border-gray-300 text-gray-900 text-xs rounded-xl cursor-pointer font-bold transition-all shadow-sm hover:border-[#B38E19]/30 h-[42px]"
+                style={{ borderRight: isArabic ? `4px solid ${colors.secondary}` : "", borderLeft: !isArabic ? `4px solid ${colors.secondary}` : "" }}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                  <span className="truncate max-w-[150px]">
+                    {faculties.find((c) => c.id == selectedId)?.name || "اختر الكلية"}
+                  </span>
+                </div>
+                <ChevronDown
+                  size={16}
+                  className={`text-[#B38E19] transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+                />
+              </div>
 
-          <div className={`absolute ${isRtl ? 'left-3' : 'right-3'} top-1/2 -translate-y-1/2 pointer-events-none text-gray-400`}>
-            <ChevronDown size={18} />
-          </div>
+              {open && (
+                <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-xl max-h-48 overflow-y-auto custom-scrollbar">
+                  {faculties.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => handleSelect(item.id)}
+                      className={`p-3 text-xs font-bold cursor-pointer hover:bg-gray-50 transition-colors ${
+                        selectedId == item.id ? "bg-gray-100 text-[#B38E19]" : "text-gray-700"
+                      }`}
+                    >
+                      {item.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </div>
 
-        {selectedCollegeId && (
-          <div className="animate-fade-in">
-            <div className="flex items-center justify-between mb-4 p-3 rounded-lg bg-slate-50">
-              <span
-                className="font-bold text-lg"
-                style={{ color: colors.primary }}
-              >
-                {colleges.find((c) => c.id == selectedCollegeId)?.name}
+        {/* Data Section */}
+        {selectedId && !loading && (
+          <div className="animate-in fade-in duration-500">
+            <div
+              className="flex items-center justify-between mb-4 p-3 rounded-lg bg-slate-50 border-s-4"
+              style={{ borderColor: colors.primary }}
+            >
+              <span className="font-black text-[11px] truncate" style={{ color: colors.primary }}>
+                {faculties.find((c) => c.id == selectedId)?.name}
               </span>
+
               <span
-                className="px-3 py-1 text-sm font-semibold text-white rounded-full"
+                className="px-3 py-1 text-[10px] font-black text-white rounded-full whitespace-nowrap"
                 style={{ backgroundColor: colors.secondary }}
               >
-                {t("TotalNumber")}: {departments.length}
+                {labels.totalLabel}: {subData.length}
               </span>
             </div>
 
-            <div className="space-y-3">
-              {loading ? (
-                <p className="text-center text-gray-400 py-4 text-sm italic">
-                  {t("loadingData")}
-                </p>
+            <div className="space-y-1 max-h-[250px] overflow-y-auto custom-scrollbar px-1">
+              {subData.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 opacity-20">
+                    <Globe size={32} />
+                    <p className="text-[10px] font-bold mt-2 uppercase tracking-tighter">لا توجد بيانات متاحة</p>
+                </div>
               ) : (
-                departments.map((dept) => (
+                subData.map((item, index) => (
                   <div
-                    key={dept.id}
-                    className="flex justify-between items-center p-3 border-b border-gray-50 hover:bg-gray-50 transition-colors"
+                    key={index}
+                    className="flex justify-between items-center p-3 border-b border-gray-50 hover:bg-gray-50 transition-colors group"
                   >
-                    <span className="text-gray-700 font-medium">
-                      {dept.name}
+                    <span className="text-gray-600 text-[11px] font-bold group-hover:text-[#19355A] transition-colors">
+                      {/* عرض اسم القسم بناءً على اللغة */}
+                      {isArabic ? item.departmentNameAR : item.departmentNameEN}
                     </span>
-                    <span
-                      className="font-mono font-bold"
-                      style={{ color: colors.primary }}
-                    >
-                      {dept.count} {t("studentUnit")}
-                    </span>
+
+                    <div className="flex items-center gap-1">
+                      <span
+                        className="font-mono font-black text-sm"
+                        style={{ color: colors.primary }}
+                      >
+                        {item.researchesNo || 0}
+                      </span>
+                      <span className="text-[9px] text-gray-400 font-bold">
+                        {labels.unitText}
+                      </span>
+                    </div>
                   </div>
                 ))
               )}
@@ -131,8 +170,8 @@ const CollegeCard = ({ title }) => {
 
       {/* Footer */}
       <div className="bg-gray-50/50 py-3 px-6 flex justify-between items-center border-t border-gray-100 mt-auto shrink-0">
-        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-          {t("statisticalInsight")} 2026
+        <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
+          {labels.footerText}
         </span>
         <div className="flex gap-1.5">
           <div className="w-1.5 h-1.5 rounded-full bg-[#B38E19]"></div>

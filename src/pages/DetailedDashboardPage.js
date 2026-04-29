@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import CollegeCard from "../components/widgets/DetailedDashboard/CollegeCard";
 import TopResearchersCard from "../components/widgets/DetailedDashboard/TopResearchersCard";
@@ -6,40 +7,106 @@ import UniversityTopResearchers from "../components/widgets/DetailedDashboard/Un
 import ResearchSourceChart from "../components/widgets/DetailedDashboard/ResearchSourceChart";
 import CitationsCurveChart from "../components/widgets/DetailedDashboard/CitationsCurveChart";
 import { useTranslation } from "react-i18next";
+import { useDetailedDashboard } from "../hooks/useDetailedDashboard";
+import { useCollegeDepartmentsAnalysis } from "../hooks/useCollegeDepartmentsAnalysis";
+
 const DetailedDashboardPage = () => {
-  const {t , i18n} = useTranslation("admin-dashboard");
+  const { t } = useTranslation("admin-dashboard");
+
+  // ===========================================
+  // 1. فصل الـ States لكل كرت عشان يشتغل لوحده
+  // ===========================================
+  const [researchersCollegeId, setResearchersCollegeId] = useState(null);
+  const [researchesCollegeId, setResearchesCollegeId] = useState(null);
+
+  // =========================
+  // Global dashboard data
+  // =========================
+  const { researchesDashboard, loading, error } = useDetailedDashboard();
+
+  // ===========================================
+  // 2. استدعاء الهوك مرتين (مرة لكل كرت)
+  // ===========================================
+  
+  // بيانات الكرت الأول (عدد الباحثين)
+  const {
+    departmentResearchersData,
+    topResearchersData, // لو محتاج تربط التوب ريسيرشرز بكرت معين
+    error: err1,
+  } = useCollegeDepartmentsAnalysis(researchersCollegeId);
+
+  // بيانات الكرت الثاني (عدد الأبحاث)
+  const {
+    departmentResearchesData,
+    error: err2,
+  } = useCollegeDepartmentsAnalysis(researchesCollegeId);
+
+  // =========================
+  // Loading / Error handling
+  // =========================
+  if (loading) return <div className="p-10 text-center">Loading...</div>;
+  if (error || err1 || err2) return <div className="p-10 text-center text-red-500">Error loading data</div>;
+
   return (
     <ResponsiveLayoutProvider>
       <div className="min-h-screen p-4 bg-gray-50">
-        {" "}
-        {/* أضفنا خلفية بسيطة لتمييز الكروت */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-          <div className="w-full h-full flex flex-col">
-            <TopResearchersCard title="أفضل الباحثين" />
-          </div>
+        <div className="max-w-[2000px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 3xl:gap-12 items-stretch">
+            
+            {/* 1. Top Researchers (مرتبط باختيار الكرت الأول مثلاً) */}
+            <div className="w-full h-full flex flex-col">
+              <TopResearchersCard
+                title="أفضل الباحثين"
+                facultyId={researchersCollegeId}
+                data={topResearchersData}
+              />
+            </div>
 
-          <div className="w-full h-full flex flex-col">
-            <UniversityTopResearchers />
-          </div>
-          <div className="w-full h-full flex flex-col ">
-            <ResearchSourceChart />
-          </div>
-          <div className="w-full h-full flex flex-col">
-            <CollegeCard title={t("NumberOfResearchersPerCollege")} t={t} />
-          </div>
+            {/* 2. University Top Researchers */}
+            <div className="w-full h-full flex flex-col">
+              <UniversityTopResearchers data={researchesDashboard?.universityTopFiveResearchers} />
+            </div>
 
-          <div className="w-full h-full flex flex-col lg:col-span-2">
-            <TopSubjectsCard />
-          </div>
-          <div className="w-full h-full flex flex-col">
-            <CollegeCard title={t("NumberOfResearchesPerCollege")}  />
-          </div>
-          <div className="w-full h-full flex flex-col lg:col-span-2">
-            <CitationsCurveChart />
+            {/* 3. Research Source Chart */}
+            <div className="w-full h-full flex flex-col">
+              <ResearchSourceChart
+                international={researchesDashboard?.internationalResearchesNo}
+                local={researchesDashboard?.localResearchesNo}
+              />
+            </div>
+
+            {/* 4. College Card (الكرت الأول - باحثين) */}
+            <div className="w-full h-full flex flex-col">
+              <CollegeCard
+                title={t("NumberOfResearchersPerCollege")}
+                onSelectionChange={(id) => setResearchersCollegeId(id)}
+                subData={departmentResearchersData}
+              />
+            </div>
+
+            {/* 5. Top Subjects */}
+            <div className="w-full h-full flex flex-col lg:col-span-2">
+              <TopSubjectsCard data={researchesDashboard?.topFiveResearchersInterestsStats} />
+            </div>
+
+            {/* 6. Second College Card (الكرت الثاني - أبحاث) */}
+            <div className="w-full h-full flex flex-col">
+              <CollegeCard
+                title={t("NumberOfResearchesPerCollege")}
+                onSelectionChange={(id) => setResearchesCollegeId(id)}
+                subData={departmentResearchesData}
+              />
+            </div>
+
+            {/* 7. Citations Chart */}
+            <div className="w-full h-full flex flex-col lg:col-span-2">
+              <CitationsCurveChart data={researchesDashboard?.citationsStats?.[0]?.detailedCitesStats} />
+            </div>
           </div>
         </div>
       </div>
     </ResponsiveLayoutProvider>
   );
 };
+
 export default DetailedDashboardPage;

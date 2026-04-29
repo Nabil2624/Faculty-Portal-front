@@ -59,7 +59,19 @@ body {
     outline: none !important;
   }
 }
+/* إلغاء الـ Focus Ring السوداء من جميع عناصر الشارت */
+.recharts-active-dot,
+.recharts-curve,
+.recharts-wrapper,
+.recharts-surface {
+    outline: none !important;
+    box-shadow: none !important;
+}
 
+/* لمنع تحديد العناصر داخل الـ SVG */
+svg:focus {
+    outline: none !important;
+}
 .recharts-wrapper:focus,
 .recharts-surface:focus,
 .recharts-sector:focus {
