@@ -1,0 +1,10 @@
+{
+  "NumberOfResearchersPerCollege": "Number of Researchers for each College",
+  "NumberOfResearchesPerCollege": "Number of Researches for each College",
+  "selectCollegeLabel": "Select a college from the list:",
+  "selectOption": "Choose College",
+  "TotalNumber": "Total Departments",
+  "loadingData": "Fetching data...",
+  "studentUnit": "Students",
+  "statisticalInsight": "Statistical Insight"
+}

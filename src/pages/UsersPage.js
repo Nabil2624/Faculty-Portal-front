@@ -539,7 +539,7 @@ export default function UsersPage() {
           display: "flex",
           flexDirection: "column",
           gap: "clamp(1rem, 1.5vw, 2.5rem)",
-          minHeight: "100vh",
+          minHeight: "90vh",
           backgroundColor: "#f9fafb",
         }}
       >

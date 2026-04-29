@@ -122,6 +122,12 @@ import Login from "../components/Login";
 import UsersList from "../pages/UsersList";
 import Dashboard from "../pages/Dashboard";
 
+import TopResearchersCard from "../components/widgets/DetailedDashboard/TopResearchersCard";
+import CollegeCard from "../components/widgets/DetailedDashboard/CollegeCard";
+import TopSubjectsCard from "../components/widgets/DetailedDashboard/TopSubjectsCard";
+import ResearchSourceChart from "../components/widgets/DetailedDashboard/ResearchSourceChart";
+import DetailedDashboardPage from "../pages/DetailedDashboardPage";
+
 // ... (باقي الـ Imports بتاعتك)
 
 function AppRouterInner() {
@@ -141,8 +147,6 @@ function AppRouterInner() {
 
   return (
     <>
-   
-
       <Routes>
         {/* --- Public Routes --- */}
         <Route path="/" element={<FacultyLandingPage />} />
@@ -158,15 +162,19 @@ function AppRouterInner() {
 
         {/* --- Protected Routes --- */}
         <Route element={<ProtectedRoute />}>
- <Route path="/logs" element={<LogsPage />} />
+        
+
+          <Route path="/dash" element={<DetailedDashboardPage />} />
+          <Route path="/logs" element={<LogsPage />} />
+          <Route path="/chart" element={<ResearchSourceChart />} />
           <Route path="/logs-categories" element={<LogsCategoryPage />} />
           <Route path="/admin/users" element={<UsersPage />} />
           <Route
             path="/admin/add-user-permission"
             element={<AddUserPermissionPage />}
           />
-          <Route path="/users" element={<UsersList/>} />
-          <Route path="/Dashboard" element={<Dashboard/>} />
+          <Route path="/users" element={<UsersList />} />
+          <Route path="/Dashboard" element={<Dashboard />} />
           <Route
             path="/admin/edit-user-permissions"
             element={<EditUserPermissionsPage />}
@@ -419,8 +427,6 @@ function AppRouterInner() {
             element={<ParticipationInQualityWorks />}
           />
 
-
-          
           <Route
             path="/add-participation-quality-work"
             element={<AddParticipationInQualityWork />}
