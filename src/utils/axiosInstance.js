@@ -3,8 +3,8 @@ import axios from "axios";
 export const axiosEvent = new EventTarget();
 
 //const BASE_URL = "https://localhost:7184/api";
-const BASE_URL = "http://localhost/core/api";
-//const BASE_URL = "http://172.1.50.98/core/api";
+//const BASE_URL = "http://localhost/core/api";
+const BASE_URL = "http://172.1.50.98/core/api";
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
