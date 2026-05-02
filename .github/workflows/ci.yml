@@ -1,0 +1,33 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [DeployTest]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Image
+        run: |
+          TAG=${GITHUB_SHA}
+          docker build -t ghcr.io/${{ github.repository_owner }}/frontend:$TAG .
+
+      - name: Push Image
+        run: |
+          TAG=${GITHUB_SHA}
+          docker push ghcr.io/${{ github.repository_owner }}/frontend:$TAG
