@@ -9,7 +9,8 @@ import CitationsCurveChart from "../components/widgets/DetailedDashboard/Citatio
 import { useTranslation } from "react-i18next";
 import { useDetailedDashboard } from "../hooks/useDetailedDashboard";
 import { useCollegeDepartmentsAnalysis } from "../hooks/useCollegeDepartmentsAnalysis";
-
+import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import { GraduationCapIcon, FileText, TrendingUp } from "lucide-react";
 const DetailedDashboardPage = () => {
   const { t } = useTranslation("admin-dashboard");
 
@@ -27,7 +28,7 @@ const DetailedDashboardPage = () => {
   // ===========================================
   // 2. استدعاء الهوك مرتين (مرة لكل كرت)
   // ===========================================
-  
+
   // بيانات الكرت الأول (عدد الباحثين)
   const {
     departmentResearchersData,
@@ -36,35 +37,45 @@ const DetailedDashboardPage = () => {
   } = useCollegeDepartmentsAnalysis(researchersCollegeId);
 
   // بيانات الكرت الثاني (عدد الأبحاث)
-  const {
-    departmentResearchesData,
-    error: err2,
-  } = useCollegeDepartmentsAnalysis(researchesCollegeId);
+  const { departmentResearchesData, error: err2 } =
+    useCollegeDepartmentsAnalysis(researchesCollegeId);
 
   // =========================
   // Loading / Error handling
   // =========================
   if (loading) return <div className="p-10 text-center">Loading...</div>;
-  if (error || err1 || err2) return <div className="p-10 text-center text-red-500">Error loading data</div>;
+  if (error || err1 || err2)
+    return (
+      <div className="p-10 text-center text-red-500">Error loading data</div>
+    );
 
   return (
     <ResponsiveLayoutProvider>
-      <div className="min-h-screen p-4 bg-gray-50">
+      <div className="min-h-screen px-4 bg-gray-50">
         <div className="max-w-[2000px] mx-auto">
+          <PageHeaderNoAction title={t("statisticsDetails")} icon={TrendingUp} />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 3xl:gap-12 items-stretch">
-            
             {/* 1. Top Researchers (مرتبط باختيار الكرت الأول مثلاً) */}
             <div className="w-full h-full flex flex-col">
               <TopResearchersCard
-                title="أفضل الباحثين"
+                title={t("title")}
                 facultyId={researchersCollegeId}
                 data={topResearchersData}
+                footerText={t("statisticalInsight")}
+                noData={t("noData")}
+                subTitle={t("facultyRank")}
               />
             </div>
 
             {/* 2. University Top Researchers */}
             <div className="w-full h-full flex flex-col">
-              <UniversityTopResearchers data={researchesDashboard?.universityTopFiveResearchers} />
+              <UniversityTopResearchers
+                title={t("title")}
+                subTitle={t("univesityRank")}
+                data={researchesDashboard?.universityTopFiveResearchers}
+                footerText={t("statisticalInsight")}
+                noData={t("noData")}
+              />
             </div>
 
             {/* 3. Research Source Chart */}
@@ -72,6 +83,7 @@ const DetailedDashboardPage = () => {
               <ResearchSourceChart
                 international={researchesDashboard?.internationalResearchesNo}
                 local={researchesDashboard?.localResearchesNo}
+                footerText={t("statisticalInsight")}
               />
             </div>
 
@@ -79,28 +91,48 @@ const DetailedDashboardPage = () => {
             <div className="w-full h-full flex flex-col">
               <CollegeCard
                 title={t("NumberOfResearchersPerCollege")}
+                selectLabel={t("selectCollegeLabel")}
+                totalLabel={t("total")}
+                loadingText={t("loadingData")}
+                unitText={t("researcher")}
+                footerText={t("statisticalInsight")}
+                emptyText={t("noData")}
                 onSelectionChange={(id) => setResearchersCollegeId(id)}
                 subData={departmentResearchersData}
+                Icon={GraduationCapIcon}
               />
             </div>
 
             {/* 5. Top Subjects */}
             <div className="w-full h-full flex flex-col lg:col-span-2">
-              <TopSubjectsCard data={researchesDashboard?.topFiveResearchersInterestsStats} />
+              <TopSubjectsCard
+                data={researchesDashboard?.topFiveResearchersInterestsStats}
+              />
             </div>
 
             {/* 6. Second College Card (الكرت الثاني - أبحاث) */}
             <div className="w-full h-full flex flex-col">
               <CollegeCard
                 title={t("NumberOfResearchesPerCollege")}
+                selectLabel={t("selectCollegeLabel")}
+                totalLabel={t("totalResearches")}
+                loadingText={t("loadingData")}
+                unitText={t("researches")}
+                footerText={t("statisticalInsight")}
+                emptyText={t("noData")}
                 onSelectionChange={(id) => setResearchesCollegeId(id)}
                 subData={departmentResearchesData}
+                Icon={FileText}
               />
             </div>
 
             {/* 7. Citations Chart */}
             <div className="w-full h-full flex flex-col lg:col-span-2">
-              <CitationsCurveChart data={researchesDashboard?.citationsStats?.[0]?.detailedCitesStats} />
+              <CitationsCurveChart
+                data={
+                  researchesDashboard?.citationsStats?.[0]?.detailedCitesStats
+                }
+              />
             </div>
           </div>
         </div>

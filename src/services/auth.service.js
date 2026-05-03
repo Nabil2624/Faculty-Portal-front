@@ -2,7 +2,7 @@ import axiosInstance from "../utils/axiosInstance";
 
 
 export const checkAuthMe = () => {
-  return axiosInstance.get("/auth/authme", {
+  return axiosInstance.get("/Authentication/AuthMe", {
     skipGlobalErrorHandler: true
   });
 };

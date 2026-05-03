@@ -9,7 +9,7 @@ import {
 } from "recharts";
 import { Globe } from "lucide-react";
 
-const ResearchSourceChart = ({ isArabic = true, local , international }) => {
+const ResearchSourceChart = ({ isArabic = true, local , international , footerText }) => {
   const primary = "#19355A";
   const gold = "#B38E19";
   // const gray = "#94a3b8";
@@ -144,7 +144,7 @@ const ResearchSourceChart = ({ isArabic = true, local , international }) => {
 
       <div className="bg-gray-50/50 py-3 px-6 flex justify-between items-center border-t border-gray-100 mt-auto shrink-0">
         <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-          Statistical Insight 2026
+          {footerText + " " + new Date().getFullYear()}
         </span>
         <div className="flex gap-1.5">
           <div className="w-1.5 h-1.5 rounded-full bg-[#B38E19]"></div>

@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ChevronDown, Globe } from "lucide-react";
+import { ChevronDown, Globe} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useFaculties } from "../../../hooks/useFaculties";
 
 const CollegeCard = ({
   title,
   onSelectionChange,
-  subData = [], // البيانات المتوقع وصولها بصيغة الباك اند الجديد
-  labels = {
-    selectLabel: "اختر الكلية",
-    totalLabel: "الإجمالي",
-    loadingText: "جاري التحميل...",
-    unitText: "بحث",
-    footerText: "إحصائيات 2026",
-  },
+  subData = [], 
+  selectLabel,
+  totalLabel,
+  loadingText,
+  unitText,
+  footerText,
+  emptyText,
+  Icon
 }) => {
   const [selectedId, setSelectedId] = useState("");
   const [open, setOpen] = useState(false);
@@ -62,15 +62,14 @@ const CollegeCard = ({
         className="px-6 py-4 text-white font-black text-lg shrink-0"
         style={{ backgroundColor: colors.primary }}
       >
-        {title}
+        <span className="flex items-center gap-1 ">
+          {Icon && <Icon size={22} className = "text-[#B38E19]" />}
+          {title}
+        </span>
       </div>
 
       {/* Body */}
       <div className="p-6 flex-grow">
-        <label className="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-          {labels.selectLabel}
-        </label>
-
         {/* Dropdown */}
         <div className="relative mb-6" ref={dropdownRef}>
           {loading ? (
@@ -79,13 +78,17 @@ const CollegeCard = ({
             <>
               <div
                 onClick={() => setOpen(!open)}
-                className="w-full px-3 py-2 flex justify-between items-center bg-white border border-gray-300 text-gray-900 text-xs rounded-xl cursor-pointer font-bold transition-all shadow-sm hover:border-[#B38E19]/30 h-[42px]"
-                style={{ borderRight: isArabic ? `4px solid ${colors.secondary}` : "", borderLeft: !isArabic ? `4px solid ${colors.secondary}` : "" }}
+                className="w-full px-3 py-2 flex justify-between items-center bg-white border border-gray-300 text-gray-900 text-xs rounded-xl cursor-pointer font-bold transition-all shadow-sm hover:border-[#B38E19]/30"
+                style={{
+                  borderRight: isArabic ? `4px solid ${colors.secondary}` : "",
+                  borderLeft: !isArabic ? `4px solid ${colors.secondary}` : "",
+                }}
               >
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                  <span className="truncate max-w-[150px]">
-                    {faculties.find((c) => c.id == selectedId)?.name || "اختر الكلية"}
+                  <span className=" max-w-[300px]">
+                    {faculties.find((c) => c.id === selectedId)?.name ||
+                      "اختر الكلية"}
                   </span>
                 </div>
                 <ChevronDown
@@ -101,7 +104,9 @@ const CollegeCard = ({
                       key={item.id}
                       onClick={() => handleSelect(item.id)}
                       className={`p-3 text-xs font-bold cursor-pointer hover:bg-gray-50 transition-colors ${
-                        selectedId == item.id ? "bg-gray-100 text-[#B38E19]" : "text-gray-700"
+                        selectedId === item.id
+                          ? "bg-gray-100 text-[#B38E19]"
+                          : "text-gray-700"
                       }`}
                     >
                       {item.name}
@@ -120,23 +125,28 @@ const CollegeCard = ({
               className="flex items-center justify-between mb-4 p-3 rounded-lg bg-slate-50 border-s-4"
               style={{ borderColor: colors.primary }}
             >
-              <span className="font-black text-[11px] truncate" style={{ color: colors.primary }}>
-                {faculties.find((c) => c.id == selectedId)?.name}
+              <span
+                className="font-black text-[11px] truncate"
+                style={{ color: colors.primary }}
+              >
+                {faculties.find((c) => c.id === selectedId)?.name}
               </span>
 
               <span
                 className="px-3 py-1 text-[10px] font-black text-white rounded-full whitespace-nowrap"
                 style={{ backgroundColor: colors.secondary }}
               >
-                {labels.totalLabel}: {subData.length}
+                {totalLabel}: {subData.length}
               </span>
             </div>
 
             <div className="space-y-1 max-h-[250px] overflow-y-auto custom-scrollbar px-1">
               {subData.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-10 opacity-20">
-                    <Globe size={32} />
-                    <p className="text-[10px] font-bold mt-2 uppercase tracking-tighter">لا توجد بيانات متاحة</p>
+                  <Globe size={32} />
+                  <p className="text-[10px] font-bold mt-2 uppercase tracking-tighter">
+                    {emptyText}
+                  </p>
                 </div>
               ) : (
                 subData.map((item, index) => (
@@ -157,7 +167,7 @@ const CollegeCard = ({
                         {item.researchesNo || 0}
                       </span>
                       <span className="text-[9px] text-gray-400 font-bold">
-                        {labels.unitText}
+                        {unitText}
                       </span>
                     </div>
                   </div>
@@ -171,7 +181,7 @@ const CollegeCard = ({
       {/* Footer */}
       <div className="bg-gray-50/50 py-3 px-6 flex justify-between items-center border-t border-gray-100 mt-auto shrink-0">
         <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">
-          {labels.footerText}
+          {footerText + " " + new Date().getFullYear()}
         </span>
         <div className="flex gap-1.5">
           <div className="w-1.5 h-1.5 rounded-full bg-[#B38E19]"></div>
