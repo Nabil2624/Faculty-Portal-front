@@ -28,9 +28,9 @@ jobs:
       - name: Build Image
         run: |
           TAG=${GITHUB_SHA}
-          docker build -t ghcr.io/${{ github.actor }}/frontend:$TAG .
+          docker build -t ghcr.io/ahmedehab5006/frontend:$TAG .
 
       - name: Push Image
         run: |
           TAG=${GITHUB_SHA}
-          docker push ghcr.io/${{ github.actor }}/frontend:$TAG
+          docker push ghcr.io/ahmedehab5006/frontend:$TAG
