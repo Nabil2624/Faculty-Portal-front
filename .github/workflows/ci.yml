@@ -25,12 +25,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Image
+      - name: Build & Push
         run: |
           TAG=${GITHUB_SHA}
-          docker build -t ghcr.io/ahmedehab5006/frontend:$TAG .
-
-      - name: Push Image
-        run: |
-          TAG=${GITHUB_SHA}
-          docker push ghcr.io/ahmedehab5006/frontend:$TAG
+          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE=ghcr.io/${REPO}/frontend:${TAG}
+          docker build -t $IMAGE .
+          docker push $IMAGE
