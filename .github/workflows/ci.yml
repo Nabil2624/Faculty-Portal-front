@@ -28,8 +28,7 @@ jobs:
       - name: Build & Push
         run: |
           TAG=${GITHUB_SHA}
-          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          IMAGE=ghcr.io/${REPO}/frontend
+          IMAGE=ghcr.io/nabil2624/faculty-portal-front/frontend
           docker build -t $IMAGE:$TAG -t $IMAGE:latest .
           docker push $IMAGE:$TAG
           docker push $IMAGE:latest
