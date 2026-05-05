@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import * as signalR from "@microsoft/signalr";
 // Components
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -20,7 +20,8 @@ import ResearchesTable from "../components/widgets/Researches/ResearchesTable";
 import useResearcherProfile from "../hooks/useResearcherProfile";
 import useScientificResearches from "../hooks/useScientificResearches";
 import { deleteScientificResearch } from "../services/scientificResearchService";
-
+import FacultyProgressLoader from "../components/FacultyProgressLoader";
+import useResearchProgress from "../hooks/useResearchProgress";
 export default function ResearchesPage() {
   const { t, i18n } = useTranslation([
     "ResearcherProfile",
@@ -75,8 +76,9 @@ export default function ResearchesPage() {
     derivedFrom,
     page,
   );
+  const { progress, total, completed, eta, message, status } =
+    useResearchProgress(nationalNumber);
 
-  // دمج البيانات الجديدة مع القديمة عند عمل Pagination
   useEffect(() => {
     if (researches) {
       if (page === 1) {
@@ -94,7 +96,6 @@ export default function ResearchesPage() {
     }
   }, [researches, page]);
 
-  // إعادة ضبط الحالة عند تغيير الفلاتر أو البحث أو اللغة
   useEffect(() => {
     setAllResearches([]);
     setPage(1);
@@ -228,15 +229,17 @@ export default function ResearchesPage() {
   if (profileLoading && page === 1) return <LoadingSpinner />;
 
   if (waiting) {
-    return (
-      <ResponsiveLayoutProvider>
-        <div className="text-center mt-20 text-xl font-semibold">
-          {isArabic
-            ? "برجاء الانتظار يتم جلب الابحاث"
-            : "Please wait, fetching researches..."}
-        </div>
-      </ResponsiveLayoutProvider>
-    );
+    if (status !== "completed") {
+      return (
+        <FacultyProgressLoader
+          progress={progress}
+          total={total}
+          completed={completed}
+          eta={eta}
+          message={message}
+        />
+      );
+    }
   }
 
   if (missingScholar) {
@@ -252,8 +255,7 @@ export default function ResearchesPage() {
           <MissingScholarCard
             onSave={async (data) => {
               try {
-                setErrorMsg(""); // امسح أي error قديم
-
+                setErrorMsg("");
                 await axios.post(
                   "http://172.1.50.98/Researches/api/fetch-research-using-scholar-profile-link/",
                   {

@@ -2,9 +2,15 @@
   "NumberOfResearchersPerCollege": "Number of Researchers for each College",
   "NumberOfResearchesPerCollege": "Number of Researches for each College",
   "selectCollegeLabel": "Select a college from the list:",
-  "selectOption": "Choose College",
-  "TotalNumber": "Total Departments",
   "loadingData": "Fetching data...",
-  "studentUnit": "Students",
-  "statisticalInsight": "Statistical Insight"
+  "statisticalInsight": "Statistical Insight",
+  "researcher": "Researcher",
+  "noData": "No Data Available",
+  "researches": "Researches",
+  "totalResearches": "Total Researches",
+  "total": "Total Researchers",
+  "title": "Top 5 Researchers",
+  "univesityRank": "University Wide Ranking ",
+  "facultyRank": "Faculty Wide Ranking",
+  "statisticsDetails" : "Statistics Details"
 }

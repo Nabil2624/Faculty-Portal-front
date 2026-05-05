@@ -3,8 +3,15 @@
   "NumberOfResearchesPerCollege": "عدد الابحاث لكل كلية",
   "selectCollegeLabel": "اختر الكلية من القائمة:",
   "selectOption": "اختر الكلية",
-  "TotalNumber": "إجمالي الأقسام",
-  "loadingData": "جاري جلب البيانات...",
-  "studentUnit": "طالب",
-  "statisticalInsight": "نظرة إحصائية"
+  "statisticalInsight": "نظرة إحصائية لسنة",
+  "total": "اجمالي عدد الباحثين",
+  "loadingData": "جاري التحميل....",
+  "researcher": "عدد الباحثين",
+  "noData": "لا توجد بيانات",
+  "researches": "عدد الابحاث",
+  "totalResearches": "اجمالي عدد الابحاث",
+  "title": "افضل خمس باحثين",
+  "univesityRank": "على مستوى الجامعة",
+  "facultyRank": "على مستوى الكلية",
+  "statisticsDetails":"تفاصيل الاحصائيات"
 }
