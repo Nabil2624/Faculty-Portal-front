@@ -15,6 +15,7 @@ import {
 import axiosInstance from "../utils/axiosInstance";
 import helwanImage from "../assets/helwan-university.jpeg";
 import { useAuth } from "../context/AuthContext"; // 1. استيراد الهوك
+import { jwtDecode } from "jwt-decode";
 
 export default function LoginPage() {
   const { t, i18n } = useTranslation("Login");
@@ -44,15 +45,16 @@ export default function LoginPage() {
           withCredentials: true,
         },
       );
+      const decoded = jwtDecode(loginResponse.data.token);
+      console.log(decoded);
+      
+      const roles = decoded?.Roles || [];
 
-      const roles = loginResponse?.data?.roles || [];
 
-      // Persist roles array for sidebar/access control
       localStorage.setItem("userRoles", JSON.stringify(roles));
-      // Remove legacy single-role key if present
+
       localStorage.removeItem("userRole");
 
-      // Role-based navigation: ManagementAdmin > SupportAdmin > Faculty Member
       if (roles.includes("ManagementAdmin")) {
         navigate("/admin/users");
       } else if (roles.includes("SupportAdmin")) {
