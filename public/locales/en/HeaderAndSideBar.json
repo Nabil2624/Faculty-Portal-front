@@ -58,5 +58,6 @@
   "systemUsers": "System Users",
   "createUser": "Create New User",
   "managementTickets": "Ticket Management",
-  "supportAdminTickets": "My Tickets"
+  "supportAdminTickets": "My Tickets",
+  "reports": "Reports"
 }

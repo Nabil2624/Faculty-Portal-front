@@ -39,9 +39,27 @@ export default function EditUserModal({ user, saving, onSave, onClose }) {
       setValidationError(t("editModal.usernameRequired"));
       return;
     }
-    if (password && password !== confirmPassword) {
-      setValidationError(t("editModal.passwordMismatch"));
-      return;
+    if (password) {
+      if (password.length < 8) {
+        setValidationError(t("createUser.validation.passwordTooShort"));
+        return;
+      }
+      if (!/[A-Z]/.test(password)) {
+        setValidationError(t("createUser.validation.passwordNoUppercase"));
+        return;
+      }
+      if (!/[0-9]/.test(password)) {
+        setValidationError(t("createUser.validation.passwordNoDigit"));
+        return;
+      }
+      if (!/[^A-Za-z0-9]/.test(password)) {
+        setValidationError(t("createUser.validation.passwordNoSpecial"));
+        return;
+      }
+      if (password !== confirmPassword) {
+        setValidationError(t("editModal.passwordMismatch"));
+        return;
+      }
     }
 
     onSave({

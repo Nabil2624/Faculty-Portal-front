@@ -57,7 +57,7 @@ function Toast({ message, type, onDismiss }) {
       className="fixed z-[60] flex items-center gap-2 rounded-xl border shadow-lg"
       style={{
         top: "clamp(1rem, 2vw, 2.5rem)",
-        right: "clamp(1rem, 2vw, 2.5rem)",
+        right: "clamp(4rem, 5vw, 5rem)",
         backgroundColor: colors.bg,
         borderColor: colors.border,
         color: colors.text,

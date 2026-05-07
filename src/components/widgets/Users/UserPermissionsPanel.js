@@ -183,6 +183,12 @@ function IndividualPermissionsSection({ user }) {
   const isRtl = i18n.dir() === "rtl";
   const permissions = user.permissions || user.extraPermissions || [];
 
+  const userRoles = user.roles?.length
+    ? user.roles
+    : [user.role?.name].filter(Boolean);
+  const isFacultyMemberOnly =
+    userRoles.length === 1 && userRoles[0] === "FacultyMember";
+
   return (
     <div
       className="rounded-2xl"
@@ -282,20 +288,26 @@ function IndividualPermissionsSection({ user }) {
 
           {/* Edit individual permissions — navigates to dedicated page */}
           <button
+            disabled={isFacultyMemberOnly}
             onClick={() =>
+              !isFacultyMemberOnly &&
               navigate(`/admin/edit-user-permissions?userId=${user.id}`, {
                 state: { user },
               })
             }
-            className="flex items-center justify-center gap-1.5 rounded-xl font-medium transition hover:opacity-80"
+            className="flex items-center justify-center gap-1.5 rounded-xl font-medium transition"
             style={{
               marginTop: "0.25rem",
               padding: "clamp(0.4rem, 0.6vw, 0.6rem)",
-              border: "1px dashed #c4b5fd",
-              backgroundColor: "#faf5ff",
-              color: "#7c3aed",
+              border: isFacultyMemberOnly
+                ? "1px dashed #d1d5db"
+                : "1px dashed #c4b5fd",
+              backgroundColor: isFacultyMemberOnly ? "#f9fafb" : "#faf5ff",
+              color: isFacultyMemberOnly ? "#9ca3af" : "#7c3aed",
               fontSize: "clamp(0.65rem, 0.85vw, 0.875rem)",
               width: "100%",
+              cursor: isFacultyMemberOnly ? "not-allowed" : "pointer",
+              opacity: isFacultyMemberOnly ? 0.6 : 1,
             }}
           >
             <Plus

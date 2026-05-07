@@ -106,6 +106,7 @@ import { EditAdminPositionPage } from "../pages/EditAdminPositionPage";
 import { AddJobGradePage } from "../pages/AddJobGradePage";
 import { EditJobGradePage } from "../pages/EditJobGradePage";
 import LogsPage from "../pages/LogsPage";
+import ReportsPage from "../pages/ReportsPage";
 import LogsCategoryPage from "../pages/LogsCategoryPage";
 import UsersPage from "../pages/UsersPage";
 import AddUserPermissionPage from "../pages/AddUserPermissionPage";
@@ -162,10 +163,9 @@ function AppRouterInner() {
 
         {/* --- Protected Routes --- */}
         <Route element={<ProtectedRoute />}>
-        
-
           <Route path="/dash" element={<DetailedDashboardPage />} />
           <Route path="/logs" element={<LogsPage />} />
+          <Route path="/admin/reports" element={<ReportsPage />} />
           <Route path="/chart" element={<ResearchSourceChart />} />
           <Route path="/logs-categories" element={<LogsCategoryPage />} />
           <Route path="/admin/users" element={<UsersPage />} />

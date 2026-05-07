@@ -1,0 +1,74 @@
+{
+  "title": "التقارير",
+  "subtitle": "عرض وطباعة التقارير الإحصائية لأعضاء هيئة التدريس",
+  "reportSubtitle": "اختر لعرض بيانات التقرير",
+  "changeFilter": "تغيير ",
+  "print": "طباعة",
+
+  "placeholder": {
+    "title": "اختر نوع التقرير",
+    "hint": "اختر أحد التقارير من القائمة على الجانب الأيمن للبدء"
+  },
+
+  "categoryPanel": {
+    "title": "أنواع التقارير"
+  },
+
+  "categories": {
+    "DETAILED_FACULTY": "تقرير تفصيلي عن أعضاء هيئة التدريس",
+    "BIANNUAL_RESEARCH": "تقرير ثنوي عن الأبحاث",
+    "RESEARCH_STATS": "إحصائية الأبحاث",
+    "SEMINARS_STATS": "إحصائية عن الندوات والمؤتمرات",
+    "EXPERIENCES_STATS": "إحصائية عن الخبرات",
+    "PUBLICATIONS_STATS": "إحصائية عن المؤلفات",
+    "CV_STATS": "إحصائية عن السيرة الذاتية",
+    "FACULTY_COUNT_STATS": "إحصائية عن عدد أعضاء هيئة التدريس",
+    "TOTAL_RESEARCH_STATS": "إحصائية عن إجمالي عدد الأبحاث",
+    "JOURNALS_STATS": "إحصائية المشاركة في المجلات",
+    "ARTICLE_REVIEWS_STATS": "إحصائية تحكيم المقالات",
+    "PATENTS_STATS": "إحصائية براءات الاختراع",
+    "PROJECTS_STATS": "إحصائية المشاريع"
+  },
+
+  "filterModal": {
+    "title": "اختر الجامعات والكليات والأقسام",
+    "noData": "لا توجد بيانات متاحة",
+    "confirm": "تأكيد",
+    "cancel": "إلغاء"
+  },
+
+  "table": {
+    "noData": "لا توجد بيانات لعرضها",
+    "noDataHint": "اختر التقرير وحدد الفلاتر المناسبة ثم اضغط تأكيد",
+    "error": "حدث خطأ أثناء تحميل البيانات",
+    "retry": "إعادة المحاولة",
+    "totalRows": "إجمالي الصفوف:",
+    "view": "عرض",
+    "columns": {
+      "no": "#",
+      "memberName": "اسم عضو هيئة التدريس",
+      "department": "القسم",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "internationalResearches": "الأبحاث الدولية",
+      "localResearches": "أبحاث محلية",
+      "patents": "براءات اختراع",
+      "awards": "جوائز",
+      "researchTitle": "اسم البحث",
+      "publicationType": "نوع النشر",
+      "publicationYear": "سنة النشر",
+      "details": "التفاصيل",
+      "faculty": "الكلية",
+      "cvCount": "عدد السير الذاتية",
+      "projectCount": "عدد المشاريع",
+      "projectType": "نوع المشروع"
+    }
+  },
+
+  "detailsModal": {
+    "title": "أبحاث عضو هيئة التدريس",
+    "researchTitle": "اسم البحث",
+    "publicationYear": "سنة النشر",
+    "noResearches": "لا توجد أبحاث مسجلة لهذا العضو"
+  }
+}

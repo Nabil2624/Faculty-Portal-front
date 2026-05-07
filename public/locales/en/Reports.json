@@ -1,0 +1,74 @@
+{
+  "title": "Reports",
+  "subtitle": "View and print statistical reports for faculty members",
+  "reportSubtitle": "Choose the appropriate filters to display report data",
+  "changeFilter": "Change Filters",
+  "print": "Print",
+
+  "placeholder": {
+    "title": "Select a Report Type",
+    "hint": "Choose one of the reports from the panel on the right to get started"
+  },
+
+  "categoryPanel": {
+    "title": "Report Types"
+  },
+
+  "categories": {
+    "DETAILED_FACULTY": "Detailed Faculty Members Report",
+    "BIANNUAL_RESEARCH": "Biannual Research Report",
+    "RESEARCH_STATS": "Research Statistics",
+    "SEMINARS_STATS": "Seminars & Conferences Statistics",
+    "EXPERIENCES_STATS": "Experiences Statistics",
+    "PUBLICATIONS_STATS": "Publications Statistics",
+    "CV_STATS": "CV Statistics",
+    "FACULTY_COUNT_STATS": "Faculty Member Count Statistics",
+    "TOTAL_RESEARCH_STATS": "Total Research Count Statistics",
+    "JOURNALS_STATS": "Journal Participation Statistics",
+    "ARTICLE_REVIEWS_STATS": "Article Review Statistics",
+    "PATENTS_STATS": "Patents Statistics",
+    "PROJECTS_STATS": "Projects Statistics"
+  },
+
+  "filterModal": {
+    "title": "Select Universities, Faculties & Departments",
+    "noData": "No data available",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+
+  "table": {
+    "noData": "No data to display",
+    "noDataHint": "Select a report, choose the filters and press Confirm",
+    "error": "An error occurred while loading data",
+    "retry": "Retry",
+    "totalRows": "Total rows:",
+    "view": "View",
+    "columns": {
+      "no": "#",
+      "memberName": "Faculty Member Name",
+      "department": "Department",
+      "email": "Email",
+      "phone": "Phone",
+      "internationalResearches": "International Researches",
+      "localResearches": "Local Researches",
+      "patents": "Patents",
+      "awards": "Awards",
+      "researchTitle": "Research Title",
+      "publicationType": "Publication Type",
+      "publicationYear": "Publication Year",
+      "details": "Details",
+      "faculty": "Faculty",
+      "cvCount": "Number of CVs",
+      "projectCount": "Number of Projects",
+      "projectType": "Project Type"
+    }
+  },
+
+  "detailsModal": {
+    "title": "Faculty Member Researches",
+    "researchTitle": "Research Title",
+    "publicationYear": "Publication Year",
+    "noResearches": "No researches recorded for this member"
+  }
+}
