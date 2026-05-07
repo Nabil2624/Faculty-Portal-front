@@ -837,7 +837,7 @@ export default function UsersPage() {
         )}
       </div>
 
-      {/* Spinner keyframes */}
+      {/* Spinner keyframes here */}
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </ResponsiveLayoutProvider>
   );

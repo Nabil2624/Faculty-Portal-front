@@ -68,12 +68,12 @@ export default function ReportsPage() {
     setShowFilterModal(true);
   };
 
-  // ── On filter confirm: fetch the report ───────────────────────────────────
+  // ── On filter confirm: fetch the report ─────────────────────────────────
   const handleFilterConfirm = (departmentIds) => {
     loadReport(selectedCategory, departmentIds);
   };
 
-  // ── Client-side filtered data ─────────────────────────────────────────────
+  // ── Client-side filtered data ───────────────────────────────────────────
   const PROJECT_TYPE_OPTIONS = [
     { value: "Research", label_en: "Research", label_ar: "بحثي" },
     { value: "Development", label_en: "Development", label_ar: "تطويري" },
