@@ -544,20 +544,217 @@ export async function getResearchStatisticsReport({ departmentIds = [] }) {
 // ─── Report: Seminars & Conferences Statistics ───────────────────────────────
 // TODO: GET /Reports/SeminarsStatistics?departmentIds[]=...
 export async function getSeminarsStatisticsReport({ departmentIds = [] }) {
-  // Placeholder – wire up real columns when backend is ready
-  return { data: [], totalCount: 0 };
+  const rows = [
+    {
+      id: 1,
+      name_ar: "د. أحمد محمد علي",
+      name_en: "Dr. Ahmed Mohamed Ali",
+      seminarType_ar: "ندوة",
+      seminarType_en: "Seminar",
+      seminarCount: 3,
+    },
+    {
+      id: 2,
+      name_ar: "د. سارة إبراهيم حسن",
+      name_en: "Dr. Sara Ibrahim Hassan",
+      seminarType_ar: "مؤتمر",
+      seminarType_en: "Conference",
+      seminarCount: 5,
+    },
+    {
+      id: 3,
+      name_ar: "أ.د. محمود كمال فريد",
+      name_en: "Prof. Mahmoud Kamal Farid",
+      seminarType_ar: "ندوة",
+      seminarType_en: "Seminar",
+      seminarCount: 2,
+    },
+    {
+      id: 4,
+      name_ar: "د. نور الدين عبد الله",
+      name_en: "Dr. Nour El-Din Abdullah",
+      seminarType_ar: "مؤتمر",
+      seminarType_en: "Conference",
+      seminarCount: 7,
+    },
+    {
+      id: 5,
+      name_ar: "أ. فاطمة يوسف خليل",
+      name_en: "Prof. Fatma Yousef Khalil",
+      seminarType_ar: "ندوة",
+      seminarType_en: "Seminar",
+      seminarCount: 4,
+    },
+    {
+      id: 6,
+      name_ar: "د. عمر فاروق الشيخ",
+      name_en: "Dr. Omar Farouk El-Sheikh",
+      seminarType_ar: "مؤتمر",
+      seminarType_en: "Conference",
+      seminarCount: 6,
+    },
+    {
+      id: 7,
+      name_ar: "د. منى السيد رمضان",
+      name_en: "Dr. Mona El-Sayed Ramadan",
+      seminarType_ar: "ندوة",
+      seminarType_en: "Seminar",
+      seminarCount: 1,
+    },
+    {
+      id: 8,
+      name_ar: "أ.د. كريم عادل رزق",
+      name_en: "Prof. Karim Adel Rizk",
+      seminarType_ar: "مؤتمر",
+      seminarType_en: "Conference",
+      seminarCount: 9,
+    },
+  ];
+  return { data: rows, totalCount: rows.length };
 }
 
 // ─── Report: Experiences Statistics ──────────────────────────────────────────
 // TODO: GET /Reports/ExperiencesStatistics?departmentIds[]=...
 export async function getExperiencesStatisticsReport({ departmentIds = [] }) {
-  return { data: [], totalCount: 0 };
+  const rows = [
+    {
+      id: 1,
+      name_ar: "د. أحمد محمد علي",
+      name_en: "Dr. Ahmed Mohamed Ali",
+      experienceType_ar: "خبرة عامة",
+      experienceType_en: "General",
+      experiencesCount: 4,
+    },
+    {
+      id: 2,
+      name_ar: "د. سارة إبراهيم حسن",
+      name_en: "Dr. Sara Ibrahim Hassan",
+      experienceType_ar: "خبرة تدريسية",
+      experienceType_en: "Teaching",
+      experiencesCount: 6,
+    },
+    {
+      id: 3,
+      name_ar: "أ.د. محمود كمال فريد",
+      name_en: "Prof. Mahmoud Kamal Farid",
+      experienceType_ar: "خبرة عامة",
+      experienceType_en: "General",
+      experiencesCount: 2,
+    },
+    {
+      id: 4,
+      name_ar: "د. نور الدين عبد الله",
+      name_en: "Dr. Nour El-Din Abdullah",
+      experienceType_ar: "خبرة تدريسية",
+      experienceType_en: "Teaching",
+      experiencesCount: 8,
+    },
+    {
+      id: 5,
+      name_ar: "أ. فاطمة يوسف خليل",
+      name_en: "Prof. Fatma Yousef Khalil",
+      experienceType_ar: "خبرة عامة",
+      experienceType_en: "General",
+      experiencesCount: 5,
+    },
+    {
+      id: 6,
+      name_ar: "د. عمر فاروق الشيخ",
+      name_en: "Dr. Omar Farouk El-Sheikh",
+      experienceType_ar: "خبرة تدريسية",
+      experienceType_en: "Teaching",
+      experiencesCount: 3,
+    },
+    {
+      id: 7,
+      name_ar: "د. منى السيد رمضان",
+      name_en: "Dr. Mona El-Sayed Ramadan",
+      experienceType_ar: "خبرة عامة",
+      experienceType_en: "General",
+      experiencesCount: 7,
+    },
+    {
+      id: 8,
+      name_ar: "أ.د. كريم عادل رزق",
+      name_en: "Prof. Karim Adel Rizk",
+      experienceType_ar: "خبرة تدريسية",
+      experienceType_en: "Teaching",
+      experiencesCount: 10,
+    },
+  ];
+  return { data: rows, totalCount: rows.length };
 }
 
 // ─── Report: Publications Statistics ─────────────────────────────────────────
 // TODO: GET /Reports/PublicationsStatistics?departmentIds[]=...
 export async function getPublicationsStatisticsReport({ departmentIds = [] }) {
-  return { data: [], totalCount: 0 };
+  const rows = [
+    {
+      id: 1,
+      name_ar: "د. أحمد محمد علي",
+      name_en: "Dr. Ahmed Mohamed Ali",
+      publicationRole_ar: "مؤلف",
+      publicationRole_en: "Author",
+      publicationsCount: 4,
+    },
+    {
+      id: 2,
+      name_ar: "د. سارة إبراهيم حسن",
+      name_en: "Dr. Sara Ibrahim Hassan",
+      publicationRole_ar: "مؤلف مشارك",
+      publicationRole_en: "Co-author",
+      publicationsCount: 2,
+    },
+    {
+      id: 3,
+      name_ar: "أ.د. محمود كمال فريد",
+      name_en: "Prof. Mahmoud Kamal Farid",
+      publicationRole_ar: "محرر",
+      publicationRole_en: "Editor",
+      publicationsCount: 6,
+    },
+    {
+      id: 4,
+      name_ar: "د. نور الدين عبد الله",
+      name_en: "Dr. Nour El-Din Abdullah",
+      publicationRole_ar: "مترجم",
+      publicationRole_en: "Translator",
+      publicationsCount: 3,
+    },
+    {
+      id: 5,
+      name_ar: "أ. فاطمة يوسف خليل",
+      name_en: "Prof. Fatma Yousef Khalil",
+      publicationRole_ar: "مؤلف",
+      publicationRole_en: "Author",
+      publicationsCount: 7,
+    },
+    {
+      id: 6,
+      name_ar: "د. عمر فاروق الشيخ",
+      name_en: "Dr. Omar Farouk El-Sheikh",
+      publicationRole_ar: "مؤلف مشارك",
+      publicationRole_en: "Co-author",
+      publicationsCount: 1,
+    },
+    {
+      id: 7,
+      name_ar: "د. منى السيد رمضان",
+      name_en: "Dr. Mona El-Sayed Ramadan",
+      publicationRole_ar: "محرر",
+      publicationRole_en: "Editor",
+      publicationsCount: 5,
+    },
+    {
+      id: 8,
+      name_ar: "أ.د. كريم عادل رزق",
+      name_en: "Prof. Karim Adel Rizk",
+      publicationRole_ar: "مؤلف",
+      publicationRole_en: "Author",
+      publicationsCount: 9,
+    },
+  ];
+  return { data: rows, totalCount: rows.length };
 }
 
 // ─── Report: CV Statistics ────────────────────────────────────────────────────
@@ -613,19 +810,173 @@ export async function getCVStatisticsReport({ departmentIds = [] }) {
 // ─── Report: Faculty Member Count Statistics ──────────────────────────────────
 // TODO: GET /Reports/FacultyCountStatistics?departmentIds[]=...
 export async function getFacultyCountStatisticsReport({ departmentIds = [] }) {
-  return { data: [], totalCount: 0 };
+  const rows = [
+    {
+      id: 1,
+      faculty_ar: "كلية الهندسة",
+      faculty_en: "Faculty of Engineering",
+      memberCount: 42,
+    },
+    {
+      id: 2,
+      faculty_ar: "كلية العلوم",
+      faculty_en: "Faculty of Science",
+      memberCount: 31,
+    },
+    {
+      id: 3,
+      faculty_ar: "كلية الطب",
+      faculty_en: "Faculty of Medicine",
+      memberCount: 27,
+    },
+    {
+      id: 4,
+      faculty_ar: "كلية الفنون الجميلة",
+      faculty_en: "Faculty of Fine Arts",
+      memberCount: 19,
+    },
+    {
+      id: 5,
+      faculty_ar: "كلية التربية",
+      faculty_en: "Faculty of Education",
+      memberCount: 35,
+    },
+    {
+      id: 6,
+      faculty_ar: "كلية الحقوق",
+      faculty_en: "Faculty of Law",
+      memberCount: 24,
+    },
+    {
+      id: 7,
+      faculty_ar: "كلية الاقتصاد والعلوم السياسية",
+      faculty_en: "Faculty of Economics & Political Science",
+      memberCount: 18,
+    },
+  ];
+  return { data: rows, totalCount: rows.length };
 }
 
 // ─── Report: Total Research Count Statistics ──────────────────────────────────
 // TODO: GET /Reports/TotalResearchStatistics?departmentIds[]=...
 export async function getTotalResearchCountReport({ departmentIds = [] }) {
-  return { data: [], totalCount: 0 };
+  const rows = [
+    {
+      id: 1,
+      faculty_ar: "كلية الهندسة",
+      faculty_en: "Faculty of Engineering",
+      researchCount: 78,
+    },
+    {
+      id: 2,
+      faculty_ar: "كلية العلوم",
+      faculty_en: "Faculty of Science",
+      researchCount: 55,
+    },
+    {
+      id: 3,
+      faculty_ar: "كلية الطب",
+      faculty_en: "Faculty of Medicine",
+      researchCount: 91,
+    },
+    {
+      id: 4,
+      faculty_ar: "كلية الفنون الجميلة",
+      faculty_en: "Faculty of Fine Arts",
+      researchCount: 23,
+    },
+    {
+      id: 5,
+      faculty_ar: "كلية التربية",
+      faculty_en: "Faculty of Education",
+      researchCount: 47,
+    },
+    {
+      id: 6,
+      faculty_ar: "كلية الحقوق",
+      faculty_en: "Faculty of Law",
+      researchCount: 34,
+    },
+    {
+      id: 7,
+      faculty_ar: "كلية الاقتصاد والعلوم السياسية",
+      faculty_en: "Faculty of Economics & Political Science",
+      researchCount: 41,
+    },
+  ];
+  return { data: rows, totalCount: rows.length };
 }
 
 // ─── Report: Journal Participation Statistics ─────────────────────────────────
 // TODO: GET /Reports/JournalsStatistics?departmentIds[]=...
 export async function getJournalsStatisticsReport({ departmentIds = [] }) {
-  return { data: [], totalCount: 0 };
+  const rows = [
+    {
+      id: 1,
+      name_ar: "د. أحمد محمد علي",
+      name_en: "Dr. Ahmed Mohamed Ali",
+      participationType_ar: "نشر",
+      participationType_en: "Publication",
+      journalCount: 6,
+    },
+    {
+      id: 2,
+      name_ar: "د. سارة إبراهيم حسن",
+      name_en: "Dr. Sara Ibrahim Hassan",
+      participationType_ar: "تحكيم",
+      participationType_en: "Review",
+      journalCount: 4,
+    },
+    {
+      id: 3,
+      name_ar: "أ.د. محمود كمال فريد",
+      name_en: "Prof. Mahmoud Kamal Farid",
+      participationType_ar: "هيئة تحرير",
+      participationType_en: "Editorial Board",
+      journalCount: 2,
+    },
+    {
+      id: 4,
+      name_ar: "د. نور الدين عبد الله",
+      name_en: "Dr. Nour El-Din Abdullah",
+      participationType_ar: "نشر",
+      participationType_en: "Publication",
+      journalCount: 9,
+    },
+    {
+      id: 5,
+      name_ar: "أ. فاطمة يوسف خليل",
+      name_en: "Prof. Fatma Yousef Khalil",
+      participationType_ar: "تحكيم",
+      participationType_en: "Review",
+      journalCount: 3,
+    },
+    {
+      id: 6,
+      name_ar: "د. عمر فاروق الشيخ",
+      name_en: "Dr. Omar Farouk El-Sheikh",
+      participationType_ar: "هيئة تحرير",
+      participationType_en: "Editorial Board",
+      journalCount: 1,
+    },
+    {
+      id: 7,
+      name_ar: "د. منى السيد رمضان",
+      name_en: "Dr. Mona El-Sayed Ramadan",
+      participationType_ar: "نشر",
+      participationType_en: "Publication",
+      journalCount: 7,
+    },
+    {
+      id: 8,
+      name_ar: "أ.د. كريم عادل رزق",
+      name_en: "Prof. Karim Adel Rizk",
+      participationType_ar: "تحكيم",
+      participationType_en: "Review",
+      journalCount: 5,
+    },
+  ];
+  return { data: rows, totalCount: rows.length };
 }
 
 // ─── Report: Article Review Statistics ───────────────────────────────────────
@@ -633,13 +984,137 @@ export async function getJournalsStatisticsReport({ departmentIds = [] }) {
 export async function getArticleReviewsStatisticsReport({
   departmentIds = [],
 }) {
-  return { data: [], totalCount: 0 };
+  const rows = [
+    {
+      id: 1,
+      name_ar: "د. أحمد محمد علي",
+      name_en: "Dr. Ahmed Mohamed Ali",
+      articleCount: 7,
+      year: 2024,
+    },
+    {
+      id: 2,
+      name_ar: "د. سارة إبراهيم حسن",
+      name_en: "Dr. Sara Ibrahim Hassan",
+      articleCount: 4,
+      year: 2023,
+    },
+    {
+      id: 3,
+      name_ar: "أ.د. محمود كمال فريد",
+      name_en: "Prof. Mahmoud Kamal Farid",
+      articleCount: 12,
+      year: 2024,
+    },
+    {
+      id: 4,
+      name_ar: "د. نور الدين عبد الله",
+      name_en: "Dr. Nour El-Din Abdullah",
+      articleCount: 3,
+      year: 2023,
+    },
+    {
+      id: 5,
+      name_ar: "أ. فاطمة يوسف خليل",
+      name_en: "Prof. Fatma Yousef Khalil",
+      articleCount: 9,
+      year: 2022,
+    },
+    {
+      id: 6,
+      name_ar: "د. عمر فاروق الشيخ",
+      name_en: "Dr. Omar Farouk El-Sheikh",
+      articleCount: 5,
+      year: 2024,
+    },
+    {
+      id: 7,
+      name_ar: "د. منى السيد رمضان",
+      name_en: "Dr. Mona El-Sayed Ramadan",
+      articleCount: 2,
+      year: 2022,
+    },
+    {
+      id: 8,
+      name_ar: "أ.د. كريم عادل رزق",
+      name_en: "Prof. Karim Adel Rizk",
+      articleCount: 15,
+      year: 2023,
+    },
+  ];
+  return { data: rows, totalCount: rows.length };
 }
 
 // ─── Report: Patents Statistics ───────────────────────────────────────────────
 // TODO: GET /Reports/PatentsStatistics?departmentIds[]=...
 export async function getPatentsStatisticsReport({ departmentIds = [] }) {
-  return { data: [], totalCount: 0 };
+  const rows = [
+    {
+      id: 1,
+      name_ar: "د. أحمد محمد علي",
+      name_en: "Dr. Ahmed Mohamed Ali",
+      patentScope_ar: "دولي",
+      patentScope_en: "International",
+      patentCount: 3,
+    },
+    {
+      id: 2,
+      name_ar: "د. سارة إبراهيم حسن",
+      name_en: "Dr. Sara Ibrahim Hassan",
+      patentScope_ar: "محلي",
+      patentScope_en: "Local",
+      patentCount: 2,
+    },
+    {
+      id: 3,
+      name_ar: "أ.د. محمود كمال فريد",
+      name_en: "Prof. Mahmoud Kamal Farid",
+      patentScope_ar: "دولي",
+      patentScope_en: "International",
+      patentCount: 5,
+    },
+    {
+      id: 4,
+      name_ar: "د. نور الدين عبد الله",
+      name_en: "Dr. Nour El-Din Abdullah",
+      patentScope_ar: "محلي",
+      patentScope_en: "Local",
+      patentCount: 4,
+    },
+    {
+      id: 5,
+      name_ar: "أ. فاطمة يوسف خليل",
+      name_en: "Prof. Fatma Yousef Khalil",
+      patentScope_ar: "دولي",
+      patentScope_en: "International",
+      patentCount: 1,
+    },
+    {
+      id: 6,
+      name_ar: "د. عمر فاروق الشيخ",
+      name_en: "Dr. Omar Farouk El-Sheikh",
+      patentScope_ar: "محلي",
+      patentScope_en: "Local",
+      patentCount: 2,
+    },
+    {
+      id: 7,
+      name_ar: "د. منى السيد رمضان",
+      name_en: "Dr. Mona El-Sayed Ramadan",
+      patentScope_ar: "دولي",
+      patentScope_en: "International",
+      patentCount: 6,
+    },
+    {
+      id: 8,
+      name_ar: "أ.د. كريم عادل رزق",
+      name_en: "Prof. Karim Adel Rizk",
+      patentScope_ar: "محلي",
+      patentScope_en: "Local",
+      patentCount: 3,
+    },
+  ];
+  return { data: rows, totalCount: rows.length };
 }
 
 // ─── Report: Projects Statistics ─────────────────────────────────────────────

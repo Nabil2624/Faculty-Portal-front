@@ -25,8 +25,22 @@ function resolveCell(row, colKey, isArabic, index) {
     return isArabic ? row.department_ar : row.department_en;
   if (colKey === "title") return isArabic ? row.title_ar : row.title_en;
   if (colKey === "faculty") return isArabic ? row.faculty_ar : row.faculty_en;
+  if (colKey === "seminarType")
+    return isArabic ? row.seminarType_ar : row.seminarType_en;
+  if (colKey === "experienceType")
+    return isArabic ? row.experienceType_ar : row.experienceType_en;
+  if (colKey === "publicationRole")
+    return isArabic ? row.publicationRole_ar : row.publicationRole_en;
   if (colKey === "projectType")
     return isArabic ? row.projectType_ar : row.projectType_en;
+  if (colKey === "participationType")
+    return isArabic ? row.participationType_ar : row.participationType_en;
+  if (colKey === "journalCount") return row.journalCount ?? "-";
+  if (colKey === "researchCount") return row.researchCount ?? "-";
+  if (colKey === "articleCount") return row.articleCount ?? "-";
+  if (colKey === "patentScope")
+    return isArabic ? row.patentScope_ar : row.patentScope_en;
+  if (colKey === "patentCount") return row.patentCount ?? "-";
   if (colKey === "publicationType")
     return isArabic ? row.publicationType_ar : row.publicationType_en;
   if (colKey === "year") return row.year;
@@ -219,7 +233,7 @@ export function ReportTable({
                           "clamp(0.5rem, 0.9vw, 1rem) clamp(0.6rem, 1vw, 1.1rem)",
                         fontSize: "clamp(0.6rem, 0.82vw, 0.9rem)",
                         fontWeight: 600,
-                        textAlign: isArabic ? "right" : "left",
+                        textAlign: "center",
                         whiteSpace: "nowrap",
                         letterSpacing: "0.01em",
                       }}
@@ -231,7 +245,7 @@ export function ReportTable({
                   {supportsDetails && (
                     <th
                       style={{
-                        width: "5rem",
+                        width: "2rem",
                         padding: "clamp(0.5rem, 0.9vw, 1rem)",
                         fontSize: "clamp(0.6rem, 0.82vw, 0.9rem)",
                         textAlign: "center",
@@ -260,7 +274,7 @@ export function ReportTable({
                             "clamp(0.5rem, 0.85vw, 0.95rem) clamp(0.6rem, 1vw, 1.1rem)",
                           fontSize: "clamp(0.62rem, 0.85vw, 0.92rem)",
                           color: "#374151",
-                          textAlign: isArabic ? "right" : "left",
+                          textAlign: "center",
                         }}
                       >
                         {resolveCell(row, col.key, isArabic, idx)}

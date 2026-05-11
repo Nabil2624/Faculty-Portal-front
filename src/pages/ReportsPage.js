@@ -11,98 +11,60 @@
 //   4. Clicking a row (if the report type supports it) opens a details modal.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BarChart3, Settings2, Search } from "lucide-react";
+import { BarChart3, Settings2 } from "lucide-react";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import useReports from "../hooks/useReports";
+import useReportFilters from "../hooks/useReportFilters";
 
 import { ReportCategoryPanel } from "../components/widgets/Reports/ReportCategoryPanel";
 import { FilterModal } from "../components/widgets/Reports/FilterModal";
 import { ReportTable } from "../components/widgets/Reports/ReportTable";
 import { ResearchDetailsModal } from "../components/widgets/Reports/ResearchDetailsModal";
+import { ReportFilterBar } from "../components/widgets/Reports/ReportFilterBar";
 
 export default function ReportsPage() {
   const { t, i18n } = useTranslation("Reports");
   const isArabic = i18n.language === "ar";
 
-  // ── Active report category ────────────────────────────────────────────────
   const [selectedCategory, setSelectedCategory] = useState(null);
-
-  // ── Filter modal visibility ───────────────────────────────────────────────
   const [showFilterModal, setShowFilterModal] = useState(false);
-
-  // ── Row-details modal ─────────────────────────────────────────────────────
   const [detailsMember, setDetailsMember] = useState(null);
 
-  // ── Search / filter state ─────────────────────────────────────────────────
-  const [searchName, setSearchName] = useState("");
-  const [searchYear, setSearchYear] = useState("");
-  const [projectType, setProjectType] = useState("");
-
-  // ── Hook ──────────────────────────────────────────────────────────────────
   const {
     universitiesTree,
     treeLoading,
-    treeError,
     loadUniversitiesTree,
     reportData,
-    totalCount,
     reportLoading,
     reportError,
     loadReport,
     resetReport,
   } = useReports();
 
-  // ── When a category is selected: reset table and open filter modal ────────
+  const filters = useReportFilters(selectedCategory, reportData, isArabic);
+
+  const openFilterModal = () => {
+    if (universitiesTree.length === 0) loadUniversitiesTree();
+    setShowFilterModal(true);
+  };
+
   const handleCategorySelect = (key) => {
     setSelectedCategory(key);
     resetReport();
     setDetailsMember(null);
-    setSearchName("");
-    setSearchYear("");
-    setProjectType("");
-    // Load the university tree the first time the modal needs it
-    if (universitiesTree.length === 0) loadUniversitiesTree();
-    setShowFilterModal(true);
+    filters.resetFilters();
+    openFilterModal();
   };
 
-  // ── On filter confirm: fetch the report ─────────────────────────────────
   const handleFilterConfirm = (departmentIds) => {
     loadReport(selectedCategory, departmentIds);
   };
 
-  // ── Client-side filtered data ───────────────────────────────────────────
-  const PROJECT_TYPE_OPTIONS = [
-    { value: "Research", label_en: "Research", label_ar: "بحثي" },
-    { value: "Development", label_en: "Development", label_ar: "تطويري" },
-    { value: "Community", label_en: "Community", label_ar: "مجتمعي" },
-    { value: "Technical", label_en: "Technical", label_ar: "تقني" },
-  ];
-
-  const filteredData = reportData.filter((row) => {
-    if (searchName.trim()) {
-      const haystack = isArabic
-        ? (row.name_ar || row.faculty_ar || "").toLowerCase()
-        : (row.name_en || row.faculty_en || "").toLowerCase();
-      if (!haystack.includes(searchName.trim().toLowerCase())) return false;
-    }
-    if (selectedCategory === "RESEARCH_STATS" && searchYear.trim()) {
-      if (String(row.year) !== searchYear.trim()) return false;
-    }
-    if (selectedCategory === "PROJECTS_STATS" && projectType) {
-      if (row.projectType_en !== projectType) return false;
-    }
-    return true;
-  });
-
-  // ── Retry on error ────────────────────────────────────────────────────────
-  const handleRetry = () => {
-    // Re-open the filter modal so the user can confirm again
-    if (universitiesTree.length === 0) loadUniversitiesTree();
-    setShowFilterModal(true);
-  };
+  const showFilterBar =
+    selectedCategory && !reportLoading && !reportError && reportData.length > 0;
 
   return (
     <ResponsiveLayoutProvider>
@@ -110,7 +72,7 @@ export default function ReportsPage() {
         dir={isArabic ? "rtl" : "ltr"}
         style={{ padding: "clamp(0.75rem, 2vw, 2.5rem)" }}
       >
-        {/* ── Page Title ───────────────────────────────────────────────────── */}
+        {/* ── Page title ───────────────────────────────────────────────────── */}
         <div
           className="flex items-center gap-3"
           style={{ marginBottom: "clamp(1.2rem, 2.5vw, 2.5rem)" }}
@@ -152,14 +114,13 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        {/* ── Main layout: Table area + Category panel ──────────────────────── */}
+        {/* ── Main layout: content area + category panel ────────────────────── */}
         <div
           className="flex gap-5 items-start"
           style={{ flexDirection: isArabic ? "row-reverse" : "row" }}
         >
-          {/* ── Left / center: report content ─────────────────────────────── */}
           <div className="flex-1 min-w-0 flex flex-col gap-4">
-            {/* Placeholder when nothing is selected yet */}
+            {/* Empty state */}
             {!selectedCategory && (
               <div
                 className="rounded-2xl border-2 border-dashed border-[#19355a]/20 flex flex-col items-center justify-center text-center"
@@ -190,7 +151,7 @@ export default function ReportsPage() {
               </div>
             )}
 
-            {/* Active report header */}
+            {/* Active category header */}
             {selectedCategory && (
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div>
@@ -210,12 +171,8 @@ export default function ReportsPage() {
                     {t("reportSubtitle")}
                   </p>
                 </div>
-                {/* Change filter button */}
                 <button
-                  onClick={() => {
-                    if (universitiesTree.length === 0) loadUniversitiesTree();
-                    setShowFilterModal(true);
-                  }}
+                  onClick={openFilterModal}
                   className="flex items-center gap-2 rounded-lg border border-[#19355a] text-[#19355a] hover:bg-[#19355a] hover:text-white transition"
                   style={{
                     padding:
@@ -234,113 +191,24 @@ export default function ReportsPage() {
               </div>
             )}
 
-            {/* Search / filter bar */}
-            {selectedCategory &&
-              !reportLoading &&
-              !reportError &&
-              reportData.length > 0 && (
-                <div className="flex flex-wrap gap-3">
-                  {/* Name search – always shown */}
-                  <div
-                    className="relative flex-1"
-                    style={{ minWidth: "180px" }}
-                  >
-                    <Search
-                      className="absolute text-gray-400 pointer-events-none"
-                      style={{
-                        width: "clamp(0.8rem, 1vw, 1rem)",
-                        height: "clamp(0.8rem, 1vw, 1rem)",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        [isArabic ? "right" : "left"]:
-                          "clamp(0.6rem, 0.9vw, 1rem)",
-                      }}
-                    />
-                    <input
-                      type="text"
-                      value={searchName}
-                      onChange={(e) => setSearchName(e.target.value)}
-                      placeholder={isArabic ? "البحث بالاسم" : "Search by name"}
-                      className="w-full rounded-lg border border-[#19355a]/20 bg-white text-gray-700 focus:outline-none focus:border-[#19355a]/50 transition"
-                      style={{
-                        padding: `clamp(0.4rem, 0.6vw, 0.65rem) clamp(0.6rem, 1vw, 1.1rem)`,
-                        paddingInlineStart: "clamp(2rem, 2.5vw, 2.5rem)",
-                        fontSize: "clamp(0.65rem, 0.88vw, 0.95rem)",
-                        direction: isArabic ? "rtl" : "ltr",
-                      }}
-                    />
-                  </div>
-
-                  {/* Year search – RESEARCH_STATS only */}
-                  {selectedCategory === "RESEARCH_STATS" && (
-                    <div
-                      className="relative flex-1"
-                      style={{ minWidth: "150px" }}
-                    >
-                      <Search
-                        className="absolute text-gray-400 pointer-events-none"
-                        style={{
-                          width: "clamp(0.8rem, 1vw, 1rem)",
-                          height: "clamp(0.8rem, 1vw, 1rem)",
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          [isArabic ? "right" : "left"]:
-                            "clamp(0.6rem, 0.9vw, 1rem)",
-                        }}
-                      />
-                      <input
-                        type="text"
-                        value={searchYear}
-                        onChange={(e) => setSearchYear(e.target.value)}
-                        placeholder={
-                          isArabic ? "البحث بالسنة" : "Search by year"
-                        }
-                        className="w-full rounded-lg border border-[#19355a]/20 bg-white text-gray-700 focus:outline-none focus:border-[#19355a]/50 transition"
-                        style={{
-                          padding: `clamp(0.4rem, 0.6vw, 0.65rem) clamp(0.6rem, 1vw, 1.1rem)`,
-                          paddingInlineStart: "clamp(2rem, 2.5vw, 2.5rem)",
-                          fontSize: "clamp(0.65rem, 0.88vw, 0.95rem)",
-                          direction: isArabic ? "rtl" : "ltr",
-                        }}
-                      />
-                    </div>
-                  )}
-
-                  {/* Project type dropdown – PROJECTS_STATS only */}
-                  {selectedCategory === "PROJECTS_STATS" && (
-                    <select
-                      value={projectType}
-                      onChange={(e) => setProjectType(e.target.value)}
-                      className="flex-1 rounded-lg border border-[#19355a]/20 bg-white text-gray-700 focus:outline-none focus:border-[#19355a]/50 transition cursor-pointer"
-                      style={{
-                        minWidth: "150px",
-                        padding: `clamp(0.4rem, 0.6vw, 0.65rem) clamp(0.6rem, 1vw, 1.1rem)`,
-                        fontSize: "clamp(0.65rem, 0.88vw, 0.95rem)",
-                        direction: isArabic ? "rtl" : "ltr",
-                      }}
-                    >
-                      <option value="">
-                        {isArabic ? "كل الأنواع" : "All types"}
-                      </option>
-                      {PROJECT_TYPE_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {isArabic ? opt.label_ar : opt.label_en}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-              )}
+            {/* Filter bar */}
+            {showFilterBar && (
+              <ReportFilterBar
+                selectedCategory={selectedCategory}
+                filters={filters}
+                isArabic={isArabic}
+              />
+            )}
 
             {/* Report table */}
             {selectedCategory && (
               <ReportTable
                 reportType={selectedCategory}
-                data={filteredData}
-                totalCount={filteredData.length}
+                data={filters.filteredData}
+                totalCount={filters.filteredData.length}
                 loading={reportLoading}
                 error={reportError}
-                onRetry={handleRetry}
+                onRetry={openFilterModal}
                 onRowClick={(row) => setDetailsMember(row)}
                 t={t}
                 isArabic={isArabic}
@@ -348,7 +216,6 @@ export default function ReportsPage() {
             )}
           </div>
 
-          {/* ── Right / side: category panel ────────────────────────────────── */}
           <ReportCategoryPanel
             selected={selectedCategory}
             onSelect={handleCategorySelect}
@@ -358,7 +225,6 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* ── Filter modal ───────────────────────────────────────────────────── */}
       <FilterModal
         open={showFilterModal}
         onClose={() => setShowFilterModal(false)}
@@ -369,7 +235,6 @@ export default function ReportsPage() {
         isArabic={isArabic}
       />
 
-      {/* ── Research details modal ─────────────────────────────────────────── */}
       <ResearchDetailsModal
         open={!!detailsMember}
         onClose={() => setDetailsMember(null)}

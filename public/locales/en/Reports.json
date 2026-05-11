@@ -61,7 +61,20 @@
       "faculty": "Faculty",
       "cvCount": "Number of CVs",
       "projectCount": "Number of Projects",
-      "projectType": "Project Type"
+      "projectType": "Project Type",
+      "seminarType": "Type",
+      "seminarCount": "Number of Seminars/Conferences",
+      "experienceType": "Experience Type",
+      "experiencesCount": "Number of Experiences",
+      "publicationRole": "Role",
+      "publicationsCount": "Number of Publications",
+      "memberCount": "Number of Faculty Members",
+      "researchCount": "Number of Researches",
+      "journalCount": "Number of Journals",
+      "participationType": "Participation Type",
+      "articleCount": "Number of Articles Reviewed",
+      "patentScope": "Patent Scope",
+      "patentCount": "Number of Patents"
     }
   },
 

@@ -77,13 +77,13 @@ export const REPORT_COLUMNS = {
   ],
   [REPORT_TYPES.BIANNUAL_RESEARCH]: [
     { key: "index", tKey: "no", width: "3rem" },
-    { key: "title", tKey: "researchTitle", width: "auto" },
+    { key: "title", tKey: "researchTitle", width: "8rem" },
     { key: "publicationType", tKey: "publicationType", width: "9rem" },
     { key: "year", tKey: "publicationYear", width: "7rem" },
   ],
   [REPORT_TYPES.RESEARCH_STATS]: [
     { key: "index", tKey: "no", width: "3rem" },
-    { key: "name", tKey: "memberName", width: "auto" },
+    { key: "name", tKey: "memberName", width: "6rem" },
     {
       key: "internationalResearches",
       tKey: "internationalResearches",
@@ -92,24 +92,59 @@ export const REPORT_COLUMNS = {
     { key: "localResearches", tKey: "localResearches", width: "9rem" },
   ],
 
-  // TODO: Define columns for remaining report types when backend data is ready.
-  // Follow the same pattern: array of { key, tKey, width }
-  [REPORT_TYPES.SEMINARS_STATS]: [],
-  [REPORT_TYPES.EXPERIENCES_STATS]: [],
-  [REPORT_TYPES.PUBLICATIONS_STATS]: [],
+  [REPORT_TYPES.SEMINARS_STATS]: [
+    { key: "index", tKey: "no", width: "3rem" },
+    { key: "name", tKey: "memberName", width: "4rem" },
+    { key: "seminarType", tKey: "seminarType", width: "10rem" },
+    { key: "seminarCount", tKey: "seminarCount", width: "8rem" },
+  ],
+  [REPORT_TYPES.EXPERIENCES_STATS]: [
+    { key: "index", tKey: "no", width: "3rem" },
+    { key: "name", tKey: "memberName", width: "2rem" },
+    { key: "experienceType", tKey: "experienceType", width: "10rem" },
+    { key: "experiencesCount", tKey: "experiencesCount", width: "8rem" },
+  ],
+  [REPORT_TYPES.PUBLICATIONS_STATS]: [
+    { key: "index", tKey: "no", width: "3rem" },
+    { key: "name", tKey: "memberName", width: "2rem" },
+    { key: "publicationRole", tKey: "publicationRole", width: "10rem" },
+    { key: "publicationsCount", tKey: "publicationsCount", width: "8rem" },
+  ],
   [REPORT_TYPES.CV_STATS]: [
     { key: "index", tKey: "no", width: "3rem" },
     { key: "faculty", tKey: "faculty", width: "auto" },
     { key: "cvCount", tKey: "cvCount", width: "10rem" },
   ],
-  [REPORT_TYPES.FACULTY_COUNT_STATS]: [],
-  [REPORT_TYPES.TOTAL_RESEARCH_STATS]: [],
-  [REPORT_TYPES.JOURNALS_STATS]: [],
-  [REPORT_TYPES.ARTICLE_REVIEWS_STATS]: [],
-  [REPORT_TYPES.PATENTS_STATS]: [],
-  [REPORT_TYPES.PROJECTS_STATS]: [
+  [REPORT_TYPES.FACULTY_COUNT_STATS]: [
+    { key: "index", tKey: "no", width: "3rem" },
+    { key: "faculty", tKey: "faculty", width: "auto" },
+    { key: "memberCount", tKey: "memberCount", width: "10rem" },
+  ],
+  [REPORT_TYPES.TOTAL_RESEARCH_STATS]: [
+    { key: "index", tKey: "no", width: "3rem" },
+    { key: "faculty", tKey: "faculty", width: "auto" },
+    { key: "researchCount", tKey: "researchCount", width: "10rem" },
+  ],
+  [REPORT_TYPES.JOURNALS_STATS]: [
+    { key: "index", tKey: "no", width: "3rem" },
+    { key: "name", tKey: "memberName", width: "8rem" },
+    { key: "participationType", tKey: "participationType", width: "10rem" },
+    { key: "journalCount", tKey: "journalCount", width: "8rem" },
+  ],
+  [REPORT_TYPES.ARTICLE_REVIEWS_STATS]: [
     { key: "index", tKey: "no", width: "3rem" },
     { key: "name", tKey: "memberName", width: "auto" },
+    { key: "articleCount", tKey: "articleCount", width: "10rem" },
+  ],
+  [REPORT_TYPES.PATENTS_STATS]: [
+    { key: "index", tKey: "no", width: "3rem" },
+    { key: "name", tKey: "memberName", width: "8rem" },
+    { key: "patentScope", tKey: "patentScope", width: "10rem" },
+    { key: "patentCount", tKey: "patentCount", width: "8rem" },
+  ],
+  [REPORT_TYPES.PROJECTS_STATS]: [
+    { key: "index", tKey: "no", width: "3rem" },
+    { key: "name", tKey: "memberName", width: "8rem" },
     { key: "projectType", tKey: "projectType", width: "10rem" },
     { key: "projectCount", tKey: "projectCount", width: "8rem" },
   ],

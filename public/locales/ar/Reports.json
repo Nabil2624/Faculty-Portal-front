@@ -61,7 +61,20 @@
       "faculty": "الكلية",
       "cvCount": "عدد السير الذاتية",
       "projectCount": "عدد المشاريع",
-      "projectType": "نوع المشروع"
+      "projectType": "نوع المشروع",
+      "seminarType": "النوع",
+      "seminarCount": "عدد الندوات/المؤتمرات",
+      "experienceType": "نوع الخبرة",
+      "experiencesCount": "عدد الخبرات",
+      "publicationRole": "الدور",
+      "publicationsCount": "عدد المؤلفات",
+      "memberCount": "عدد أعضاء هيئة التدريس",
+      "researchCount": "عدد الأبحاث",
+      "journalCount": "عدد المجلات",
+      "participationType": "نوع المشاركة",
+      "articleCount": "عدد المقالات المحكّمة",
+      "patentScope": "نطاق براءة الاختراع",
+      "patentCount": "عدد براءات الاختراع"
     }
   },
 

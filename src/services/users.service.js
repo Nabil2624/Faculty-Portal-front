@@ -156,9 +156,9 @@ export async function grantUserPermissions(userId, permissions) {
 
 /** Revoke individual permissions from a user. */
 export async function revokeUserPermissions(userId, permissions) {
-  const res = await axiosInstance.put(
+  const res = await axiosInstance.delete(
     `/Admin/UserRevokePermissions/${userId}`,
-    permissions,
+    { data: permissions },
   );
   return res.data;
 }
