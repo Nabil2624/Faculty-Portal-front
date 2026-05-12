@@ -275,6 +275,9 @@ export function ReportTable({
                           fontSize: "clamp(0.62rem, 0.85vw, 0.92rem)",
                           color: "#374151",
                           textAlign: "center",
+                          ...(col.key === "phone"
+                            ? { direction: "ltr", whiteSpace: "nowrap" }
+                            : {}),
                         }}
                       >
                         {resolveCell(row, col.key, isArabic, idx)}

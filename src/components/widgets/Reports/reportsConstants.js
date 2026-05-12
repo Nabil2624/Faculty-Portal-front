@@ -65,7 +65,7 @@ export const REPORT_COLUMNS = {
     { key: "name", tKey: "memberName", width: "12rem" },
     { key: "department", tKey: "department", width: "10rem" },
     { key: "email", tKey: "email", width: "12rem" },
-    { key: "phone", tKey: "phone", width: "9rem" },
+    { key: "phone", tKey: "phone", width: "20rem" },
     {
       key: "internationalResearches",
       tKey: "internationalResearches",

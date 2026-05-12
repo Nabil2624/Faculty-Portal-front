@@ -63,68 +63,6 @@ export async function getUniversitiesTree() {
         },
       ],
     },
-    {
-      id: 2,
-      name_ar: "جامعة حلوان",
-      name_en: "Helwan University",
-      faculties: [
-        {
-          id: 21,
-          name_ar: "كلية الفنون الجميلة",
-          name_en: "Faculty of Fine Arts",
-          departments: [
-            { id: 211, name_ar: "التصوير", name_en: "Painting" },
-            { id: 212, name_ar: "النحت", name_en: "Sculpture" },
-          ],
-        },
-        {
-          id: 22,
-          name_ar: "كلية التربية",
-          name_en: "Faculty of Education",
-          departments: [
-            {
-              id: 221,
-              name_ar: "المناهج والتدريس",
-              name_en: "Curriculum & Teaching",
-            },
-            {
-              id: 222,
-              name_ar: "علم النفس التربوي",
-              name_en: "Educational Psychology",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      id: 3,
-      name_ar: "جامعة القاهرة",
-      name_en: "Cairo University",
-      faculties: [
-        {
-          id: 31,
-          name_ar: "كلية الحقوق",
-          name_en: "Faculty of Law",
-          departments: [
-            { id: 311, name_ar: "القانون العام", name_en: "Public Law" },
-            { id: 312, name_ar: "القانون الخاص", name_en: "Private Law" },
-          ],
-        },
-        {
-          id: 32,
-          name_ar: "كلية الاقتصاد والعلوم السياسية",
-          name_en: "Faculty of Economics & Political Science",
-          departments: [
-            { id: 321, name_ar: "الاقتصاد", name_en: "Economics" },
-            {
-              id: 322,
-              name_ar: "العلوم السياسية",
-              name_en: "Political Science",
-            },
-          ],
-        },
-      ],
-    },
   ];
 }
 
