@@ -15,9 +15,9 @@ import { ReportDropdown } from "./ReportDropdown";
 // ─── Dropdown option lists ────────────────────────────────────────────────────
 const PROJECT_TYPE_OPTIONS = [
   { value: "Research", label_en: "Research", label_ar: "بحثي" },
-  { value: "Development", label_en: "Development", label_ar: "تطويري" },
-  { value: "Community", label_en: "Community", label_ar: "مجتمعي" },
-  { value: "Technical", label_en: "Technical", label_ar: "تقني" },
+  { value: "Engineering", label_en: "Engineering", label_ar: "هندسة" },
+  { value: "Quality", label_en: "Quality", label_ar: "جودة" },
+  { value: "External", label_en: "External", label_ar: "خارجي" },
 ];
 
 const SEMINAR_TYPE_OPTIONS = [
@@ -36,19 +36,32 @@ const EXPERIENCE_TYPE_OPTIONS = [
 
 const PUBLICATION_ROLE_OPTIONS = [
   { value: "Author", label_en: "Author", label_ar: "مؤلف" },
-  { value: "Co-author", label_en: "Co-author", label_ar: "مؤلف مشارك" },
-  { value: "Editor", label_en: "Editor", label_ar: "محرر" },
   { value: "Translator", label_en: "Translator", label_ar: "مترجم" },
+  { value: "Reviewer", label_en: "Reviewer", label_ar: "مراجع" },
+  {
+    value: "Translator/Reviewer",
+    label_en: "Translator/Reviewer",
+    label_ar: "مترجم/مراجع",
+  },
+  { value: "Book Editor", label_en: "Book Editor", label_ar: "محرر كتاب" },
+  { value: "Chapter Author", label_en: "Chapter Author", label_ar: "مؤلف فصل" },
 ];
 
 const PARTICIPATION_TYPE_OPTIONS = [
-  { value: "Publication", label_en: "Publication", label_ar: "نشر" },
-  { value: "Review", label_en: "Review", label_ar: "تحكيم" },
   {
-    value: "Editorial Board",
-    label_en: "Editorial Board",
-    label_ar: "هيئة تحرير",
+    value: "Editor-in-Chief",
+    label_en: "Editor-in-Chief",
+    label_ar: "رئيس تحرير",
   },
+  {
+    value: "Managing Editor",
+    label_en: "Managing Editor",
+    label_ar: "مدير تحرير",
+  },
+  { value: "Deputy Editor", label_en: "Deputy Editor", label_ar: "نائب تحرير" },
+  { value: "Member", label_en: "Member", label_ar: "عضو" },
+  { value: "Editor", label_en: "Editor", label_ar: "محرر" },
+  { value: "Reviewer", label_en: "Reviewer", label_ar: "محكم" },
 ];
 
 const PATENT_SCOPE_OPTIONS = [
