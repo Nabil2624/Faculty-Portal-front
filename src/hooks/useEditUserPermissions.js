@@ -19,12 +19,12 @@ export default function useEditUserPermissions({
   // ── Local selection state (mirrors what the user currently has + changes) ──
   // We store the IDs of permissions the user currently has as individual perms
   const [grantedIds, setGrantedIds] = useState(
-    () => new Set((userPermissions || []).map((p) => p.id)),
+    () => new Set((userPermissions || []).map((p) => p.code)),
   );
 
   // Sync when the parent passes a fresh userPermissions list
   useEffect(() => {
-    setGrantedIds(new Set((userPermissions || []).map((p) => p.id)));
+    setGrantedIds(new Set((userPermissions || []).map((p) => p.code)));
   }, [userPermissions]);
 
   // ── Search / filter ──────────────────────────────────────────────────────────
@@ -92,7 +92,7 @@ export default function useEditUserPermissions({
   const togglePermission = useCallback(
     async (permission) => {
       if (!userId || actionLoading) return;
-      const isGranted = grantedIds.has(permission.id);
+      const isGranted = grantedIds.has(permission.code);
 
       setActionLoading(true);
       try {
@@ -100,13 +100,13 @@ export default function useEditUserPermissions({
           await revokeUserPermissions(userId, [permission]);
           setGrantedIds((prev) => {
             const next = new Set(prev);
-            next.delete(permission.id);
+            next.delete(permission.code);
             return next;
           });
           setToast({ message: "revokeSuccess", type: "success" });
         } else {
           await grantUserPermissions(userId, [permission]);
-          setGrantedIds((prev) => new Set([...prev, permission.id]));
+          setGrantedIds((prev) => new Set([...prev, permission.code]));
           setToast({ message: "grantSuccess", type: "success" });
         }
       } catch (err) {
@@ -128,7 +128,7 @@ export default function useEditUserPermissions({
     async (typePerms) => {
       if (!userId || actionLoading || typePerms.length === 0) return;
 
-      const allGranted = typePerms.every((p) => grantedIds.has(p.id));
+      const allGranted = typePerms.every((p) => grantedIds.has(p.code));
 
       setActionLoading(true);
       try {
@@ -137,16 +137,16 @@ export default function useEditUserPermissions({
           await revokeUserPermissions(userId, typePerms);
           setGrantedIds((prev) => {
             const next = new Set(prev);
-            typePerms.forEach((p) => next.delete(p.id));
+            typePerms.forEach((p) => next.delete(p.code));
             return next;
           });
           setToast({ message: "revokeSuccess", type: "success" });
         } else {
           // Grant the ones not yet granted
-          const toGrant = typePerms.filter((p) => !grantedIds.has(p.id));
+          const toGrant = typePerms.filter((p) => !grantedIds.has(p.code));
           await grantUserPermissions(userId, toGrant);
           setGrantedIds(
-            (prev) => new Set([...prev, ...toGrant.map((p) => p.id)]),
+            (prev) => new Set([...prev, ...toGrant.map((p) => p.code)]),
           );
           setToast({ message: "grantSuccess", type: "success" });
         }
