@@ -20,6 +20,7 @@
     "socialTab": "Social Media Platforms",
     "saveSuccess": "Saved successfully.",
     "saveError": "Failed to save. Please try again.",
+    "noPersonalDataToEditError": "This user might not have personal data to edit.",
     "nameAr": "Name (Arabic)",
     "nameEn": "Name (English)",
     "nationalNumber": "National Number",

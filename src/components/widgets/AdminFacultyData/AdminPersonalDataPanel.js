@@ -254,6 +254,10 @@ function PersonalTab({ data, saving, lookups, isAr, t, onSave }) {
       await onSave(form);
       setEditing(false);
     } catch (e) {
+      if (e?.response?.status === 400) {
+        setSectionError(t("personalData.noPersonalDataToEditError"));
+        return;
+      }
       setSectionError(
         e?.response?.data?.message ||
           e?.response?.data?.title ||
