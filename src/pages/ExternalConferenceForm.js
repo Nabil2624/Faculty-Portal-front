@@ -431,7 +431,7 @@ export default function ExternalConferenceForm() {
           </FormSection>
           <KnowledgeBase participationType={formData.participation} />
           {/* زر الحفظ */}
-          <div className="pt-2">
+          <div className="pt-2 grid grid-cols-2 gap-2">
             <button
               type="submit"
               className="w-full bg-[#19355a] text-white font-bold 
@@ -441,6 +441,16 @@ export default function ExternalConferenceForm() {
             focus:outline-none focus:ring-2 focus:ring-[#19355a]/40"
             >
               {t("submit")}
+            </button>
+            <button
+              type="submit"
+              className="w-full bg-green-600 text-white font-bold 
+            py-[clamp(0.6rem,1vw,1.2rem)] px-6 rounded-[clamp(8px,1vw,14px)] shadow-md 
+            hover:bg-[#112540] active:scale-[0.99] transition-all 
+            text-[clamp(0.9rem,1.1vw,1.4rem)] tracking-wide
+            focus:outline-none focus:ring-2 focus:ring-[#19355a]/40"
+            >
+              {t("send")}
             </button>
           </div>
         </form>

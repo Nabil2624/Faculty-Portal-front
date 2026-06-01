@@ -20,7 +20,7 @@ const ExternalConferenceCategoryPage = () => {
       titleKey: "attendQf04.title",
       descKey: "attendQf04.description",
       imageUrl: attendExternalImg,
-      link: "/forms/qf-04", 
+      link: "/external-form", 
     },
     {
       id: "history",
