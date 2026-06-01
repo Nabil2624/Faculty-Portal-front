@@ -173,6 +173,11 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
           link: "/admin/tickets",
           roles: ["ManagementAdmin"],
         },
+        {
+          key: "reports",
+          link: "/admin/reports",
+          roles: ["ManagementAdmin"],
+        },
       ],
     },
   ];
