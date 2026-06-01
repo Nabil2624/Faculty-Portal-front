@@ -201,7 +201,7 @@ const TopResearchersCard = ({
                         className="text-sm font-black"
                         style={{ color: isTopThree ? gold : primary }}
                       >
-                        {res.score * 100 || 0}
+                        {res.score || 0}
                       </span>
                     </div>
                   </div>

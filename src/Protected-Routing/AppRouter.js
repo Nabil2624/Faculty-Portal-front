@@ -9,7 +9,6 @@ import {
 } from "react-router-dom";
 import { axiosEvent } from "../utils/axiosInstance";
 import ProtectedRoute from "./ProtectedRoute";
-import SessionExpiredPopup from "../components/ui/SessionExpiredPopup";
 
 // --- استيراد المكونات ---
 import RegisterPage from "../components/RegistrationPage";
@@ -65,7 +64,6 @@ import EditScientificResearch from "../pages/EditScientificResearch";
 import EditThesis from "../pages/EditThesis";
 import AddSupervisionOrJudgement from "../pages/AddSupervisionOrJudgement";
 import EditSupervisionOrJudgement from "../pages/EditSupervisionOrJudgement";
-import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
 import PrizesAndRewards from "../pages/PrizesAndRewards";
 import AddPrizesAndRewards from "../pages/AddPrizesAndRewards";
 import EditPrizesAndRewards from "../pages/EditPrizesAndRewards";
@@ -121,20 +119,24 @@ import ManageCVPage from "../pages/ManageCVPage";
 import Login from "../components/Login";
 import UsersList from "../pages/UsersList";
 import Dashboard from "../pages/Dashboard";
-
-import TopResearchersCard from "../components/widgets/DetailedDashboard/TopResearchersCard";
-import CollegeCard from "../components/widgets/DetailedDashboard/CollegeCard";
-import TopSubjectsCard from "../components/widgets/DetailedDashboard/TopSubjectsCard";
 import ResearchSourceChart from "../components/widgets/DetailedDashboard/ResearchSourceChart";
 import DetailedDashboardPage from "../pages/DetailedDashboardPage";
+import ProfilePage from "../pages/ProfilePage";
+import Chat from "../pages/Chat";
+import CategoriesPage from "../pages/CategoriesPage";
+import InternalConferenceCategoryPage from "../pages/InternalConferenceCategoryPage";
+import ExternalConferenceCategoryPage from "../pages/ExternalConferenceCategoryPage";
+import ScientificMissionCategoryPage from "../pages/ScientificMissionCategoryPage";
+import ExternalConferenceForm from "../pages/ExternalConferenceForm";
 
-// ... (باقي الـ Imports بتاعتك)
+
+
 
 function AppRouterInner() {
   const navigate = useNavigate();
   const { isCheckingAuth } = useAuth();
 
-  // خلينا بس توجيه الـ Errors هنا عشان بنحتاج useNavigate
+
   useEffect(() => {
     const handler = (e) => {
       if (typeof e.detail === "string" && e.detail.startsWith("/error/")) {
@@ -164,7 +166,15 @@ function AppRouterInner() {
         <Route element={<ProtectedRoute />}>
         
 
+
+          <Route path="/external-form" element={<ExternalConferenceForm />} />
+          <Route path="/scientific-missions-categories" element={<ScientificMissionCategoryPage />} />
+          <Route path="/external-categories" element={<ExternalConferenceCategoryPage />} />
+          <Route path="/internal-categories" element={<InternalConferenceCategoryPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
+          <Route path="/chatC" element={<Chat />} />
           <Route path="/dash" element={<DetailedDashboardPage />} />
+          <Route path="/profile-page" element={<ProfilePage />} />
           <Route path="/logs" element={<LogsPage />} />
           <Route path="/chart" element={<ResearchSourceChart />} />
           <Route path="/logs-categories" element={<LogsCategoryPage />} />

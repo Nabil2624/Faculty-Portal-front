@@ -46,7 +46,6 @@ export default function LoginPage() {
         },
       );
       const decoded = jwtDecode(loginResponse.data.token);
-      console.log(decoded);
       
       const roles = decoded?.Roles || [];
 

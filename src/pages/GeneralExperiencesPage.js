@@ -12,6 +12,7 @@ import GeneralExperienceModals from "../components/widgets/GeneralExperiences/Ge
 import useGeneralExperience from "../hooks/useGeneralExperience";
 import { deleteGeneralExperience } from "../services/generalExperience.service";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
+import ErrorCard from "../components/ui/ErrorCard";
 
 export default function GeneralExperiencesPage() {
   const { t, i18n } = useTranslation("GeneralExperiences");
@@ -86,6 +87,15 @@ export default function GeneralExperiencesPage() {
     navigate("/edit-general-experiences", { state: { item } });
   };
 
+  if (error)
+    return (
+      <ResponsiveLayoutProvider>
+        <div className="flex items-center p-3 justify-center min-h-[80vh] w-full">
+          <ErrorCard pageName={t("title")} isAr={isArabic} />
+        </div>
+      </ResponsiveLayoutProvider>
+    );
+
   return (
     <ResponsiveLayoutProvider>
       <div
@@ -94,11 +104,11 @@ export default function GeneralExperiencesPage() {
         {/* تم إزالة الـ PageHeader القديم أو تعديله لأن البحث الآن داخل الجدول */}
         <PageHeaderNoAction title={t("title")} icon={Globe} />
 
-        {!loading && error && (
+        {/* {!loading && error && (
           <div className="flex-1 flex items-center justify-center text-red-500 font-bold">
             {t("errors.loadFailed")}
           </div>
-        )}
+        )} */}
 
         <div className="flex-1 overflow-hidden">
           <GeneralExperiencesTable

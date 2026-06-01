@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   PieChart,
   Pie,
@@ -6,13 +6,18 @@ import {
   ResponsiveContainer,
   Tooltip,
   Legend,
+  Sector
 } from "recharts";
 import { Globe } from "lucide-react";
 
-const ResearchSourceChart = ({ isArabic = true, local , international , footerText }) => {
+const ResearchSourceChart = ({ isArabic = true, local, international, footerText }) => {
+  const [activeIndex, setActiveIndex] = useState(null);
+
   const primary = "#19355A";
   const gold = "#B38E19";
-  // const gray = "#94a3b8";
+  // الألوان عند الـ Hover (درجات أفتح قليلاً)
+  const primaryHover = "#254d82";
+  const goldHover = "#d4aa24";
 
   const localValue = local || 0;
   const internationalValue = international || 0;
@@ -28,30 +33,60 @@ const ResearchSourceChart = ({ isArabic = true, local , international , footerTe
       value: internationalValue,
       percentage: calculatePercentage(internationalValue),
       color: primary,
+      hoverColor: primaryHover,
     },
     {
       name: isArabic ? "أبحاث محلية" : "Local",
       value: localValue,
       percentage: calculatePercentage(localValue),
       color: gold,
+      hoverColor: goldHover,
     },
   ];
 
-  const tooltipStyle = {
-    backgroundColor: "#fff",
-    border: "none",
-    borderRadius: "12px",
-    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-    fontSize: "12px",
-    fontWeight: "bold",
-    textAlign: isArabic ? "right" : "left",
-    direction: isArabic ? "rtl" : "ltr",
+  // دالة لرسم الجزء النشط بتأثير التكبير
+  const renderActiveShape = (props) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+    return (
+      <g>
+        <Sector
+          cx={cx}
+          cy={cy}
+          innerRadius={innerRadius}
+          outerRadius={outerRadius + 8} // زيادة القطر الخارجي للتكبير
+          startAngle={startAngle}
+          endAngle={endAngle}
+          fill={fill}
+          style={{ filter: "drop-shadow(0px 4px 10px rgba(0,0,0,0.2))" }}
+        />
+      </g>
+    );
+  };
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div 
+          className="bg-white p-3 rounded-xl shadow-2xl border border-gray-100 flex flex-col gap-1 min-w-[120px]"
+          style={{ direction: isArabic ? "rtl" : "ltr", zIndex: 9999 }}
+        >
+          <span className="text-[#19355A] font-bold text-xs">{payload[0].name}</span>
+          <span className="text-[#B38E19] font-black text-sm">
+            {payload[0].value.toLocaleString()} 
+            <span className="text-[10px] text-gray-400 mr-1 ml-1">
+              ({payload[0].payload.percentage}%)
+            </span>
+          </span>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
     <div
       dir={isArabic ? "rtl" : "ltr"}
-      className="w-full h-full bg-white shadow-[0_10px_30px_rgba(25,53,90,0.1)] rounded-[2rem] border border-gray-100 overflow-hidden transition-all hover:shadow-xl flex flex-col focus:outline-none select-none"
+      className="w-full h-full bg-white shadow-[0_10px_30px_rgba(25,53,90,0.1)] rounded-[2rem] border border-gray-100 overflow-hidden transition-shadow hover:shadow-xl flex flex-col focus:outline-none select-none"
     >
       <div className="px-6 py-5 border-b bg-[#19355A] border-gray-50 flex justify-between items-center shrink-0">
         <div>
@@ -71,6 +106,8 @@ const ResearchSourceChart = ({ isArabic = true, local , international , footerTe
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
+              activeIndex={activeIndex}
+              activeShape={renderActiveShape}
               data={chartData}
               cx="50%"
               cy="45%"
@@ -79,41 +116,33 @@ const ResearchSourceChart = ({ isArabic = true, local , international , footerTe
               paddingAngle={8}
               dataKey="value"
               stroke="none"
-              style={{ outline: "none" }}
+              style={{ outline: "none", cursor: "pointer" }}
+              onMouseEnter={(_, index) => setActiveIndex(index)}
+              onMouseLeave={() => setActiveIndex(null)}
             >
               {chartData.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`} 
-                  fill={entry.color} 
-                  style={{ outline: "none" }} 
+                  fill={activeIndex === index ? entry.hoverColor : entry.color} 
+                  style={{ outline: "none", transition: "fill 0.3s ease" }} 
                 />
               ))}
             </Pie>
 
-            <Tooltip
-              contentStyle={tooltipStyle}
-              itemStyle={{ color: "#19355A" }}
-              cursor={{ fill: "transparent" }}
-            />
+            <Tooltip content={<CustomTooltip />} wrapperStyle={{ zIndex: 1000 }} />
 
             <Legend
               verticalAlign="bottom"
               height={36}
               iconType="circle"
-              wrapperStyle={{ outline: "none", paddingBottom: "5px" }}
               formatter={(value) => (
-                <span className="text-[11px] font-bold text-gray-600 px-1">
-                  {value}
-                </span>
+                <span className="text-[11px] font-bold text-gray-600 px-1">{value}</span>
               )}
             />
           </PieChart>
         </ResponsiveContainer>
 
-        <div
-          className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
-          style={{ top: "-10%" }}
-        >
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none" style={{ top: "-10%" }}>
           <span className="text-[9px] text-gray-400 font-black uppercase tracking-tighter">
             {isArabic ? "إجمالي الأبحاث" : "TOTAL RESEARCH"}
           </span>
@@ -127,12 +156,11 @@ const ResearchSourceChart = ({ isArabic = true, local , international , footerTe
         {chartData.map((item, index) => (
           <div
             key={index}
-            className="bg-gray-50 p-2.5 rounded-2xl flex flex-col items-center border border-gray-100 hover:border-gray-200 transition-all shadow-sm"
+            className={`p-2.5 rounded-2xl flex flex-col items-center border transition-all shadow-sm ${
+              activeIndex === index ? "bg-white border-[#B38E19] scale-105" : "bg-gray-50 border-gray-100"
+            }`}
           >
-            <span
-              className="text-[12px] font-black"
-              style={{ color: item.color }}
-            >
+            <span className="text-[12px] font-black" style={{ color: item.color }}>
               {item.percentage}%
             </span>
             <span className="text-[9px] text-gray-400 font-bold truncate w-full text-center mt-0.5">
@@ -144,12 +172,11 @@ const ResearchSourceChart = ({ isArabic = true, local , international , footerTe
 
       <div className="bg-gray-50/50 py-3 px-6 flex justify-between items-center border-t border-gray-100 mt-auto shrink-0">
         <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-          {footerText + " " + new Date().getFullYear()}
+          {footerText} {new Date().getFullYear()}
         </span>
         <div className="flex gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#B38E19]"></div>
-          <div className="w-1.5 h-1.5 rounded-full bg-gray-200"></div>
-          <div className="w-1.5 h-1.5 rounded-full bg-gray-200"></div>
+          <div className={`w-1.5 h-1.5 rounded-full transition-colors ${activeIndex === 1 ? "bg-[#B38E19]" : "bg-gray-200"}`}></div>
+          <div className={`w-1.5 h-1.5 rounded-full transition-colors ${activeIndex === 0 ? "bg-[#19355A]" : "bg-gray-200"}`}></div>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import AppRouter from "./Protected-Routing/AppRouter";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
+
 // مكون فرعي عشان نقدر نستخدم الـ useAuth لظهور الـ Spinner
 function AppContent() {
   const { isCheckingAuth } = useAuth();
