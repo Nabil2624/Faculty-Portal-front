@@ -3,6 +3,7 @@
   "loading": "Loading messages...",
   "noMessages": "No messages yet. Start the conversation.",
   "noTicket": "No ticket selected.",
+  "noTicketSub": "Please select a ticket from the list to start chatting.",
   "goBack": "Go Back",
   "loadMore": "Load older messages",
   "inputPlaceholder": "Type a message…",

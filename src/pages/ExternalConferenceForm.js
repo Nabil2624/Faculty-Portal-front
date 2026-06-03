@@ -396,13 +396,7 @@ export default function ExternalConferenceForm() {
 
             {/* موافقة العميد والبديل */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <InputFieldForm
-                label={t("deanApproval")}
-                name="deanApproval"
-                value={formData.deanApproval}
-                onChange={handleInputChange}
-                placeholder={t("placeholders.deanApproval")}
-              />
+
               <InputFieldForm
                 label={t("substituteWorker")}
                 name="substituteWorker"

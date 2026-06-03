@@ -43,3 +43,19 @@ export const getDepartmentResearchesDashboard = {
       skipGlobalErrorHandler: true,
     }),
 };
+
+export const getOverallSystemPerformanceReportPreview = (notes = "") =>
+  axiosInstance.get(
+    "/DashboardAndReports/OverallSystemPerformanceReportPreview",
+    {
+      params: { notes },
+      skipGlobalErrorHandler: true,
+    },
+  );
+
+export const downloadGeneralSystemReportPdf = (notes = "") =>
+  axiosInstance.get("/DashboardAndReports/DownloadGeneralSystemReportPdf", {
+    params: { notes },
+    responseType: "blob",
+    skipGlobalErrorHandler: true,
+  });
