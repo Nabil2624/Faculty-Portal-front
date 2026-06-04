@@ -1,0 +1,18 @@
+{
+  "tracker": {
+    "title": "Application Tracker",
+    "back": "Back",
+    "currentStatus": "Current Status",
+    "comment": "Rejection Comment",
+
+    "submitted": "Submitted",
+    "underReview": "Under Review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+
+    "applicant": "Applicant",
+    "conference": "Conference",
+    "submissionDate": "Submission Date",
+    "requestId": "Request ID"
+  }
+}

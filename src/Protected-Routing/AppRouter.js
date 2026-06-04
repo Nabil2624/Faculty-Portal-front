@@ -129,14 +129,11 @@ import InternalConferenceCategoryPage from "../pages/InternalConferenceCategoryP
 import ExternalConferenceCategoryPage from "../pages/ExternalConferenceCategoryPage";
 import ScientificMissionCategoryPage from "../pages/ScientificMissionCategoryPage";
 import ExternalConferenceForm from "../pages/ExternalConferenceForm";
-
-
-
+import OrderTrackerPage from "../pages/OrderTrackerPage";
 
 function AppRouterInner() {
   const navigate = useNavigate();
   const { isCheckingAuth } = useAuth();
-
 
   useEffect(() => {
     const handler = (e) => {
@@ -160,18 +157,25 @@ function AppRouterInner() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/error/:code" element={<ErrorPage />} />
         <Route path="/under-development" element={<UnderDevelopment />} />
-        <Route path="/L" element={<Login />} />
+
         {/* ... باقي الـ Public Routes */}
 
         {/* --- Protected Routes --- */}
         <Route element={<ProtectedRoute />}>
-        
-
-
+          <Route path="/order" element={<OrderTrackerPage />} />
           <Route path="/external-form" element={<ExternalConferenceForm />} />
-          <Route path="/scientific-missions-categories" element={<ScientificMissionCategoryPage />} />
-          <Route path="/external-categories" element={<ExternalConferenceCategoryPage />} />
-          <Route path="/internal-categories" element={<InternalConferenceCategoryPage />} />
+          <Route
+            path="/scientific-missions-categories"
+            element={<ScientificMissionCategoryPage />}
+          />
+          <Route
+            path="/external-categories"
+            element={<ExternalConferenceCategoryPage />}
+          />
+          <Route
+            path="/internal-categories"
+            element={<InternalConferenceCategoryPage />}
+          />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/chatC" element={<Chat />} />
           <Route path="/dash" element={<DetailedDashboardPage />} />

@@ -1,6 +1,6 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 export default function PageHeaderAction({ title, icon: Icon }) {
   const { i18n } = useTranslation();
@@ -41,7 +41,6 @@ export default function PageHeaderAction({ title, icon: Icon }) {
       `}</style>
 
       <div className="w-full flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border-b-[3px] border-[#b38e19] mb-6 gap-4">
-        
         {/* الجزء الأيمن/الأيسر: الأيقونة والعنوان */}
         <div className="flex items-center gap-3 min-w-0">
           {/* حاوية الأيقونة (تظهر فقط لو تم تمريرها) */}
@@ -62,12 +61,12 @@ export default function PageHeaderAction({ title, icon: Icon }) {
           </div>
         </div>
 
-        {/* 🌟 زرار العودة المطور بالسهم الكبير المتحرك 🌟 */}
+        
         <button
           onClick={() => navigate(-1)}
           className="group shiny-btn bg-gradient-to-r from-[#b38e19] to-[#d4af37] text-white px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-[0_4px_15px_rgba(179,142,25,0.35)] hover:shadow-[0_6px_20px_rgba(25,53,90,0.4)] hover:from-[#19355A] hover:to-[#254d80] transition-all duration-500 hover:-translate-y-0.5 active:translate-y-0 shrink-0 flex items-center gap-2"
         >
-          {/* سهم العودة العربي: كبير، تخين، ويندفع لليسار عند الهوفر */}
+         
           {isRtl && (
             <span className="text-base sm:text-xl font-extrabold inline-block transform transition-transform duration-300 group-hover:-translate-x-1.5">
               ←
@@ -78,14 +77,13 @@ export default function PageHeaderAction({ title, icon: Icon }) {
             {isRtl ? "عودة" : "Back"}
           </span>
 
-          {/* سهم العودة الإنجليزي: كبير، تخين، ويندفع لليمين عند الهوفر */}
+          
           {!isRtl && (
             <span className="text-base sm:text-xl font-extrabold inline-block transform transition-transform duration-300 group-hover:translate-x-1.5">
               →
             </span>
           )}
         </button>
-
       </div>
     </>
   );
