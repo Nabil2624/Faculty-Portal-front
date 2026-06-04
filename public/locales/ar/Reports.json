@@ -46,7 +46,7 @@
     "view": "عرض",
     "columns": {
       "no": "#",
-      "memberName": "اسم عضو هيئة التدريس",
+      "memberName": "الاسم",
       "department": "القسم",
       "email": "البريد الإلكتروني",
       "phone": "الهاتف",

@@ -1,17 +1,17 @@
-// ─── Reports Service ──────────────────────────────────────────────────────────
-// TODO (backend integration): Replace all dummy-data functions below with real
-// API calls using the shared axiosInstance (or a dedicated axios instance).
-//
-// Pattern used in other services:
-//   import axiosInstance from "../utils/axiosInstance";
-//   export async function getDetailedFacultyReport(params) {
-//     const res = await axiosInstance.get("/Reports/DetailedFaculty", { params });
-//     return res.data;
-//   }
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Reports Service ─────────────────────────────────────────────────────────
+import axiosInstance from "../utils/axiosInstance";
 
-// ─── Lookup: Universities / Faculties / Departments ──────────────────────────
-// TODO: fetch from API  →  GET /Lookups/Universities
+// ─── Lookup: Faculties with their departments ─────────────────────────────────
+// GET /LookUpItems/UniversityFacultiesWithDepartments
+export async function getUniversityFacultiesWithDepartments() {
+  const res = await axiosInstance.get(
+    "/LookUpItems/UniversityFacultiesWithDepartments",
+    { skipGlobalErrorHandler: true },
+  );
+  return res.data;
+}
+
+// kept for compatibility with other report types that still use dummy data
 export async function getUniversitiesTree() {
   // Dummy data: array of universities, each with faculties, each with departments
   return [
@@ -67,9 +67,32 @@ export async function getUniversitiesTree() {
 }
 
 // ─── Report: Detailed Faculty Members ────────────────────────────────────────
-// TODO: GET /Reports/DetailedFaculty?departmentIds[]=...
-export async function getDetailedFacultyReport({ departmentIds = [] }) {
-  // Dummy data – replace with real API call
+// GET /DashboardAndReports/FacultyMembersDataReportTable
+export async function getDetailedFacultyReport({
+  facultyIds = [],
+  departmentIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 0,
+  pageSize = 20,
+}) {
+  const params = new URLSearchParams();
+  if (sorting) params.append("Sorting", sorting);
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
+
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/FacultyMembersDataReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+  return res.data; // { pageIndex, pageSize, totalCount, data: [...] }
+}
+
+// ─── DUMMY PLACEHOLDER – kept only until remaining reports are integrated ─────
+async function _dummyDetailedFacultyRows() {
   const rows = [
     {
       id: 1,
@@ -289,118 +312,36 @@ export async function getDetailedFacultyReport({ departmentIds = [] }) {
     },
   ];
 
-  return {
-    data: rows,
-    totalCount: rows.length,
-  };
+  return { data: rows, totalCount: rows.length };
 }
 
-// ─── Report: Biannual Research ────────────────────────────────────────────────
-// TODO: GET /Reports/BiannualResearch?departmentIds[]=...
-export async function getBiannualResearchReport({ departmentIds = [] }) {
-  const rows = [
-    {
-      id: 1,
-      title_ar: "تأثير الذكاء الاصطناعي على قطاع التعليم",
-      title_en: "Impact of AI on Education Sector",
-      publicationType_ar: "دولي",
-      publicationType_en: "International",
-      year: 2024,
-    },
-    {
-      id: 2,
-      title_ar: "بروتوكولات أمان الشبكات اللاسلكية",
-      title_en: "Wireless Network Security Protocols",
-      publicationType_ar: "دولي",
-      publicationType_en: "International",
-      year: 2024,
-    },
-    {
-      id: 3,
-      title_ar: "تحليل الجينوم باستخدام التعلم العميق",
-      title_en: "Genome Analysis Using Deep Learning",
-      publicationType_ar: "محلي",
-      publicationType_en: "Local",
-      year: 2024,
-    },
-    {
-      id: 4,
-      title_ar: "نمذجة المناخ وتغير درجات الحرارة",
-      title_en: "Climate Modeling and Temperature Changes",
-      publicationType_ar: "دولي",
-      publicationType_en: "International",
-      year: 2023,
-    },
-    {
-      id: 5,
-      title_ar: "تقنيات تخزين الطاقة الشمسية",
-      title_en: "Solar Energy Storage Technologies",
-      publicationType_ar: "محلي",
-      publicationType_en: "Local",
-      year: 2023,
-    },
-    {
-      id: 6,
-      title_ar: "الروبوتات الطبية في غرف العمليات",
-      title_en: "Medical Robots in Operating Rooms",
-      publicationType_ar: "دولي",
-      publicationType_en: "International",
-      year: 2023,
-    },
-    {
-      id: 7,
-      title_ar: "تأثير التلوث الهوائي على الصحة العامة",
-      title_en: "Impact of Air Pollution on Public Health",
-      publicationType_ar: "محلي",
-      publicationType_en: "Local",
-      year: 2023,
-    },
-    {
-      id: 8,
-      title_ar: "تطوير المواد النانوية للتطبيقات الطبية",
-      title_en: "Developing Nanomaterials for Medical Applications",
-      publicationType_ar: "دولي",
-      publicationType_en: "International",
-      year: 2022,
-    },
-    {
-      id: 9,
-      title_ar: "منهجية التعلم النشط في التعليم الجامعي",
-      title_en: "Active Learning Methodology in Higher Education",
-      publicationType_ar: "محلي",
-      publicationType_en: "Local",
-      year: 2022,
-    },
-    {
-      id: 10,
-      title_ar: "تحسين كفاءة محركات الرياح",
-      title_en: "Improving Wind Turbine Efficiency",
-      publicationType_ar: "دولي",
-      publicationType_en: "International",
-      year: 2022,
-    },
-    {
-      id: 11,
-      title_ar: "معالجة مياه الصرف الصحي بالطاقة الشمسية",
-      title_en: "Wastewater Treatment Using Solar Energy",
-      publicationType_ar: "محلي",
-      publicationType_en: "Local",
-      year: 2021,
-    },
-    {
-      id: 12,
-      title_ar: "التصوير بالرنين المغناطيسي بالذكاء الاصطناعي",
-      title_en: "MRI Imaging with Artificial Intelligence",
-      publicationType_ar: "دولي",
-      publicationType_en: "International",
-      year: 2021,
-    },
-  ];
+// ─── Report: Biannual Research per Year ───────────────────────────────────────
+// GET /DashboardAndReports/ResearchesPerYearReportTable
+export async function getBiannualResearchReport({
+  facultyIds = [],
+  departmentIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 0,
+  pageSize = 20,
+  publicationType = "",
+  pubYears = [],
+}) {
+  const params = new URLSearchParams();
+  if (sorting) params.append("Sort", sorting);
+  if (publicationType) params.append("PublicationType", publicationType);
+  pubYears.forEach((y) => params.append("PubYears", y));
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
 
-  return {
-    data: rows,
-    totalCount: rows.length,
-  };
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/ResearchesPerYearReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+  return res.data; // { pageIndex, pageSize, totalCount, data: [{ researchTitle, publicationType, pubYear }] }
 }
 
 // ─── Report: Research Statistics ─────────────────────────────────────────────
@@ -479,76 +420,31 @@ export async function getResearchStatisticsReport({ departmentIds = [] }) {
   };
 }
 
-// ─── Report: Seminars & Conferences Statistics ───────────────────────────────
-// TODO: GET /Reports/SeminarsStatistics?departmentIds[]=...
-export async function getSeminarsStatisticsReport({ departmentIds = [] }) {
-  const rows = [
-    {
-      id: 1,
-      name_ar: "د. أحمد محمد علي",
-      name_en: "Dr. Ahmed Mohamed Ali",
-      seminarType_ar: "ندوة",
-      seminarType_en: "Seminar",
-      seminarCount: 3,
-    },
-    {
-      id: 2,
-      name_ar: "د. سارة إبراهيم حسن",
-      name_en: "Dr. Sara Ibrahim Hassan",
-      seminarType_ar: "مؤتمر",
-      seminarType_en: "Conference",
-      seminarCount: 5,
-    },
-    {
-      id: 3,
-      name_ar: "أ.د. محمود كمال فريد",
-      name_en: "Prof. Mahmoud Kamal Farid",
-      seminarType_ar: "ندوة",
-      seminarType_en: "Seminar",
-      seminarCount: 2,
-    },
-    {
-      id: 4,
-      name_ar: "د. نور الدين عبد الله",
-      name_en: "Dr. Nour El-Din Abdullah",
-      seminarType_ar: "مؤتمر",
-      seminarType_en: "Conference",
-      seminarCount: 7,
-    },
-    {
-      id: 5,
-      name_ar: "أ. فاطمة يوسف خليل",
-      name_en: "Prof. Fatma Yousef Khalil",
-      seminarType_ar: "ندوة",
-      seminarType_en: "Seminar",
-      seminarCount: 4,
-    },
-    {
-      id: 6,
-      name_ar: "د. عمر فاروق الشيخ",
-      name_en: "Dr. Omar Farouk El-Sheikh",
-      seminarType_ar: "مؤتمر",
-      seminarType_en: "Conference",
-      seminarCount: 6,
-    },
-    {
-      id: 7,
-      name_ar: "د. منى السيد رمضان",
-      name_en: "Dr. Mona El-Sayed Ramadan",
-      seminarType_ar: "ندوة",
-      seminarType_en: "Seminar",
-      seminarCount: 1,
-    },
-    {
-      id: 8,
-      name_ar: "أ.د. كريم عادل رزق",
-      name_en: "Prof. Karim Adel Rizk",
-      seminarType_ar: "مؤتمر",
-      seminarType_en: "Conference",
-      seminarCount: 9,
-    },
-  ];
-  return { data: rows, totalCount: rows.length };
+// ─── Report: Conferences & Seminars ──────────────────────────────────────────
+// GET /DashboardAndReports/ConferencesAndSeminarsReportTable
+export async function getSeminarsStatisticsReport({
+  facultyIds = [],
+  departmentIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 0,
+  pageSize = 20,
+  type = "",
+}) {
+  const params = new URLSearchParams();
+  if (type) params.append("Type", type);
+  if (sorting) params.append("Sort", sorting);
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
+
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/ConferencesAndSeminarsReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+  return res.data; // { pageIndex, pageSize, totalCount, data: [...] }
 }
 
 // ─── Report: Experiences Statistics ──────────────────────────────────────────

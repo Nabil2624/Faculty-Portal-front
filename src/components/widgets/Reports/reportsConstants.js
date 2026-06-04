@@ -61,19 +61,19 @@ export const REPORT_CATEGORIES = [
 // "tKey" maps to  t(`table.columns.<key>`)  in the Reports namespace.
 export const REPORT_COLUMNS = {
   [REPORT_TYPES.DETAILED_FACULTY]: [
-    { key: "index", tKey: "no", width: "3rem" },
-    { key: "name", tKey: "memberName", width: "12rem" },
-    { key: "department", tKey: "department", width: "10rem" },
-    { key: "email", tKey: "email", width: "12rem" },
-    { key: "phone", tKey: "phone", width: "20rem" },
+    { key: "index", tKey: "no", width: "1rem" },
+    { key: "name", tKey: "memberName", width: "26rem" },
+    { key: "department", tKey: "department", width: "8rem" },
+    { key: "email", tKey: "email", width: "11rem" },
+    { key: "phone", tKey: "phone", width: "1rem" },
     {
       key: "internationalResearches",
       tKey: "internationalResearches",
-      width: "8rem",
+      width: "1rem",
     },
-    { key: "localResearches", tKey: "localResearches", width: "7rem" },
-    { key: "patents", tKey: "patents", width: "6rem" },
-    { key: "awards", tKey: "awards", width: "6rem" },
+    { key: "localResearches", tKey: "localResearches", width: "5rem" },
+    { key: "patents", tKey: "patents", width: "4rem" },
+    { key: "awards", tKey: "awards", width: "4rem" },
   ],
   [REPORT_TYPES.BIANNUAL_RESEARCH]: [
     { key: "index", tKey: "no", width: "3rem" },
@@ -152,6 +152,42 @@ export const REPORT_COLUMNS = {
 
 // ─── Which report types support row-click details popup ───────────────────────
 export const SUPPORTS_ROW_DETAILS = new Set([REPORT_TYPES.DETAILED_FACULTY]);
+
+// ─── Which report types use server-side pagination / search / sort ────────────
+export const SERVER_SIDE_TYPES = new Set([
+  REPORT_TYPES.DETAILED_FACULTY,
+  REPORT_TYPES.BIANNUAL_RESEARCH,
+  REPORT_TYPES.SEMINARS_STATS,
+]);
+
+// ─── Sort enum values for DETAILED_FACULTY (server-side) ─────────────────────
+export const DETAILED_FACULTY_SORT_MAP = {
+  name: { asc: "NameAsc", desc: "NameDesc" },
+  email: { asc: "EmailAsc", desc: "EmailDesc" },
+  internationalResearches: {
+    asc: "NoOfInternationalResearchesASC",
+    desc: "NoOfInternationalResearchesDesc",
+  },
+  localResearches: {
+    asc: "NoOfLocalResearchesAsc",
+    desc: "NoOfLocalResearchesDesc",
+  },
+  patents: { asc: "NoOfPatentsAsc", desc: "NoOfPatentsDesc" },
+  awards: { asc: "NoOfAwardsAsc", desc: "NoOfAwardsDesc" },
+};
+
+// ─── Sort enum values for BIANNUAL_RESEARCH (server-side) ────────────────────
+export const BIANNUAL_RESEARCH_SORT_MAP = {
+  year: { asc: "PubYearASC", desc: "PubYearDESC" },
+};
+
+// ─── Sort enum values for SEMINARS_STATS (server-side) ───────────────────────
+export const SEMINARS_STATS_SORT_MAP = {
+  seminarCount: {
+    asc: "NoOfConferencesOrSeminarsAsc",
+    desc: "NoOfConferencesOrSeminarsDesc",
+  },
+};
 
 // ─── Theme colors (matches rest of the system) ────────────────────────────────
 export const COLORS = {

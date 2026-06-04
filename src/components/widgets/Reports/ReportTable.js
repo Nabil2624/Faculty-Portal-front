@@ -14,19 +14,65 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useRef } from "react";
-import { Printer, RefreshCw, XCircle, FileSearch } from "lucide-react";
-import { REPORT_COLUMNS, SUPPORTS_ROW_DETAILS } from "./reportsConstants";
+import {
+  Printer,
+  RefreshCw,
+  XCircle,
+  FileSearch,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import {
+  REPORT_COLUMNS,
+  SUPPORTS_ROW_DETAILS,
+  SERVER_SIDE_TYPES,
+  DETAILED_FACULTY_SORT_MAP,
+  BIANNUAL_RESEARCH_SORT_MAP,
+  SEMINARS_STATS_SORT_MAP,
+} from "./reportsConstants";
 
-// ─── Cell value resolver ──────────────────────────────────────────────────────
+// Sort map per report type
+const SORT_MAP_BY_TYPE = {
+  DETAILED_FACULTY: DETAILED_FACULTY_SORT_MAP,
+  BIANNUAL_RESEARCH: BIANNUAL_RESEARCH_SORT_MAP,
+  SEMINARS_STATS: SEMINARS_STATS_SORT_MAP,
+};
+
+// Supports both dummy data field names and real API field names
 function resolveCell(row, colKey, isArabic, index) {
   if (colKey === "index") return index + 1;
-  if (colKey === "name") return isArabic ? row.name_ar : row.name_en;
-  if (colKey === "department")
-    return isArabic ? row.department_ar : row.department_en;
-  if (colKey === "title") return isArabic ? row.title_ar : row.title_en;
-  if (colKey === "faculty") return isArabic ? row.faculty_ar : row.faculty_en;
-  if (colKey === "seminarType")
-    return isArabic ? row.seminarType_ar : row.seminarType_en;
+  if (colKey === "name") {
+    if (row.name_ar !== undefined) return isArabic ? row.name_ar : row.name_en;
+    return row.name ?? row.facultyMemberName ?? "-";
+  }
+  if (colKey === "department") {
+    if (row.department_ar !== undefined)
+      return isArabic ? row.department_ar : row.department_en;
+    return row.department ?? "-";
+  }
+  if (colKey === "faculty") {
+    if (row.faculty_ar !== undefined)
+      return isArabic ? row.faculty_ar : row.faculty_en;
+    return row.faculty ?? "-";
+  }
+  // title: dummy uses title_ar/title_en; API (BIANNUAL_RESEARCH) uses researchTitle
+  if (colKey === "title") {
+    if (row.title_ar !== undefined)
+      return isArabic ? row.title_ar : row.title_en;
+    return row.researchTitle ?? row.title ?? "-";
+  }
+  // seminarType: dummy uses seminarType_ar/en; API uses type
+  if (colKey === "seminarType") {
+    if (row.seminarType_ar !== undefined)
+      return isArabic ? row.seminarType_ar : row.seminarType_en;
+    return row.type ?? "-";
+  }
+  // seminarCount: dummy uses seminarCount; API uses noOfConferencesOrSeminars
+  if (colKey === "seminarCount")
+    return row.seminarCount ?? row.noOfConferencesOrSeminars ?? "-";
   if (colKey === "experienceType")
     return isArabic ? row.experienceType_ar : row.experienceType_en;
   if (colKey === "publicationRole")
@@ -41,17 +87,32 @@ function resolveCell(row, colKey, isArabic, index) {
   if (colKey === "patentScope")
     return isArabic ? row.patentScope_ar : row.patentScope_en;
   if (colKey === "patentCount") return row.patentCount ?? "-";
-  if (colKey === "publicationType")
-    return isArabic ? row.publicationType_ar : row.publicationType_en;
-  if (colKey === "year") return row.year;
-  if (colKey === "email") return row.email;
-  if (colKey === "phone") return row.phone;
+  // publicationType: dummy uses _ar/_en; API returns plain enum string
+  if (colKey === "publicationType") {
+    if (row.publicationType_ar !== undefined)
+      return isArabic ? row.publicationType_ar : row.publicationType_en;
+    if (isArabic) {
+      const arMap = {
+        International: "دولي",
+        Local: "محلي",
+        Unspecified: "غير محدد",
+      };
+      return arMap[row.publicationType] ?? row.publicationType ?? "-";
+    }
+    return row.publicationType ?? "-";
+  }
+  // year: dummy uses year; API (BIANNUAL_RESEARCH) uses pubYear
+  if (colKey === "year") return row.year ?? row.pubYear ?? "-";
+  if (colKey === "email") return row.email ?? "-";
+  if (colKey === "phone") return row.phone ?? row.phoneNumber ?? "-";
   if (colKey === "internationalResearches")
-    return row.internationalResearches ?? "-";
-  if (colKey === "localResearches") return row.localResearches ?? "-";
-  if (colKey === "patents") return row.patents ?? "-";
-  if (colKey === "awards") return row.awards ?? "-";
-  // Fallback: try direct key access
+    return (
+      row.internationalResearches ?? row.noOfInternationalResearches ?? "-"
+    );
+  if (colKey === "localResearches")
+    return row.localResearches ?? row.noOfLocalResearches ?? "-";
+  if (colKey === "patents") return row.patents ?? row.noOfPatents ?? "-";
+  if (colKey === "awards") return row.awards ?? row.noOfAwards ?? "-";
   return row[colKey] ?? "-";
 }
 
@@ -65,10 +126,66 @@ export function ReportTable({
   onRowClick,
   t,
   isArabic,
+  // DETAILED_FACULTY server-side sort + pagination
+  sorting,
+  onSort,
+  pageIndex = 0,
+  pageSize = 20,
+  onPageChange,
 }) {
   const printRef = useRef(null);
   const columns = REPORT_COLUMNS[reportType] || [];
   const supportsDetails = SUPPORTS_ROW_DETAILS.has(reportType);
+  const isServerSide = SERVER_SIDE_TYPES.has(reportType);
+  const currentSortMap = SORT_MAP_BY_TYPE[reportType] || {};
+
+  // ── Sort helper for server-side types ─────────────────────────────────────
+  const handleHeaderClick = (colKey) => {
+    if (!isServerSide || !onSort) return;
+    const sortMap = currentSortMap[colKey];
+    if (!sortMap) return;
+    const isAsc = sorting === sortMap.asc;
+    onSort(isAsc ? sortMap.desc : sortMap.asc);
+  };
+
+  const getSortIcon = (colKey) => {
+    if (!isServerSide) return null;
+    const sortMap = currentSortMap[colKey];
+    if (!sortMap) return null;
+    if (sorting === sortMap.asc)
+      return (
+        <ChevronUp
+          style={{
+            width: "0.85rem",
+            height: "0.85rem",
+            display: "inline",
+            verticalAlign: "middle",
+          }}
+        />
+      );
+    if (sorting === sortMap.desc)
+      return (
+        <ChevronDown
+          style={{
+            width: "0.85rem",
+            height: "0.85rem",
+            display: "inline",
+            verticalAlign: "middle",
+          }}
+        />
+      );
+    return (
+      <ChevronsUpDown
+        style={{
+          width: "0.85rem",
+          height: "0.85rem",
+          display: "inline",
+          verticalAlign: "middle",
+          opacity: 0.4,
+        }}
+      />
+    );
+  };
 
   // ── Print handler ─────────────────────────────────────────────────────────
   const handlePrint = () => {
@@ -214,33 +331,51 @@ export function ReportTable({
 
         {/* Actual table (hidden while loading/error) */}
         {!loading && !error && data.length > 0 && columns.length > 0 && (
-          <div className="overflow-x-auto" ref={printRef}>
+          <div className={isServerSide ? "" : "overflow-x-auto"} ref={printRef}>
             <table
               className="w-full border-collapse"
               style={{
-                minWidth: "clamp(500px, 70vw, 1200px)",
+                ...(isServerSide
+                  ? {}
+                  : { minWidth: "clamp(500px, 70vw, 1200px)" }),
                 direction: isArabic ? "rtl" : "ltr",
               }}
             >
               <thead>
                 <tr className="bg-[#19355a] text-white">
-                  {columns.map((col) => (
-                    <th
-                      key={col.key}
-                      style={{
-                        width: col.width,
-                        padding:
-                          "clamp(0.5rem, 0.9vw, 1rem) clamp(0.6rem, 1vw, 1.1rem)",
-                        fontSize: "clamp(0.6rem, 0.82vw, 0.9rem)",
-                        fontWeight: 600,
-                        textAlign: "center",
-                        whiteSpace: "nowrap",
-                        letterSpacing: "0.01em",
-                      }}
-                    >
-                      {t(`table.columns.${col.tKey}`)}
-                    </th>
-                  ))}
+                  {columns.map((col) => {
+                    const isSortable =
+                      isServerSide && !!currentSortMap[col.key];
+                    return (
+                      <th
+                        key={col.key}
+                        onClick={
+                          isSortable
+                            ? () => handleHeaderClick(col.key)
+                            : undefined
+                        }
+                        style={{
+                          width: col.width,
+                          padding:
+                            "clamp(0.5rem, 0.9vw, 1rem) clamp(0.6rem, 1vw, 1.1rem)",
+                          fontSize: "clamp(0.6rem, 0.82vw, 0.9rem)",
+                          fontWeight: 600,
+                          textAlign: "center",
+                          whiteSpace: "nowrap",
+                          letterSpacing: "0.01em",
+                          cursor: isSortable ? "pointer" : "default",
+                          userSelect: "none",
+                        }}
+                      >
+                        {t(`table.columns.${col.tKey}`)}
+                        {isSortable && (
+                          <span style={{ marginInlineStart: "0.25rem" }}>
+                            {getSortIcon(col.key)}
+                          </span>
+                        )}
+                      </th>
+                    );
+                  })}
                   {/* Extra column for "details" on clickable rows */}
                   {supportsDetails && (
                     <th
@@ -311,26 +446,85 @@ export function ReportTable({
         )}
       </div>
 
-      {/* Total count footer */}
-      {!loading && !error && data.length > 0 && (
-        <div
-          className="flex items-center justify-between rounded-xl border border-[#19355a]/10 bg-[#19355a]/5 px-4"
-          style={{
-            padding:
-              "clamp(0.5rem, 0.8vw, 0.9rem) clamp(0.8rem, 1.2vw, 1.3rem)",
-            fontSize: "clamp(0.62rem, 0.85vw, 0.92rem)",
-          }}
-          dir={isArabic ? "rtl" : "ltr"}
-        >
-          <span className="text-gray-600">{t("table.totalRows")}</span>
-          <span
-            className="font-bold text-[#19355a]"
-            style={{ fontSize: "clamp(0.75rem, 1vw, 1.1rem)" }}
+      {/* Footer: pagination for server-side types, total count for others */}
+      {!loading &&
+        !error &&
+        data.length > 0 &&
+        (isServerSide ? (
+          <div
+            className="flex items-center justify-between rounded-xl border border-[#19355a]/10 bg-[#19355a]/5"
+            style={{
+              padding:
+                "clamp(0.5rem, 0.8vw, 0.9rem) clamp(0.8rem, 1.2vw, 1.3rem)",
+              fontSize: "clamp(0.62rem, 0.85vw, 0.92rem)",
+            }}
+            dir={isArabic ? "rtl" : "ltr"}
           >
-            {totalCount.toLocaleString()}
-          </span>
-        </div>
-      )}
+            <span className="text-gray-600">
+              {isArabic
+                ? `الإجمالي: ${totalCount?.toLocaleString() ?? 0}`
+                : `Total: ${totalCount?.toLocaleString() ?? 0}`}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onPageChange && onPageChange(pageIndex - 1)}
+                disabled={pageIndex === 0}
+                className="rounded-lg border border-[#19355a]/20 bg-white text-[#19355a] hover:bg-[#19355a] hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+                style={{
+                  padding:
+                    "clamp(0.25rem, 0.4vw, 0.45rem) clamp(0.4rem, 0.6vw, 0.65rem)",
+                }}
+              >
+                {isArabic ? (
+                  <ChevronRight style={{ width: "1rem", height: "1rem" }} />
+                ) : (
+                  <ChevronLeft style={{ width: "1rem", height: "1rem" }} />
+                )}
+              </button>
+              <span
+                className="font-semibold text-[#19355a]"
+                style={{ minWidth: "5rem", textAlign: "center" }}
+              >
+                {isArabic
+                  ? `${Math.ceil((totalCount ?? 0) / pageSize)} / ${pageIndex + 1}`
+                  : `${pageIndex + 1} / ${Math.ceil((totalCount ?? 0) / pageSize)}`}
+              </span>
+              <button
+                onClick={() => onPageChange && onPageChange(pageIndex + 1)}
+                disabled={(pageIndex + 1) * pageSize >= (totalCount ?? 0)}
+                className="rounded-lg border border-[#19355a]/20 bg-white text-[#19355a] hover:bg-[#19355a] hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+                style={{
+                  padding:
+                    "clamp(0.25rem, 0.4vw, 0.45rem) clamp(0.4rem, 0.6vw, 0.65rem)",
+                }}
+              >
+                {isArabic ? (
+                  <ChevronLeft style={{ width: "1rem", height: "1rem" }} />
+                ) : (
+                  <ChevronRight style={{ width: "1rem", height: "1rem" }} />
+                )}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div
+            className="flex items-center justify-between rounded-xl border border-[#19355a]/10 bg-[#19355a]/5 px-4"
+            style={{
+              padding:
+                "clamp(0.5rem, 0.8vw, 0.9rem) clamp(0.8rem, 1.2vw, 1.3rem)",
+              fontSize: "clamp(0.62rem, 0.85vw, 0.92rem)",
+            }}
+            dir={isArabic ? "rtl" : "ltr"}
+          >
+            <span className="text-gray-600">{t("table.totalRows")}</span>
+            <span
+              className="font-bold text-[#19355a]"
+              style={{ fontSize: "clamp(0.75rem, 1vw, 1.1rem)" }}
+            >
+              {totalCount.toLocaleString()}
+            </span>
+          </div>
+        ))}
     </div>
   );
 }

@@ -18,6 +18,7 @@ import { BarChart3, Settings2 } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import useReports from "../hooks/useReports";
 import useReportFilters from "../hooks/useReportFilters";
+import { SERVER_SIDE_TYPES } from "../components/widgets/Reports/reportsConstants";
 
 import { ReportCategoryPanel } from "../components/widgets/Reports/ReportCategoryPanel";
 import { FilterModal } from "../components/widgets/Reports/FilterModal";
@@ -32,12 +33,15 @@ export default function ReportsPage() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [detailsMember, setDetailsMember] = useState(null);
+  // serverParams[category] = { facultyIds, departmentIds, search, sorting, pageIndex, pageSize, ...typeExtras }
+  const [serverParams, setServerParams] = useState({});
 
   const {
-    universitiesTree,
+    facultiesTree,
     treeLoading,
-    loadUniversitiesTree,
+    loadFacultiesTree,
     reportData,
+    totalCount,
     reportLoading,
     reportError,
     loadReport,
@@ -47,7 +51,7 @@ export default function ReportsPage() {
   const filters = useReportFilters(selectedCategory, reportData, isArabic);
 
   const openFilterModal = () => {
-    if (universitiesTree.length === 0) loadUniversitiesTree();
+    if (facultiesTree.length === 0) loadFacultiesTree();
     setShowFilterModal(true);
   };
 
@@ -59,12 +63,66 @@ export default function ReportsPage() {
     openFilterModal();
   };
 
-  const handleFilterConfirm = (departmentIds) => {
-    loadReport(selectedCategory, departmentIds);
+  // Build the initial extra params per server-side type
+  const buildInitialParams = (category, facultyIds, departmentIds) => {
+    const base = {
+      facultyIds,
+      departmentIds,
+      search: "",
+      sorting: "",
+      pageIndex: 0,
+      pageSize: 20,
+    };
+    if (category === "BIANNUAL_RESEARCH")
+      return { ...base, publicationType: "", pubYears: [] };
+    if (category === "SEMINARS_STATS") return { ...base, type: "" };
+    return base;
   };
 
+  const handleFilterConfirm = ({ facultyIds, departmentIds }) => {
+    if (SERVER_SIDE_TYPES.has(selectedCategory)) {
+      const params = buildInitialParams(
+        selectedCategory,
+        facultyIds,
+        departmentIds,
+      );
+      setServerParams((prev) => ({ ...prev, [selectedCategory]: params }));
+      loadReport(selectedCategory, params);
+    } else {
+      loadReport(selectedCategory, { departmentIds });
+    }
+  };
+
+  // Generic update for any server-side param change (sort, search, page, filter dropdowns)
+  const updateServerParams = (category, updates) => {
+    setServerParams((prev) => {
+      const next = { ...prev[category], ...updates };
+      // Kick off fetch immediately after state update would be async, so use the computed value
+      loadReport(category, next);
+      return { ...prev, [category]: next };
+    });
+  };
+
+  const handleServerSort = (sorting) =>
+    updateServerParams(selectedCategory, { sorting, pageIndex: 0 });
+
+  const handleServerSearch = (search) =>
+    updateServerParams(selectedCategory, { search, pageIndex: 0 });
+
+  const handleServerPageChange = (pageIndex) =>
+    updateServerParams(selectedCategory, { pageIndex });
+
+  const handleServerFilterChange = (key, value) =>
+    updateServerParams(selectedCategory, { [key]: value, pageIndex: 0 });
+
+  const curServerParams = serverParams[selectedCategory];
+
   const showFilterBar =
-    selectedCategory && !reportLoading && !reportError && reportData.length > 0;
+    selectedCategory &&
+    !reportError &&
+    (SERVER_SIDE_TYPES.has(selectedCategory)
+      ? curServerParams != null
+      : !reportLoading && reportData.length > 0);
 
   return (
     <ResponsiveLayoutProvider>
@@ -197,6 +255,17 @@ export default function ReportsPage() {
                 selectedCategory={selectedCategory}
                 filters={filters}
                 isArabic={isArabic}
+                serverParams={curServerParams}
+                onServerSearch={
+                  SERVER_SIDE_TYPES.has(selectedCategory)
+                    ? handleServerSearch
+                    : undefined
+                }
+                onServerFilterChange={
+                  SERVER_SIDE_TYPES.has(selectedCategory)
+                    ? handleServerFilterChange
+                    : undefined
+                }
               />
             )}
 
@@ -204,14 +273,27 @@ export default function ReportsPage() {
             {selectedCategory && (
               <ReportTable
                 reportType={selectedCategory}
-                data={filters.filteredData}
-                totalCount={filters.filteredData.length}
+                data={
+                  SERVER_SIDE_TYPES.has(selectedCategory)
+                    ? reportData
+                    : filters.filteredData
+                }
+                totalCount={
+                  SERVER_SIDE_TYPES.has(selectedCategory)
+                    ? totalCount
+                    : filters.filteredData.length
+                }
                 loading={reportLoading}
                 error={reportError}
                 onRetry={openFilterModal}
                 onRowClick={(row) => setDetailsMember(row)}
                 t={t}
                 isArabic={isArabic}
+                sorting={curServerParams?.sorting}
+                onSort={handleServerSort}
+                pageIndex={curServerParams?.pageIndex ?? 0}
+                pageSize={curServerParams?.pageSize ?? 20}
+                onPageChange={handleServerPageChange}
               />
             )}
           </div>
@@ -229,7 +311,7 @@ export default function ReportsPage() {
         open={showFilterModal}
         onClose={() => setShowFilterModal(false)}
         onConfirm={handleFilterConfirm}
-        universitiesTree={universitiesTree}
+        facultiesTree={facultiesTree}
         treeLoading={treeLoading}
         t={t}
         isArabic={isArabic}

@@ -1,13 +1,14 @@
 // ─── FilterModal ──────────────────────────────────────────────────────────────
-// Popup for selecting universities → faculties → departments.
+// Popup for selecting faculties → departments.
 // Props:
-//   open              – boolean
-//   onClose           – callback()
-//   onConfirm         – callback(departmentIds: number[])
-//   universitiesTree  – array from getUniversitiesTree()
-//   treeLoading       – boolean
-//   t                 – i18next translation function (Reports namespace)
-//   isArabic          – boolean
+//   open          – boolean
+//   onClose       – callback()
+//   onConfirm     – callback({ facultyIds: number[], departmentIds: number[] })
+//   facultiesTree – array from getUniversityFacultiesWithDepartments()
+//                   [{ id, nameAR, nameEN, departments: [{ id, nameAR, nameEN }] }]
+//   treeLoading   – boolean
+//   t             – i18next translation function (Reports namespace)
+//   isArabic      – boolean
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from "react";
@@ -24,27 +25,20 @@ export function FilterModal({
   open,
   onClose,
   onConfirm,
-  universitiesTree,
+  facultiesTree,
   treeLoading,
   t,
   isArabic,
 }) {
-  // Track which universities / faculties are expanded
-  const [expandedUnivs, setExpandedUnivs] = useState({});
   const [expandedFaculties, setExpandedFaculties] = useState({});
-
-  // Selection state: sets of checked IDs
-  const [checkedUnivs, setCheckedUnivs] = useState(new Set());
   const [checkedFaculties, setCheckedFaculties] = useState(new Set());
   const [checkedDepts, setCheckedDepts] = useState(new Set());
 
-  // Reset selection when modal opens
+  // Reset when modal opens
   useEffect(() => {
     if (open) {
-      setCheckedUnivs(new Set());
       setCheckedFaculties(new Set());
       setCheckedDepts(new Set());
-      setExpandedUnivs({});
       setExpandedFaculties({});
     }
   }, [open]);
@@ -53,41 +47,13 @@ export function FilterModal({
 
   // ── Helpers ──────────────────────────────────────────────────────────────
 
-  const name = (item) => (isArabic ? item.name_ar : item.name_en);
+  const name = (item) => (isArabic ? item.nameAR : item.nameEN);
 
-  // Collect all department IDs under a university
-  const univDeptIds = (univ) =>
-    univ.faculties.flatMap((f) => f.departments.map((d) => d.id));
   // Collect all department IDs under a faculty
   const facDeptIds = (fac) => fac.departments.map((d) => d.id);
 
-  // ── University toggle ─────────────────────────────────────────────────────
-  const toggleUniv = (univ) => {
-    const deptIds = univDeptIds(univ);
-    const facIds = univ.faculties.map((f) => f.id);
-    const isChecked = checkedUnivs.has(univ.id);
-
-    setCheckedUnivs((prev) => {
-      const next = new Set(prev);
-      isChecked ? next.delete(univ.id) : next.add(univ.id);
-      return next;
-    });
-    setCheckedFaculties((prev) => {
-      const next = new Set(prev);
-      facIds.forEach((id) => (isChecked ? next.delete(id) : next.add(id)));
-      return next;
-    });
-    setCheckedDepts((prev) => {
-      const next = new Set(prev);
-      deptIds.forEach((id) => (isChecked ? next.delete(id) : next.add(id)));
-      return next;
-    });
-    // Auto-expand when checking
-    if (!isChecked) setExpandedUnivs((prev) => ({ ...prev, [univ.id]: true }));
-  };
-
   // ── Faculty toggle ────────────────────────────────────────────────────────
-  const toggleFaculty = (univ, fac) => {
+  const toggleFaculty = (fac) => {
     const deptIds = facDeptIds(fac);
     const isChecked = checkedFaculties.has(fac.id);
 
@@ -101,65 +67,55 @@ export function FilterModal({
       deptIds.forEach((id) => (isChecked ? next.delete(id) : next.add(id)));
       return next;
     });
-    // Sync university checkbox
-    const allFacChecked = univ.faculties.every((f) =>
-      f.id === fac.id ? !isChecked : checkedFaculties.has(f.id),
-    );
-    setCheckedUnivs((prev) => {
-      const next = new Set(prev);
-      allFacChecked ? next.add(univ.id) : next.delete(univ.id);
-      return next;
-    });
     if (!isChecked)
       setExpandedFaculties((prev) => ({ ...prev, [fac.id]: true }));
   };
 
   // ── Department toggle ─────────────────────────────────────────────────────
-  const toggleDept = (univ, fac, dept) => {
+  const toggleDept = (fac, dept) => {
     const isChecked = checkedDepts.has(dept.id);
-    setCheckedDepts((prev) => {
-      const next = new Set(prev);
-      isChecked ? next.delete(dept.id) : next.add(dept.id);
-      return next;
-    });
-    // Sync faculty
     const newDepts = new Set(checkedDepts);
     isChecked ? newDepts.delete(dept.id) : newDepts.add(dept.id);
+    setCheckedDepts(newDepts);
+
+    // Sync faculty checkbox
     const allDeptChecked = fac.departments.every((d) => newDepts.has(d.id));
     setCheckedFaculties((prev) => {
       const next = new Set(prev);
       allDeptChecked ? next.add(fac.id) : next.delete(fac.id);
       return next;
     });
-    // Sync university
-    const allFacChecked = univ.faculties.every((f) =>
-      f.id === fac.id ? allDeptChecked : checkedFaculties.has(f.id),
-    );
-    setCheckedUnivs((prev) => {
-      const next = new Set(prev);
-      allFacChecked ? next.add(univ.id) : next.delete(univ.id);
-      return next;
-    });
   };
 
   // ── Confirm ───────────────────────────────────────────────────────────────
   const handleConfirm = () => {
-    // If no departments explicitly checked but faculties/univs are: collect all
-    let ids = [...checkedDepts];
-    if (ids.length === 0 && checkedFaculties.size > 0) {
-      universitiesTree.forEach((u) =>
-        u.faculties.forEach((f) => {
-          if (checkedFaculties.has(f.id))
-            ids.push(...f.departments.map((d) => d.id));
-        }),
-      );
-    }
-    onConfirm(ids);
+    onConfirm({
+      facultyIds: [...checkedFaculties],
+      departmentIds: [...checkedDepts],
+    });
     onClose();
   };
 
-  const hasSelection =
-    checkedDepts.size > 0 || checkedFaculties.size > 0 || checkedUnivs.size > 0;
+  const hasSelection = checkedDepts.size > 0 || checkedFaculties.size > 0;
+
+  // ── Select All / Deselect All ─────────────────────────────────────────────
+  const allFacultyIds = facultiesTree.map((f) => f.id);
+  const allDeptIds = facultiesTree.flatMap((f) =>
+    f.departments.map((d) => d.id),
+  );
+  const allSelected =
+    allFacultyIds.length > 0 &&
+    allFacultyIds.every((id) => checkedFaculties.has(id));
+
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setCheckedFaculties(new Set());
+      setCheckedDepts(new Set());
+    } else {
+      setCheckedFaculties(new Set(allFacultyIds));
+      setCheckedDepts(new Set(allDeptIds));
+    }
+  };
 
   // ── Checkbox UI helper ────────────────────────────────────────────────────
   const Checkbox = ({ checked, indeterminate, onChange, label, bold }) => (
@@ -240,7 +196,7 @@ export function FilterModal({
             </div>
           )}
 
-          {!treeLoading && universitiesTree.length === 0 && (
+          {!treeLoading && facultiesTree.length === 0 && (
             <p
               className="text-center text-gray-500 py-8"
               style={{ fontSize: "clamp(0.7rem, 0.95vw, 1rem)" }}
@@ -249,114 +205,89 @@ export function FilterModal({
             </p>
           )}
 
+          {/* Select All row */}
+          {!treeLoading && facultiesTree.length > 0 && (
+            <div className="flex items-center justify-between mb-3 pb-3 border-b border-[#19355a]/10">
+              <span
+                className="text-gray-500 font-medium"
+                style={{ fontSize: "clamp(0.62rem, 0.85vw, 0.9rem)" }}
+              >
+                {isArabic
+                  ? `${checkedFaculties.size} ${"كليات"} · ${checkedDepts.size} ${"أقسام"}`
+                  : `${checkedFaculties.size} faculties · ${checkedDepts.size} departments`}
+              </span>
+              <button
+                onClick={toggleSelectAll}
+                className="text-[#19355a] hover:text-[#b38e19] font-semibold transition-colors"
+                style={{ fontSize: "clamp(0.62rem, 0.85vw, 0.9rem)" }}
+              >
+                {allSelected
+                  ? isArabic
+                    ? "إلغاء تحديد الكل"
+                    : "Deselect All"
+                  : isArabic
+                    ? "تحديد الكل"
+                    : "Select All"}
+              </button>
+            </div>
+          )}
+
           {!treeLoading &&
-            universitiesTree.map((univ) => {
-              const univExpanded = expandedUnivs[univ.id];
-              const deptIds = univDeptIds(univ);
-              const someDeptsChecked = deptIds.some((id) =>
-                checkedDepts.has(id),
-              );
+            facultiesTree.map((fac) => {
+              const facExpanded = expandedFaculties[fac.id];
+              const deptIds = facDeptIds(fac);
+              const someDepts = deptIds.some((id) => checkedDepts.has(id));
 
               return (
                 <div
-                  key={univ.id}
+                  key={fac.id}
                   className="mb-3 rounded-xl border border-[#19355a]/12 overflow-hidden"
                 >
-                  {/* University row */}
+                  {/* Faculty row */}
                   <div className="flex items-center justify-between bg-[#19355a]/6 px-4 py-3">
                     <Checkbox
-                      checked={checkedUnivs.has(univ.id)}
-                      indeterminate={
-                        !checkedUnivs.has(univ.id) && someDeptsChecked
-                      }
-                      onChange={() => toggleUniv(univ)}
-                      label={name(univ)}
+                      checked={checkedFaculties.has(fac.id)}
+                      indeterminate={!checkedFaculties.has(fac.id) && someDepts}
+                      onChange={() => toggleFaculty(fac)}
+                      label={name(fac)}
                       bold
                     />
-                    <button
-                      onClick={() =>
-                        setExpandedUnivs((p) => ({
-                          ...p,
-                          [univ.id]: !p[univ.id],
-                        }))
-                      }
-                      className="text-[#19355a] hover:text-[#b38e19] transition-colors flex-shrink-0 ms-2"
-                    >
-                      {univExpanded ? (
-                        <ChevronUp
-                          style={{ width: "1.1rem", height: "1.1rem" }}
-                        />
-                      ) : (
-                        <ChevronDown
-                          style={{ width: "1.1rem", height: "1.1rem" }}
-                        />
-                      )}
-                    </button>
+                    {fac.departments.length > 0 && (
+                      <button
+                        onClick={() =>
+                          setExpandedFaculties((p) => ({
+                            ...p,
+                            [fac.id]: !p[fac.id],
+                          }))
+                        }
+                        className="text-[#19355a] hover:text-[#b38e19] transition-colors flex-shrink-0 ms-2"
+                      >
+                        {facExpanded ? (
+                          <ChevronUp
+                            style={{ width: "1.1rem", height: "1.1rem" }}
+                          />
+                        ) : (
+                          <ChevronDown
+                            style={{ width: "1.1rem", height: "1.1rem" }}
+                          />
+                        )}
+                      </button>
+                    )}
                   </div>
 
-                  {/* Faculties */}
-                  {univExpanded && (
-                    <div className="px-4 py-2">
-                      {univ.faculties.map((fac) => {
-                        const facExpanded = expandedFaculties[fac.id];
-                        const facDepts = facDeptIds(fac);
-                        const someDepts = facDepts.some((id) =>
-                          checkedDepts.has(id),
-                        );
-
-                        return (
-                          <div key={fac.id} className="mb-2">
-                            {/* Faculty row */}
-                            <div className="flex items-center justify-between py-2 border-b border-[#19355a]/8">
-                              <Checkbox
-                                checked={checkedFaculties.has(fac.id)}
-                                indeterminate={
-                                  !checkedFaculties.has(fac.id) && someDepts
-                                }
-                                onChange={() => toggleFaculty(univ, fac)}
-                                label={name(fac)}
-                              />
-                              <button
-                                onClick={() =>
-                                  setExpandedFaculties((p) => ({
-                                    ...p,
-                                    [fac.id]: !p[fac.id],
-                                  }))
-                                }
-                                className="text-[#19355a] hover:text-[#b38e19] transition-colors flex-shrink-0 ms-2"
-                              >
-                                {facExpanded ? (
-                                  <ChevronUp
-                                    style={{ width: "1rem", height: "1rem" }}
-                                  />
-                                ) : (
-                                  <ChevronDown
-                                    style={{ width: "1rem", height: "1rem" }}
-                                  />
-                                )}
-                              </button>
-                            </div>
-
-                            {/* Departments */}
-                            {facExpanded && (
-                              <ul className="ps-4 pt-1">
-                                {fac.departments.map((dept) => (
-                                  <li key={dept.id} className="py-1">
-                                    <Checkbox
-                                      checked={checkedDepts.has(dept.id)}
-                                      onChange={() =>
-                                        toggleDept(univ, fac, dept)
-                                      }
-                                      label={name(dept)}
-                                    />
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
+                  {/* Departments */}
+                  {facExpanded && fac.departments.length > 0 && (
+                    <ul className="px-4 py-2">
+                      {fac.departments.map((dept) => (
+                        <li key={dept.id} className="py-1">
+                          <Checkbox
+                            checked={checkedDepts.has(dept.id)}
+                            onChange={() => toggleDept(fac, dept)}
+                            label={name(dept)}
+                          />
+                        </li>
+                      ))}
+                    </ul>
                   )}
                 </div>
               );
