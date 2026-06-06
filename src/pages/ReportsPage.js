@@ -25,6 +25,7 @@ import { FilterModal } from "../components/widgets/Reports/FilterModal";
 import { ReportTable } from "../components/widgets/Reports/ReportTable";
 import { ResearchDetailsModal } from "../components/widgets/Reports/ResearchDetailsModal";
 import { ReportFilterBar } from "../components/widgets/Reports/ReportFilterBar";
+import { ReportPdfModal } from "../components/widgets/Reports/ReportPdfModal";
 
 export default function ReportsPage() {
   const { t, i18n } = useTranslation("Reports");
@@ -33,6 +34,7 @@ export default function ReportsPage() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [detailsMember, setDetailsMember] = useState(null);
+  const [showPdfModal, setShowPdfModal] = useState(false);
   // serverParams[category] = { facultyIds, departmentIds, search, sorting, pageIndex, pageSize, ...typeExtras }
   const [serverParams, setServerParams] = useState({});
 
@@ -70,7 +72,7 @@ export default function ReportsPage() {
       departmentIds,
       search: "",
       sorting: "",
-      pageIndex: 0,
+      pageIndex: 1,
       pageSize: 20,
     };
     if (category === "BIANNUAL_RESEARCH")
@@ -104,16 +106,16 @@ export default function ReportsPage() {
   };
 
   const handleServerSort = (sorting) =>
-    updateServerParams(selectedCategory, { sorting, pageIndex: 0 });
+    updateServerParams(selectedCategory, { sorting, pageIndex: 1 });
 
   const handleServerSearch = (search) =>
-    updateServerParams(selectedCategory, { search, pageIndex: 0 });
+    updateServerParams(selectedCategory, { search, pageIndex: 1 });
 
   const handleServerPageChange = (pageIndex) =>
     updateServerParams(selectedCategory, { pageIndex });
 
   const handleServerFilterChange = (key, value) =>
-    updateServerParams(selectedCategory, { [key]: value, pageIndex: 0 });
+    updateServerParams(selectedCategory, { [key]: value, pageIndex: 1 });
 
   const curServerParams = serverParams[selectedCategory];
 
@@ -291,9 +293,14 @@ export default function ReportsPage() {
                 isArabic={isArabic}
                 sorting={curServerParams?.sorting}
                 onSort={handleServerSort}
-                pageIndex={curServerParams?.pageIndex ?? 0}
+                pageIndex={curServerParams?.pageIndex ?? 1}
                 pageSize={curServerParams?.pageSize ?? 20}
                 onPageChange={handleServerPageChange}
+                onPdfDownload={
+                  SERVER_SIDE_TYPES.has(selectedCategory)
+                    ? () => setShowPdfModal(true)
+                    : undefined
+                }
               />
             )}
           </div>
@@ -321,6 +328,15 @@ export default function ReportsPage() {
         open={!!detailsMember}
         onClose={() => setDetailsMember(null)}
         member={detailsMember}
+        t={t}
+        isArabic={isArabic}
+      />
+
+      <ReportPdfModal
+        open={showPdfModal}
+        onClose={() => setShowPdfModal(false)}
+        reportType={selectedCategory}
+        serverParams={curServerParams}
         t={t}
         isArabic={isArabic}
       />

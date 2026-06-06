@@ -73,7 +73,7 @@ export async function getDetailedFacultyReport({
   departmentIds = [],
   search = "",
   sorting = "",
-  pageIndex = 0,
+  pageIndex = 1,
   pageSize = 20,
 }) {
   const params = new URLSearchParams();
@@ -315,6 +315,26 @@ async function _dummyDetailedFacultyRows() {
   return { data: rows, totalCount: rows.length };
 }
 
+// ─── PDF Download: Detailed Faculty Members ──────────────────────────────────
+// GET /DashboardAndReports/FacultyMembersDataReportPDF
+export async function downloadDetailedFacultyReportPdf({
+  facultyIds = [],
+  departmentIds = [],
+  sorting = "",
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (sorting) params.append("Sorting", sorting);
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/FacultyMembersDataReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
+}
+
 // ─── Report: Biannual Research per Year ───────────────────────────────────────
 // GET /DashboardAndReports/ResearchesPerYearReportTable
 export async function getBiannualResearchReport({
@@ -322,7 +342,7 @@ export async function getBiannualResearchReport({
   departmentIds = [],
   search = "",
   sorting = "",
-  pageIndex = 0,
+  pageIndex = 1,
   pageSize = 20,
   publicationType = "",
   pubYears = [],
@@ -342,6 +362,52 @@ export async function getBiannualResearchReport({
     { skipGlobalErrorHandler: true },
   );
   return res.data; // { pageIndex, pageSize, totalCount, data: [{ researchTitle, publicationType, pubYear }] }
+}
+
+// ─── PDF Download: Biannual Research per Year ────────────────────────────────
+// GET /DashboardAndReports/ResearchesPerYearReportPDF
+export async function downloadBiannualResearchReportPdf({
+  facultyIds = [],
+  departmentIds = [],
+  publicationType = "",
+  pubYears = [],
+  sorting = "",
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (publicationType) params.append("PublicationType", publicationType);
+  pubYears.forEach((y) => params.append("PubYears", y));
+  if (sorting) params.append("Sort", sorting);
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/ResearchesPerYearReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
+}
+
+// ─── PDF Download: Conferences & Seminars ────────────────────────────────────
+// GET /DashboardAndReports/ConferencesAndSeminarsReportPDF
+export async function downloadSeminarsReportPdf({
+  facultyIds = [],
+  departmentIds = [],
+  type = "",
+  sorting = "",
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (type) params.append("Type", type);
+  if (sorting) params.append("Sort", sorting);
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/ConferencesAndSeminarsReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
 }
 
 // ─── Report: Research Statistics ─────────────────────────────────────────────
@@ -427,7 +493,7 @@ export async function getSeminarsStatisticsReport({
   departmentIds = [],
   search = "",
   sorting = "",
-  pageIndex = 0,
+  pageIndex = 1,
   pageSize = 20,
   type = "",
 }) {

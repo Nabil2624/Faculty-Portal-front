@@ -129,9 +129,11 @@ export function ReportTable({
   // DETAILED_FACULTY server-side sort + pagination
   sorting,
   onSort,
-  pageIndex = 0,
+  pageIndex = 1,
   pageSize = 20,
   onPageChange,
+  // PDF download callback (server-side types only)
+  onPdfDownload,
 }) {
   const printRef = useRef(null);
   const columns = REPORT_COLUMNS[reportType] || [];
@@ -233,11 +235,11 @@ export function ReportTable({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Print button */}
+      {/* Print / PDF download button */}
       {data.length > 0 && !loading && (
         <div className={`flex ${isArabic ? "justify-start" : "justify-end"}`}>
           <button
-            onClick={handlePrint}
+            onClick={isServerSide && onPdfDownload ? onPdfDownload : handlePrint}
             className="flex items-center gap-2 bg-[#19355a] text-white rounded-lg hover:bg-[#19355a]/85 transition"
             style={{
               padding:
@@ -251,7 +253,9 @@ export function ReportTable({
                 height: "clamp(0.8rem, 1vw, 1.1rem)",
               }}
             />
-            {t("print")}
+            {isServerSide && onPdfDownload
+              ? isArabic ? "تحميل PDF" : "Download PDF"
+              : t("print")}
           </button>
         </div>
       )}
@@ -468,7 +472,7 @@ export function ReportTable({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => onPageChange && onPageChange(pageIndex - 1)}
-                disabled={pageIndex === 0}
+                disabled={pageIndex <= 1}
                 className="rounded-lg border border-[#19355a]/20 bg-white text-[#19355a] hover:bg-[#19355a] hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{
                   padding:
@@ -486,12 +490,12 @@ export function ReportTable({
                 style={{ minWidth: "5rem", textAlign: "center" }}
               >
                 {isArabic
-                  ? `${Math.ceil((totalCount ?? 0) / pageSize)} / ${pageIndex + 1}`
-                  : `${pageIndex + 1} / ${Math.ceil((totalCount ?? 0) / pageSize)}`}
+                  ? `${Math.ceil((totalCount ?? 0) / pageSize)} / ${pageIndex}`
+                  : `${pageIndex} / ${Math.ceil((totalCount ?? 0) / pageSize)}`}
               </span>
               <button
                 onClick={() => onPageChange && onPageChange(pageIndex + 1)}
-                disabled={(pageIndex + 1) * pageSize >= (totalCount ?? 0)}
+                disabled={pageIndex * pageSize >= (totalCount ?? 0)}
                 className="rounded-lg border border-[#19355a]/20 bg-white text-[#19355a] hover:bg-[#19355a] hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
                 style={{
                   padding:
