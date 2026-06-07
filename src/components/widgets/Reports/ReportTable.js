@@ -32,6 +32,7 @@ import {
   DETAILED_FACULTY_SORT_MAP,
   BIANNUAL_RESEARCH_SORT_MAP,
   SEMINARS_STATS_SORT_MAP,
+  RESEARCH_STATS_SORT_MAP,
 } from "./reportsConstants";
 
 // Sort map per report type
@@ -39,6 +40,7 @@ const SORT_MAP_BY_TYPE = {
   DETAILED_FACULTY: DETAILED_FACULTY_SORT_MAP,
   BIANNUAL_RESEARCH: BIANNUAL_RESEARCH_SORT_MAP,
   SEMINARS_STATS: SEMINARS_STATS_SORT_MAP,
+  RESEARCH_STATS: RESEARCH_STATS_SORT_MAP,
 };
 
 // Supports both dummy data field names and real API field names
@@ -76,7 +78,13 @@ function resolveCell(row, colKey, isArabic, index) {
   if (colKey === "experienceType")
     return isArabic ? row.experienceType_ar : row.experienceType_en;
   if (colKey === "publicationRole")
-    return isArabic ? row.publicationRole_ar : row.publicationRole_en;
+    return (
+      row.authorRole ??
+      (isArabic ? row.publicationRole_ar : row.publicationRole_en) ??
+      "-"
+    );
+  if (colKey === "publicationsCount")
+    return row.noOfWritings ?? row.publicationsCount ?? "-";
   if (colKey === "projectType")
     return isArabic ? row.projectType_ar : row.projectType_en;
   if (colKey === "participationType")
@@ -328,7 +336,7 @@ export function ReportTable({
               className="text-gray-400"
               style={{ fontSize: "clamp(0.62rem, 0.85vw, 0.9rem)" }}
             >
-              {t("table.noDataHint")}
+              {/* {t("table.noDataHint")} */}
             </p>
           </div>
         )}

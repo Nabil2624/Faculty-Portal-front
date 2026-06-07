@@ -16,18 +16,24 @@ import {
   downloadDetailedFacultyReportPdf,
   downloadBiannualResearchReportPdf,
   downloadSeminarsReportPdf,
+  downloadResearchStatisticsReportPdf,
+  downloadWritingsReportPdf,
 } from "../../../services/reports.service";
 
 const PDF_DOWNLOADERS = {
   DETAILED_FACULTY: downloadDetailedFacultyReportPdf,
   BIANNUAL_RESEARCH: downloadBiannualResearchReportPdf,
   SEMINARS_STATS: downloadSeminarsReportPdf,
+  RESEARCH_STATS: downloadResearchStatisticsReportPdf,
+  PUBLICATIONS_STATS: downloadWritingsReportPdf,
 };
 
 const FILE_NAMES = {
   DETAILED_FACULTY: "faculty-members-report.pdf",
   BIANNUAL_RESEARCH: "researches-per-year-report.pdf",
   SEMINARS_STATS: "conferences-seminars-report.pdf",
+  RESEARCH_STATS: "research-statistics-report.pdf",
+  PUBLICATIONS_STATS: "writings-report.pdf",
 };
 
 export function ReportPdfModal({ open, onClose, reportType, serverParams, t, isArabic }) {

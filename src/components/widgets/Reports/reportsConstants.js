@@ -158,6 +158,8 @@ export const SERVER_SIDE_TYPES = new Set([
   REPORT_TYPES.DETAILED_FACULTY,
   REPORT_TYPES.BIANNUAL_RESEARCH,
   REPORT_TYPES.SEMINARS_STATS,
+  REPORT_TYPES.RESEARCH_STATS,
+  REPORT_TYPES.PUBLICATIONS_STATS,
 ]);
 
 // ─── Sort enum values for DETAILED_FACULTY (server-side) ─────────────────────
@@ -186,6 +188,18 @@ export const SEMINARS_STATS_SORT_MAP = {
   seminarCount: {
     asc: "NoOfConferencesOrSeminarsAsc",
     desc: "NoOfConferencesOrSeminarsDesc",
+  },
+};
+
+// ─── Sort enum values for RESEARCH_STATS (server-side) ───────────────────────
+export const RESEARCH_STATS_SORT_MAP = {
+  internationalResearches: {
+    asc: "NoOfInternationalResearchesASC",
+    desc: "NoOfInternationalResearchesDESC",
+  },
+  localResearches: {
+    asc: "NoOfLocalResearchesASC",
+    desc: "NoOfLocalResearchesDESC",
   },
 };
 

@@ -12,6 +12,7 @@ import { useState, useEffect, useRef } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import { ReportDropdown } from "./ReportDropdown";
 import { ReportMultiSelect } from "./ReportMultiSelect";
+import { getAuthorRoles } from "../../../services/reports.service";
 
 // ─── Dropdown option lists ────────────────────────────────────────────────────
 const PROJECT_TYPE_OPTIONS = [
@@ -45,19 +46,6 @@ const EXPERIENCE_TYPE_OPTIONS = [
     label_en: "Teaching Experiences",
     label_ar: "خبرات تدريسية",
   },
-];
-
-const PUBLICATION_ROLE_OPTIONS = [
-  { value: "Author", label_en: "Author", label_ar: "مؤلف" },
-  { value: "Translator", label_en: "Translator", label_ar: "مترجم" },
-  { value: "Reviewer", label_en: "Reviewer", label_ar: "مراجع" },
-  {
-    value: "Translator/Reviewer",
-    label_en: "Translator/Reviewer",
-    label_ar: "مترجم/مراجع",
-  },
-  { value: "Book Editor", label_en: "Book Editor", label_ar: "محرر كتاب" },
-  { value: "Chapter Author", label_en: "Chapter Author", label_ar: "مؤلف فصل" },
 ];
 
 const PARTICIPATION_TYPE_OPTIONS = [
@@ -212,6 +200,23 @@ export function ReportFilterBar({
     setPatentScope,
   } = filters;
 
+  // ── Author roles lookup (for PUBLICATIONS_STATS) ───────────────────────────
+  const [authorRoleOptions, setAuthorRoleOptions] = useState([]);
+  useEffect(() => {
+    if (selectedCategory !== "PUBLICATIONS_STATS") return;
+    getAuthorRoles()
+      .then((roles) =>
+        setAuthorRoleOptions(
+          roles.map((r) => ({
+            value: r.id,
+            label_en: r.valueEn,
+            label_ar: r.valueAr,
+          })),
+        ),
+      )
+      .catch(() => setAuthorRoleOptions([]));
+  }, [selectedCategory]);
+
   // ── Debounced local input for server-side search ──────────────────────────
   const isServerSearch = !!onServerSearch;
   const [localSearch, setLocalSearch] = useState(serverParams?.search ?? "");
@@ -262,11 +267,16 @@ export function ReportFilterBar({
       </div>
 
       {selectedCategory === "RESEARCH_STATS" && (
-        <YearMultiSelect
-          selectedYears={selectedYears}
-          setSelectedYears={setSelectedYears}
-          availableYears={availableYears}
+        <ReportMultiSelect
+          value={serverParams?.pubYears ?? []}
+          onChange={(val) => onServerFilterChange?.("pubYears", val)}
+          options={BIANNUAL_YEAR_OPTIONS.map((y) => ({
+            value: y,
+            label: String(y),
+          }))}
+          placeholder={isArabic ? "كل السنوات" : "All years"}
           isArabic={isArabic}
+          minWidth="160px"
         />
       )}
 
@@ -329,9 +339,9 @@ export function ReportFilterBar({
 
       {selectedCategory === "PUBLICATIONS_STATS" && (
         <ReportDropdown
-          value={publicationRole}
-          onChange={setPublicationRole}
-          options={PUBLICATION_ROLE_OPTIONS}
+          value={serverParams?.roles?.[0] ?? ""}
+          onChange={(val) => onServerFilterChange?.("roles", val ? [val] : [])}
+          options={authorRoleOptions}
           placeholder={isArabic ? "كل الأدوار" : "All roles"}
           isArabic={isArabic}
           minWidth="150px"

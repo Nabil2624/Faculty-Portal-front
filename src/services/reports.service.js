@@ -1,6 +1,15 @@
 // ─── Reports Service ─────────────────────────────────────────────────────────
 import axiosInstance from "../utils/axiosInstance";
 
+// ─── Lookup: Author Roles ────────────────────────────────────────────────────
+// GET /LookUpItems/AuthorRoles
+export async function getAuthorRoles() {
+  const res = await axiosInstance.get("/LookUpItems/AuthorRoles", {
+    skipGlobalErrorHandler: true,
+  });
+  return res.data; // [{ id, valueAr, valueEn }]
+}
+
 // ─── Lookup: Faculties with their departments ─────────────────────────────────
 // GET /LookUpItems/UniversityFacultiesWithDepartments
 export async function getUniversityFacultiesWithDepartments() {
@@ -411,79 +420,52 @@ export async function downloadSeminarsReportPdf({
 }
 
 // ─── Report: Research Statistics ─────────────────────────────────────────────
-// TODO: GET /Reports/ResearchStatistics?departmentIds[]=...
-export async function getResearchStatisticsReport({ departmentIds = [] }) {
-  const rows = [
-    {
-      id: 1,
-      name_ar: "د. أحمد محمد علي",
-      name_en: "Dr. Ahmed Mohamed Ali",
-      internationalResearches: 5,
-      localResearches: 8,
-      year: 2023,
-    },
-    {
-      id: 2,
-      name_ar: "د. سارة إبراهيم حسن",
-      name_en: "Dr. Sara Ibrahim Hassan",
-      internationalResearches: 7,
-      localResearches: 4,
-      year: 2024,
-    },
-    {
-      id: 3,
-      name_ar: "أ.د. محمود كمال فريد",
-      name_en: "Prof. Mahmoud Kamal Farid",
-      internationalResearches: 12,
-      localResearches: 6,
-      year: 2022,
-    },
-    {
-      id: 4,
-      name_ar: "د. نور الدين عبد الله",
-      name_en: "Dr. Nour El-Din Abdullah",
-      internationalResearches: 3,
-      localResearches: 9,
-      year: 2023,
-    },
-    {
-      id: 5,
-      name_ar: "أ. فاطمة يوسف خليل",
-      name_en: "Prof. Fatma Yousef Khalil",
-      internationalResearches: 9,
-      localResearches: 5,
-      year: 2024,
-    },
-    {
-      id: 6,
-      name_ar: "د. عمر فاروق الشيخ",
-      name_en: "Dr. Omar Farouk El-Sheikh",
-      internationalResearches: 4,
-      localResearches: 11,
-      year: 2022,
-    },
-    {
-      id: 7,
-      name_ar: "د. منى السيد رمضان",
-      name_en: "Dr. Mona El-Sayed Ramadan",
-      internationalResearches: 6,
-      localResearches: 3,
-      year: 2023,
-    },
-    {
-      id: 8,
-      name_ar: "أ.د. كريم عادل رزق",
-      name_en: "Prof. Karim Adel Rizk",
-      internationalResearches: 14,
-      localResearches: 7,
-      year: 2024,
-    },
-  ];
+// GET /DashboardAndReports/FacultyMembersResearchesReportTable
+export async function getResearchStatisticsReport({
+  facultyIds = [],
+  departmentIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 1,
+  pageSize = 20,
+  pubYears = [],
+}) {
+  const params = new URLSearchParams();
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (sorting) params.append("Sort", sorting);
+  pubYears.forEach((y) => params.append("PubYear", y));
 
-  return {
-    data: rows,
-    totalCount: rows.length,
-  };
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/FacultyMembersResearchesReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+  return res.data; // { pageIndex, pageSize, totalCount, data: [...] }
+}
+
+// ─── PDF Download: Research Statistics ───────────────────────────────────────
+// GET /DashboardAndReports/FacultyMembersResearchesReportPDF
+export async function downloadResearchStatisticsReportPdf({
+  facultyIds = [],
+  departmentIds = [],
+  sorting = "",
+  pubYears = [],
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (sorting) params.append("Sort", sorting);
+  pubYears.forEach((y) => params.append("PubYear", y));
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/FacultyMembersResearchesReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
 }
 
 // ─── Report: Conferences & Seminars ──────────────────────────────────────────
@@ -585,76 +567,50 @@ export async function getExperiencesStatisticsReport({ departmentIds = [] }) {
   return { data: rows, totalCount: rows.length };
 }
 
-// ─── Report: Publications Statistics ─────────────────────────────────────────
-// TODO: GET /Reports/PublicationsStatistics?departmentIds[]=...
-export async function getPublicationsStatisticsReport({ departmentIds = [] }) {
-  const rows = [
-    {
-      id: 1,
-      name_ar: "د. أحمد محمد علي",
-      name_en: "Dr. Ahmed Mohamed Ali",
-      publicationRole_ar: "مؤلف",
-      publicationRole_en: "Author",
-      publicationsCount: 4,
-    },
-    {
-      id: 2,
-      name_ar: "د. سارة إبراهيم حسن",
-      name_en: "Dr. Sara Ibrahim Hassan",
-      publicationRole_ar: "مؤلف مشارك",
-      publicationRole_en: "Co-author",
-      publicationsCount: 2,
-    },
-    {
-      id: 3,
-      name_ar: "أ.د. محمود كمال فريد",
-      name_en: "Prof. Mahmoud Kamal Farid",
-      publicationRole_ar: "محرر",
-      publicationRole_en: "Editor",
-      publicationsCount: 6,
-    },
-    {
-      id: 4,
-      name_ar: "د. نور الدين عبد الله",
-      name_en: "Dr. Nour El-Din Abdullah",
-      publicationRole_ar: "مترجم",
-      publicationRole_en: "Translator",
-      publicationsCount: 3,
-    },
-    {
-      id: 5,
-      name_ar: "أ. فاطمة يوسف خليل",
-      name_en: "Prof. Fatma Yousef Khalil",
-      publicationRole_ar: "مؤلف",
-      publicationRole_en: "Author",
-      publicationsCount: 7,
-    },
-    {
-      id: 6,
-      name_ar: "د. عمر فاروق الشيخ",
-      name_en: "Dr. Omar Farouk El-Sheikh",
-      publicationRole_ar: "مؤلف مشارك",
-      publicationRole_en: "Co-author",
-      publicationsCount: 1,
-    },
-    {
-      id: 7,
-      name_ar: "د. منى السيد رمضان",
-      name_en: "Dr. Mona El-Sayed Ramadan",
-      publicationRole_ar: "محرر",
-      publicationRole_en: "Editor",
-      publicationsCount: 5,
-    },
-    {
-      id: 8,
-      name_ar: "أ.د. كريم عادل رزق",
-      name_en: "Prof. Karim Adel Rizk",
-      publicationRole_ar: "مؤلف",
-      publicationRole_en: "Author",
-      publicationsCount: 9,
-    },
-  ];
-  return { data: rows, totalCount: rows.length };
+// ─── Report: Publications (Writings) Statistics ───────────────────────────────
+// GET /DashboardAndReports/WritingsReportTable
+export async function getPublicationsStatisticsReport({
+  facultyIds = [],
+  departmentIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 1,
+  pageSize = 20,
+  roles = [],
+}) {
+  const params = new URLSearchParams();
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  roles.forEach((r) => params.append("Roles", r));
+
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/WritingsReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+  return res.data; // { pageIndex, pageSize, totalCount, data: [{ facultyMemberName, authorRole, noOfWritings }] }
+}
+
+// ─── PDF Download: Publications (Writings) Statistics ────────────────────────
+// GET /DashboardAndReports/WritingsReportPDF
+export async function downloadWritingsReportPdf({
+  facultyIds = [],
+  departmentIds = [],
+  roles = [],
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  roles.forEach((r) => params.append("Roles", r));
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/WritingsReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
 }
 
 // ─── Report: CV Statistics ────────────────────────────────────────────────────

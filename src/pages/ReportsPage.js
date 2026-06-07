@@ -78,6 +78,8 @@ export default function ReportsPage() {
     if (category === "BIANNUAL_RESEARCH")
       return { ...base, publicationType: "", pubYears: [] };
     if (category === "SEMINARS_STATS") return { ...base, type: "" };
+    if (category === "RESEARCH_STATS") return { ...base, pubYears: [] };
+    if (category === "PUBLICATIONS_STATS") return { ...base, roles: [] };
     return base;
   };
 
