@@ -10,7 +10,9 @@ export async function fetchCurrentUserApi() {
 }
 
 export async function fetchConversationByTicketIdApi(ticketId) {
-  const res = await axiosInstance.get(`/Messaging/TicketConversation/${ticketId}`);
+  const res = await axiosInstance.get(
+    `/Messaging/TicketConversation/${ticketId}`,
+  );
   return res?.data ?? null;
 }
 
@@ -43,9 +45,12 @@ export async function fetchMessagesApi(conversationId, cursor = null) {
   const params = { take: DEFAULT_TAKE };
   if (cursor != null) params.cursor = cursor;
 
-  const res = await axiosInstance.get(`/Messaging/Conversation/${conversationId}`, {
-    params,
-  });
+  const res = await axiosInstance.get(
+    `/Messaging/Conversation/${conversationId}`,
+    {
+      params,
+    },
+  );
   const data = res?.data;
 
   const raw = Array.isArray(data)

@@ -185,7 +185,10 @@ export default function useChat(ticket) {
       if (!conversation?.id || !text.trim()) return;
 
       const participants = conversation.participants ?? [];
-      const recieverId = getReceiverIdFromParticipants(conversation, currentUser);
+      const recieverId = getReceiverIdFromParticipants(
+        conversation,
+        currentUser,
+      );
 
       if (!recieverId) {
         console.warn(
