@@ -33,6 +33,13 @@ import {
   BIANNUAL_RESEARCH_SORT_MAP,
   SEMINARS_STATS_SORT_MAP,
   RESEARCH_STATS_SORT_MAP,
+  PUBLICATIONS_STATS_SORT_MAP,
+  EXPERIENCES_STATS_SORT_MAP,
+  CV_STATS_SORT_MAP,
+  ARTICLE_REVIEWS_STATS_SORT_MAP,
+  JOURNALS_STATS_SORT_MAP,
+  PATENTS_STATS_SORT_MAP,
+  PROJECTS_STATS_SORT_MAP,
 } from "./reportsConstants";
 
 // Sort map per report type
@@ -41,6 +48,13 @@ const SORT_MAP_BY_TYPE = {
   BIANNUAL_RESEARCH: BIANNUAL_RESEARCH_SORT_MAP,
   SEMINARS_STATS: SEMINARS_STATS_SORT_MAP,
   RESEARCH_STATS: RESEARCH_STATS_SORT_MAP,
+  PUBLICATIONS_STATS: PUBLICATIONS_STATS_SORT_MAP,
+  EXPERIENCES_STATS: EXPERIENCES_STATS_SORT_MAP,
+  CV_STATS: CV_STATS_SORT_MAP,
+  ARTICLE_REVIEWS_STATS: ARTICLE_REVIEWS_STATS_SORT_MAP,
+  JOURNALS_STATS: JOURNALS_STATS_SORT_MAP,
+  PATENTS_STATS: PATENTS_STATS_SORT_MAP,
+  PROJECTS_STATS: PROJECTS_STATS_SORT_MAP,
 };
 
 // Supports both dummy data field names and real API field names
@@ -58,7 +72,7 @@ function resolveCell(row, colKey, isArabic, index) {
   if (colKey === "faculty") {
     if (row.faculty_ar !== undefined)
       return isArabic ? row.faculty_ar : row.faculty_en;
-    return row.faculty ?? "-";
+    return row.faculty ?? row.facultyName ?? "-";
   }
   // title: dummy uses title_ar/title_en; API (BIANNUAL_RESEARCH) uses researchTitle
   if (colKey === "title") {
@@ -66,17 +80,33 @@ function resolveCell(row, colKey, isArabic, index) {
       return isArabic ? row.title_ar : row.title_en;
     return row.researchTitle ?? row.title ?? "-";
   }
-  // seminarType: dummy uses seminarType_ar/en; API uses type
+  // seminarType: dummy uses seminarType_ar/en; API uses type ("Conference" | "Seminar")
   if (colKey === "seminarType") {
     if (row.seminarType_ar !== undefined)
       return isArabic ? row.seminarType_ar : row.seminarType_en;
+    if (isArabic) {
+      const arMap = { Conference: "مؤتمر", Seminar: "ندوة" };
+      return arMap[row.type] ?? row.type ?? "-";
+    }
     return row.type ?? "-";
   }
   // seminarCount: dummy uses seminarCount; API uses noOfConferencesOrSeminars
   if (colKey === "seminarCount")
     return row.seminarCount ?? row.noOfConferencesOrSeminars ?? "-";
-  if (colKey === "experienceType")
-    return isArabic ? row.experienceType_ar : row.experienceType_en;
+  if (colKey === "experienceType") {
+    if (row.experienceType_ar !== undefined)
+      return isArabic ? row.experienceType_ar : row.experienceType_en;
+    if (isArabic) {
+      const arMap = {
+        "General Experience": "خبرة عامة",
+        "Teaching Experience": "خبرة تدريسية",
+      };
+      return arMap[row.experienceType] ?? row.experienceType ?? "-";
+    }
+    return row.experienceType ?? "-";
+  }
+  if (colKey === "experiencesCount")
+    return row.experiencesCount ?? row.experienceCount ?? "-";
   if (colKey === "publicationRole")
     return (
       row.authorRole ??
@@ -86,15 +116,36 @@ function resolveCell(row, colKey, isArabic, index) {
   if (colKey === "publicationsCount")
     return row.noOfWritings ?? row.publicationsCount ?? "-";
   if (colKey === "projectType")
-    return isArabic ? row.projectType_ar : row.projectType_en;
+    return (
+      (isArabic ? row.projectType_ar : row.projectType_en) ??
+      row.projectType ??
+      "-"
+    );
   if (colKey === "participationType")
-    return isArabic ? row.participationType_ar : row.participationType_en;
-  if (colKey === "journalCount") return row.journalCount ?? "-";
+    return (
+      (isArabic ? row.participationType_ar : row.participationType_en) ??
+      row.participationType ??
+      "-"
+    );
+  if (colKey === "journalCount")
+    return row.journalCount ?? row.noOfParticipations ?? "-";
   if (colKey === "researchCount") return row.researchCount ?? "-";
-  if (colKey === "articleCount") return row.articleCount ?? "-";
-  if (colKey === "patentScope")
-    return isArabic ? row.patentScope_ar : row.patentScope_en;
-  if (colKey === "patentCount") return row.patentCount ?? "-";
+  if (colKey === "articleCount")
+    return row.articleCount ?? row.noOfArticles ?? "-";
+  if (colKey === "patentScope") {
+    if (row.patentScope_ar !== undefined || row.patentScope_en !== undefined) {
+      return isArabic ? row.patentScope_ar : row.patentScope_en;
+    }
+    const scope = row.localOrInternational ?? row.patentScope ?? row.type;
+    if (!scope) return "-";
+    if (!isArabic) return scope;
+    const arMap = { Local: "محلي", International: "دولي" };
+    return arMap[scope] ?? scope;
+  }
+  if (colKey === "patentCount")
+    return row.patentCount ?? row.noOfPatents ?? "-";
+  if (colKey === "projectCount")
+    return row.projectCount ?? row.noOfProjects ?? "-";
   // publicationType: dummy uses _ar/_en; API returns plain enum string
   if (colKey === "publicationType") {
     if (row.publicationType_ar !== undefined)
@@ -121,6 +172,7 @@ function resolveCell(row, colKey, isArabic, index) {
     return row.localResearches ?? row.noOfLocalResearches ?? "-";
   if (colKey === "patents") return row.patents ?? row.noOfPatents ?? "-";
   if (colKey === "awards") return row.awards ?? row.noOfAwards ?? "-";
+  if (colKey === "cvCount") return row.cvCount ?? row.noOfCVs ?? "-";
   return row[colKey] ?? "-";
 }
 
@@ -247,7 +299,9 @@ export function ReportTable({
       {data.length > 0 && !loading && (
         <div className={`flex ${isArabic ? "justify-start" : "justify-end"}`}>
           <button
-            onClick={isServerSide && onPdfDownload ? onPdfDownload : handlePrint}
+            onClick={
+              isServerSide && onPdfDownload ? onPdfDownload : handlePrint
+            }
             className="flex items-center gap-2 bg-[#19355a] text-white rounded-lg hover:bg-[#19355a]/85 transition"
             style={{
               padding:
@@ -262,7 +316,9 @@ export function ReportTable({
               }}
             />
             {isServerSide && onPdfDownload
-              ? isArabic ? "تحميل PDF" : "Download PDF"
+              ? isArabic
+                ? "تحميل PDF"
+                : "Download PDF"
               : t("print")}
           </button>
         </div>

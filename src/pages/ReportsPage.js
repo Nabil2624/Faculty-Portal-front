@@ -23,7 +23,6 @@ import { SERVER_SIDE_TYPES } from "../components/widgets/Reports/reportsConstant
 import { ReportCategoryPanel } from "../components/widgets/Reports/ReportCategoryPanel";
 import { FilterModal } from "../components/widgets/Reports/FilterModal";
 import { ReportTable } from "../components/widgets/Reports/ReportTable";
-import { ResearchDetailsModal } from "../components/widgets/Reports/ResearchDetailsModal";
 import { ReportFilterBar } from "../components/widgets/Reports/ReportFilterBar";
 import { ReportPdfModal } from "../components/widgets/Reports/ReportPdfModal";
 
@@ -33,7 +32,6 @@ export default function ReportsPage() {
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [detailsMember, setDetailsMember] = useState(null);
   const [showPdfModal, setShowPdfModal] = useState(false);
   // serverParams[category] = { facultyIds, departmentIds, search, sorting, pageIndex, pageSize, ...typeExtras }
   const [serverParams, setServerParams] = useState({});
@@ -60,7 +58,6 @@ export default function ReportsPage() {
   const handleCategorySelect = (key) => {
     setSelectedCategory(key);
     resetReport();
-    setDetailsMember(null);
     filters.resetFilters();
     openFilterModal();
   };
@@ -78,8 +75,12 @@ export default function ReportsPage() {
     if (category === "BIANNUAL_RESEARCH")
       return { ...base, publicationType: "", pubYears: [] };
     if (category === "SEMINARS_STATS") return { ...base, type: "" };
-    if (category === "RESEARCH_STATS") return { ...base, pubYears: [] };
     if (category === "PUBLICATIONS_STATS") return { ...base, roles: [] };
+    if (category === "JOURNALS_STATS")
+      return { ...base, typesOfParticipation: [] };
+    if (category === "PATENTS_STATS")
+      return { ...base, localOrInternational: "" };
+    if (category === "PROJECTS_STATS") return { ...base, typesOfProject: [] };
     return base;
   };
 
@@ -93,7 +94,7 @@ export default function ReportsPage() {
       setServerParams((prev) => ({ ...prev, [selectedCategory]: params }));
       loadReport(selectedCategory, params);
     } else {
-      loadReport(selectedCategory, { departmentIds });
+      loadReport(selectedCategory, { facultyIds, departmentIds });
     }
   };
 
@@ -290,7 +291,6 @@ export default function ReportsPage() {
                 loading={reportLoading}
                 error={reportError}
                 onRetry={openFilterModal}
-                onRowClick={(row) => setDetailsMember(row)}
                 t={t}
                 isArabic={isArabic}
                 sorting={curServerParams?.sorting}
@@ -322,14 +322,6 @@ export default function ReportsPage() {
         onConfirm={handleFilterConfirm}
         facultiesTree={facultiesTree}
         treeLoading={treeLoading}
-        t={t}
-        isArabic={isArabic}
-      />
-
-      <ResearchDetailsModal
-        open={!!detailsMember}
-        onClose={() => setDetailsMember(null)}
-        member={detailsMember}
         t={t}
         isArabic={isArabic}
       />

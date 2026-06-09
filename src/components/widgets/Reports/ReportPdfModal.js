@@ -18,6 +18,12 @@ import {
   downloadSeminarsReportPdf,
   downloadResearchStatisticsReportPdf,
   downloadWritingsReportPdf,
+  downloadExperiencesStatisticsReportPdf,
+  downloadCVStatisticsReportPdf,
+  downloadArticleReviewsStatisticsReportPdf,
+  downloadJournalsStatisticsReportPdf,
+  downloadPatentsStatisticsReportPdf,
+  downloadProjectsStatisticsReportPdf,
 } from "../../../services/reports.service";
 
 const PDF_DOWNLOADERS = {
@@ -26,6 +32,12 @@ const PDF_DOWNLOADERS = {
   SEMINARS_STATS: downloadSeminarsReportPdf,
   RESEARCH_STATS: downloadResearchStatisticsReportPdf,
   PUBLICATIONS_STATS: downloadWritingsReportPdf,
+  EXPERIENCES_STATS: downloadExperiencesStatisticsReportPdf,
+  CV_STATS: downloadCVStatisticsReportPdf,
+  ARTICLE_REVIEWS_STATS: downloadArticleReviewsStatisticsReportPdf,
+  JOURNALS_STATS: downloadJournalsStatisticsReportPdf,
+  PATENTS_STATS: downloadPatentsStatisticsReportPdf,
+  PROJECTS_STATS: downloadProjectsStatisticsReportPdf,
 };
 
 const FILE_NAMES = {
@@ -34,9 +46,22 @@ const FILE_NAMES = {
   SEMINARS_STATS: "conferences-seminars-report.pdf",
   RESEARCH_STATS: "research-statistics-report.pdf",
   PUBLICATIONS_STATS: "writings-report.pdf",
+  EXPERIENCES_STATS: "experiences-report.pdf",
+  CV_STATS: "cvs-report.pdf",
+  ARTICLE_REVIEWS_STATS: "reviewing-articles-report.pdf",
+  JOURNALS_STATS: "participation-in-magazines-report.pdf",
+  PATENTS_STATS: "patents-report.pdf",
+  PROJECTS_STATS: "projects-report.pdf",
 };
 
-export function ReportPdfModal({ open, onClose, reportType, serverParams, t, isArabic }) {
+export function ReportPdfModal({
+  open,
+  onClose,
+  reportType,
+  serverParams,
+  t,
+  isArabic,
+}) {
   const [notes, setNotes] = useState("");
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(null);
@@ -82,8 +107,13 @@ export function ReportPdfModal({ open, onClose, reportType, serverParams, t, isA
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }}
-      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+      style={{
+        backgroundColor: "rgba(0,0,0,0.5)",
+        backdropFilter: "blur(4px)",
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) handleClose();
+      }}
     >
       <div
         dir={isArabic ? "rtl" : "ltr"}
@@ -116,9 +146,7 @@ export function ReportPdfModal({ open, onClose, reportType, serverParams, t, isA
         {/* Body */}
         <div className="px-6 py-5 flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <label
-              className="text-xs font-bold text-[#19355A] uppercase tracking-widest"
-            >
+            <label className="text-xs font-bold text-[#19355A] uppercase tracking-widest">
               {isArabic ? "ملاحظات التقرير" : "Report Notes"}
             </label>
             <textarea
@@ -151,7 +179,8 @@ export function ReportPdfModal({ open, onClose, reportType, serverParams, t, isA
             onClick={handleClose}
             className="rounded-xl border border-slate-200 text-slate-500 font-bold hover:bg-slate-50 transition"
             style={{
-              padding: "clamp(0.45rem,0.7vw,0.65rem) clamp(1.2rem,1.8vw,1.8rem)",
+              padding:
+                "clamp(0.45rem,0.7vw,0.65rem) clamp(1.2rem,1.8vw,1.8rem)",
               fontSize: "clamp(0.75rem,1vw,0.9rem)",
             }}
           >
@@ -172,8 +201,12 @@ export function ReportPdfModal({ open, onClose, reportType, serverParams, t, isA
               <Printer size={15} />
             )}
             {downloading
-              ? isArabic ? "جاري التحميل…" : "Downloading…"
-              : isArabic ? "تحميل PDF" : "Download PDF"}
+              ? isArabic
+                ? "جاري التحميل…"
+                : "Downloading…"
+              : isArabic
+                ? "تحميل PDF"
+                : "Download PDF"}
           </button>
         </div>
       </div>

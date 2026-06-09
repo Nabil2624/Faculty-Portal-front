@@ -10,6 +10,25 @@ export async function getAuthorRoles() {
   return res.data; // [{ id, valueAr, valueEn }]
 }
 
+// GET /LookUpItems/ProjectTypes
+export async function getProjectTypes() {
+  const res = await axiosInstance.get("/LookUpItems/ProjectTypes", {
+    skipGlobalErrorHandler: true,
+  });
+  return Array.isArray(res.data) ? res.data.filter(Boolean) : [];
+}
+
+// GET /LookUpItems/MagazineParticipationRoles
+export async function getMagazineParticipationRoles() {
+  const res = await axiosInstance.get(
+    "/LookUpItems/MagazineParticipationRoles",
+    {
+      skipGlobalErrorHandler: true,
+    },
+  );
+  return Array.isArray(res.data) ? res.data.filter(Boolean) : [];
+}
+
 // ─── Lookup: Faculties with their departments ─────────────────────────────────
 // GET /LookUpItems/UniversityFacultiesWithDepartments
 export async function getUniversityFacultiesWithDepartments() {
@@ -358,7 +377,9 @@ export async function getBiannualResearchReport({
 }) {
   const params = new URLSearchParams();
   if (sorting) params.append("Sort", sorting);
-  if (publicationType) params.append("PublicationType", publicationType);
+  // "Unspecified" means "show all" — same as not filtering at all
+  if (publicationType && publicationType !== "Unspecified")
+    params.append("PublicationType", publicationType);
   pubYears.forEach((y) => params.append("PubYears", y));
   facultyIds.forEach((id) => params.append("FacultyIds", id));
   departmentIds.forEach((id) => params.append("DepartmentIds", id));
@@ -428,7 +449,6 @@ export async function getResearchStatisticsReport({
   sorting = "",
   pageIndex = 1,
   pageSize = 20,
-  pubYears = [],
 }) {
   const params = new URLSearchParams();
   if (search) params.append("Search", search);
@@ -437,7 +457,6 @@ export async function getResearchStatisticsReport({
   facultyIds.forEach((id) => params.append("FacultyIds", id));
   departmentIds.forEach((id) => params.append("DepartmentIds", id));
   if (sorting) params.append("Sort", sorting);
-  pubYears.forEach((y) => params.append("PubYear", y));
 
   const res = await axiosInstance.get(
     `/DashboardAndReports/FacultyMembersResearchesReportTable?${params.toString()}`,
@@ -452,14 +471,12 @@ export async function downloadResearchStatisticsReportPdf({
   facultyIds = [],
   departmentIds = [],
   sorting = "",
-  pubYears = [],
   notes = "",
 } = {}) {
   const params = new URLSearchParams();
   facultyIds.forEach((id) => params.append("FacultyIds", id));
   departmentIds.forEach((id) => params.append("DepartmentIds", id));
   if (sorting) params.append("Sort", sorting);
-  pubYears.forEach((y) => params.append("PubYear", y));
   if (notes) params.append("notes", notes);
 
   return axiosInstance.get(
@@ -492,79 +509,73 @@ export async function getSeminarsStatisticsReport({
     `/DashboardAndReports/ConferencesAndSeminarsReportTable?${params.toString()}`,
     { skipGlobalErrorHandler: true },
   );
-  return res.data; // { pageIndex, pageSize, totalCount, data: [...] }
+
+  // Flatten nested conferencesAndSeminars into one row per entry
+  const raw = res.data;
+  const flatData = (raw?.data ?? []).flatMap((member) =>
+    (member.conferencesAndSeminars ?? []).map((entry) => ({
+      facultyMemberName: member.facultyMemberName,
+      type: entry.type,
+      noOfConferencesOrSeminars: entry.noOfConferencesOrSeminars,
+    })),
+  );
+  return { ...raw, data: flatData };
 }
 
 // ─── Report: Experiences Statistics ──────────────────────────────────────────
-// TODO: GET /Reports/ExperiencesStatistics?departmentIds[]=...
-export async function getExperiencesStatisticsReport({ departmentIds = [] }) {
-  const rows = [
-    {
-      id: 1,
-      name_ar: "د. أحمد محمد علي",
-      name_en: "Dr. Ahmed Mohamed Ali",
-      experienceType_ar: "خبرة عامة",
-      experienceType_en: "General",
-      experiencesCount: 4,
-    },
-    {
-      id: 2,
-      name_ar: "د. سارة إبراهيم حسن",
-      name_en: "Dr. Sara Ibrahim Hassan",
-      experienceType_ar: "خبرة تدريسية",
-      experienceType_en: "Teaching",
-      experiencesCount: 6,
-    },
-    {
-      id: 3,
-      name_ar: "أ.د. محمود كمال فريد",
-      name_en: "Prof. Mahmoud Kamal Farid",
-      experienceType_ar: "خبرة عامة",
-      experienceType_en: "General",
-      experiencesCount: 2,
-    },
-    {
-      id: 4,
-      name_ar: "د. نور الدين عبد الله",
-      name_en: "Dr. Nour El-Din Abdullah",
-      experienceType_ar: "خبرة تدريسية",
-      experienceType_en: "Teaching",
-      experiencesCount: 8,
-    },
-    {
-      id: 5,
-      name_ar: "أ. فاطمة يوسف خليل",
-      name_en: "Prof. Fatma Yousef Khalil",
-      experienceType_ar: "خبرة عامة",
-      experienceType_en: "General",
-      experiencesCount: 5,
-    },
-    {
-      id: 6,
-      name_ar: "د. عمر فاروق الشيخ",
-      name_en: "Dr. Omar Farouk El-Sheikh",
-      experienceType_ar: "خبرة تدريسية",
-      experienceType_en: "Teaching",
-      experiencesCount: 3,
-    },
-    {
-      id: 7,
-      name_ar: "د. منى السيد رمضان",
-      name_en: "Dr. Mona El-Sayed Ramadan",
-      experienceType_ar: "خبرة عامة",
-      experienceType_en: "General",
-      experiencesCount: 7,
-    },
-    {
-      id: 8,
-      name_ar: "أ.د. كريم عادل رزق",
-      name_en: "Prof. Karim Adel Rizk",
-      experienceType_ar: "خبرة تدريسية",
-      experienceType_en: "Teaching",
-      experiencesCount: 10,
-    },
-  ];
-  return { data: rows, totalCount: rows.length };
+// GET /DashboardAndReports/ExperinceReportTable
+export async function getExperiencesStatisticsReport({
+  facultyIds = [],
+  departmentIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 1,
+  pageSize = 20,
+}) {
+  const params = new URLSearchParams();
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (sorting) params.append("Sorting", sorting);
+
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/ExperinceReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+
+  const raw = res.data;
+  const flatData = (raw?.data ?? []).flatMap((member) =>
+    (member.experiences ?? []).map((entry, index) => ({
+      id: `${member.facultyMemberName}-${entry.experienceType}-${index}`,
+      facultyMemberName: member.facultyMemberName,
+      experienceType: entry.experienceType,
+      experienceCount: entry.experienceCount,
+    })),
+  );
+
+  return { ...raw, data: flatData };
+}
+
+// ─── PDF Download: Experiences Statistics ───────────────────────────────────
+// GET /DashboardAndReports/ExperinceReportPDF
+export async function downloadExperiencesStatisticsReportPdf({
+  facultyIds = [],
+  departmentIds = [],
+  sorting = "",
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (sorting) params.append("Sorting", sorting);
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/ExperinceReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
 }
 
 // ─── Report: Publications (Writings) Statistics ───────────────────────────────
@@ -580,17 +591,31 @@ export async function getPublicationsStatisticsReport({
 }) {
   const params = new URLSearchParams();
   if (search) params.append("Search", search);
+  if (sorting) params.append("Sort", sorting);
   params.append("PageIndex", String(pageIndex));
   params.append("PageSize", String(pageSize));
   facultyIds.forEach((id) => params.append("FacultyIds", id));
   departmentIds.forEach((id) => params.append("DepartmentIds", id));
-  roles.forEach((r) => params.append("Roles", r));
+  roles
+    .map((r) => String(r ?? "").trim())
+    .filter(Boolean)
+    .forEach((r) => params.append("Roles", r));
 
   const res = await axiosInstance.get(
     `/DashboardAndReports/WritingsReportTable?${params.toString()}`,
     { skipGlobalErrorHandler: true },
   );
-  return res.data; // { pageIndex, pageSize, totalCount, data: [{ facultyMemberName, authorRole, noOfWritings }] }
+
+  // Flatten nested writings into one row per entry
+  const raw = res.data;
+  const flatData = (raw?.data ?? []).flatMap((member) =>
+    (member.writings ?? []).map((entry) => ({
+      facultyMemberName: member.facultyMemberName,
+      authorRole: entry.authorRole,
+      noOfWritings: entry.noOfWritings,
+    })),
+  );
+  return { ...raw, data: flatData };
 }
 
 // ─── PDF Download: Publications (Writings) Statistics ────────────────────────
@@ -604,7 +629,10 @@ export async function downloadWritingsReportPdf({
   const params = new URLSearchParams();
   facultyIds.forEach((id) => params.append("FacultyIds", id));
   departmentIds.forEach((id) => params.append("DepartmentIds", id));
-  roles.forEach((r) => params.append("Roles", r));
+  roles
+    .map((r) => String(r ?? "").trim())
+    .filter(Boolean)
+    .forEach((r) => params.append("Roles", r));
   if (notes) params.append("notes", notes);
 
   return axiosInstance.get(
@@ -614,53 +642,53 @@ export async function downloadWritingsReportPdf({
 }
 
 // ─── Report: CV Statistics ────────────────────────────────────────────────────
-// TODO: GET /Reports/CVStatistics?departmentIds[]=...
-export async function getCVStatisticsReport({ departmentIds = [] }) {
-  const rows = [
-    {
-      id: 1,
-      faculty_ar: "كلية الهندسة",
-      faculty_en: "Faculty of Engineering",
-      cvCount: 42,
-    },
-    {
-      id: 2,
-      faculty_ar: "كلية العلوم",
-      faculty_en: "Faculty of Science",
-      cvCount: 31,
-    },
-    {
-      id: 3,
-      faculty_ar: "كلية الطب",
-      faculty_en: "Faculty of Medicine",
-      cvCount: 27,
-    },
-    {
-      id: 4,
-      faculty_ar: "كلية الفنون الجميلة",
-      faculty_en: "Faculty of Fine Arts",
-      cvCount: 19,
-    },
-    {
-      id: 5,
-      faculty_ar: "كلية التربية",
-      faculty_en: "Faculty of Education",
-      cvCount: 35,
-    },
-    {
-      id: 6,
-      faculty_ar: "كلية الحقوق",
-      faculty_en: "Faculty of Law",
-      cvCount: 24,
-    },
-    {
-      id: 7,
-      faculty_ar: "كلية الاقتصاد والعلوم السياسية",
-      faculty_en: "Faculty of Economics & Political Science",
-      cvCount: 18,
-    },
-  ];
-  return { data: rows, totalCount: rows.length };
+// GET /DashboardAndReports/CVsReportTable
+export async function getCVStatisticsReport({
+  facultyIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 1,
+  pageSize = 20,
+}) {
+  const params = new URLSearchParams();
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  if (sorting) params.append("Sort", sorting);
+
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/CVsReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+
+  const raw = res.data;
+  const data = (raw?.data ?? []).map((row, index) => ({
+    id: row.facultyName ?? index,
+    facultyName: row.facultyName,
+    noOfCVs: row.noOfCVs,
+    departmentCVs: row.departmentCVs ?? [],
+  }));
+
+  return { ...raw, data };
+}
+
+// ─── PDF Download: CV Statistics ────────────────────────────────────────────
+// GET /DashboardAndReports/CVsReportPDF
+export async function downloadCVStatisticsReportPdf({
+  facultyIds = [],
+  sorting = "",
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  if (sorting) params.append("Sort", sorting);
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/CVsReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
 }
 
 // ─── Report: Faculty Member Count Statistics ──────────────────────────────────
@@ -763,284 +791,246 @@ export async function getTotalResearchCountReport({ departmentIds = [] }) {
   return { data: rows, totalCount: rows.length };
 }
 
-// ─── Report: Journal Participation Statistics ─────────────────────────────────
-// TODO: GET /Reports/JournalsStatistics?departmentIds[]=...
-export async function getJournalsStatisticsReport({ departmentIds = [] }) {
-  const rows = [
-    {
-      id: 1,
-      name_ar: "د. أحمد محمد علي",
-      name_en: "Dr. Ahmed Mohamed Ali",
-      participationType_ar: "نشر",
-      participationType_en: "Publication",
-      journalCount: 6,
-    },
-    {
-      id: 2,
-      name_ar: "د. سارة إبراهيم حسن",
-      name_en: "Dr. Sara Ibrahim Hassan",
-      participationType_ar: "تحكيم",
-      participationType_en: "Review",
-      journalCount: 4,
-    },
-    {
-      id: 3,
-      name_ar: "أ.د. محمود كمال فريد",
-      name_en: "Prof. Mahmoud Kamal Farid",
-      participationType_ar: "هيئة تحرير",
-      participationType_en: "Editorial Board",
-      journalCount: 2,
-    },
-    {
-      id: 4,
-      name_ar: "د. نور الدين عبد الله",
-      name_en: "Dr. Nour El-Din Abdullah",
-      participationType_ar: "نشر",
-      participationType_en: "Publication",
-      journalCount: 9,
-    },
-    {
-      id: 5,
-      name_ar: "أ. فاطمة يوسف خليل",
-      name_en: "Prof. Fatma Yousef Khalil",
-      participationType_ar: "تحكيم",
-      participationType_en: "Review",
-      journalCount: 3,
-    },
-    {
-      id: 6,
-      name_ar: "د. عمر فاروق الشيخ",
-      name_en: "Dr. Omar Farouk El-Sheikh",
-      participationType_ar: "هيئة تحرير",
-      participationType_en: "Editorial Board",
-      journalCount: 1,
-    },
-    {
-      id: 7,
-      name_ar: "د. منى السيد رمضان",
-      name_en: "Dr. Mona El-Sayed Ramadan",
-      participationType_ar: "نشر",
-      participationType_en: "Publication",
-      journalCount: 7,
-    },
-    {
-      id: 8,
-      name_ar: "أ.د. كريم عادل رزق",
-      name_en: "Prof. Karim Adel Rizk",
-      participationType_ar: "تحكيم",
-      participationType_en: "Review",
-      journalCount: 5,
-    },
-  ];
-  return { data: rows, totalCount: rows.length };
+// ─── Report: Participation in Magazines Statistics ──────────────────────────
+// GET /DashboardAndReports/ParticipationInMagazinesReportTable
+export async function getJournalsStatisticsReport({
+  facultyIds = [],
+  departmentIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 1,
+  pageSize = 20,
+  typesOfParticipation = [],
+}) {
+  const params = new URLSearchParams();
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
+  if (sorting) params.append("Sort", sorting);
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  typesOfParticipation.forEach((role) =>
+    params.append("TypesOfParticipation", role),
+  );
+
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/ParticipationInMagazinesReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+
+  const raw = res.data;
+  const flatData = (raw?.data ?? []).flatMap((member, memberIndex) =>
+    (member.participations ?? []).map((entry, entryIndex) => ({
+      id: `${member.facultyMemberName ?? memberIndex}-${entry.participationType ?? entryIndex}`,
+      facultyMemberName: member.facultyMemberName,
+      participationType: entry.participationType,
+      journalCount: entry.noOfParticipations,
+      noOfParticipations: entry.noOfParticipations,
+    })),
+  );
+
+  return { ...raw, data: flatData };
+}
+
+// GET /DashboardAndReports/ParticipationInMagazinesReportPDF
+export async function downloadJournalsStatisticsReportPdf({
+  facultyIds = [],
+  departmentIds = [],
+  typesOfParticipation = [],
+  sorting = "",
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  typesOfParticipation.forEach((role) =>
+    params.append("TypesOfParticipation", role),
+  );
+  if (sorting) params.append("Sort", sorting);
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/ParticipationInMagazinesReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
 }
 
 // ─── Report: Article Review Statistics ───────────────────────────────────────
-// TODO: GET /Reports/ArticleReviewsStatistics?departmentIds[]=...
+// GET /DashboardAndReports/ReviewingArticlesReportTable
 export async function getArticleReviewsStatisticsReport({
+  facultyIds = [],
   departmentIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 1,
+  pageSize = 20,
 }) {
-  const rows = [
-    {
-      id: 1,
-      name_ar: "د. أحمد محمد علي",
-      name_en: "Dr. Ahmed Mohamed Ali",
-      articleCount: 7,
-      year: 2024,
-    },
-    {
-      id: 2,
-      name_ar: "د. سارة إبراهيم حسن",
-      name_en: "Dr. Sara Ibrahim Hassan",
-      articleCount: 4,
-      year: 2023,
-    },
-    {
-      id: 3,
-      name_ar: "أ.د. محمود كمال فريد",
-      name_en: "Prof. Mahmoud Kamal Farid",
-      articleCount: 12,
-      year: 2024,
-    },
-    {
-      id: 4,
-      name_ar: "د. نور الدين عبد الله",
-      name_en: "Dr. Nour El-Din Abdullah",
-      articleCount: 3,
-      year: 2023,
-    },
-    {
-      id: 5,
-      name_ar: "أ. فاطمة يوسف خليل",
-      name_en: "Prof. Fatma Yousef Khalil",
-      articleCount: 9,
-      year: 2022,
-    },
-    {
-      id: 6,
-      name_ar: "د. عمر فاروق الشيخ",
-      name_en: "Dr. Omar Farouk El-Sheikh",
-      articleCount: 5,
-      year: 2024,
-    },
-    {
-      id: 7,
-      name_ar: "د. منى السيد رمضان",
-      name_en: "Dr. Mona El-Sayed Ramadan",
-      articleCount: 2,
-      year: 2022,
-    },
-    {
-      id: 8,
-      name_ar: "أ.د. كريم عادل رزق",
-      name_en: "Prof. Karim Adel Rizk",
-      articleCount: 15,
-      year: 2023,
-    },
-  ];
-  return { data: rows, totalCount: rows.length };
+  const params = new URLSearchParams();
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
+  if (sorting) params.append("Sort", sorting);
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/ReviewingArticlesReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+
+  return res.data;
 }
 
-// ─── Report: Patents Statistics ───────────────────────────────────────────────
-// TODO: GET /Reports/PatentsStatistics?departmentIds[]=...
-export async function getPatentsStatisticsReport({ departmentIds = [] }) {
-  const rows = [
-    {
-      id: 1,
-      name_ar: "د. أحمد محمد علي",
-      name_en: "Dr. Ahmed Mohamed Ali",
-      patentScope_ar: "دولي",
-      patentScope_en: "International",
-      patentCount: 3,
-    },
-    {
-      id: 2,
-      name_ar: "د. سارة إبراهيم حسن",
-      name_en: "Dr. Sara Ibrahim Hassan",
-      patentScope_ar: "محلي",
-      patentScope_en: "Local",
-      patentCount: 2,
-    },
-    {
-      id: 3,
-      name_ar: "أ.د. محمود كمال فريد",
-      name_en: "Prof. Mahmoud Kamal Farid",
-      patentScope_ar: "دولي",
-      patentScope_en: "International",
-      patentCount: 5,
-    },
-    {
-      id: 4,
-      name_ar: "د. نور الدين عبد الله",
-      name_en: "Dr. Nour El-Din Abdullah",
-      patentScope_ar: "محلي",
-      patentScope_en: "Local",
-      patentCount: 4,
-    },
-    {
-      id: 5,
-      name_ar: "أ. فاطمة يوسف خليل",
-      name_en: "Prof. Fatma Yousef Khalil",
-      patentScope_ar: "دولي",
-      patentScope_en: "International",
-      patentCount: 1,
-    },
-    {
-      id: 6,
-      name_ar: "د. عمر فاروق الشيخ",
-      name_en: "Dr. Omar Farouk El-Sheikh",
-      patentScope_ar: "محلي",
-      patentScope_en: "Local",
-      patentCount: 2,
-    },
-    {
-      id: 7,
-      name_ar: "د. منى السيد رمضان",
-      name_en: "Dr. Mona El-Sayed Ramadan",
-      patentScope_ar: "دولي",
-      patentScope_en: "International",
-      patentCount: 6,
-    },
-    {
-      id: 8,
-      name_ar: "أ.د. كريم عادل رزق",
-      name_en: "Prof. Karim Adel Rizk",
-      patentScope_ar: "محلي",
-      patentScope_en: "Local",
-      patentCount: 3,
-    },
-  ];
-  return { data: rows, totalCount: rows.length };
+// ─── PDF Download: Reviewing Articles Statistics ────────────────────────────
+// GET /DashboardAndReports/ReviewingArticlesReportPDF
+export async function downloadArticleReviewsStatisticsReportPdf({
+  facultyIds = [],
+  departmentIds = [],
+  sorting = "",
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  if (sorting) params.append("Sort", sorting);
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/ReviewingArticlesReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
 }
 
-// ─── Report: Projects Statistics ─────────────────────────────────────────────
-// TODO: GET /Reports/ProjectsStatistics?departmentIds[]=...
-export async function getProjectsStatisticsReport({ departmentIds = [] }) {
-  const rows = [
-    {
-      id: 1,
-      name_ar: "د. أحمد محمد علي",
-      name_en: "Dr. Ahmed Mohamed Ali",
-      projectType_ar: "بحثي",
-      projectType_en: "Research",
-      projectCount: 5,
-    },
-    {
-      id: 2,
-      name_ar: "د. سارة إبراهيم حسن",
-      name_en: "Dr. Sara Ibrahim Hassan",
-      projectType_ar: "تطويري",
-      projectType_en: "Development",
-      projectCount: 3,
-    },
-    {
-      id: 3,
-      name_ar: "أ.د. محمود كمال فريد",
-      name_en: "Prof. Mahmoud Kamal Farid",
-      projectType_ar: "بحثي",
-      projectType_en: "Research",
-      projectCount: 7,
-    },
-    {
-      id: 4,
-      name_ar: "د. نور الدين عبد الله",
-      name_en: "Dr. Nour El-Din Abdullah",
-      projectType_ar: "مجتمعي",
-      projectType_en: "Community",
-      projectCount: 2,
-    },
-    {
-      id: 5,
-      name_ar: "أ. فاطمة يوسف خليل",
-      name_en: "Prof. Fatma Yousef Khalil",
-      projectType_ar: "تقني",
-      projectType_en: "Technical",
-      projectCount: 4,
-    },
-    {
-      id: 6,
-      name_ar: "د. عمر فاروق الشيخ",
-      name_en: "Dr. Omar Farouk El-Sheikh",
-      projectType_ar: "تطويري",
-      projectType_en: "Development",
-      projectCount: 6,
-    },
-    {
-      id: 7,
-      name_ar: "د. منى السيد رمضان",
-      name_en: "Dr. Mona El-Sayed Ramadan",
-      projectType_ar: "مجتمعي",
-      projectType_en: "Community",
-      projectCount: 1,
-    },
-    {
-      id: 8,
-      name_ar: "أ.د. كريم عادل رزق",
-      name_en: "Prof. Karim Adel Rizk",
-      projectType_ar: "بحثي",
-      projectType_en: "Research",
-      projectCount: 8,
-    },
-  ];
-  return { data: rows, totalCount: rows.length };
+// ─── Report: Patents Statistics ─────────────────────────────────────────────
+// GET /DashboardAndReports/PatentsReportTable
+export async function getPatentsStatisticsReport({
+  facultyIds = [],
+  departmentIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 1,
+  pageSize = 20,
+  localOrInternational = "",
+}) {
+  const params = new URLSearchParams();
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
+  if (sorting) params.append("Sort", sorting);
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (localOrInternational)
+    params.append("LocalOrInternational", localOrInternational);
+
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/PatentsReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+
+  const raw = res.data;
+  const flatData = (raw?.data ?? []).flatMap((member, memberIndex) => {
+    if (Array.isArray(member.patents)) {
+      return member.patents.map((entry, entryIndex) => ({
+        id: `${member.facultyMemberName ?? memberIndex}-${entry.type ?? entryIndex}`,
+        facultyMemberName: member.facultyMemberName,
+        localOrInternational: entry.type,
+        patentCount: entry.noOfPatents,
+        noOfPatents: entry.noOfPatents,
+      }));
+    }
+
+    return [
+      {
+        id: member.facultyMemberName ?? memberIndex,
+        facultyMemberName: member.facultyMemberName,
+        localOrInternational: member.localOrInternational,
+        patentCount: member.noOfPatents,
+        noOfPatents: member.noOfPatents,
+      },
+    ];
+  });
+
+  return { ...raw, data: flatData };
+}
+
+// GET /DashboardAndReports/PatentsReportPDF
+export async function downloadPatentsStatisticsReportPdf({
+  facultyIds = [],
+  departmentIds = [],
+  localOrInternational = "",
+  sorting = "",
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (localOrInternational)
+    params.append("LocalOrInternational", localOrInternational);
+  if (sorting) params.append("Sort", sorting);
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/PatentsReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
+}
+
+// ─── Report: Projects Statistics ────────────────────────────────────────────
+// GET /DashboardAndReports/ProjectsReportTable
+export async function getProjectsStatisticsReport({
+  facultyIds = [],
+  departmentIds = [],
+  search = "",
+  sorting = "",
+  pageIndex = 1,
+  pageSize = 20,
+  typesOfProject = [],
+}) {
+  const params = new URLSearchParams();
+  if (search) params.append("Search", search);
+  params.append("PageIndex", String(pageIndex));
+  params.append("PageSize", String(pageSize));
+  if (sorting) params.append("Sort", sorting);
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  typesOfProject.forEach((type) => params.append("TypesOfProject", type));
+
+  const res = await axiosInstance.get(
+    `/DashboardAndReports/ProjectsReportTable?${params.toString()}`,
+    { skipGlobalErrorHandler: true },
+  );
+
+  const raw = res.data;
+  const flatData = (raw?.data ?? []).flatMap((member, memberIndex) =>
+    (member.projects ?? []).map((entry, entryIndex) => ({
+      id: `${member.facultyMemberName ?? memberIndex}-${entry.projectType ?? entryIndex}`,
+      facultyMemberName: member.facultyMemberName,
+      projectType: entry.projectType,
+      projectCount: entry.noOfProjects,
+      noOfProjects: entry.noOfProjects,
+    })),
+  );
+
+  return { ...raw, data: flatData };
+}
+
+// GET /DashboardAndReports/ProjectsReportPDF
+export async function downloadProjectsStatisticsReportPdf({
+  facultyIds = [],
+  departmentIds = [],
+  typesOfProject = [],
+  sorting = "",
+  notes = "",
+} = {}) {
+  const params = new URLSearchParams();
+  facultyIds.forEach((id) => params.append("FacultyIds", id));
+  departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  typesOfProject.forEach((type) => params.append("TypesOfProject", type));
+  if (sorting) params.append("Sort", sorting);
+  if (notes) params.append("notes", notes);
+
+  return axiosInstance.get(
+    `/DashboardAndReports/ProjectsReportPDF?${params.toString()}`,
+    { responseType: "blob", skipGlobalErrorHandler: true },
+  );
 }

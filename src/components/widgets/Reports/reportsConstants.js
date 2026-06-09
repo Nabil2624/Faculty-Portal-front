@@ -14,8 +14,6 @@ import {
   Briefcase,
   PenTool,
   FileText,
-  UserCheck,
-  TrendingUp,
   BookMarked,
   CheckSquare,
   Lightbulb,
@@ -48,8 +46,6 @@ export const REPORT_CATEGORIES = [
   { key: REPORT_TYPES.EXPERIENCES_STATS, icon: Briefcase },
   { key: REPORT_TYPES.PUBLICATIONS_STATS, icon: PenTool },
   { key: REPORT_TYPES.CV_STATS, icon: FileText },
-  { key: REPORT_TYPES.FACULTY_COUNT_STATS, icon: UserCheck },
-  { key: REPORT_TYPES.TOTAL_RESEARCH_STATS, icon: TrendingUp },
   { key: REPORT_TYPES.JOURNALS_STATS, icon: BookMarked },
   { key: REPORT_TYPES.ARTICLE_REVIEWS_STATS, icon: CheckSquare },
   { key: REPORT_TYPES.PATENTS_STATS, icon: Lightbulb },
@@ -151,7 +147,7 @@ export const REPORT_COLUMNS = {
 };
 
 // ─── Which report types support row-click details popup ───────────────────────
-export const SUPPORTS_ROW_DETAILS = new Set([REPORT_TYPES.DETAILED_FACULTY]);
+export const SUPPORTS_ROW_DETAILS = new Set([]);
 
 // ─── Which report types use server-side pagination / search / sort ────────────
 export const SERVER_SIDE_TYPES = new Set([
@@ -160,6 +156,12 @@ export const SERVER_SIDE_TYPES = new Set([
   REPORT_TYPES.SEMINARS_STATS,
   REPORT_TYPES.RESEARCH_STATS,
   REPORT_TYPES.PUBLICATIONS_STATS,
+  REPORT_TYPES.EXPERIENCES_STATS,
+  REPORT_TYPES.CV_STATS,
+  REPORT_TYPES.ARTICLE_REVIEWS_STATS,
+  REPORT_TYPES.JOURNALS_STATS,
+  REPORT_TYPES.PATENTS_STATS,
+  REPORT_TYPES.PROJECTS_STATS,
 ]);
 
 // ─── Sort enum values for DETAILED_FACULTY (server-side) ─────────────────────
@@ -189,6 +191,51 @@ export const SEMINARS_STATS_SORT_MAP = {
     asc: "NoOfConferencesOrSeminarsAsc",
     desc: "NoOfConferencesOrSeminarsDesc",
   },
+};
+
+// ─── Sort enum values for PUBLICATIONS_STATS (server-side) ──────────────────
+export const PUBLICATIONS_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameAsc", desc: "FacultyMemberNameDesc" },
+  publicationsCount: { asc: "NoOfWritingsASC", desc: "NoOfWritingsDESC" },
+};
+
+// ─── Sort enum values for EXPERIENCES_STATS (server-side) ───────────────────
+export const EXPERIENCES_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameASC", desc: "FacultyMemberNameDESC" },
+  experiencesCount: {
+    asc: "ExperienceCountAsc",
+    desc: "ExperienceCountDesc",
+  },
+};
+
+// ─── Sort enum values for CV_STATS (server-side) ────────────────────────────
+export const CV_STATS_SORT_MAP = {
+  faculty: { asc: "FacultyNameAsc", desc: "FacultyNameDesc" },
+  cvCount: { asc: "NoOfCVsASC", desc: "NoOfCvsDESC" },
+};
+
+// ─── Sort enum values for ARTICLE_REVIEWS_STATS (server-side) ───────────────
+export const ARTICLE_REVIEWS_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameAsc", desc: "FacultyMemberNameDesc" },
+  articleCount: { asc: "NoOfArticlesAsc", desc: "NoOfArticlesDesc" },
+};
+
+export const JOURNALS_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameASC", desc: "FacultyMemberNameDESC" },
+  journalCount: {
+    asc: "NoOfParticipationsASC",
+    desc: "NoOfParticipationsDESC",
+  },
+};
+
+export const PATENTS_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameASC", desc: "FacultyMemberNameDESC" },
+  patentCount: { asc: "NoOfPatentsASC", desc: "NoOfPatentsDESC" },
+};
+
+export const PROJECTS_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameASC", desc: "FacultyMemberNameDESC" },
+  projectCount: { asc: "NoOfProjectsASC", desc: "NoOfProjectsDESC" },
 };
 
 // ─── Sort enum values for RESEARCH_STATS (server-side) ───────────────────────

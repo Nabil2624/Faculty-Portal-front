@@ -185,6 +185,15 @@ function EditActionSelectorModal({
   const { t, i18n } = useTranslation("Users");
   const isArabic = i18n.language === "ar";
 
+  const currentUserRoles = React.useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("userRoles") || "[]");
+    } catch {
+      return [];
+    }
+  }, []);
+  const isManagementAdmin = currentUserRoles.includes("ManagementAdmin");
+
   // Group admin permissions by type → determine read / update capability per type
   const typeMap = {};
   (adminPermissions || []).forEach((p) => {
@@ -199,7 +208,10 @@ function EditActionSelectorModal({
 
   const sections = Object.entries(typeMap)
     .filter(
-      ([type, caps]) => type !== "Tickets" && (caps.canRead || caps.canUpdate),
+      ([type, caps]) =>
+        type !== "Tickets" &&
+        !(isManagementAdmin && type === "Reports") &&
+        (caps.canRead || caps.canUpdate),
     )
     .map(([type, caps]) => ({ type, ...caps }));
 
