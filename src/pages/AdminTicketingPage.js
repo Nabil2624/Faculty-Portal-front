@@ -291,7 +291,7 @@ function ConfirmModal({
                   className="text-red-600"
                   style={{ fontSize: "clamp(0.65rem, 0.88vw, 0.95rem)" }}
                 >
-                  {error}
+                  {t(error, { defaultValue: error })}
                 </p>
               </div>
             )}
@@ -621,6 +621,10 @@ export default function AdminTicketingPage() {
       setConfirmAction(null);
       handleRefresh();
     } catch (err) {
+      if (err?.response?.status === 403) {
+        setActionError("permissionDenied");
+        return;
+      }
       setActionError(
         err?.response?.data?.message ||
           err?.response?.data?.title ||
@@ -892,7 +896,7 @@ export default function AdminTicketingPage() {
                   className="text-red-600"
                   style={{ fontSize: "clamp(0.65rem, 0.88vw, 0.95rem)" }}
                 >
-                  {fetchError}
+                  {t(fetchError, { defaultValue: fetchError })}
                 </p>
               </div>
             )}

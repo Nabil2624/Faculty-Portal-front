@@ -4,6 +4,7 @@
   "refresh": "Refresh",
   "loading": "Loading users…",
   "error": "Failed to load users. Please try again.",
+  "permissionDenied": "You do not have permission to perform this action.",
   "retry": "Retry",
   "noUsers": "No users match your current filters.",
   "search": "Search by name, email, username or national ID…",
@@ -88,6 +89,7 @@
   "toasts": {
     "updateSuccess": "User updated successfully.",
     "updateError": "Failed to update user.",
+    "permissionDenied": "You do not have permission to perform this action.",
     "addPermissionSuccess": "Permission added.",
     "addPermissionError": "Failed to add permission.",
     "removePermissionSuccess": "Permission removed.",

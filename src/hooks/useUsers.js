@@ -52,7 +52,7 @@ export default function useUsers() {
 
   // ─── Load admin permissions once ─────────────────────────────────────────
   useEffect(() => {
-    getCurrentUserPermissions()
+    getCurrentUserPermissions({ skipGlobalErrorHandler: true })
       .then(setAdminPermissions)
       .catch(() => setAdminPermissions([]));
   }, []);
@@ -68,11 +68,21 @@ export default function useUsers() {
         roles: roleFilter,
         pageIndex: page,
         pageSize: PAGE_SIZE,
+        skipGlobalErrorHandler: true,
       });
       setUsers(result.data);
       setTotalCount(result.totalCount);
     } catch (err) {
-      setError(err?.message || "Failed to load users.");
+      if (err?.response?.status === 403) {
+        setError("permissionDenied");
+        return;
+      }
+      setError(
+        err?.response?.data?.message ||
+          err?.response?.data?.title ||
+          err?.message ||
+          "Failed to load users.",
+      );
     } finally {
       setLoading(false);
     }
@@ -84,7 +94,10 @@ export default function useUsers() {
       // Fetch all users without a role filter and count locally.
       // The backend role filter is unreliable for names that contain spaces
       // (e.g. "Faculty Member" vs "FacultyMember"), so we count from data.
-      const res = await getUsers({ pageSize: 500 });
+      const res = await getUsers({
+        pageSize: 500,
+        skipGlobalErrorHandler: true,
+      });
       const counts = { FacultyMember: 0, ManagementAdmin: 0, SupportAdmin: 0 };
       res.data.forEach((u) => {
         (u.roles || []).forEach((role) => {
@@ -153,6 +166,7 @@ export default function useUsers() {
           username,
           nationalNumber,
           password,
+          skipGlobalErrorHandler: true,
         });
         setUsers((prev) =>
           prev.map((u) => {
@@ -163,8 +177,17 @@ export default function useUsers() {
         closeEditModal();
         closePermSelector();
         showToast("updateSuccess", "success");
-      } catch {
-        showToast("updateError", "error");
+      } catch (err) {
+        if (err?.response?.status === 403) {
+          showToast("permissionDenied", "error");
+          return;
+        }
+        showToast(
+          err?.response?.data?.message ||
+            err?.response?.data?.title ||
+            "updateError",
+          "error",
+        );
       } finally {
         setSaving(false);
       }

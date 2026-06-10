@@ -777,7 +777,7 @@ export default function UsersPage() {
                 flexShrink: 0,
               }}
             />
-            {t("error")}
+            <span>{t(error, { defaultValue: error })}</span>
             <button
               onClick={reload}
               className="ml-auto underline font-medium hover:opacity-80"
