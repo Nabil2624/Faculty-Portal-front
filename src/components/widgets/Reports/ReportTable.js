@@ -84,11 +84,23 @@ function resolveCell(row, colKey, isArabic, index) {
   if (colKey === "seminarType") {
     if (row.seminarType_ar !== undefined)
       return isArabic ? row.seminarType_ar : row.seminarType_en;
+    const normalizedType =
+      row.type === 1 || row.type === "1"
+        ? 1
+        : row.type === 2 || row.type === "2"
+          ? 2
+          : row.type;
     if (isArabic) {
-      const arMap = { Conference: "مؤتمر", Seminar: "ندوة" };
-      return arMap[row.type] ?? row.type ?? "-";
+      const arMap = {
+        1: "مؤتمر",
+        2: "ندوة",
+        Conference: "مؤتمر",
+        Seminar: "ندوة",
+      };
+      return arMap[normalizedType] ?? row.type ?? "-";
     }
-    return row.type ?? "-";
+    const enMap = { 1: "Conference", 2: "Seminar" };
+    return enMap[normalizedType] ?? row.type ?? "-";
   }
   // seminarCount: dummy uses seminarCount; API uses noOfConferencesOrSeminars
   if (colKey === "seminarCount")
@@ -200,6 +212,7 @@ export function ReportTable({
   const supportsDetails = SUPPORTS_ROW_DETAILS.has(reportType);
   const isServerSide = SERVER_SIDE_TYPES.has(reportType);
   const currentSortMap = SORT_MAP_BY_TYPE[reportType] || {};
+  const isForbidden = error?.response?.status === 403 || error?.status === 403;
 
   // ── Sort helper for server-side types ─────────────────────────────────────
   const handleHeaderClick = (colKey) => {
@@ -356,19 +369,21 @@ export function ReportTable({
               className="text-gray-600"
               style={{ fontSize: "clamp(0.72rem, 1vw, 1rem)" }}
             >
-              {t("table.error")}
+              {isForbidden ? t("permissionDenied") : t("table.error")}
             </p>
-            <button
-              onClick={onRetry}
-              className="bg-[#19355a] text-white rounded-lg hover:bg-[#19355a]/85 transition"
-              style={{
-                padding:
-                  "clamp(0.35rem, 0.55vw, 0.6rem) clamp(0.8rem, 1.2vw, 1.3rem)",
-                fontSize: "clamp(0.65rem, 0.88vw, 0.95rem)",
-              }}
-            >
-              {t("table.retry")}
-            </button>
+            {!isForbidden && (
+              <button
+                onClick={onRetry}
+                className="bg-[#19355a] text-white rounded-lg hover:bg-[#19355a]/85 transition"
+                style={{
+                  padding:
+                    "clamp(0.35rem, 0.55vw, 0.6rem) clamp(0.8rem, 1.2vw, 1.3rem)",
+                  fontSize: "clamp(0.65rem, 0.88vw, 0.95rem)",
+                }}
+              >
+                {t("table.retry")}
+              </button>
+            )}
           </div>
         )}
 

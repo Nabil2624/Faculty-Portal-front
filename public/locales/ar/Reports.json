@@ -4,6 +4,7 @@
   "reportSubtitle": "اختر لعرض بيانات التقرير",
   "changeFilter": "تغيير ",
   "print": "طباعة",
+  "permissionDenied": "ليس لديك صلاحية لعرض هذا التقرير.",
 
   "placeholder": {
     "title": "اختر نوع التقرير",

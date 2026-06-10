@@ -21,8 +21,8 @@ import {
 // ─── Dropdown option lists ────────────────────────────────────────────────────
 
 const SEMINAR_TYPE_OPTIONS = [
-  { value: "Seminar", label_en: "Seminars", label_ar: "ندوات" },
-  { value: "Conference", label_en: "Conferences", label_ar: "مؤتمرات" },
+  { value: 2, label_en: "Seminars", label_ar: "ندوات" },
+  { value: 1, label_en: "Conferences", label_ar: "مؤتمرات" },
 ];
 
 const PUBLICATION_TYPE_OPTIONS = [

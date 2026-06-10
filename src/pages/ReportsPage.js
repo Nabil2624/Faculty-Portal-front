@@ -39,6 +39,7 @@ export default function ReportsPage() {
   const {
     facultiesTree,
     treeLoading,
+    treeError,
     loadFacultiesTree,
     reportData,
     totalCount,
@@ -322,6 +323,7 @@ export default function ReportsPage() {
         onConfirm={handleFilterConfirm}
         facultiesTree={facultiesTree}
         treeLoading={treeLoading}
+        treeError={treeError}
         t={t}
         isArabic={isArabic}
       />

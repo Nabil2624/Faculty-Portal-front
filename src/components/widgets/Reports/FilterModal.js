@@ -27,6 +27,7 @@ export function FilterModal({
   onConfirm,
   facultiesTree,
   treeLoading,
+  treeError,
   t,
   isArabic,
 }) {
@@ -44,6 +45,9 @@ export function FilterModal({
   }, [open]);
 
   if (!open) return null;
+
+  const isForbidden =
+    treeError?.response?.status === 403 || treeError?.status === 403;
 
   // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -201,7 +205,7 @@ export function FilterModal({
               className="text-center text-gray-500 py-8"
               style={{ fontSize: "clamp(0.7rem, 0.95vw, 1rem)" }}
             >
-              {t("filterModal.noData")}
+              {isForbidden ? t("permissionDenied") : t("filterModal.noData")}
             </p>
           )}
 

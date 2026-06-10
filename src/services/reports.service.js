@@ -1,6 +1,27 @@
 // ─── Reports Service ─────────────────────────────────────────────────────────
 import axiosInstance from "../utils/axiosInstance";
 
+const SEMINAR_TYPE_LABELS = {
+  1: { en: "Conference", ar: "مؤتمر" },
+  2: { en: "Seminar", ar: "ندوة" },
+};
+
+function normalizeSeminarType(value) {
+  if (value === 1 || value === "1" || value === "Conference") return 1;
+  if (value === 2 || value === "2" || value === "Seminar") return 2;
+  return "";
+}
+
+function getSeminarTypeLabels(value) {
+  const normalized = normalizeSeminarType(value);
+  return (
+    SEMINAR_TYPE_LABELS[normalized] || {
+      en: String(value ?? ""),
+      ar: String(value ?? ""),
+    }
+  );
+}
+
 // ─── Lookup: Author Roles ────────────────────────────────────────────────────
 // GET /LookUpItems/AuthorRoles
 export async function getAuthorRoles() {
@@ -504,6 +525,8 @@ export async function getSeminarsStatisticsReport({
   if (search) params.append("Search", search);
   params.append("PageIndex", String(pageIndex));
   params.append("PageSize", String(pageSize));
+  const normalizedType = normalizeSeminarType(type);
+  if (normalizedType) params.append("Type", String(normalizedType));
 
   const res = await axiosInstance.get(
     `/DashboardAndReports/ConferencesAndSeminarsReportTable?${params.toString()}`,
@@ -513,11 +536,16 @@ export async function getSeminarsStatisticsReport({
   // Flatten nested conferencesAndSeminars into one row per entry
   const raw = res.data;
   const flatData = (raw?.data ?? []).flatMap((member) =>
-    (member.conferencesAndSeminars ?? []).map((entry) => ({
-      facultyMemberName: member.facultyMemberName,
-      type: entry.type,
-      noOfConferencesOrSeminars: entry.noOfConferencesOrSeminars,
-    })),
+    (member.conferencesAndSeminars ?? []).map((entry) => {
+      const labels = getSeminarTypeLabels(entry.type);
+      return {
+        facultyMemberName: member.facultyMemberName,
+        type: normalizeSeminarType(entry.type),
+        seminarType_en: labels.en,
+        seminarType_ar: labels.ar,
+        noOfConferencesOrSeminars: entry.noOfConferencesOrSeminars,
+      };
+    }),
   );
   return { ...raw, data: flatData };
 }
