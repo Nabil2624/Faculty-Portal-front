@@ -25,6 +25,7 @@ export const PERMISSION_TYPES = [
   "FacultyMemberScientificProgressionData",
   "FacultyMemberWritingsData",
   "Tickets",
+  "Reports",
 ];
 
 // ─── Normalize user from API response ─────────────────────────────────────────

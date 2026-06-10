@@ -6,6 +6,11 @@ import {
   PERMISSION_TYPES,
 } from "../services/users.service";
 
+function normalizePermissionType(type) {
+  if (type === 13 || type === "13") return "Reports";
+  return type;
+}
+
 export default function useEditUserPermissions({
   userId,
   userPermissions = [],
@@ -57,8 +62,9 @@ export default function useEditUserPermissions({
   const filteredPermissions = useMemo(() => {
     const q = search.trim().toLowerCase();
     return allPermissions.filter((p) => {
-      if (hideTickets && p.type === "Tickets") return false;
-      const matchesType = !typeFilter || p.type === typeFilter;
+      const normalizedType = normalizePermissionType(p.type);
+      if (hideTickets && normalizedType === "Tickets") return false;
+      const matchesType = !typeFilter || normalizedType === typeFilter;
       const matchesSearch =
         !q ||
         p.displayName?.toLowerCase().includes(q) ||
@@ -74,8 +80,9 @@ export default function useEditUserPermissions({
       groups[type] = [];
     });
     filteredPermissions.forEach((p) => {
-      if (groups[p.type]) {
-        groups[p.type].push(p);
+      const normalizedType = normalizePermissionType(p.type);
+      if (groups[normalizedType]) {
+        groups[normalizedType].push(p);
       } else {
         // unknown type — put in first bucket
         const first = PERMISSION_TYPES[0];

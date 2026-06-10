@@ -291,8 +291,8 @@ function IndividualPermissionsSection({ user }) {
             disabled={isFacultyMemberOnly}
             onClick={() =>
               !isFacultyMemberOnly &&
-              navigate(`/admin/edit-user-permissions?userId=${user.id}`, {
-                state: { user },
+              navigate("/admin/edit-user-permissions", {
+                state: { user, userId: user.id },
               })
             }
             className="flex items-center justify-center gap-1.5 rounded-xl font-medium transition"

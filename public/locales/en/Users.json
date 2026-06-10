@@ -149,7 +149,8 @@
       "label": "Writings",
       "desc": "Scientific writings and patents"
     },
-    "Tickets": { "label": "Tickets", "desc": "Support tickets and helpdesk" }
+    "Tickets": { "label": "Tickets", "desc": "Support tickets and helpdesk" },
+    "Reports": { "label": "Reports", "desc": "System reports and analytics" }
   },
 
   "createUser": {
