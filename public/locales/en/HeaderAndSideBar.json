@@ -56,9 +56,10 @@
   "systemLogs": "System Logs",
   "logsCategories": "Log Categories & Actions",
   "systemUsers": "System Users",
+  "dashboard": "Dashboard",
   "createUser": "Create New User",
   "managementTickets": "Ticket Management",
   "supportAdminTickets": "My Tickets",
   "reports": "Reports",
-  "users":"Another Users"
+  "users": "Another Users"
 }

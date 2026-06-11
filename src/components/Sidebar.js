@@ -61,7 +61,12 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const navItems = [
     { key: "home", icon: <Home />, link: "/profile" },
     { key: "personalInfo", icon: <User />, link: "/personal-data" },
-    { key: "users", icon: <Users />, link: "/users" },
+    {
+      key: "users",
+      icon: <Users />,
+      link: "/users",
+      roles: ["Faculty Member"],
+    },
 
     {
       key: "researchAndSupervision",
@@ -165,7 +170,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         { key: "systemLogs", link: "/logs" },
         { key: "logsCategories", link: "/logs-categories" },
         { key: "systemUsers", link: "/admin/users" },
-        { key: "dashboard", link: "/dashboard" },
+        { key: "dashboard", link: "/Dashboard", roles: ["ManagementAdmin"] },
         {
           key: "createUser",
           link: "/admin/create-user",
