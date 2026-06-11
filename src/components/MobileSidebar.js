@@ -16,6 +16,7 @@ import {
   LifeBuoy,
   Headset,
   IdCard,
+  Users,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import logo from "../assets/helwan-logo.png";
@@ -32,6 +33,12 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
   const navItems = [
     { key: "home", icon: <Home size={20} />, link: "/profile" },
     { key: "personalInfo", icon: <User size={20} />, link: "/personal-data" },
+    {
+      key: "users",
+      icon: <Users size={20} />,
+      link: "/users",
+      roles: ["Faculty Member"],
+    },
 
     {
       key: "researchAndSupervision",
@@ -136,6 +143,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
         { key: "systemLogs", link: "/logs" },
         { key: "logsCategories", link: "/logs-categories" },
         { key: "systemUsers", link: "/admin/users" },
+        { key: "dashboard", link: "/Dashboard", roles: ["ManagementAdmin"] },
         {
           key: "createUser",
           link: "/admin/create-user",
@@ -192,10 +200,18 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
                   onClick={() => toggleMenu(item.key, level)}
                   className={itemStyles}
                 >
-                  <span className={isActive ? "text-[#B38e19]" : "text-white/40 group-hover:text-white"}>
+                  <span
+                    className={
+                      isActive
+                        ? "text-[#B38e19]"
+                        : "text-white/40 group-hover:text-white"
+                    }
+                  >
                     {item.icon}
                   </span>
-                  <span className={`text-sm ${isActive ? "font-bold" : "font-medium"}`}>
+                  <span
+                    className={`text-sm ${isActive ? "font-bold" : "font-medium"}`}
+                  >
                     {t(item.key)}
                   </span>
                 </button>
@@ -206,10 +222,18 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
                   onClick={onClose}
                   className={itemStyles}
                 >
-                  <span className={isActive ? "text-[#B38e19]" : "text-white/40 group-hover:text-white"}>
+                  <span
+                    className={
+                      isActive
+                        ? "text-[#B38e19]"
+                        : "text-white/40 group-hover:text-white"
+                    }
+                  >
                     {item.icon}
                   </span>
-                  <span className={`text-sm ${isActive ? "font-bold" : "font-medium"}`}>
+                  <span
+                    className={`text-sm ${isActive ? "font-bold" : "font-medium"}`}
+                  >
                     {t(item.key)}
                   </span>
                 </Link>
