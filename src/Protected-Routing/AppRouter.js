@@ -188,7 +188,7 @@ function AppRouterInner() {
           />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/chatC" element={<Chat />} />
-          <Route path="/dash" element={<DetailedDashboardPage />} />
+          <Route path="/detailed-dashboard" element={<DetailedDashboardPage />} />
           <Route path="/profile-page" element={<ProfilePage />} />
           <Route path="/logs" element={<LogsPage />} />
           <Route path="/admin/reports" element={<ReportsPage />} />

@@ -165,6 +165,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         { key: "systemLogs", link: "/logs" },
         { key: "logsCategories", link: "/logs-categories" },
         { key: "systemUsers", link: "/admin/users" },
+        { key: "dashboard", link: "/dashboard" },
         {
           key: "createUser",
           link: "/admin/create-user",

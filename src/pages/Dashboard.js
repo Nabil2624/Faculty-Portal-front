@@ -32,6 +32,7 @@ import AcademicLoader from "../components/AcademicLoader";
 import { useDashboard } from "../hooks/useDashboard";
 import { useTranslation } from "react-i18next";
 import CollegeCard from "../components/widgets/DetailedDashboard/CollegeCard";
+import { useNavigate } from "react-router-dom";
 import {
   getOverallSystemPerformanceReportPreview,
   downloadGeneralSystemReportPdf,
@@ -40,7 +41,7 @@ const Dashboard = () => {
   const { dashboard, loading, error } = useDashboard();
   const { t, i18n } = useTranslation();
   const isArabic = i18n.language === "ar";
-
+const navigate = useNavigate();
   // ── Report modal state ────────────────────────────────────────────────────
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportNotes, setReportNotes] = useState("");
@@ -263,7 +264,7 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="flex gap-3">
-              <button className="h-[clamp(2.5rem,3.2vw,3rem)] flex items-center justify-center gap-2 bg-[#19355A] text-white px-5 rounded-xl font-black text-[clamp(10px,1.2vw,18px)] uppercase tracking-[2px] hover:bg-[#2a4a75] transition-all active:scale-95 shadow-lg">
+              <button onClick={() => navigate("/detailed-dashboard")} className="h-[clamp(2.5rem,3.2vw,3rem)] flex items-center justify-center gap-2 bg-[#19355A] text-white px-5 rounded-xl font-black text-[clamp(10px,1.2vw,18px)] uppercase tracking-[2px] hover:bg-[#2a4a75] transition-all active:scale-95 shadow-lg">
                 {" "}
                 عرض التفاصيل{" "}
               </button>
