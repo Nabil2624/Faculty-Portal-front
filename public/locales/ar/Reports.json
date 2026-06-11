@@ -4,6 +4,7 @@
   "reportSubtitle": "اختر لعرض بيانات التقرير",
   "changeFilter": "تغيير ",
   "print": "طباعة",
+  "permissionDenied": "ليس لديك صلاحية لعرض هذا التقرير.",
 
   "placeholder": {
     "title": "اختر نوع التقرير",
@@ -46,7 +47,7 @@
     "view": "عرض",
     "columns": {
       "no": "#",
-      "memberName": "اسم عضو هيئة التدريس",
+      "memberName": "الاسم",
       "department": "القسم",
       "email": "البريد الإلكتروني",
       "phone": "الهاتف",

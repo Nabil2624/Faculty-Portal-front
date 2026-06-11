@@ -4,6 +4,7 @@
   "reportSubtitle": "Choose the appropriate filters to display report data",
   "changeFilter": "Change Filters",
   "print": "Print",
+  "permissionDenied": "You don't have permission to view this report.",
 
   "placeholder": {
     "title": "Select a Report Type",

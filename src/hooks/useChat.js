@@ -1,225 +1,43 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import axiosInstance from "../utils/axiosInstance";
-import * as signalR from "@microsoft/signalr";
-import { MESSAGING_HUB_URL } from "../services/messaging.service";
+import {
+  fetchCurrentUserApi,
+  fetchConversationByTicketIdApi,
+  createConversationFromTicketApi,
+  fetchMessagesApi,
+  sendMessageApi,
+  markMessageAsReadApi,
+} from "./chat/chatDataApi";
+import {
+  sortMessagesChronologically,
+  dedupeMessages,
+  getReceiverIdFromParticipants,
+  getUnreadIncomingMessages,
+} from "./chat/messageUtils";
+import {
+  startConnection,
+  stopConnection,
+  joinConversation,
+  leaveConversation,
+  onReceiveMessage,
+  onConversationUpdated,
+  onMessageDelivered,
+  onMessageRead,
+  onConnectionStateChange,
+  getConnectionState,
+} from "./chat/chatHubClient";
 
-let connection = null;
-let activeConversationId = null;
-
-const callbacks = {
-  receiveMessage: [],
-  conversationUpdated: [],
-  messageDelivered: [],
-  messageRead: [],
-  connectionStateChange: [],
+export {
+  startConnection,
+  stopConnection,
+  joinConversation,
+  leaveConversation,
+  onReceiveMessage,
+  onConversationUpdated,
+  onMessageDelivered,
+  onMessageRead,
+  onConnectionStateChange,
+  getConnectionState,
 };
-
-function sortMessagesChronologically(items) {
-  return [...items].sort(
-    (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
-  );
-}
-
-function dedupeMessages(items) {
-  const seen = new Set();
-
-  return items.filter((m) => {
-    const key = m?.id ?? `${m?.senderId}-${m?.createdAt}-${m?.content}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-function notifyConnectionState() {
-  const state = getConnectionState();
-  callbacks.connectionStateChange.forEach((cb) => cb(state));
-}
-
-export function getConnectionState() {
-  if (!connection) return "disconnected";
-
-  switch (connection.state) {
-    case signalR.HubConnectionState.Connected:
-      return "connected";
-    case signalR.HubConnectionState.Connecting:
-    case signalR.HubConnectionState.Reconnecting:
-      return "reconnecting";
-    default:
-      return "disconnected";
-  }
-}
-
-export async function startConnection() {
-  if (connection && connection.state === signalR.HubConnectionState.Connected) {
-    return;
-  }
-
-  if (connection) {
-    try {
-      await connection.stop();
-    } catch (err) {
-      console.warn("Error while stopping previous SignalR connection:", err);
-    }
-  }
-
-  connection = new signalR.HubConnectionBuilder()
-    .withUrl(MESSAGING_HUB_URL, {
-      withCredentials: true,
-    })
-    .withAutomaticReconnect()
-    .configureLogging(signalR.LogLevel.Information)
-    .build();
-
-  connection.on("ReceiveMessage", (message) => {
-    callbacks.receiveMessage.forEach((cb) => cb(message));
-  });
-
-  connection.on("ConversationUpdated", (message) => {
-    callbacks.conversationUpdated.forEach((cb) => cb(message));
-  });
-
-  connection.on("MessageDelivered", (message) => {
-    callbacks.messageDelivered.forEach((cb) => cb(message));
-  });
-
-  connection.on("MessageRead", (message) => {
-    callbacks.messageRead.forEach((cb) => cb(message));
-  });
-
-  connection.onreconnecting((err) => {
-    console.warn("SignalR reconnecting...", err);
-    notifyConnectionState();
-  });
-
-  connection.onreconnected(async () => {
-    notifyConnectionState();
-
-    if (activeConversationId != null) {
-      try {
-        await connection.invoke("JoinConversation", activeConversationId);
-      } catch (err) {
-        console.warn("Could not rejoin conversation:", err);
-      }
-    }
-  });
-
-  connection.onclose((err) => {
-    console.warn("SignalR connection closed:", err);
-    notifyConnectionState();
-  });
-
-  await connection.start();
-  notifyConnectionState();
-
-  if (activeConversationId != null) {
-    try {
-      await connection.invoke("JoinConversation", activeConversationId);
-    } catch (err) {
-      console.warn("Could not join conversation after start:", err);
-    }
-  }
-}
-
-export async function stopConnection() {
-  if (!connection) return;
-
-  try {
-    await connection.stop();
-  } catch (err) {
-    console.warn("Error while stopping SignalR connection:", err);
-  } finally {
-    connection = null;
-    activeConversationId = null;
-  }
-}
-
-export async function joinConversation(conversationId) {
-  activeConversationId = conversationId;
-
-  if (
-    !connection ||
-    connection.state !== signalR.HubConnectionState.Connected
-  ) {
-    return;
-  }
-
-  try {
-    await connection.invoke("JoinConversation", conversationId);
-  } catch (err) {
-    console.warn("Could not join conversation:", err);
-  }
-}
-
-export async function leaveConversation(conversationId) {
-  if (
-    !connection ||
-    connection.state !== signalR.HubConnectionState.Connected
-  ) {
-    if (activeConversationId === conversationId) {
-      activeConversationId = null;
-    }
-    return;
-  }
-
-  try {
-    await connection.invoke("LeaveConversation", conversationId);
-  } catch (err) {
-    console.warn("Could not leave conversation:", err);
-  } finally {
-    if (activeConversationId === conversationId) {
-      activeConversationId = null;
-    }
-  }
-}
-
-export function onReceiveMessage(cb) {
-  callbacks.receiveMessage.push(cb);
-  return () => {
-    callbacks.receiveMessage = callbacks.receiveMessage.filter((c) => c !== cb);
-  };
-}
-
-export function onConversationUpdated(cb) {
-  callbacks.conversationUpdated.push(cb);
-  return () => {
-    callbacks.conversationUpdated = callbacks.conversationUpdated.filter(
-      (c) => c !== cb,
-    );
-  };
-}
-
-export function onMessageDelivered(cb) {
-  callbacks.messageDelivered.push(cb);
-  return () => {
-    callbacks.messageDelivered = callbacks.messageDelivered.filter(
-      (c) => c !== cb,
-    );
-  };
-}
-
-export function onMessageRead(cb) {
-  callbacks.messageRead.push(cb);
-  return () => {
-    callbacks.messageRead = callbacks.messageRead.filter((c) => c !== cb);
-  };
-}
-
-export function onConnectionStateChange(cb) {
-  callbacks.connectionStateChange.push(cb);
-  cb(getConnectionState());
-
-  return () => {
-    callbacks.connectionStateChange = callbacks.connectionStateChange.filter(
-      (c) => c !== cb,
-    );
-  };
-}
-
-// ---------------- Hook ----------------
-
-const DEFAULT_TAKE = 20;
-const CURRENT_USER_ENDPOINT = "/Authentication/GetCurrentUser";
 
 export default function useChat(ticket) {
   const [currentUser, setCurrentUser] = useState(null);
@@ -244,8 +62,7 @@ export default function useChat(ticket) {
 
   const fetchCurrentUser = useCallback(async () => {
     try {
-      const res = await axiosInstance.get(CURRENT_USER_ENDPOINT);
-      const data = res?.data ?? null;
+      const data = await fetchCurrentUserApi();
 
       safeSetState(() => {
         setCurrentUser(data);
@@ -253,7 +70,7 @@ export default function useChat(ticket) {
 
       return data;
     } catch (err) {
-      console.warn("Could not fetch current user from:", CURRENT_USER_ENDPOINT);
+      console.warn("Could not fetch current user.");
       return null;
     }
   }, [safeSetState]);
@@ -272,11 +89,7 @@ export default function useChat(ticket) {
 
     try {
       setError(null);
-
-      const res = await axiosInstance.get(
-        `/Messaging/TicketConversation/${ticket.id}`,
-      );
-      const data = res?.data ?? null;
+      const data = await fetchConversationByTicketIdApi(ticket.id);
 
       safeSetState(() => {
         setConversation(data);
@@ -305,25 +118,7 @@ export default function useChat(ticket) {
 
   const fetchMessages = useCallback(async (conversationId, cursor = null) => {
     try {
-      const params = { take: DEFAULT_TAKE };
-      if (cursor != null) params.cursor = cursor;
-
-      const res = await axiosInstance.get(
-        `/Messaging/Conversation/${conversationId}`,
-        { params },
-      );
-      const data = res?.data;
-
-      const raw = Array.isArray(data)
-        ? data
-        : (data?.messages ?? data?.data ?? data?.items ?? []);
-
-      const nc = data?.nextCursor ?? data?.cursor ?? null;
-      const hm = data?.hasMore ?? raw.length === DEFAULT_TAKE;
-
-      const msgs = sortMessagesChronologically(raw);
-
-      return { msgs, nextCursor: nc, hasMore: hm };
+      return await fetchMessagesApi(conversationId, cursor);
     } catch (err) {
       console.warn("Failed to fetch messages:", err);
       return { msgs: [], nextCursor: null, hasMore: false };
@@ -333,20 +128,11 @@ export default function useChat(ticket) {
   const markAllRead = useCallback(async () => {
     if (!messages.length || !currentUser) return;
 
-    const myId = currentUser?.userId ?? currentUser?.id;
-
-    const unread = messages.filter((m) => {
-      const senderId = m.senderId ?? m.userId;
-      const alreadyRead =
-        m.isRead === true || m.read === true || m.status === "Read";
-
-      return (
-        String(senderId) !== String(myId) &&
-        !alreadyRead &&
-        m.id != null &&
-        !readInFlightRef.current.has(m.id)
-      );
-    });
+    const unread = getUnreadIncomingMessages(
+      messages,
+      currentUser,
+      readInFlightRef.current,
+    );
 
     if (!unread.length) return;
 
@@ -354,9 +140,7 @@ export default function useChat(ticket) {
 
     try {
       await Promise.allSettled(
-        unread.map((msg) =>
-          axiosInstance.put(`/Messaging/Message/${msg.id}/Read`),
-        ),
+        unread.map((msg) => markMessageAsReadApi(msg.id)),
       );
     } finally {
       unread.forEach((msg) => readInFlightRef.current.delete(msg.id));
@@ -400,15 +184,11 @@ export default function useChat(ticket) {
     async (text) => {
       if (!conversation?.id || !text.trim()) return;
 
-      const myId = currentUser?.userId ?? currentUser?.id;
       const participants = conversation.participants ?? [];
-
-      const other = participants.find((p) => {
-        const pid = p.userId ?? p.id ?? p.participantId;
-        return String(pid) !== String(myId);
-      });
-
-      const recieverId = other?.userId ?? other?.id ?? other?.participantId;
+      const recieverId = getReceiverIdFromParticipants(
+        conversation,
+        currentUser,
+      );
 
       if (!recieverId) {
         console.warn(
@@ -424,11 +204,10 @@ export default function useChat(ticket) {
       safeSetState(() => setSending(true));
 
       try {
-        await axiosInstance.post("/Messaging/Message", {
+        await sendMessageApi({
           conversationId: conversation.id,
           recieverId,
           content: text.trim(),
-          messageType: "Text",
         });
       } catch (err) {
         const msg =
@@ -525,7 +304,7 @@ export default function useChat(ticket) {
           setNextCursor(null);
         });
 
-        const [user, conv] = await Promise.all([
+        const [, conv] = await Promise.all([
           fetchCurrentUser(),
           fetchConversation(),
         ]);
@@ -533,31 +312,8 @@ export default function useChat(ticket) {
         let resolvedConv = conv;
 
         if (!resolvedConv?.id && ticket?.assignedToId) {
-          // No conversation exists yet — create one
-          // Use senderId/assignedToId directly from the ticket to avoid
-          // relying on currentUser field name variations (userId vs id, etc.)
-          const now = new Date().toISOString();
-          const participants = [
-            {
-              userId: ticket.senderId,
-              username: ticket.senderUsername ?? "",
-              joinedAt: now,
-            },
-            {
-              userId: ticket.assignedToId,
-              username: ticket.assigneeUsername ?? "",
-              joinedAt: now,
-            },
-          ];
-
           try {
-            const res = await axiosInstance.post("/Messaging/Conversation", {
-              type: "Direct",
-              title: ticket.title ?? "Ticket Conversation",
-              ticketId: ticket.id,
-              participants,
-            });
-            resolvedConv = res?.data ?? null;
+            resolvedConv = await createConversationFromTicketApi(ticket);
             safeSetState(() => setConversation(resolvedConv));
           } catch (createErr) {
             const msg =

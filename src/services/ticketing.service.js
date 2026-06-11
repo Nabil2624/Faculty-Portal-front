@@ -96,6 +96,7 @@ export async function getAllTickets({
   priority = "",
   pageIndex = 1,
   pageSize = 10,
+  skipGlobalErrorHandler = false,
 } = {}) {
   const params = {
     PageIndex: pageIndex,
@@ -106,33 +107,63 @@ export async function getAllTickets({
     ...(status && { Status: status }),
     ...(priority && { Priority: priority }),
   };
-  const res = await axiosInstance.get("/Ticketing/Ticket", { params });
+  const res = await axiosInstance.get("/Ticketing/Ticket", {
+    params,
+    skipGlobalErrorHandler,
+  });
   return res.data;
 }
 
-export async function getSuitableSupportAdmins(type) {
+export async function getSuitableSupportAdmins(
+  type,
+  { skipGlobalErrorHandler = false } = {},
+) {
   const res = await axiosInstance.get(
     "/Ticketing/Ticket/SuitableSupportAdmins",
-    { params: { type } },
+    {
+      params: { type },
+      skipGlobalErrorHandler,
+    },
   );
   return res.data;
 }
 
-export async function assignTicket(ticketId, body) {
+export async function assignTicket(
+  ticketId,
+  body,
+  { skipGlobalErrorHandler = false } = {},
+) {
   const res = await axiosInstance.put(
     `/Ticketing/Ticket/Assign/${ticketId}`,
     body,
+    {
+      skipGlobalErrorHandler,
+    },
   );
   return res.data;
 }
 
-export async function closeTicketAdmin(ticketId) {
-  const res = await axiosInstance.put(`/Ticketing/Ticket/Close/${ticketId}`);
+export async function closeTicketAdmin(
+  ticketId,
+  { skipGlobalErrorHandler = false } = {},
+) {
+  const res = await axiosInstance.put(
+    `/Ticketing/Ticket/Close/${ticketId}`,
+    undefined,
+    {
+      skipGlobalErrorHandler,
+    },
+  );
   return res.data;
 }
 
-export async function deleteTicket(ticketId) {
-  const res = await axiosInstance.delete(`/Ticketing/Ticket/${ticketId}`);
+export async function deleteTicket(
+  ticketId,
+  { skipGlobalErrorHandler = false } = {},
+) {
+  const res = await axiosInstance.delete(`/Ticketing/Ticket/${ticketId}`, {
+    skipGlobalErrorHandler,
+  });
   return res.data;
 }
 

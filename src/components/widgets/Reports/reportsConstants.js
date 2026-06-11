@@ -14,8 +14,6 @@ import {
   Briefcase,
   PenTool,
   FileText,
-  UserCheck,
-  TrendingUp,
   BookMarked,
   CheckSquare,
   Lightbulb,
@@ -48,8 +46,6 @@ export const REPORT_CATEGORIES = [
   { key: REPORT_TYPES.EXPERIENCES_STATS, icon: Briefcase },
   { key: REPORT_TYPES.PUBLICATIONS_STATS, icon: PenTool },
   { key: REPORT_TYPES.CV_STATS, icon: FileText },
-  { key: REPORT_TYPES.FACULTY_COUNT_STATS, icon: UserCheck },
-  { key: REPORT_TYPES.TOTAL_RESEARCH_STATS, icon: TrendingUp },
   { key: REPORT_TYPES.JOURNALS_STATS, icon: BookMarked },
   { key: REPORT_TYPES.ARTICLE_REVIEWS_STATS, icon: CheckSquare },
   { key: REPORT_TYPES.PATENTS_STATS, icon: Lightbulb },
@@ -61,19 +57,19 @@ export const REPORT_CATEGORIES = [
 // "tKey" maps to  t(`table.columns.<key>`)  in the Reports namespace.
 export const REPORT_COLUMNS = {
   [REPORT_TYPES.DETAILED_FACULTY]: [
-    { key: "index", tKey: "no", width: "3rem" },
-    { key: "name", tKey: "memberName", width: "12rem" },
-    { key: "department", tKey: "department", width: "10rem" },
-    { key: "email", tKey: "email", width: "12rem" },
-    { key: "phone", tKey: "phone", width: "20rem" },
+    { key: "index", tKey: "no", width: "1rem" },
+    { key: "name", tKey: "memberName", width: "26rem" },
+    { key: "department", tKey: "department", width: "8rem" },
+    { key: "email", tKey: "email", width: "11rem" },
+    { key: "phone", tKey: "phone", width: "1rem" },
     {
       key: "internationalResearches",
       tKey: "internationalResearches",
-      width: "8rem",
+      width: "1rem",
     },
-    { key: "localResearches", tKey: "localResearches", width: "7rem" },
-    { key: "patents", tKey: "patents", width: "6rem" },
-    { key: "awards", tKey: "awards", width: "6rem" },
+    { key: "localResearches", tKey: "localResearches", width: "5rem" },
+    { key: "patents", tKey: "patents", width: "4rem" },
+    { key: "awards", tKey: "awards", width: "4rem" },
   ],
   [REPORT_TYPES.BIANNUAL_RESEARCH]: [
     { key: "index", tKey: "no", width: "3rem" },
@@ -151,7 +147,108 @@ export const REPORT_COLUMNS = {
 };
 
 // ─── Which report types support row-click details popup ───────────────────────
-export const SUPPORTS_ROW_DETAILS = new Set([REPORT_TYPES.DETAILED_FACULTY]);
+export const SUPPORTS_ROW_DETAILS = new Set([]);
+
+// ─── Which report types use server-side pagination / search / sort ────────────
+export const SERVER_SIDE_TYPES = new Set([
+  REPORT_TYPES.DETAILED_FACULTY,
+  REPORT_TYPES.BIANNUAL_RESEARCH,
+  REPORT_TYPES.SEMINARS_STATS,
+  REPORT_TYPES.RESEARCH_STATS,
+  REPORT_TYPES.PUBLICATIONS_STATS,
+  REPORT_TYPES.EXPERIENCES_STATS,
+  REPORT_TYPES.CV_STATS,
+  REPORT_TYPES.ARTICLE_REVIEWS_STATS,
+  REPORT_TYPES.JOURNALS_STATS,
+  REPORT_TYPES.PATENTS_STATS,
+  REPORT_TYPES.PROJECTS_STATS,
+]);
+
+// ─── Sort enum values for DETAILED_FACULTY (server-side) ─────────────────────
+export const DETAILED_FACULTY_SORT_MAP = {
+  name: { asc: "NameAsc", desc: "NameDesc" },
+  email: { asc: "EmailAsc", desc: "EmailDesc" },
+  internationalResearches: {
+    asc: "NoOfInternationalResearchesASC",
+    desc: "NoOfInternationalResearchesDesc",
+  },
+  localResearches: {
+    asc: "NoOfLocalResearchesAsc",
+    desc: "NoOfLocalResearchesDesc",
+  },
+  patents: { asc: "NoOfPatentsAsc", desc: "NoOfPatentsDesc" },
+  awards: { asc: "NoOfAwardsAsc", desc: "NoOfAwardsDesc" },
+};
+
+// ─── Sort enum values for BIANNUAL_RESEARCH (server-side) ────────────────────
+export const BIANNUAL_RESEARCH_SORT_MAP = {
+  year: { asc: "PubYearASC", desc: "PubYearDESC" },
+};
+
+// ─── Sort enum values for SEMINARS_STATS (server-side) ───────────────────────
+export const SEMINARS_STATS_SORT_MAP = {
+  seminarCount: {
+    asc: "NoOfConferencesOrSeminarsAsc",
+    desc: "NoOfConferencesOrSeminarsDesc",
+  },
+};
+
+// ─── Sort enum values for PUBLICATIONS_STATS (server-side) ──────────────────
+export const PUBLICATIONS_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameAsc", desc: "FacultyMemberNameDesc" },
+  publicationsCount: { asc: "NoOfWritingsASC", desc: "NoOfWritingsDESC" },
+};
+
+// ─── Sort enum values for EXPERIENCES_STATS (server-side) ───────────────────
+export const EXPERIENCES_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameASC", desc: "FacultyMemberNameDESC" },
+  experiencesCount: {
+    asc: "ExperienceCountAsc",
+    desc: "ExperienceCountDesc",
+  },
+};
+
+// ─── Sort enum values for CV_STATS (server-side) ────────────────────────────
+export const CV_STATS_SORT_MAP = {
+  faculty: { asc: "FacultyNameAsc", desc: "FacultyNameDesc" },
+  cvCount: { asc: "NoOfCVsASC", desc: "NoOfCvsDESC" },
+};
+
+// ─── Sort enum values for ARTICLE_REVIEWS_STATS (server-side) ───────────────
+export const ARTICLE_REVIEWS_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameAsc", desc: "FacultyMemberNameDesc" },
+  articleCount: { asc: "NoOfArticlesAsc", desc: "NoOfArticlesDesc" },
+};
+
+export const JOURNALS_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameASC", desc: "FacultyMemberNameDESC" },
+  journalCount: {
+    asc: "NoOfParticipationsASC",
+    desc: "NoOfParticipationsDESC",
+  },
+};
+
+export const PATENTS_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameASC", desc: "FacultyMemberNameDESC" },
+  patentCount: { asc: "NoOfPatentsASC", desc: "NoOfPatentsDESC" },
+};
+
+export const PROJECTS_STATS_SORT_MAP = {
+  name: { asc: "FacultyMemberNameASC", desc: "FacultyMemberNameDESC" },
+  projectCount: { asc: "NoOfProjectsASC", desc: "NoOfProjectsDESC" },
+};
+
+// ─── Sort enum values for RESEARCH_STATS (server-side) ───────────────────────
+export const RESEARCH_STATS_SORT_MAP = {
+  internationalResearches: {
+    asc: "NoOfInternationalResearchesASC",
+    desc: "NoOfInternationalResearchesDESC",
+  },
+  localResearches: {
+    asc: "NoOfLocalResearchesASC",
+    desc: "NoOfLocalResearchesDESC",
+  },
+};
 
 // ─── Theme colors (matches rest of the system) ────────────────────────────────
 export const COLORS = {

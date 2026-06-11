@@ -24,11 +24,16 @@ export default function useAdminTickets() {
         ...filters,
         pageIndex: page,
         pageSize: ADMIN_PAGE_SIZE,
+        skipGlobalErrorHandler: true,
       });
       setTickets(res.data || []);
       setTotalCount(res.totalCount || 0);
       setCurrentPage(page);
     } catch (err) {
+      if (err?.response?.status === 403) {
+        setError("permissionDenied");
+        return;
+      }
       setError(
         err?.response?.data?.message ||
           err?.response?.data?.title ||
@@ -40,19 +45,21 @@ export default function useAdminTickets() {
   }, []);
 
   const fetchSuitableAdmins = useCallback(async (ticket) => {
-    return getSuitableSupportAdmins(ticket.type);
+    return getSuitableSupportAdmins(ticket.type, {
+      skipGlobalErrorHandler: true,
+    });
   }, []);
 
   const doAssign = useCallback(async (ticketId, body) => {
-    await assignTicket(ticketId, body);
+    await assignTicket(ticketId, body, { skipGlobalErrorHandler: true });
   }, []);
 
   const doClose = useCallback(async (ticketId) => {
-    await closeTicketAdmin(ticketId);
+    await closeTicketAdmin(ticketId, { skipGlobalErrorHandler: true });
   }, []);
 
   const doDelete = useCallback(async (ticketId) => {
-    await deleteTicket(ticketId);
+    await deleteTicket(ticketId, { skipGlobalErrorHandler: true });
   }, []);
 
   return {

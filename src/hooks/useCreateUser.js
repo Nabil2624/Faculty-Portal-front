@@ -41,6 +41,7 @@ export default function useCreateUser() {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // ─── Toast helper ──────────────────────────────────────────────────────────
   const showToast = useCallback((messageKey, type = "success") => {
@@ -53,10 +54,21 @@ export default function useCreateUser() {
     setPermissionsLoading(true);
     setPermissionsError(null);
     try {
-      const result = await getAllPermissions({});
+      const result = await getAllPermissions({
+        skipGlobalErrorHandler: true,
+      });
       setAllPermissions(result.data);
     } catch (err) {
-      setPermissionsError(err?.message || "Failed to load permissions.");
+      if (err?.response?.status === 403) {
+        setPermissionsError("permissionDenied");
+        return;
+      }
+      setPermissionsError(
+        err?.response?.data?.message ||
+          err?.response?.data?.title ||
+          err?.message ||
+          "Failed to load permissions.",
+      );
     } finally {
       setPermissionsLoading(false);
     }
@@ -152,6 +164,7 @@ export default function useCreateUser() {
     );
 
     setSubmitting(true);
+    setSubmitError("");
     try {
       await createUser({
         userName: form.userName,
@@ -160,6 +173,7 @@ export default function useCreateUser() {
         password: form.password,
         permissions: selectedPerms,
         roles: form.roles.map((r) => ({ name: r })),
+        skipGlobalErrorHandler: true,
       });
       setSuccess(true);
       showToast("success", "success");
@@ -168,6 +182,8 @@ export default function useCreateUser() {
       const status = err?.response?.status;
       if (status === 409) {
         showToast("conflict", "error");
+      } else if (status === 403) {
+        setSubmitError("permissionDenied");
       } else {
         showToast("error", "error");
       }
@@ -229,6 +245,7 @@ export default function useCreateUser() {
     // submission
     submitting,
     submit,
+    submitError,
     reset,
     toast,
     success,

@@ -294,14 +294,14 @@ const DetailedDashboardPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 3xl:gap-12 items-stretch">
               {/* 1. Top Researchers (مرتبط باختيار الكرت الأول مثلاً) */}
               <div className="w-full h-full flex flex-col">
-                <TopResearchersCard
-                  title={t("title")}
-                  facultyId={researchersCollegeId}
-                  data={topResearchersData}
-                  footerText={t("statisticalInsight")}
-                  noData={t("noData")}
-                  subTitle={t("facultyRank")}
-                />
+            <TopResearchersCard
+              title={t("title")}
+              facultyId={researchersCollegeId}
+              data={topResearchersData?.slice(0, 5)}
+              footerText={t("statisticalInsight")}
+              noData={t("noData")}
+              subTitle={t("facultyRank")}
+            />
               </div>
 
               {/* 2. University Top Researchers */}

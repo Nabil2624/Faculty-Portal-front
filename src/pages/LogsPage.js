@@ -5,7 +5,10 @@ import { ScrollText, RefreshCw } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import useLogs from "../hooks/useLogs";
 
-import { PAGE_SIZE, EMPTY_FILTERS } from "../components/widgets/Logs/logsConstants";
+import {
+  PAGE_SIZE,
+  EMPTY_FILTERS,
+} from "../components/widgets/Logs/logsConstants";
 import { LogsStatsRow } from "../components/widgets/Logs/LogsStatsRow";
 import { LogsSearchBar } from "../components/widgets/Logs/LogsSearchBar";
 import { LogsTable } from "../components/widgets/Logs/LogsTable";
@@ -169,7 +172,8 @@ export default function LogsPage() {
         >
           <span>
             {t("showing")}{" "}
-            {Math.min((currentPage - 1) * PAGE_SIZE + 1, totalCount)}{String.fromCharCode(8211)}
+            {Math.min((currentPage - 1) * PAGE_SIZE + 1, totalCount)}
+            {String.fromCharCode(8211)}
             {Math.min(currentPage * PAGE_SIZE, totalCount)} {t("of")}{" "}
             {totalCount} {t("entries")}
           </span>
