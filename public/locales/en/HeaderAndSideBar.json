@@ -59,5 +59,6 @@
   "createUser": "Create New User",
   "managementTickets": "Ticket Management",
   "supportAdminTickets": "My Tickets",
-  "reports": "Reports"
+  "reports": "Reports",
+  "users":"Another Users"
 }

@@ -1,10 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Bell, Mail, Search, Menu, LogOut, Globe, Clock, GraduationCap } from "lucide-react"; // تم إضافة GraduationCap هنا
+import {
+  Bell,
+  Mail,
+  Search,
+  Menu,
+  LogOut,
+  Globe,
+  Clock,
+  GraduationCap,
+} from "lucide-react"; // تم إضافة GraduationCap هنا
 import { useTranslation } from "react-i18next";
 import FloatingSearch from "./FloatingSearch";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../services/auth.service";
-
+import { useNotifications } from "../hooks/useNotifications";
 export default function MobileHeader({ onBurgerClick }) {
   const { t, i18n } = useTranslation("headerandsidebar");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -12,15 +21,35 @@ export default function MobileHeader({ onBurgerClick }) {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const isArabic = i18n.language === "ar";
+  const { notifications, markAllAsRead, loadMoreNotifications } =
+    useNotifications();
 
-  // داتا الإشعارات
-  const [notifications] = useState([
-    { id: 1, title: "محاضرة جديدة", body: "تم رفع فيديو محاضرة التحليل الإنشائي", time: "منذ 5 دقائق", unread: true },
-    { id: 2, title: "تعديل جدول", body: "تغيير موعد معمل الفيزياء للفرقة الثانية", time: "منذ ساعتين", unread: true },
-    { id: 3, title: "تنبيه إداري", body: "يرجى سداد المصروفات المتبقية قبل نهاية الأسبوع", time: "منذ يوم", unread: false },
-  ]);
+  const formatTime = (dateString) => {
+    if (!dateString) return "";
 
-  const unreadCount = notifications.filter((n) => n.unread).length;
+    const date = new Date(dateString);
+    const now = new Date();
+
+    const diffMs = now - date;
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffHour = Math.floor(diffMin / 60);
+
+    if (diffMin < 1) return "now";
+    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffHour < 24) return `${diffHour}h ago`;
+
+    return date.toLocaleDateString();
+  };
+
+  // ===== mapping backend → UI =====
+  const mappedNotifications = notifications.map((n) => ({
+    id: n.id || `${n.receiverId}-${n.createdAt}`,
+    title: n.title || n.message,
+    time: formatTime(n.createdAt),
+    unread: n.unread ?? true,
+  }));
+
+  const hasUnread = mappedNotifications.some((n) => n.unread);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -61,17 +90,18 @@ export default function MobileHeader({ onBurgerClick }) {
 
         {/* المجموعه اللي فيها الأيقونات - حافظنا على الـ Container الأصلي وضفنا الزرار جواه */}
         <div className="flex items-center gap-0.5 bg-white/5 rounded-2xl p-1 border border-white/5">
-          
           {/* Notification Wrapper */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setNotificationsOpen(!notificationsOpen)}
               className={`p-2 transition-colors relative rounded-lg ${
-                notificationsOpen ? "bg-white/10 text-[#B38E19]" : "hover:text-[#B38E19]"
+                notificationsOpen
+                  ? "bg-white/10 text-[#B38E19]"
+                  : "hover:text-[#B38E19]"
               }`}
             >
               <Bell size={18} />
-              {unreadCount > 0 && (
+              {hasUnread > 0 && (
                 <span
                   className={`absolute top-2.5 ${isArabic ? "left-2.5" : "right-2.5"} flex h-2 w-2`}
                 >
@@ -87,16 +117,18 @@ export default function MobileHeader({ onBurgerClick }) {
                 className={`absolute top-[120%] ${isArabic ? "-right-2" : "-left-2"} w-72 bg-[#19355a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl z-[60] animate-in fade-in zoom-in duration-200`}
               >
                 <div className="p-3 border-b border-white/10 flex justify-between items-center bg-white/5">
-                  <span className="text-xs font-bold">{isArabic ? "الإشعارات" : "Notifications"}</span>
-                  {unreadCount > 0 && (
+                  <span className="text-xs font-bold">
+                    {isArabic ? "الإشعارات" : "Notifications"}
+                  </span>
+                  {mappedNotifications > 0 && (
                     <span className="text-[10px] bg-[#B38E19] px-2 py-0.5 rounded-full text-white font-bold">
-                      {unreadCount} {isArabic ? "جديدة" : "New"}
+                      {hasUnread} {isArabic ? "جديدة" : "New"}
                     </span>
                   )}
                 </div>
 
                 <div className="max-h-[320px] overflow-y-auto scrollbar-hide">
-                  {notifications.map((n) => (
+                  {mappedNotifications.map((n) => (
                     <div
                       key={n.id}
                       className={`p-3 border-b border-white/5 hover:bg-white/10 transition-colors cursor-pointer ${
@@ -104,19 +136,26 @@ export default function MobileHeader({ onBurgerClick }) {
                       }`}
                     >
                       <div className="flex justify-between items-start mb-1">
-                        <h4 className={`text-[11px] font-bold ${n.unread ? "text-[#B38E19]" : "text-gray-200"}`}>
+                        <h4
+                          className={`text-[11px] font-bold ${n.unread ? "text-[#B38E19]" : "text-gray-200"}`}
+                        >
                           {n.title}
                         </h4>
                         <span className="text-[9px] text-gray-500 flex items-center gap-1">
                           <Clock size={10} /> {n.time}
                         </span>
                       </div>
-                      <p className="text-[10px] text-gray-400 line-clamp-2 leading-relaxed">{n.body}</p>
+                      <p className="text-[10px] text-gray-400 line-clamp-2 leading-relaxed">
+                        {n.body}
+                      </p>
                     </div>
                   ))}
                 </div>
 
-                <button className="w-full py-2.5 text-[10px] text-center bg-white/5 hover:bg-[#B38E19] hover:text-white text-[#B38E19] font-bold transition-all border-t border-white/5">
+                <button
+                  onClick={loadMoreNotifications}
+                  className="w-full py-2.5 text-[10px] text-center bg-white/5 hover:bg-[#B38E19] hover:text-white text-[#B38E19] font-bold transition-all border-t border-white/5"
+                >
                   {isArabic ? "عرض الكل" : "View All"}
                 </button>
               </div>
@@ -127,13 +166,15 @@ export default function MobileHeader({ onBurgerClick }) {
             <Mail size={18} />
           </button>
 
-          
           <button
             onClick={() => navigate("/categories")}
             className="p-2 hover:text-[#B38E19] active:bg-white/10 rounded-lg transition-colors group"
             title={isArabic ? "الأنشطة الأكاديمية" : "Academic Activities"}
           >
-            <GraduationCap size={18} className="group-hover:rotate-6 transition-transform duration-200" />
+            <GraduationCap
+              size={18}
+              className="group-hover:rotate-6 transition-transform duration-200"
+            />
           </button>
 
           <button
@@ -165,7 +206,10 @@ export default function MobileHeader({ onBurgerClick }) {
         </button>
       </div>
 
-      <FloatingSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <FloatingSearch
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
     </header>
   );
 }

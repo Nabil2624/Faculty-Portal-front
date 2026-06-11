@@ -34,7 +34,10 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
+    const controller = new AbortController();
+
     setError(null);
     try {
       const loginResponse = await axiosInstance.post(
@@ -44,11 +47,11 @@ export default function LoginPage() {
           skipGlobalErrorHandler: true,
           withCredentials: true,
         },
+        { signal: controller.signal },
       );
       const decoded = jwtDecode(loginResponse.data.token);
-      
-      const roles = decoded?.Roles || [];
 
+      const roles = decoded?.Roles || [];
 
       localStorage.setItem("userRoles", JSON.stringify(roles));
 

@@ -130,6 +130,10 @@ import ExternalConferenceCategoryPage from "../pages/ExternalConferenceCategoryP
 import ScientificMissionCategoryPage from "../pages/ScientificMissionCategoryPage";
 import ExternalConferenceForm from "../pages/ExternalConferenceForm";
 import OrderTrackerPage from "../pages/OrderTrackerPage";
+import ConferenceFormPage from "../pages/ConferenceFormPage"
+import HistoryPage from "../pages/HistoryPage";
+import FacultyConferenceFormPage from "../pages/FacultyConferenceFormPage";
+import StudyLeaveFormPage from "../pages/StudyLeaveFormPage";
 
 function AppRouterInner() {
   const navigate = useNavigate();
@@ -162,8 +166,14 @@ function AppRouterInner() {
 
         {/* --- Protected Routes --- */}
         <Route element={<ProtectedRoute />}>
+
+
+
+          <Route path="/study-leave" element={<StudyLeaveFormPage />} />
+          <Route path="/faculty-conference" element={<FacultyConferenceFormPage />} />
+          <Route path="/history" element={<HistoryPage />} />
           <Route path="/order" element={<OrderTrackerPage />} />
-          <Route path="/external-form" element={<ExternalConferenceForm />} />
+          <Route path="/conference-form" element={<ConferenceFormPage /> } />
           <Route
             path="/scientific-missions-categories"
             element={<ScientificMissionCategoryPage />}

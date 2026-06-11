@@ -15,7 +15,8 @@ import {
   ShieldCheck,
   LifeBuoy,
   IdCard,
-  Headset, // أضفت الأيقونات الناقصة للـ Roles التانية
+  Headset,
+  Users, // أضفت الأيقونات الناقصة للـ Roles التانية
 } from "lucide-react";
 import logo from "../assets/Capital.png";
 
@@ -60,6 +61,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const navItems = [
     { key: "home", icon: <Home />, link: "/profile" },
     { key: "personalInfo", icon: <User />, link: "/personal-data" },
+    { key: "users", icon: <Users />, link: "/users" },
 
     {
       key: "researchAndSupervision",

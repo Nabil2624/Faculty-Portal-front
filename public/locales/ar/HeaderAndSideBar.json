@@ -60,5 +60,6 @@
   "createUser": "إنشاء مستخدم جديد",
   "managementTickets": "إدارة الشكاوى",
   "supportAdminTickets": "إدارة شكاوى الدعم",
-  "reports": "التقارير"
+  "reports": "التقارير",
+  "users": "مستحدمين آخرين"
 }

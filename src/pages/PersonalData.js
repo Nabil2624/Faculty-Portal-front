@@ -30,14 +30,14 @@ export default function PersonalData() {
   // ---------------- Logic to check if Edit button should be disabled ----------------
   const isTabDisabled = () => {
     if (activeTab === "personal") {
-      // إذا كانت البيانات فارغة أو غير موجودة (404)
+
       return !personalData || Object.keys(personalData).length === 0;
     }
     if (activeTab === "social") {
-      // نتحقق مما إذا كانت البيانات فارغة أو كل القيم بداخلها null/undefined
+   
       return !socialData || Object.values(socialData).every((val) => !val);
     }
-    return false; // الأقسام الأخرى تظل مفعلة بشكل طبيعي
+    return false; 
   };
 
   const isDisabled = isTabDisabled();

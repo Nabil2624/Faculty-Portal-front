@@ -1,11 +1,8 @@
 import React from 'react';
 
-const TopResearch = () => {
-  const researchData = [
-    { id: 1, title: "تطوير أنظمة إدارة التعلم الذكية باستخدام تقنيات الذكاء الاصطناعي", year: "2025", citations: 45 },
-    { id: 2, title: "أمان البيانات في السحب الحوسبية الأكاديمية: دراسة حالة على الجامعات المصرية", year: "2024", citations: 120 },
-    { id: 3, title: "تحسين تجربة المستخدم في البوابات الحكومية ثنائية اللغة", year: "2024", citations: 88 }
-  ];
+const TopResearch = ({ data = [] }) => {
+
+
 
   return (
     <div className="w-full py-6 flex justify-center px-4">
@@ -43,7 +40,7 @@ const TopResearch = () => {
 
           {/* Table Body */}
           <div className="flex flex-col">
-            {researchData.map((item, index) => (
+            {data.map((item, index) => (
               <div 
                 key={item.id} 
                 className="group flex flex-col md:flex-row items-start md:items-center py-5 px-6 border-b border-gray-50 last:border-0 hover:bg-slate-50 transition-all duration-200"
@@ -65,7 +62,7 @@ const TopResearch = () => {
                   <div className="md:w-32 flex flex-col md:items-center">
                      <span className="md:hidden text-[9px] text-gray-400 font-black uppercase">السنة</span>
                      <span className="text-[#19355A] font-mono font-bold text-sm bg-gray-50 md:bg-transparent px-2 py-1 md:p-0 rounded">
-                       {item.year}
+                       {item.publicationYear}
                      </span>
                   </div>
 

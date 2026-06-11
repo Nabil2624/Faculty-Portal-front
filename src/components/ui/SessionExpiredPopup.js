@@ -2,16 +2,16 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { LogOut, ShieldAlert } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-
+import { useNavigate } from "react-router-dom";
 export default function SessionExpiredPopup() {
   const { t } = useTranslation("session-popup");
   const { isSessionPopupVisible, handleLogout } = useAuth();
-
+  const navigate = useNavigate();
   if (!isSessionPopupVisible) return null;
 
   const handleLoginRedirect = () => {
-    handleLogout(); 
-    window.location.replace(window.location.origin + "/login");
+    handleLogout();
+    navigate("/login");
   };
 
   return (
@@ -26,9 +26,10 @@ export default function SessionExpiredPopup() {
         <h2 className="text-2xl font-bold text-white mb-2">
           {t("sessionExpiredTitle") || "انتهت الجلسة"}
         </h2>
-        
+
         <p className="text-white/60 mb-8 leading-relaxed">
-          {t("sessionExpiredDesc") || "يرجى تسجيل الدخول مرة أخرى لمتابعة العمل وحماية بياناتك."}
+          {t("sessionExpiredDesc") ||
+            "يرجى تسجيل الدخول مرة أخرى لمتابعة العمل وحماية بياناتك."}
         </p>
 
         <button

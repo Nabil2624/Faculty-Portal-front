@@ -3,13 +3,86 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import HeroProfile from "../components/widgets/PublicProfile/HeroProfile";
 import TopResearch from "../components/widgets/PublicProfile/TopResearch";
 import InfoSection from "../components/widgets/PublicProfile/InfoSection";
-const experienceData = [
-  { title: "مستشار تقني لتطوير البوابات الجامعية", subtitle: "جامعة القاهرة", date: "2023 - الحاضر" },
-  { title: "مدير مشروع بوابة التعلم الذكي", subtitle: "وزارة التعليم العالي", date: "2021 - 2023" },
-  { title: "خبير نظم الربط المباشر (SignalR)", subtitle: "المجمع التكنولوجي المتكامل", date: "2019 - 2021" },
-];
-
+import useProfilePage from "../hooks/useProfilePage";
+import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axiosInstance from "../utils/axiosInstance";
+import subImg from "../assets/prof.jpg";
 const ProfilePage = () => {
+  const location = useLocation();
+
+  const facultyMemberId = location.state?.userId || location.state;
+
+  const { profile, loading, error } = useProfilePage(facultyMemberId);
+  const [img, setImg] = useState(subImg);
+
+  const heroData = {
+    facultyMemberId: facultyMemberId,
+    id: profile?.id ?? "",
+    name: profile?.facultyMemberName ?? "",
+    bio: profile?.bioSummary ?? "",
+    registrationId: profile?.registerationId ?? "",
+    isVerified: profile?.isVerified ?? false,
+    issueDate: profile?.issueDate ?? null,
+    profilePicture: profile?.profilePicture ?? null,
+    interests: profile?.interests ?? [],
+    system: profile?.system ?? "",
+  };
+
+  useEffect(() => {
+    const loadProfileImage = async () => {
+      try {
+        if (heroData.profilePicture) {
+          const url = `/Attachments/${profile.personalDataId}/${profile.profilePicture.id}?context=3`;
+          const response = await axiosInstance.get(url, {
+            responseType: "blob",
+          });
+          const imageBlob = response.data;
+          const imageUrl = URL.createObjectURL(imageBlob);
+          setImg(imageUrl);
+        } else {
+          setImg(subImg);
+        }
+      } catch (err) {
+        console.error("Error loading profile image:", err);
+        setImg(subImg);
+      }
+    };
+    loadProfileImage();
+  }, [profile]);
+  const researchesData =
+    profile?.researches?.map((research) => ({
+      id: research?.id ?? 0,
+      title: research?.title ?? "",
+      publisher: research?.publisher ?? "",
+      journal: research?.journalOrConfernce ?? "",
+      publicationType: research?.publicationType ?? "",
+      publicationYear: research?.pubYear ?? "",
+      citations: research?.noOfCititations ?? 0,
+      abstract: research?.abstract ?? "",
+      researchLink: research?.researchLink ?? "",
+      doi: research?.doi ?? "",
+      volume: research?.volume ?? "",
+      issue: research?.issue ?? "",
+      pages: research?.noOfPages ?? "",
+      contributors: research?.contributions ?? [],
+    })) ?? [];
+  const scientificMissionsData =
+    profile?.scientificMissions?.map((mission) => ({
+      title: mission?.missionName || "مهمة علمية",
+      subtitle: mission?.universityOrFaculty ?? "",
+      date: mission?.startDate ? `${mission.startDate}` : "",
+      country: mission?.countryOrCity ?? "",
+      notes: mission?.notes ?? "",
+    })) ?? [];
+  const experiencesData =
+    profile?.experinces?.map((experience) => ({
+      title: experience?.title ?? "",
+      subtitle: experience?.organization ?? "",
+      date: experience?.startDate ? `${experience.startDate}` : "",
+    })) ?? [];
+  const interestsData =
+    profile?.interests?.map((interest) => interest?.name ?? "") ?? [];
   return (
     <ResponsiveLayoutProvider>
       <div className="min-h-screen bg-[#F4F7F9] font-sans text-[#19355A]">
@@ -39,38 +112,39 @@ const ProfilePage = () => {
 
           {/* 2. Page Content - Structured as a Professional Profile */}
           <div className="max-w-[1200px] mx-auto px-4">
- 
-
-
             {/* Main Grid Layout */}
             <div className="flex flex-col gap-y-12">
               {/* الجزء الأول: الكارت التعريفي (المرجع الأساسي للهوية) */}
               <section className="w-full">
-                <HeroProfile />
+                <HeroProfile
+                  data={heroData}
+                  interests={interestsData}
+                  img={img}
+                />
               </section>
 
               {/* الجزء الثاني: لوحة البيانات (Data Dashboard) */}
               <div className="grid grid-cols-1 gap-y-8">
                 {/* تجميعة الأبحاث */}
                 <div>
-                  <TopResearch />
+                  <TopResearch data={researchesData} />
                 </div>
 
                 {/* تجميعة السجلات الوظيفية والعلمية */}
                 <div className="grid grid-cols-1 gap-8">
-                  <div >
+                  <div>
                     <InfoSection
                       title="المهمات العلمية والبعثات"
                       buttonText="سجل البعثات"
-                      data={experienceData} // بيانات المهمات
+                      data={scientificMissionsData} // بيانات المهمات
                     />
                   </div>
 
-                  <div >
+                  <div>
                     <InfoSection
                       title="الخبرات المهنية المعتمدة"
                       buttonText="السجل الوظيفي"
-                      data={experienceData} // بيانات الخبرات
+                      data={experiencesData} // بيانات الخبرات
                       showCitations={false}
                     />
                   </div>

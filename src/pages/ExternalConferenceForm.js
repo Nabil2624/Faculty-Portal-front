@@ -11,7 +11,7 @@ import { KnowledgeBase } from "../components/ui/KnowledgeBaseSection";
 export default function ExternalConferenceForm() {
   const { t, i18n } = useTranslation("ExternalForm");
   const isArabic = i18n.language === "ar";
-
+  const [attachments, setAttachments] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     currentJob: "",
@@ -32,7 +32,7 @@ export default function ExternalConferenceForm() {
     location: "",
     organizer: "",
     expensesCoverage: "",
-    participation: "researchPresenter", // 💡 القيمة الابتدائية الافتراضية (مقدم بحث)
+    participation: "researchPresenter", 
     acceptanceType: "",
     researchName: "",
     fees: "",
@@ -396,7 +396,6 @@ export default function ExternalConferenceForm() {
 
             {/* موافقة العميد والبديل */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-
               <InputFieldForm
                 label={t("substituteWorker")}
                 name="substituteWorker"
