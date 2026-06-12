@@ -1,0 +1,53 @@
+{
+  "categories": {
+    "title": "Academic Activities & Academic Mobility",
+    "subtitle": "Please select the appropriate category to proceed with your submission",
+    "external_conference": {
+      "title": "External Conference",
+      "description": "International conferences held outside the university or country to share research global scale."
+    },
+    "internal_conference": {
+      "title": "Internal Conference",
+      "description": "Local conferences and symposiums organized within the university faculties and departments."
+    },
+    "scientific_mission": {
+      "title": "Scientific Mission",
+      "description": "Advanced research fellowships and academic exchange programs with international institutions."
+    }
+  },
+  "internalTitle": "Internal Conferences",
+  "attend": {
+    "title": "Attend Internal Conference (QF-05)",
+    "description": "Submit a request to attend an internal academic conference or seminar organized within the university faculties."
+  },
+  "organize": {
+    "title": "Organize Internal Conference (QF-06)",
+    "description": "Submit a formal proposal or request to organize and host an academic conference or workshop inside the university."
+  },
+  "history": {
+    "title": "Request History",
+    "description": "Track your submitted external requests, decisions, and approval status."
+  },
+  "externalTitle": "External Conferences",
+  "attendQf04": {
+    "title": "Attend External Conference (QF-04)",
+    "description": "Submit a request to attend scientific conferences or seminars outside the university."
+  },
+  "historyExternal": {
+    "title": "External Request History",
+    "description": "Track your submitted external requests, decisions, and approval status."
+  },
+  "scientificMissionTitle": "Scientific Missions",
+  "generalMission": {
+    "title": "General Scientific Mission Form",
+    "description": "Submit a request for general scientific missions funded or delegated by the university for research collaboration."
+  },
+  "personalMission": {
+    "title": "Personal Scholarship Scientific Mission Form",
+    "description": "Submit a request for scientific missions based on personally acquired academic scholarships or research grants."
+  },
+  "historyMission": {
+    "title": "Scientific Missions History",
+    "description": "Track your submitted external requests, decisions, and approval status."
+  }
+}

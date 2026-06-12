@@ -209,6 +209,7 @@ export default function CreateUserPage() {
     totalSelected,
     submitting,
     submit,
+    submitError,
     reset,
     toast,
     success,
@@ -398,6 +399,22 @@ export default function CreateUserPage() {
             </div>
 
             {/* ─── Actions bar ───────────────────────────────────────────────── */}
+            {submitError && (
+              <div
+                style={{
+                  marginTop: "clamp(1rem, 1.5vw, 2rem)",
+                  padding: "clamp(0.75rem, 1vw, 1.2rem)",
+                  borderRadius: "clamp(8px, 0.8vw, 12px)",
+                  backgroundColor: "#fef2f2",
+                  border: "1px solid #fca5a5",
+                  color: "#b91c1c",
+                  fontSize: "clamp(0.7rem, 0.9vw, 1rem)",
+                }}
+              >
+                {t(submitError, { defaultValue: submitError })}
+              </div>
+            )}
+
             <div
               style={{
                 display: "flex",

@@ -35,7 +35,7 @@
   "supervisionThesis": "Supervision & Reviewing",
   "theses": "Master’s & PhD Theses",
   "researcherProfile": "Researcher Profile",
-  "nominatedResearches": "Nominated Researches",
+  "nominatedResearches": "Recommended Researches",
   "recommendedSupervisions": "Recommended Supervisory Committees",
   "researchAndSupervision": "Researches & Supervision",
   "awards": "Awards",
@@ -56,7 +56,10 @@
   "systemLogs": "System Logs",
   "logsCategories": "Log Categories & Actions",
   "systemUsers": "System Users",
+  "dashboard": "Dashboard",
   "createUser": "Create New User",
   "managementTickets": "Ticket Management",
-  "supportAdminTickets": "My Tickets"
+  "supportAdminTickets": "My Tickets",
+  "reports": "Reports",
+  "users": "Another Users"
 }

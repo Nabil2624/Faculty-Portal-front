@@ -134,7 +134,7 @@ export default function PermissionGroupPanel({
   const isRtl = i18n.dir() === "rtl";
   const [open, setOpen] = useState(true);
 
-  const grantedCount = permissions.filter((p) => grantedIds.has(p.id)).length;
+  const grantedCount = permissions.filter((p) => grantedIds.has(p.code)).length;
   const allGranted =
     grantedCount === permissions.length && permissions.length > 0;
   const someGranted = grantedCount > 0 && !allGranted;
@@ -286,9 +286,9 @@ export default function PermissionGroupPanel({
         >
           {permissions.map((perm) => (
             <PermissionRow
-              key={perm.id}
+              key={perm.code}
               permission={perm}
-              isGranted={grantedIds.has(perm.id)}
+              isGranted={grantedIds.has(perm.code)}
               onToggle={onToggle}
               disabled={actionLoading}
             />

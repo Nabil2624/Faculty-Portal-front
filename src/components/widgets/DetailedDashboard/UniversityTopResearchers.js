@@ -106,10 +106,10 @@ const UniversityTopResearchers = ({
                         className={`font-bold leading-tight ${index === 0 ? "text-sm" : "text-xs"}`}
                         style={{ color: primary }}
                       >
-                        {researcher.researcherName}
+                        {researcher.researcherNameEN}
                       </h3>
                       <p className="text-[10px] text-gray-400 font-bold tracking-tight">
-                        {researcher.departmentName || "Faculty Member"}
+                        {researcher.researcherJobTitleAR || "Faculty Member"} {"|"}{" "} <span className="text-[#B38E19]">{researcher.researcherFacultyAR}</span>
                       </p>
                     </div>
                   </div>
@@ -131,7 +131,7 @@ const UniversityTopResearchers = ({
                         className="text-sm font-black"
                         style={{ color: isTopThree ? gold : primary }}
                       >
-                        {researcher.score * 100} {/* تغيير اسم الحقل */}
+                        {researcher.score} {/* تغيير اسم الحقل */}
                       </span>
                     </div>
                   </div>

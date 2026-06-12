@@ -188,7 +188,7 @@ export default function UsersTable({
                           whiteSpace: "nowrap",
                         }}
                       >
-                        @{user.username}
+                        {user.username}
                       </div>
                     </div>
                   </div>

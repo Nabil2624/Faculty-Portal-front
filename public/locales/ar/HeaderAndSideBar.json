@@ -12,7 +12,7 @@
   "settings": "الإعدادات",
   "support": " الدعم الفني",
   "personalInfo": "المعلومات الشخصية",
-  "cv":"السيرة الذاتية",
+  "cv": "السيرة الذاتية",
   "personalData": "البيانات الشخصية",
   "contactInfo": "بيانات الاتصال",
   "socialNetworking": "صفحات التواصل ",
@@ -57,7 +57,10 @@
   "systemLogs": "سجلات النظام",
   "logsCategories": "فئات وإجراءات السجلات",
   "systemUsers": "مستخدمو النظام",
+  "dashboard": "لوحة التحكم",
   "createUser": "إنشاء مستخدم جديد",
   "managementTickets": "إدارة الشكاوى",
-  "supportAdminTickets":  "إدارة شكاوى الدعم"
+  "supportAdminTickets": "إدارة شكاوى الدعم",
+  "reports": "التقارير",
+  "users": "مستحدمين آخرين"
 }

@@ -169,3 +169,18 @@ p {
   margin-top: 0;
   margin-bottom: 0em;
 }
+/* تلوين الهيدر والأيام المحددة بألوان السستم الكحلي والجولد */
+.react-datepicker__header {
+  background-color: #19355a !important; /* الهيدر كحلي ملكي */
+  border-bottom: 1px solid #b38e19 !important;
+}
+.react-datepicker__current-month, .react-datepicker__day-name {
+  color: #ffffff !important; /* نصوص بيضاء جوه الهيدر الكحلي */
+}
+.react-datepicker__day--selected, .react-datepicker__day--keyboard-selected {
+  background-color: #b38e19 !important; /* اليوم المختار جولد */
+  color: white !important;
+}
+.react-datepicker__day:hover {
+  background-color: rgba(179, 142, 25, 0.15) !important; /* هوفر جولد هادي */
+}

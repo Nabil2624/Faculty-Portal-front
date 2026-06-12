@@ -844,7 +844,7 @@ export default function PermissionsPickerWidget({
                       fontWeight: 600,
                     }}
                   >
-                    {permissionsError}
+                    {t(permissionsError, { defaultValue: permissionsError })}
                   </p>
                   <button
                     type="button"

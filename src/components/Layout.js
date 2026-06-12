@@ -29,7 +29,7 @@ export default function Layout({ children }) {
       {/* 2. Main Content Wrapper */}
       <div
         // أضفنا transition-all و duration-300 و ease-in-out ليتزامن مع السايدبار
-        className="flex flex-col flex-1 bg-white transition-all duration-300 ease-in-out relative"
+        className="flex flex-col flex-1 transition-all duration-300 ease-in-out relative"
         style={{
           marginLeft: !isArabic ? sidebarMargin : undefined,
           marginRight: isArabic ? sidebarMargin : undefined,

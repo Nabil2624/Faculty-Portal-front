@@ -34,7 +34,10 @@ export default function LoginPage() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
+    const controller = new AbortController();
+
     setError(null);
     try {
       const loginResponse = await axiosInstance.post(
@@ -44,12 +47,11 @@ export default function LoginPage() {
           skipGlobalErrorHandler: true,
           withCredentials: true,
         },
+        { signal: controller.signal },
       );
       const decoded = jwtDecode(loginResponse.data.token);
-      console.log(decoded);
-      
-      const roles = decoded?.Roles || [];
 
+      const roles = decoded?.Roles || [];
 
       localStorage.setItem("userRoles", JSON.stringify(roles));
 
@@ -193,7 +195,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className={`absolute top-1/2 -translate-y-1/2 text-white/20 hover:text-[#b38e19] transition-colors ${isArabic ? "left-4" : "right-4"}`}
+                    className={`absolute top-1/2 -translate-y-1/2 text-[#b38e19] hover:text-[#dcb538] transition-colors ${isArabic ? "left-4" : "right-4"}`}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>

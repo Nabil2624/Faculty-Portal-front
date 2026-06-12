@@ -15,7 +15,8 @@ import {
   ShieldCheck,
   LifeBuoy,
   IdCard,
-  Headset, // أضفت الأيقونات الناقصة للـ Roles التانية
+  Headset,
+  Users, // أضفت الأيقونات الناقصة للـ Roles التانية
 } from "lucide-react";
 import logo from "../assets/Capital.png";
 
@@ -60,6 +61,12 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
   const navItems = [
     { key: "home", icon: <Home />, link: "/profile" },
     { key: "personalInfo", icon: <User />, link: "/personal-data" },
+    {
+      key: "users",
+      icon: <Users />,
+      link: "/users",
+      roles: ["Faculty Member"],
+    },
 
     {
       key: "researchAndSupervision",
@@ -163,6 +170,7 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         { key: "systemLogs", link: "/logs" },
         { key: "logsCategories", link: "/logs-categories" },
         { key: "systemUsers", link: "/admin/users" },
+        { key: "dashboard", link: "/Dashboard", roles: ["ManagementAdmin"] },
         {
           key: "createUser",
           link: "/admin/create-user",
@@ -171,6 +179,11 @@ export default function Sidebar({ lang, isExpanded, setIsExpanded }) {
         {
           key: "managementTickets",
           link: "/admin/tickets",
+          roles: ["ManagementAdmin"],
+        },
+        {
+          key: "reports",
+          link: "/admin/reports",
           roles: ["ManagementAdmin"],
         },
       ],

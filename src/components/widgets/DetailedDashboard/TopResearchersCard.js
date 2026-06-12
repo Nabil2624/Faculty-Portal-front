@@ -176,11 +176,15 @@ const TopResearchersCard = ({
                         className={`font-bold leading-tight ${index === 0 ? "text-sm" : "text-xs"}`}
                         style={{ color: primary }}
                       >
-                        {res.researcherName || res.name}
+                        {res.researcherNameAR || res.name}
                       </h3>
                       <p className="text-[10px] text-gray-400 font-bold tracking-tight">
-                        {res.departmentName || res.dept || "Faculty Member"}
+                        {res.departmentAR || res.dept || "Faculty Member"}
                       </p>
+                        <p className="text-[10px] text-gray-400 font-bold tracking-tight">
+                        <span className="text-[#B38E19]">{res.researcherJobTitleAR}</span>
+                      </p>
+                 
                     </div>
                   </div>
 

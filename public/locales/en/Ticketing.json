@@ -102,6 +102,7 @@
   "confirm": "Confirm",
   "cancel": "Cancel",
   "revokeInProgress": "This ticket is currently being processed and cannot be revoked.",
+  "permissionDenied": "You do not have permission to perform this action.",
   "actionError": "An error occurred. Please try again.",
   "successCreate": "Ticket created successfully.",
 

@@ -25,6 +25,7 @@ export const PERMISSION_TYPES = [
   "FacultyMemberScientificProgressionData",
   "FacultyMemberWritingsData",
   "Tickets",
+  "Reports",
 ];
 
 // ─── Normalize user from API response ─────────────────────────────────────────
@@ -65,6 +66,7 @@ export async function getUsers({
   roles = [],
   pageIndex = 0,
   pageSize = 10,
+  skipGlobalErrorHandler = false,
 } = {}) {
   const params = {
     pageIndex: pageIndex + 1,
@@ -76,6 +78,7 @@ export async function getUsers({
 
   const res = await axiosInstance.get("/Admin/Users", {
     params,
+    skipGlobalErrorHandler,
     paramsSerializer: (p) => qs.stringify(p, { arrayFormat: "repeat" }),
   });
 
@@ -87,8 +90,15 @@ export async function getUsers({
 }
 
 /** Get the currently logged-in admin's own permissions. */
-export async function getCurrentUserPermissions() {
-  const res = await axiosInstance.get("/Authentication/CurrentUserPermissions");
+export async function getCurrentUserPermissions({
+  skipGlobalErrorHandler = false,
+} = {}) {
+  const res = await axiosInstance.get(
+    "/Authentication/CurrentUserPermissions",
+    {
+      skipGlobalErrorHandler,
+    },
+  );
   return res.data || [];
 }
 
@@ -109,6 +119,7 @@ export async function getAllPermissions({
   sort = "",
   search = "",
   types = [],
+  skipGlobalErrorHandler = false,
 } = {}) {
   const params = {
     ...(sort && { Sort: sort }),
@@ -118,6 +129,7 @@ export async function getAllPermissions({
 
   const res = await axiosInstance.get("/Admin/Permissions", {
     params,
+    skipGlobalErrorHandler,
     paramsSerializer: (p) => qs.stringify(p, { arrayFormat: "repeat" }),
   });
 
@@ -133,15 +145,22 @@ export async function createUser({
   password,
   permissions,
   roles,
+  skipGlobalErrorHandler = false,
 }) {
-  const res = await axiosInstance.post("/Admin/User", {
-    userName,
-    email,
-    nationalNumber,
-    password,
-    permissions: permissions || [],
-    roles: roles || [],
-  });
+  const res = await axiosInstance.post(
+    "/Admin/User",
+    {
+      userName,
+      email,
+      nationalNumber,
+      password,
+      permissions: permissions || [],
+      roles: roles || [],
+    },
+    {
+      skipGlobalErrorHandler,
+    },
+  );
   return res.data;
 }
 
@@ -156,9 +175,9 @@ export async function grantUserPermissions(userId, permissions) {
 
 /** Revoke individual permissions from a user. */
 export async function revokeUserPermissions(userId, permissions) {
-  const res = await axiosInstance.put(
+  const res = await axiosInstance.delete(
     `/Admin/UserRevokePermissions/${userId}`,
-    permissions,
+    { data: permissions },
   );
   return res.data;
 }
@@ -166,7 +185,7 @@ export async function revokeUserPermissions(userId, permissions) {
 /** Update a user account credentials (username, email, password). National ID is read-only. */
 export async function updateUser(
   id,
-  { username, email, nationalNumber, password },
+  { username, email, nationalNumber, password, skipGlobalErrorHandler = false },
 ) {
   const body = {
     userName: username,
@@ -174,6 +193,8 @@ export async function updateUser(
     nationalNumber,
     ...(password && { password }),
   };
-  const res = await axiosInstance.put(`/Admin/UserCredeintals/${id}`, body);
+  const res = await axiosInstance.put(`/Admin/UserCredeintals/${id}`, body, {
+    skipGlobalErrorHandler,
+  });
   return res.data ? normalizeUser(res.data) : null;
 }

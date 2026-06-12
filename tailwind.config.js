@@ -21,13 +21,29 @@ module.exports = {
           "0%": { opacity: "0", transform: "translateY(-10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+         statusPulse: {
+          "0%": {
+            boxShadow: "0 0 0 0 rgba(25,53,90,.45)",
+          },
+          "70%": {
+            boxShadow: "0 0 0 14px rgba(25,53,90,0)",
+          },
+          "100%": {
+            boxShadow: "0 0 0 0 rgba(25,53,90,0)",
+          },
+        },
       },
       animation: {
         spin: "spin 1.3s linear infinite",
         "spin-reverse": "spin-reverse 2.5s linear infinite",
         fadeIn: "fadeIn 0.18s ease-out",
+        statusPulse: "statusPulse 2s infinite",
       },
     },
   },
   plugins: [require("@tailwindcss/line-clamp")],
 };
+
+
+
+

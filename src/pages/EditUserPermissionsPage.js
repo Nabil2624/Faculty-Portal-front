@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
@@ -79,10 +79,9 @@ function Toast({ messageKey, type, onDismiss, isArabic }) {
 export default function EditUserPermissionsPage() {
   const { t, i18n } = useTranslation("Users");
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const location = useLocation();
 
-  const userId = searchParams.get("userId");
+  const userId = location.state?.userId || location.state?.user?.id || null;
 
   // User info passed via navigation state (from UserPermissionsPanel)
   const userState = location.state?.user || null;

@@ -54,17 +54,17 @@ export async function getLogs({
   dateTo = "",
 } = {}) {
   const params = {
-    pageIndex: page - 1,
-    pageSize,
-    ...(search && { search }),
+    PageIndex: page - 1,
+    PageSize: pageSize,
+    ...(search && { Search: search }),
     ...(levels.length && {
-      levels: levels.map((l) => LOG_LEVEL_ENUM[l]).filter(Boolean),
+      LevelIds: levels.map((l) => LOG_LEVEL_ENUM[l]).filter(Boolean),
     }),
-    ...(categories.length && { categories }),
-    ...(categoryActions.length && { categoryActions }),
-    ...(codes.length && { codes }),
-    ...(dateFrom && { dateFrom }),
-    ...(dateTo && { dateTo }),
+    ...(categories.length && { CategoryIds: categories }),
+    ...(categoryActions.length && { CategoryActionIds: categoryActions }),
+    ...(codes.length && { ServiceCodeIds: codes }),
+    ...(dateFrom && { From: dateFrom }),
+    ...(dateTo && { To: dateTo }),
   };
 
   const res = await logsAxios.get("/Logs", {

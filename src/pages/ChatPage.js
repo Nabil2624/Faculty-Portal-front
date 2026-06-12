@@ -231,15 +231,57 @@ export default function ChatPage() {
   // Redirect if no ticket in state
   if (!ticket) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#f9fafb]">
-        <p className="text-gray-500">{t("noTicket")}</p>
-        <button
-          onClick={() => navigate(-1)}
-          className="mt-4 text-[#19355a] underline"
-          style={{ fontSize: "clamp(0.75rem, 1vw, 1rem)" }}
-        >
-          {t("goBack")}
-        </button>
+      <div
+        dir={isArabic ? "rtl" : "ltr"}
+        className="flex flex-col items-center justify-center min-h-screen bg-[#f9fafb]"
+      >
+        <div className="flex flex-col items-center gap-5 text-center px-8">
+          {/* Icon */}
+          <div
+            className="rounded-full bg-[#19355a] flex items-center justify-center shadow-md"
+            style={{
+              width: "clamp(4rem, 6vw, 7rem)",
+              height: "clamp(4rem, 6vw, 7rem)",
+            }}
+          >
+            <MessageSquare
+              className="text-white"
+              style={{
+                width: "clamp(1.8rem, 2.8vw, 3.2rem)",
+                height: "clamp(1.8rem, 2.8vw, 3.2rem)",
+              }}
+            />
+          </div>
+
+          {/* Heading */}
+          <h2
+            className="font-bold text-[#19355a]"
+            style={{ fontSize: "clamp(1rem, 1.6vw, 1.6rem)" }}
+          >
+            {t("noTicket")}
+          </h2>
+
+          {/* Subtitle */}
+          <p
+            className="text-gray-400"
+            style={{ fontSize: "clamp(0.75rem, 1vw, 1rem)", maxWidth: "28rem" }}
+          >
+            {t("noTicketSub")}
+          </p>
+
+          {/* Back button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="mt-2 bg-[#19355a] text-white rounded-xl hover:bg-[#19355a]/90 transition font-medium"
+            style={{
+              padding:
+                "clamp(0.45rem, 0.7vw, 0.75rem) clamp(1.5rem, 2.5vw, 2.5rem)",
+              fontSize: "clamp(0.75rem, 1vw, 1rem)",
+            }}
+          >
+            {t("goBack")}
+          </button>
+        </div>
       </div>
     );
   }

@@ -15,8 +15,8 @@ import {
   ShieldCheck,
   LifeBuoy,
   Headset,
-  Settings,
   IdCard,
+  Users,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import logo from "../assets/helwan-logo.png";
@@ -33,6 +33,12 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
   const navItems = [
     { key: "home", icon: <Home size={20} />, link: "/profile" },
     { key: "personalInfo", icon: <User size={20} />, link: "/personal-data" },
+    {
+      key: "users",
+      icon: <Users size={20} />,
+      link: "/users",
+      roles: ["Faculty Member"],
+    },
 
     {
       key: "researchAndSupervision",
@@ -116,7 +122,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
         },
       ],
     },
-    { key: "cv", icon: <IdCard />, link: "/cv" },
+    { key: "cv", icon: <IdCard size={20} />, link: "/cv" },
     {
       key: "support",
       icon: <LifeBuoy size={20} />,
@@ -137,6 +143,7 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
         { key: "systemLogs", link: "/logs" },
         { key: "logsCategories", link: "/logs-categories" },
         { key: "systemUsers", link: "/admin/users" },
+        { key: "dashboard", link: "/Dashboard", roles: ["ManagementAdmin"] },
         {
           key: "createUser",
           link: "/admin/create-user",
@@ -181,24 +188,56 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
             location.pathname === item.link ||
             (hasSub && item.sub.some((s) => s.link === location.pathname));
 
+          // ستايل مشترك للأزرار واللينكات لتجنب تكرار الكود
+          const itemStyles = `w-full py-2.5 px-3 rounded-lg flex items-center gap-3 transition-all duration-300 group
+            ${isActive ? "bg-white/10 text-[#B38e19]" : "text-white/70 hover:bg-white/5 hover:text-white"}`;
+
           return (
             <div key={item.key} className="flex flex-col">
-              <button
-                onClick={() => (hasSub ? toggleMenu(item.key, level) : null)}
-                className={`w-full py-2.5 px-3 rounded-lg flex items-center gap-3 transition-all duration-300 group
-                  ${isActive ? "bg-white/10 text-[#B38e19]" : "text-white/70 hover:bg-white/5 hover:text-white"}`}
-              >
-                <span
-                  className={`${isActive ? "text-[#B38e19]" : "text-white/40 group-hover:text-white"}`}
+              {hasSub ? (
+                /* لو فيه صب منيو: يفضل كـ زرار يفتح ويقفل القائمة */
+                <button
+                  onClick={() => toggleMenu(item.key, level)}
+                  className={itemStyles}
                 >
-                  {item.icon}
-                </span>
-                <span
-                  className={`text-sm ${isActive ? "font-bold" : "font-medium"}`}
+                  <span
+                    className={
+                      isActive
+                        ? "text-[#B38e19]"
+                        : "text-white/40 group-hover:text-white"
+                    }
+                  >
+                    {item.icon}
+                  </span>
+                  <span
+                    className={`text-sm ${isActive ? "font-bold" : "font-medium"}`}
+                  >
+                    {t(item.key)}
+                  </span>
+                </button>
+              ) : (
+                /* لو مفيش صب منيو (زي هوم وبيرسونال داتا): يتحول لـ Link يوديك للصفحة ويقفل السايدبار فوراً */
+                <Link
+                  to={item.link || "#"}
+                  onClick={onClose}
+                  className={itemStyles}
                 >
-                  {t(item.key)}
-                </span>
-              </button>
+                  <span
+                    className={
+                      isActive
+                        ? "text-[#B38e19]"
+                        : "text-white/40 group-hover:text-white"
+                    }
+                  >
+                    {item.icon}
+                  </span>
+                  <span
+                    className={`text-sm ${isActive ? "font-bold" : "font-medium"}`}
+                  >
+                    {t(item.key)}
+                  </span>
+                </Link>
+              )}
 
               {hasSub && isOpenMenu && (
                 <div
@@ -266,23 +305,11 @@ export default function MobileSidebar({ isOpen, onClose, lang }) {
             navItems.filter((item) => {
               if (item.roles)
                 return item.roles.some((r) => userRoles.includes(r));
-              // Items without a roles restriction are Faculty Member items
               if (!userRoles.includes("Faculty Member")) return false;
               return true;
             }),
           )}
         </nav>
-
-        <div className="p-4 bg-black/10 border-t border-white/5 flex flex-col gap-1">
-          <Link
-            to="/settings"
-            onClick={onClose}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/60 hover:bg-white/5 hover:text-white"
-          >
-            <Settings size={20} className="opacity-50" />
-            <span className="text-sm font-medium">{t("settings")}</span>
-          </Link>
-        </div>
       </aside>
     </div>
   );

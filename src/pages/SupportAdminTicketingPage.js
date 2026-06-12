@@ -31,7 +31,11 @@ import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import useSupportAdminTickets, {
   SUPPORT_PAGE_SIZE,
 } from "../hooks/useSupportAdminTickets";
-import { getUserIdentifiers, updateUser } from "../services/users.service";
+import {
+  getUserIdentifiers,
+  updateUser,
+  getCurrentUserPermissions,
+} from "../services/users.service";
 import SubModuleSelectorModal, {
   MODULE_SUBMODULES,
 } from "../components/widgets/AdminFacultyData/SubModuleSelectorModal";
@@ -207,6 +211,7 @@ function TypeBadge({ type, t }) {
 function ModuleSelectorModal({
   open,
   targetUser,
+  adminPermissions,
   isArabic,
   onSelect,
   onClose,
@@ -214,11 +219,35 @@ function ModuleSelectorModal({
   const { t: tUsers } = useTranslation("Users");
   if (!open || !targetUser) return null;
 
-  const modules = [
+  const allModules = [
     "UserAccount",
     "FacultyMemberData",
     ...Object.keys(MODULE_SUBMODULES),
   ];
+
+  // Filter modules to only those the support admin has permission for
+  const typeMap = {};
+  (adminPermissions || []).forEach((p) => {
+    const parts = p.code?.split(".");
+    if (!parts || parts.length < 2) return;
+    const type = parts[0];
+    const action = parts[1];
+    if (!typeMap[type]) typeMap[type] = { canRead: false, canUpdate: false };
+    if (action === "Read") typeMap[type].canRead = true;
+    if (action === "Update") typeMap[type].canUpdate = true;
+  });
+  const permittedTypes = new Set(
+    Object.entries(typeMap)
+      .filter(
+        ([type, caps]) =>
+          type !== "Tickets" && (caps.canRead || caps.canUpdate),
+      )
+      .map(([type]) => type),
+  );
+  const modules =
+    adminPermissions === null
+      ? allModules
+      : allModules.filter((key) => permittedTypes.has(key));
 
   return (
     <>
@@ -778,6 +807,14 @@ export default function SupportAdminTicketingPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState("");
 
+  // Support admin's own permissions (for module selector filtering)
+  const [adminPermissions, setAdminPermissions] = useState(null);
+  useEffect(() => {
+    getCurrentUserPermissions()
+      .then(setAdminPermissions)
+      .catch(() => setAdminPermissions([]));
+  }, []);
+
   // Manage user data
   const [manageTarget, setManageTarget] = useState(null); // ticket
   const [lookingUpUser, setLookingUpUser] = useState(false);
@@ -1035,6 +1072,7 @@ export default function SupportAdminTicketingPage() {
       <ModuleSelectorModal
         open={moduleSelectorOpen}
         targetUser={foundUser}
+        adminPermissions={adminPermissions}
         isArabic={isArabic}
         onSelect={handleModuleSelect}
         onClose={() => setModuleSelectorOpen(false)}

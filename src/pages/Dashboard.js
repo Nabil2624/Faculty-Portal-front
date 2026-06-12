@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import {
   BarChart,
   Bar,
@@ -22,16 +22,126 @@ import {
   Users,
   ShieldCheck,
   FileText,
+  X,
+  Printer,
+  RefreshCw,
+  Eye,
 } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import AcademicLoader from "../components/AcademicLoader";
 import { useDashboard } from "../hooks/useDashboard";
 import { useTranslation } from "react-i18next";
 import CollegeCard from "../components/widgets/DetailedDashboard/CollegeCard";
+import { useNavigate } from "react-router-dom";
+import {
+  getOverallSystemPerformanceReportPreview,
+  downloadGeneralSystemReportPdf,
+} from "../services/dashboardAndReports.service";
 const Dashboard = () => {
   const { dashboard, loading, error } = useDashboard();
   const { t, i18n } = useTranslation();
   const isArabic = i18n.language === "ar";
+const navigate = useNavigate();
+  // ── Report modal state ────────────────────────────────────────────────────
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportNotes, setReportNotes] = useState("");
+  const [reportPreview, setReportPreview] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState(null);
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState(null);
+  const [previewZoom, setPreviewZoom] = useState(0.85);
+
+  const ZOOM_STEP = 0.15;
+  const ZOOM_MIN = 0.4;
+  const ZOOM_MAX = 2.5;
+
+  const fetchPreview = useCallback(async (notes) => {
+    setPreviewLoading(true);
+    setPreviewError(null);
+    try {
+      const res = await getOverallSystemPerformanceReportPreview(notes);
+      setReportPreview(res.data);
+    } catch {
+      setPreviewError("تعذّر تحميل المعاينة. يرجى المحاولة مرة أخرى.");
+    } finally {
+      setPreviewLoading(false);
+    }
+  }, []);
+
+  const openReportModal = () => {
+    setReportModalOpen(true);
+    setReportNotes("");
+    setReportPreview(null);
+    setPreviewError(null);
+    setDownloadError(null);
+    setPreviewZoom(0.85);
+    fetchPreview("");
+  };
+
+  const handleDownloadPdf = async () => {
+    setDownloading(true);
+    setDownloadError(null);
+    try {
+      const res = await downloadGeneralSystemReportPdf(reportNotes);
+      const url = window.URL.createObjectURL(
+        new Blob([res.data], { type: "application/pdf" }),
+      );
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "system-performance-report.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      setDownloadError("تعذّر تحميل الملف. يرجى المحاولة مرة أخرى.");
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  // Render the preview data (handles both HTML strings and JSON objects)
+  const renderPreviewData = (data) => {
+    if (!data) return null;
+    if (typeof data === "string") {
+      return (
+        <div
+          className="prose max-w-none text-slate-700"
+          style={{ fontSize: "clamp(0.75rem, 1vw, 0.9rem)" }}
+          dangerouslySetInnerHTML={{ __html: data }}
+        />
+      );
+    }
+    if (typeof data === "object") {
+      const entries = Object.entries(data);
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {entries.map(([key, value]) => (
+            <div
+              key={key}
+              className="bg-[#f8fafc] rounded-xl border border-slate-100 px-4 py-3 flex flex-col gap-1"
+            >
+              <span
+                className="text-[#B38E19] font-bold uppercase tracking-wide"
+                style={{ fontSize: "clamp(0.6rem, 0.75vw, 0.72rem)" }}
+              >
+                {key}
+              </span>
+              <span
+                className="text-[#19355A] font-black"
+                style={{ fontSize: "clamp(0.8rem, 1.1vw, 1.1rem)" }}
+              >
+                {Array.isArray(value) ? value.join(", ") : String(value ?? "—")}
+              </span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+  // ─────────────────────────────────────────────────────────────────────────
   const tooltipStyle = {
     backgroundColor: "#ffffff",
     border: "2px solid #B38E19",
@@ -154,11 +264,14 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="flex gap-3">
-              <button className="h-[clamp(2.5rem,3.2vw,3rem)] flex items-center justify-center gap-2 bg-[#19355A] text-white px-5 rounded-xl font-black text-[clamp(10px,1.2vw,18px)] uppercase tracking-[2px] hover:bg-[#2a4a75] transition-all active:scale-95 shadow-lg">
+              <button onClick={() => navigate("/detailed-dashboard")} className="h-[clamp(2.5rem,3.2vw,3rem)] flex items-center justify-center gap-2 bg-[#19355A] text-white px-5 rounded-xl font-black text-[clamp(10px,1.2vw,18px)] uppercase tracking-[2px] hover:bg-[#2a4a75] transition-all active:scale-95 shadow-lg">
                 {" "}
                 عرض التفاصيل{" "}
               </button>
-              <button className="h-[clamp(2.5rem,3.2vw,3rem)] flex items-center justify-center gap-2 bg-[#B38E19] text-white px-5 rounded-xl font-black text-[clamp(10px,1.2vw,18px)] uppercase tracking-[2px] hover:bg-[#cfa82a] transition-all active:scale-95 shadow-lg shadow-amber-900/10">
+              <button
+                onClick={openReportModal}
+                className="h-[clamp(2.5rem,3.2vw,3rem)] flex items-center justify-center gap-2 bg-[#B38E19] text-white px-5 rounded-xl font-black text-[clamp(10px,1.2vw,18px)] uppercase tracking-[2px] hover:bg-[#cfa82a] transition-all active:scale-95 shadow-lg shadow-amber-900/10"
+              >
                 {" "}
                 طباعة تقرير{" "}
               </button>
@@ -568,6 +681,207 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* ── Report Modal ─────────────────────────────────────────────────── */}
+      {reportModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+            backdropFilter: "blur(4px)",
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setReportModalOpen(false);
+          }}
+        >
+          <div
+            dir="rtl"
+            className="bg-white rounded-2xl shadow-2xl w-full flex flex-col"
+            style={{ maxWidth: "760px", maxHeight: "90vh" }}
+          >
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#19355A] flex items-center justify-center">
+                  <Printer size={17} className="text-white" />
+                </div>
+                <div>
+                  <h2 className="font-black text-[#19355A] text-base leading-none">
+                    تقرير أداء النظام العام
+                  </h2>
+                  <p className="text-[10px] text-[#B38E19] font-bold tracking-widest uppercase mt-0.5">
+                    Overall System Performance Report
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setReportModalOpen(false)}
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Scrollable body */}
+            <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5">
+              {/* Notes section */}
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-[#19355A] uppercase tracking-widest">
+                  ملاحظات التقرير
+                </label>
+                <textarea
+                  value={reportNotes}
+                  onChange={(e) => setReportNotes(e.target.value)}
+                  placeholder="اكتب ملاحظاتك هنا… (اختياري)"
+                  rows={3}
+                  className="w-full rounded-xl border border-slate-200 outline-none resize-none text-slate-700 bg-[#f8fafc] focus:border-[#B38E19] transition"
+                  style={{
+                    padding:
+                      "clamp(0.5rem,0.8vw,0.75rem) clamp(0.75rem,1vw,1rem)",
+                    fontSize: "clamp(0.8rem,1vw,0.95rem)",
+                  }}
+                />
+                <button
+                  onClick={() => fetchPreview(reportNotes)}
+                  disabled={previewLoading}
+                  className="self-start flex items-center gap-2 rounded-lg border border-[#19355A] text-[#19355A] font-bold hover:bg-[#19355A] hover:text-white transition disabled:opacity-50"
+                  style={{
+                    padding:
+                      "clamp(0.3rem,0.5vw,0.45rem) clamp(0.8rem,1vw,1rem)",
+                    fontSize: "clamp(0.7rem,0.9vw,0.85rem)",
+                  }}
+                >
+                  {previewLoading ? (
+                    <RefreshCw size={13} className="animate-spin" />
+                  ) : (
+                    <Eye size={13} />
+                  )}
+                  تحديث المعاينة
+                </button>
+              </div>
+
+              {/* Divider + zoom controls */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1 h-px bg-slate-100" />
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  معاينة التقرير
+                </span>
+                <div className="flex-1 h-px bg-slate-100" />
+                {/* Zoom controls — only shown when preview has content */}
+                {!previewLoading && !previewError && reportPreview && (
+                  <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-1 py-0.5">
+                    <button
+                      onClick={() =>
+                        setPreviewZoom((z) =>
+                          Math.max(ZOOM_MIN, +(z - ZOOM_STEP).toFixed(2)),
+                        )
+                      }
+                      disabled={previewZoom <= ZOOM_MIN}
+                      title="تصغير"
+                      className="w-6 h-6 flex items-center justify-center rounded text-slate-500 hover:bg-slate-100 transition disabled:opacity-30 text-base font-bold leading-none"
+                    >
+                      −
+                    </button>
+                    <button
+                      onClick={() => setPreviewZoom(1)}
+                      title="إعادة الحجم الافتراضي"
+                      className="px-1.5 h-6 flex items-center justify-center rounded text-[10px] font-bold text-[#19355A] hover:bg-slate-100 transition tabular-nums"
+                    >
+                      {Math.round(previewZoom * 100)}%
+                    </button>
+                    <button
+                      onClick={() =>
+                        setPreviewZoom((z) =>
+                          Math.min(ZOOM_MAX, +(z + ZOOM_STEP).toFixed(2)),
+                        )
+                      }
+                      disabled={previewZoom >= ZOOM_MAX}
+                      title="تكبير"
+                      className="w-6 h-6 flex items-center justify-center rounded text-slate-500 hover:bg-slate-100 transition disabled:opacity-30 text-base font-bold leading-none"
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Preview area */}
+              <div className="min-h-[120px] overflow-auto rounded-xl border border-slate-100 bg-[#f8fafc]">
+                {previewLoading && (
+                  <div className="flex items-center justify-center gap-2 py-10 text-slate-400">
+                    <RefreshCw size={18} className="animate-spin" />
+                    <span className="text-sm font-medium">
+                      جاري تحميل المعاينة…
+                    </span>
+                  </div>
+                )}
+                {previewError && !previewLoading && (
+                  <div className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-red-600 text-sm font-medium">
+                    {previewError}
+                  </div>
+                )}
+                {!previewLoading && !previewError && reportPreview && (
+                  <div
+                    style={{
+                      transform: `scale(${previewZoom})`,
+                      transformOrigin: "top right",
+                      transition: "transform 0.15s ease",
+                      // Push the container height so the scrollable parent reflects the scaled size
+                      minHeight: `${previewZoom * 100}%`,
+                      padding: "1rem",
+                    }}
+                  >
+                    {renderPreviewData(reportPreview)}
+                  </div>
+                )}
+                {!previewLoading && !previewError && !reportPreview && (
+                  <div className="flex items-center justify-center py-10 text-slate-400 text-sm">
+                    لا توجد بيانات للمعاينة حالياً
+                  </div>
+                )}
+              </div>
+
+              {downloadError && (
+                <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-red-600 text-sm font-medium">
+                  {downloadError}
+                </div>
+              )}
+            </div>
+
+            {/* Modal footer */}
+            <div className="px-6 py-4 border-t border-slate-100 shrink-0 flex justify-between items-center gap-3">
+              <button
+                onClick={() => setReportModalOpen(false)}
+                className="rounded-xl border border-slate-200 text-slate-500 font-bold hover:bg-slate-50 transition"
+                style={{
+                  padding:
+                    "clamp(0.45rem,0.7vw,0.65rem) clamp(1.2rem,1.8vw,1.8rem)",
+                  fontSize: "clamp(0.75rem,1vw,0.9rem)",
+                }}
+              >
+                إغلاق
+              </button>
+              <button
+                onClick={handleDownloadPdf}
+                disabled={downloading}
+                className="flex items-center gap-2 rounded-xl bg-[#B38E19] text-white font-black hover:bg-[#cfa82a] transition disabled:opacity-50 active:scale-95 shadow-md"
+                style={{
+                  padding:
+                    "clamp(0.45rem,0.7vw,0.65rem) clamp(1.5rem,2vw,2.5rem)",
+                  fontSize: "clamp(0.8rem,1.1vw,1rem)",
+                }}
+              >
+                {downloading ? (
+                  <RefreshCw size={15} className="animate-spin" />
+                ) : (
+                  <Printer size={15} />
+                )}
+                {downloading ? "جاري التحميل…" : "طباعة"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </ResponsiveLayoutProvider>
   );
 };

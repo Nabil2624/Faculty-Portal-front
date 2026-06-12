@@ -57,7 +57,7 @@ function Toast({ message, type, onDismiss }) {
       className="fixed z-[60] flex items-center gap-2 rounded-xl border shadow-lg"
       style={{
         top: "clamp(1rem, 2vw, 2.5rem)",
-        right: "clamp(1rem, 2vw, 2.5rem)",
+        right: "clamp(4rem, 5vw, 5rem)",
         backgroundColor: colors.bg,
         borderColor: colors.border,
         color: colors.text,
@@ -185,6 +185,15 @@ function EditActionSelectorModal({
   const { t, i18n } = useTranslation("Users");
   const isArabic = i18n.language === "ar";
 
+  const currentUserRoles = React.useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("userRoles") || "[]");
+    } catch {
+      return [];
+    }
+  }, []);
+  const isManagementAdmin = currentUserRoles.includes("ManagementAdmin");
+
   // Group admin permissions by type → determine read / update capability per type
   const typeMap = {};
   (adminPermissions || []).forEach((p) => {
@@ -199,7 +208,10 @@ function EditActionSelectorModal({
 
   const sections = Object.entries(typeMap)
     .filter(
-      ([type, caps]) => type !== "Tickets" && (caps.canRead || caps.canUpdate),
+      ([type, caps]) =>
+        type !== "Tickets" &&
+        !(isManagementAdmin && type === "Reports") &&
+        (caps.canRead || caps.canUpdate),
     )
     .map(([type, caps]) => ({ type, ...caps }));
 
@@ -765,7 +777,7 @@ export default function UsersPage() {
                 flexShrink: 0,
               }}
             />
-            {t("error")}
+            <span>{t(error, { defaultValue: error })}</span>
             <button
               onClick={reload}
               className="ml-auto underline font-medium hover:opacity-80"
@@ -837,7 +849,7 @@ export default function UsersPage() {
         )}
       </div>
 
-      {/* Spinner keyframes */}
+      {/* Spinner keyframes here */}
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </ResponsiveLayoutProvider>
   );

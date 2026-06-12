@@ -1,0 +1,18 @@
+{
+  "tracker": {
+    "title": "متابعة الطلب",
+    "back": "رجوع",
+    "currentStatus": "الحالة الحالية",
+    "comment": "سبب الرفض",
+
+    "submitted": "تم التقديم",
+    "underReview": "قيد المراجعة",
+    "approved": "تمت الموافقة",
+    "rejected": "مرفوض",
+
+    "applicant": "مقدم الطلب",
+    "conference": "المؤتمر",
+    "submissionDate": "تاريخ التقديم",
+    "requestId": "رقم الطلب"
+  }
+}

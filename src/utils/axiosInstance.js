@@ -9,7 +9,7 @@ const BASE_URL = "http://172.1.50.98/core/api";
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json; charset=utf-8"
   },
   withCredentials: true
 });

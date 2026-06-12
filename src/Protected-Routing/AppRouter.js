@@ -9,7 +9,6 @@ import {
 } from "react-router-dom";
 import { axiosEvent } from "../utils/axiosInstance";
 import ProtectedRoute from "./ProtectedRoute";
-import SessionExpiredPopup from "../components/ui/SessionExpiredPopup";
 
 // --- استيراد المكونات ---
 import RegisterPage from "../components/RegistrationPage";
@@ -65,7 +64,6 @@ import EditScientificResearch from "../pages/EditScientificResearch";
 import EditThesis from "../pages/EditThesis";
 import AddSupervisionOrJudgement from "../pages/AddSupervisionOrJudgement";
 import EditSupervisionOrJudgement from "../pages/EditSupervisionOrJudgement";
-import MissingScholarCard from "../components/widgets/ResearcherProfile/MissingScholarCard";
 import PrizesAndRewards from "../pages/PrizesAndRewards";
 import AddPrizesAndRewards from "../pages/AddPrizesAndRewards";
 import EditPrizesAndRewards from "../pages/EditPrizesAndRewards";
@@ -106,6 +104,7 @@ import { EditAdminPositionPage } from "../pages/EditAdminPositionPage";
 import { AddJobGradePage } from "../pages/AddJobGradePage";
 import { EditJobGradePage } from "../pages/EditJobGradePage";
 import LogsPage from "../pages/LogsPage";
+import ReportsPage from "../pages/ReportsPage";
 import LogsCategoryPage from "../pages/LogsCategoryPage";
 import UsersPage from "../pages/UsersPage";
 import AddUserPermissionPage from "../pages/AddUserPermissionPage";
@@ -121,20 +120,25 @@ import ManageCVPage from "../pages/ManageCVPage";
 import Login from "../components/Login";
 import UsersList from "../pages/UsersList";
 import Dashboard from "../pages/Dashboard";
-
-import TopResearchersCard from "../components/widgets/DetailedDashboard/TopResearchersCard";
-import CollegeCard from "../components/widgets/DetailedDashboard/CollegeCard";
-import TopSubjectsCard from "../components/widgets/DetailedDashboard/TopSubjectsCard";
 import ResearchSourceChart from "../components/widgets/DetailedDashboard/ResearchSourceChart";
 import DetailedDashboardPage from "../pages/DetailedDashboardPage";
-
-// ... (باقي الـ Imports بتاعتك)
+import ProfilePage from "../pages/ProfilePage";
+import Chat from "../pages/Chat";
+import CategoriesPage from "../pages/CategoriesPage";
+import InternalConferenceCategoryPage from "../pages/InternalConferenceCategoryPage";
+import ExternalConferenceCategoryPage from "../pages/ExternalConferenceCategoryPage";
+import ScientificMissionCategoryPage from "../pages/ScientificMissionCategoryPage";
+import ExternalConferenceForm from "../pages/ExternalConferenceForm";
+import OrderTrackerPage from "../pages/OrderTrackerPage";
+import ConferenceFormPage from "../pages/ConferenceFormPage"
+import HistoryPage from "../pages/HistoryPage";
+import FacultyConferenceFormPage from "../pages/FacultyConferenceFormPage";
+import StudyLeaveFormPage from "../pages/StudyLeaveFormPage";
 
 function AppRouterInner() {
   const navigate = useNavigate();
   const { isCheckingAuth } = useAuth();
 
-  // خلينا بس توجيه الـ Errors هنا عشان بنحتاج useNavigate
   useEffect(() => {
     const handler = (e) => {
       if (typeof e.detail === "string" && e.detail.startsWith("/error/")) {
@@ -157,15 +161,37 @@ function AppRouterInner() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/error/:code" element={<ErrorPage />} />
         <Route path="/under-development" element={<UnderDevelopment />} />
-        <Route path="/L" element={<Login />} />
+
         {/* ... باقي الـ Public Routes */}
 
         {/* --- Protected Routes --- */}
         <Route element={<ProtectedRoute />}>
-        
 
-          <Route path="/dash" element={<DetailedDashboardPage />} />
+
+
+          <Route path="/study-leave" element={<StudyLeaveFormPage />} />
+          <Route path="/faculty-conference" element={<FacultyConferenceFormPage />} />
+          <Route path="/history" element={<HistoryPage />} />
+          <Route path="/order" element={<OrderTrackerPage />} />
+          <Route path="/conference-form" element={<ConferenceFormPage /> } />
+          <Route
+            path="/scientific-missions-categories"
+            element={<ScientificMissionCategoryPage />}
+          />
+          <Route
+            path="/external-categories"
+            element={<ExternalConferenceCategoryPage />}
+          />
+          <Route
+            path="/internal-categories"
+            element={<InternalConferenceCategoryPage />}
+          />
+          <Route path="/categories" element={<CategoriesPage />} />
+          <Route path="/chatC" element={<Chat />} />
+          <Route path="/detailed-dashboard" element={<DetailedDashboardPage />} />
+          <Route path="/profile-page" element={<ProfilePage />} />
           <Route path="/logs" element={<LogsPage />} />
+          <Route path="/admin/reports" element={<ReportsPage />} />
           <Route path="/chart" element={<ResearchSourceChart />} />
           <Route path="/logs-categories" element={<LogsCategoryPage />} />
           <Route path="/admin/users" element={<UsersPage />} />

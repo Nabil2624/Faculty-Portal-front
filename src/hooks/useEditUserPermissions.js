@@ -6,6 +6,11 @@ import {
   PERMISSION_TYPES,
 } from "../services/users.service";
 
+function normalizePermissionType(type) {
+  if (type === 13 || type === "13") return "Reports";
+  return type;
+}
+
 export default function useEditUserPermissions({
   userId,
   userPermissions = [],
@@ -19,12 +24,12 @@ export default function useEditUserPermissions({
   // ── Local selection state (mirrors what the user currently has + changes) ──
   // We store the IDs of permissions the user currently has as individual perms
   const [grantedIds, setGrantedIds] = useState(
-    () => new Set((userPermissions || []).map((p) => p.id)),
+    () => new Set((userPermissions || []).map((p) => p.code)),
   );
 
   // Sync when the parent passes a fresh userPermissions list
   useEffect(() => {
-    setGrantedIds(new Set((userPermissions || []).map((p) => p.id)));
+    setGrantedIds(new Set((userPermissions || []).map((p) => p.code)));
   }, [userPermissions]);
 
   // ── Search / filter ──────────────────────────────────────────────────────────
@@ -57,8 +62,9 @@ export default function useEditUserPermissions({
   const filteredPermissions = useMemo(() => {
     const q = search.trim().toLowerCase();
     return allPermissions.filter((p) => {
-      if (hideTickets && p.type === "Tickets") return false;
-      const matchesType = !typeFilter || p.type === typeFilter;
+      const normalizedType = normalizePermissionType(p.type);
+      if (hideTickets && normalizedType === "Tickets") return false;
+      const matchesType = !typeFilter || normalizedType === typeFilter;
       const matchesSearch =
         !q ||
         p.displayName?.toLowerCase().includes(q) ||
@@ -74,8 +80,9 @@ export default function useEditUserPermissions({
       groups[type] = [];
     });
     filteredPermissions.forEach((p) => {
-      if (groups[p.type]) {
-        groups[p.type].push(p);
+      const normalizedType = normalizePermissionType(p.type);
+      if (groups[normalizedType]) {
+        groups[normalizedType].push(p);
       } else {
         // unknown type — put in first bucket
         const first = PERMISSION_TYPES[0];
@@ -92,7 +99,7 @@ export default function useEditUserPermissions({
   const togglePermission = useCallback(
     async (permission) => {
       if (!userId || actionLoading) return;
-      const isGranted = grantedIds.has(permission.id);
+      const isGranted = grantedIds.has(permission.code);
 
       setActionLoading(true);
       try {
@@ -100,13 +107,13 @@ export default function useEditUserPermissions({
           await revokeUserPermissions(userId, [permission]);
           setGrantedIds((prev) => {
             const next = new Set(prev);
-            next.delete(permission.id);
+            next.delete(permission.code);
             return next;
           });
           setToast({ message: "revokeSuccess", type: "success" });
         } else {
           await grantUserPermissions(userId, [permission]);
-          setGrantedIds((prev) => new Set([...prev, permission.id]));
+          setGrantedIds((prev) => new Set([...prev, permission.code]));
           setToast({ message: "grantSuccess", type: "success" });
         }
       } catch (err) {
@@ -128,7 +135,7 @@ export default function useEditUserPermissions({
     async (typePerms) => {
       if (!userId || actionLoading || typePerms.length === 0) return;
 
-      const allGranted = typePerms.every((p) => grantedIds.has(p.id));
+      const allGranted = typePerms.every((p) => grantedIds.has(p.code));
 
       setActionLoading(true);
       try {
@@ -137,16 +144,16 @@ export default function useEditUserPermissions({
           await revokeUserPermissions(userId, typePerms);
           setGrantedIds((prev) => {
             const next = new Set(prev);
-            typePerms.forEach((p) => next.delete(p.id));
+            typePerms.forEach((p) => next.delete(p.code));
             return next;
           });
           setToast({ message: "revokeSuccess", type: "success" });
         } else {
           // Grant the ones not yet granted
-          const toGrant = typePerms.filter((p) => !grantedIds.has(p.id));
+          const toGrant = typePerms.filter((p) => !grantedIds.has(p.code));
           await grantUserPermissions(userId, toGrant);
           setGrantedIds(
-            (prev) => new Set([...prev, ...toGrant.map((p) => p.id)]),
+            (prev) => new Set([...prev, ...toGrant.map((p) => p.code)]),
           );
           setToast({ message: "grantSuccess", type: "success" });
         }
