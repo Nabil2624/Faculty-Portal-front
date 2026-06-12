@@ -194,15 +194,16 @@ function EditActionSelectorModal({
   }, []);
   const isManagementAdmin = currentUserRoles.includes("ManagementAdmin");
 
-  // Group admin permissions by type → determine read / update capability per type
+  // Group admin permissions by type.
+  // A module should be visible if the admin has at least one permission on it.
   const typeMap = {};
   (adminPermissions || []).forEach((p) => {
-    const parts = p.code?.split(".");
-    if (!parts || parts.length < 2) return;
-    const type = parts[0];
+    const parts = p.code?.split(".") || [];
+    const type = p.type || parts[0];
     const action = parts[1];
-    if (!typeMap[type]) typeMap[type] = { canRead: false, canUpdate: false };
-    if (action === "Read") typeMap[type].canRead = true;
+    if (!type) return;
+    if (!typeMap[type]) typeMap[type] = { hasAny: false, canUpdate: false };
+    typeMap[type].hasAny = true;
     if (action === "Update") typeMap[type].canUpdate = true;
   });
 
@@ -211,7 +212,7 @@ function EditActionSelectorModal({
       ([type, caps]) =>
         type !== "Tickets" &&
         !(isManagementAdmin && type === "Reports") &&
-        (caps.canRead || caps.canUpdate),
+        caps.hasAny,
     )
     .map(([type, caps]) => ({ type, ...caps }));
 
@@ -316,14 +317,14 @@ function EditActionSelectorModal({
                   style={{
                     width: "clamp(30px, 2.5vw, 48px)",
                     height: "clamp(30px, 2.5vw, 48px)",
-                    backgroundColor: canUpdate ? "#eff6ff" : "#f0fdf4",
+                    backgroundColor: "#f3f4f6",
                   }}
                 >
                   <Icon
                     style={{
                       width: "clamp(14px, 1.3vw, 22px)",
                       height: "clamp(14px, 1.3vw, 22px)",
-                      color: canUpdate ? "#2563eb" : "#059669",
+                      color: "#374151",
                     }}
                   />
                 </div>
@@ -344,18 +345,6 @@ function EditActionSelectorModal({
                   }}
                 >
                   {t(`sections.${type}.desc`, meta.desc || "")}
-                </div>
-                <div
-                  style={{
-                    marginTop: "0.4rem",
-                    fontSize: "clamp(0.55rem, 0.7vw, 0.85rem)",
-                    fontWeight: 600,
-                    color: canUpdate ? "#2563eb" : "#059669",
-                  }}
-                >
-                  {canUpdate
-                    ? t("editActionSelector.viewEdit")
-                    : t("editActionSelector.viewOnly")}
                 </div>
               </button>
             );
