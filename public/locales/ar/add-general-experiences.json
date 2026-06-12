@@ -19,7 +19,7 @@
     "startDate": "اختر تاريخ البداية",
     "endDate": "اختر تاريخ النهاية",
     "description": "أدخل تفاصيل الخبرة",
-    "authority" : "ادخل الدجهة"
+    "authority" : "ادخل الجهة"
   },
   "buttons": {
     "save": "حفظ",
