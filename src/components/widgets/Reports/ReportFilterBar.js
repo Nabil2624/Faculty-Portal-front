@@ -68,7 +68,7 @@ export function ReportFilterBar({
       .then((roles) =>
         setAuthorRoleOptions(
           roles.map((r) => ({
-            value: r.valueEn ?? r.valueAr ?? String(r.id),
+            value: String(r.id),
             label_en: r.valueEn,
             label_ar: r.valueAr,
           })),

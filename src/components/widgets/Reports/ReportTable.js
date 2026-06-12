@@ -121,8 +121,8 @@ function resolveCell(row, colKey, isArabic, index) {
     return row.experiencesCount ?? row.experienceCount ?? "-";
   if (colKey === "publicationRole")
     return (
-      row.authorRole ??
       (isArabic ? row.publicationRole_ar : row.publicationRole_en) ??
+      row.authorRole ??
       "-"
     );
   if (colKey === "publicationsCount")
@@ -211,6 +211,7 @@ export function ReportTable({
   const columns = REPORT_COLUMNS[reportType] || [];
   const supportsDetails = SUPPORTS_ROW_DETAILS.has(reportType);
   const isServerSide = SERVER_SIDE_TYPES.has(reportType);
+  const hideTotalCount = reportType === "PUBLICATIONS_STATS";
   const currentSortMap = SORT_MAP_BY_TYPE[reportType] || {};
   const isForbidden = error?.response?.status === 403 || error?.status === 403;
 
@@ -535,7 +536,9 @@ export function ReportTable({
         data.length > 0 &&
         (isServerSide ? (
           <div
-            className="flex items-center justify-between rounded-xl border border-[#19355a]/10 bg-[#19355a]/5"
+            className={`flex items-center rounded-xl border border-[#19355a]/10 bg-[#19355a]/5 ${
+              hideTotalCount ? "justify-end" : "justify-between"
+            }`}
             style={{
               padding:
                 "clamp(0.5rem, 0.8vw, 0.9rem) clamp(0.8rem, 1.2vw, 1.3rem)",
@@ -543,11 +546,13 @@ export function ReportTable({
             }}
             dir={isArabic ? "rtl" : "ltr"}
           >
-            <span className="text-gray-600">
-              {isArabic
-                ? `الإجمالي: ${totalCount?.toLocaleString() ?? 0}`
-                : `Total: ${totalCount?.toLocaleString() ?? 0}`}
-            </span>
+            {!hideTotalCount && (
+              <span className="text-gray-600">
+                {isArabic
+                  ? `الإجمالي: ${totalCount?.toLocaleString() ?? 0}`
+                  : `Total: ${totalCount?.toLocaleString() ?? 0}`}
+              </span>
+            )}
             <div className="flex items-center gap-2">
               <button
                 onClick={() => onPageChange && onPageChange(pageIndex - 1)}
