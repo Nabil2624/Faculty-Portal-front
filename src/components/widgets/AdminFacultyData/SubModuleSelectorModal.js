@@ -206,11 +206,14 @@ export default function SubModuleSelectorModal({
   targetUser,
   onSelect,
   onClose,
+  hiddenSubModules = [],
 }) {
   const { t, i18n } = useTranslation("AdminFacultyData");
   const isAr = i18n.language === "ar";
 
-  const subModules = MODULE_SUBMODULES[moduleType] || [];
+  const subModules = (MODULE_SUBMODULES[moduleType] || []).filter(
+    ({ key }) => !hiddenSubModules.includes(key),
+  );
 
   return (
     <div
