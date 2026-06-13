@@ -1,11 +1,11 @@
 {
-  "title": "Recommendedd Scientific Research",
+  "title": "Recommended Scientific Research",
   "filter": "Filter",
   "accept": "Accept",
   "reject": "Reject",
   "view": "View",
   "empty": "No data available",
-  "fetchError": "Failed to load nominated research",
+  "fetchError": "Failed to load",
   "previous": "Previous",
   "next": "Next",
   "page": "page",

@@ -163,8 +163,10 @@ export default function AdminFacultyDataPage() {
   // Sub-modules that hide the "Add New" button
   const hideAddButton = [
     "researcherProfile",
+    "researches",
     "recommendedResearches",
     "recommendedThesesSupervisings",
+    "theses",
     "personalData",
   ].includes(subModule);
 
@@ -174,7 +176,12 @@ export default function AdminFacultyDataPage() {
     <ResponsiveLayoutProvider>
       {/* Toast */}
       {toast && (
-        <Toast messageKey={toast.key} type={toast.type} onDismiss={() => {}} isArabic={isAr} />
+        <Toast
+          messageKey={toast.key}
+          type={toast.type}
+          onDismiss={() => {}}
+          isArabic={isAr}
+        />
       )}
 
       {/* Add modal */}
@@ -462,9 +469,7 @@ export default function AdminFacultyDataPage() {
           <AdminResearchesPanel user={user} subModule={subModule} />
         )}
         {subModule === "theses" && <AdminThesesPanel user={user} />}
-        {subModule === "personalData" && (
-          <AdminPersonalDataPanel user={user} />
-        )}
+        {subModule === "personalData" && <AdminPersonalDataPanel user={user} />}
 
         {/* ── Generic table ── */}
         {!isSpecialPanel && !loading && !error && (

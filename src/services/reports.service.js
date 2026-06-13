@@ -634,14 +634,27 @@ export async function getPublicationsStatisticsReport({
     { skipGlobalErrorHandler: true },
   );
 
+  const authorRolesLookup = await getAuthorRoles().catch(() => []);
+  const roleById = new Map(
+    (Array.isArray(authorRolesLookup) ? authorRolesLookup : []).map((role) => [
+      String(role?.id ?? ""),
+      role,
+    ]),
+  );
+
   // Flatten nested writings into one row per entry
   const raw = res.data;
   const flatData = (raw?.data ?? []).flatMap((member) =>
-    (member.writings ?? []).map((entry) => ({
-      facultyMemberName: member.facultyMemberName,
-      authorRole: entry.authorRole,
-      noOfWritings: entry.noOfWritings,
-    })),
+    (member.writings ?? []).map((entry) => {
+      const role = roleById.get(String(entry.authorRole ?? ""));
+      return {
+        facultyMemberName: member.facultyMemberName,
+        publicationRole_en: role?.valueEn,
+        publicationRole_ar: role?.valueAr,
+        authorRole: role?.valueEn ?? role?.valueAr ?? entry.authorRole,
+        noOfWritings: entry.noOfWritings,
+      };
+    }),
   );
   return { ...raw, data: flatData };
 }
@@ -652,11 +665,13 @@ export async function downloadWritingsReportPdf({
   facultyIds = [],
   departmentIds = [],
   roles = [],
+  sorting = "",
   notes = "",
 } = {}) {
   const params = new URLSearchParams();
   facultyIds.forEach((id) => params.append("FacultyIds", id));
   departmentIds.forEach((id) => params.append("DepartmentIds", id));
+  if (sorting) params.append("Sort", sorting);
   roles
     .map((r) => String(r ?? "").trim())
     .filter(Boolean)
