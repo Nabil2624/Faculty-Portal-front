@@ -7,7 +7,7 @@ export const startConnection = async (onNotificationReceived) => {
   try {
     if (!connection) {
       connection = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:7184/hubs/notificationHub", {
+        .withUrl("https://localhost/core/hubs/notificationHub", {
           withCredentials: true,
         })
         .withAutomaticReconnect()

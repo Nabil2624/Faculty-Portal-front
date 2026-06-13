@@ -16,7 +16,7 @@ const useResearchProgress = (nationalNumber) => {
 
     // إعداد الاتصال
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://172.1.50.98/core/hubs/researchProgressHub")
+      .withUrl("http://localhost/core/hubs/researchProgressHub")
       .withAutomaticReconnect()
       .build();
 
