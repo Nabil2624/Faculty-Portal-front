@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Plus,
@@ -20,6 +20,7 @@ import {
   adminDeleteThesis,
   adminUploadThesisAttachments,
   adminDeleteThesisAttachment,
+  adminDownloadThesisAttachment,
   adminSearchResearchByTitle,
   adminGetAcademicGradeLookups,
   adminGetUniversitiesLookup,
@@ -30,8 +31,8 @@ import DeleteConfirmModal from "./DeleteConfirmModal";
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 const THESIS_TYPES = [
-  { value: 1, labelKey: "phd" },
-  { value: 2, labelKey: "master" },
+  { value: "PHD", labelKey: "phd" },
+  { value: "Master", labelKey: "master" },
 ];
 
 const SUPERVISOR_ROLES = [
@@ -106,6 +107,101 @@ function Field({ label, children }) {
   );
 }
 
+const EMPTY_MEMBER = () => ({
+  id: null,
+  memberId: null,
+  role: 1,
+  name: "",
+  jobLevelId: "",
+  authority: "",
+});
+
+const EMPTY_FORM = () => ({
+  type: "PHD",
+  link: "",
+  title: "",
+  gradeId: "",
+  enrollmentDate: "",
+  registrationDate: "",
+  internalGradeDate: "",
+  supervisionConfirmationDate: "",
+  discussionDate: "",
+  universityOrFaculty: "",
+  comitteeMembers: [EMPTY_MEMBER()],
+  researches: [],
+  newAttachments: [],
+});
+
+const normalizeDate = (value) => (value ? String(value).substring(0, 10) : "");
+
+const normalizeRole = (role) => {
+  if (typeof role === "number") {
+    return role;
+  }
+
+  const value = String(role || "").toLowerCase();
+  if (
+    value === "administration" ||
+    value === "adminstration" ||
+    value === "adminstrator"
+  ) {
+    return 1;
+  }
+  if (value === "reviewer" || value === "reviewing") {
+    return 2;
+  }
+  return 3;
+};
+
+const toMemberPayload = (member, thesisId = 0) => ({
+  memberId: member.memberId || null,
+  role: Number(member.role),
+  name: member.name.trim(),
+  jobLevelId: member.jobLevelId || null,
+  authority: member.authority || "",
+  thesesId: thesisId,
+});
+
+const toResearchPayload = (research) => ({
+  ...research,
+  contributions: Array.isArray(research.contributions)
+    ? research.contributions.map((contribution) => ({
+        ...contribution,
+      }))
+    : [],
+  attachments: Array.isArray(research.attachments)
+    ? research.attachments.map((attachment) => ({
+        ...attachment,
+      }))
+    : [],
+  cites: Array.isArray(research.cites)
+    ? research.cites.map((cite) => ({
+        ...cite,
+      }))
+    : [],
+});
+
+const getLookupLabel = (item, isArabic) => {
+  if (!item) {
+    return "";
+  }
+
+  return isArabic ? item.valueAr || item.valueEn : item.valueEn || item.valueAr;
+};
+
+const formatDate = (value, locale) => {
+  if (!value) {
+    return "—";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleDateString(locale);
+};
+
 // ─── Thesis Form Modal ────────────────────────────────────────────────────────
 
 function ThesisFormModal({
@@ -117,26 +213,11 @@ function ThesisFormModal({
   onSave,
   onClose,
 }) {
-  const { t } = useTranslation("AdminFacultyData");
+  const { t, i18n } = useTranslation("AdminFacultyData");
   const isEdit = !!item;
 
-  const emptyForm = {
-    type: 1,
-    title: "",
-    studentName: "",
-    specialization: "",
-    gradeId: "",
-    universityOrFaculty: "",
-    registrationDate: "",
-    supervisionFormationDate: "",
-    discussionDate: "",
-    grantingDate: "",
-    supervisors: [],
-    researches: [],
-    newAttachments: [],
-  };
-
-  const [form, setForm] = useState(emptyForm);
+  const isArabic = i18n.language === "ar";
+  const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [loadingItem, setLoadingItem] = useState(isEdit);
   const [errors, setErrors] = useState({});
@@ -146,80 +227,149 @@ function ThesisFormModal({
   const [existingAttachments, setExistingAttachments] = useState([]);
   const [deletingAttachment, setDeletingAttachment] = useState(null);
 
-  // Committee member form
-  const [newSupervisor, setNewSupervisor] = useState({
-    name: "",
-    role: 1,
-    jobLevelId: "",
-    authority: "",
-  });
-
   // Research search
   const [researchQuery, setResearchQuery] = useState("");
   const [researchSearching, setResearchSearching] = useState(false);
   const [researchResults, setResearchResults] = useState([]);
   const [researchSearchError, setResearchSearchError] = useState(null);
+  const [initialMembers, setInitialMembers] = useState([]);
+  const [initialResearches, setInitialResearches] = useState([]);
 
   const set = (key, val) => setForm((p) => ({ ...p, [key]: val }));
+  const visibleMembers = form.comitteeMembers.filter(
+    (member) => !member._deleted,
+  );
+  const visibleResearches = form.researches.filter(
+    (research) => !research._deleted,
+  );
+  const universitySuggestions = useMemo(
+    () =>
+      (universityLookups || [])
+        .map((item) => getLookupLabel(item, isArabic))
+        .filter(Boolean),
+    [isArabic, universityLookups],
+  );
+
+  const updateMember = (index, key, value) => {
+    setForm((prev) => {
+      const nextMembers = [...prev.comitteeMembers];
+      const target = nextMembers[index];
+      if (!target) {
+        return prev;
+      }
+
+      nextMembers[index] = {
+        ...target,
+        [key]: value,
+        _changed: target._orig ? true : target._changed,
+      };
+
+      return { ...prev, comitteeMembers: nextMembers };
+    });
+  };
 
   // Load existing thesis in edit mode
   useEffect(() => {
-    if (!isEdit) return;
+    if (!isEdit) {
+      setForm(EMPTY_FORM());
+      setExistingAttachments([]);
+      setInitialMembers([]);
+      setInitialResearches([]);
+      setLoadingItem(false);
+      return;
+    }
+
+    setLoadingItem(true);
     adminGetThesisById(item.id, userId)
       .then((r) => {
         const d = r.data;
+        const members = (d.comitteeMembers || []).map((member) => ({
+          id: member.id,
+          memberId: member.memberId || null,
+          role: normalizeRole(member.role),
+          name: member.name || "",
+          jobLevelId: member.jobLevelId || "",
+          authority: member.authority || "",
+          _orig: true,
+          _changed: false,
+        }));
+        const researches = (d.researches || []).map((research) => ({
+          ...research,
+          _orig: true,
+          _deleted: false,
+        }));
+
         setForm({
-          type: d.type === "Master" ? 2 : 1,
+          type: d.type === "Master" ? "Master" : "PHD",
+          link: d.link || "",
           title: d.title || "",
-          studentName: d.studentName || "",
-          specialization: d.specialization || "",
           gradeId: d.gradeId || "",
           universityOrFaculty: d.universityOrFaculty || "",
+          enrollmentDate: normalizeDate(d.enrollmentDate),
           registrationDate: (d.registrationDate || "").substring(0, 10),
-          supervisionFormationDate: (
-            d.supervisionFormationDate || ""
-          ).substring(0, 10),
-          discussionDate: (d.discussionDate || "").substring(0, 10),
-          grantingDate: (d.grantingDate || "").substring(0, 10),
-          supervisors: (d.supervisors || []).map((s) => ({
-            ...s,
-            _orig: true,
-          })),
-          researches: (d.researches || []).map((res) => ({
-            ...res,
-            _orig: true,
-          })),
+          internalGradeDate: normalizeDate(d.internalGradeDate),
+          supervisionConfirmationDate: normalizeDate(
+            d.supervisionConfirmationDate,
+          ),
+          discussionDate: normalizeDate(d.discussionDate),
+          comitteeMembers: members.length > 0 ? members : [EMPTY_MEMBER()],
+          researches,
           newAttachments: [],
         });
+        setInitialMembers(members);
+        setInitialResearches(researches);
         setExistingAttachments(d.attachments || []);
       })
       .catch(() => {})
       .finally(() => setLoadingItem(false));
   }, [isEdit, item?.id, userId]);
 
-  const handleResearchSearch = async () => {
-    if (!researchQuery.trim()) return;
-    setResearchSearching(true);
-    setResearchSearchError(null);
-    setResearchResults([]);
-    try {
-      const r = await adminSearchResearchByTitle(researchQuery.trim());
-      setResearchResults(r.data || []);
-    } catch {
-      setResearchSearchError(t("fields.researchNotFound"));
-    } finally {
+  useEffect(() => {
+    if (!researchQuery || researchQuery.trim().length < 2) {
+      setResearchResults([]);
+      setResearchSearchError(null);
       setResearchSearching(false);
+      return undefined;
     }
-  };
+
+    const timeoutId = setTimeout(async () => {
+      setResearchSearching(true);
+      setResearchSearchError(null);
+      try {
+        const response = await adminSearchResearchByTitle(researchQuery.trim());
+        const results = Array.isArray(response.data)
+          ? response.data
+          : response.data
+            ? [response.data]
+            : [];
+
+        setResearchResults(results);
+        if (results.length === 0) {
+          setResearchSearchError(t("fields.researchNotFound"));
+        }
+      } catch {
+        setResearchResults([]);
+        setResearchSearchError(t("fields.researchNotFound"));
+      } finally {
+        setResearchSearching(false);
+      }
+    }, 400);
+
+    return () => clearTimeout(timeoutId);
+  }, [researchQuery, t]);
 
   const addResearch = (res) => {
-    if (form.researches.some((r) => r.id === res.id)) return;
+    if (form.researches.some((r) => r.id === res.id && !r._deleted)) {
+      return;
+    }
+
     setForm((p) => ({
       ...p,
-      researches: [...p.researches, { ...res, _new: true }],
+      researches: [...p.researches, { ...res, _new: true, _deleted: false }],
     }));
     setResearchResults([]);
     setResearchQuery("");
+    setResearchSearchError(null);
   };
 
   const removeResearch = (id) => {
@@ -231,23 +381,33 @@ function ThesisFormModal({
     }));
   };
 
-  const addSupervisor = () => {
-    if (!newSupervisor.name.trim()) return;
+  const addMember = () => {
     setForm((p) => ({
       ...p,
-      supervisors: [
-        ...p.supervisors,
-        { ...newSupervisor, _new: true, _id: Date.now() },
+      comitteeMembers: [
+        ...p.comitteeMembers,
+        { ...EMPTY_MEMBER(), _new: true, _id: Date.now() },
       ],
     }));
-    setNewSupervisor({ name: "", role: 1, jobLevelId: "", authority: "" });
   };
 
-  const removeSupervisor = (idx) => {
+  const removeMember = (idx) => {
     setForm((p) => {
-      const next = [...p.supervisors];
-      next[idx] = { ...next[idx], _deleted: true };
-      return { ...p, supervisors: next };
+      const next = [...p.comitteeMembers];
+      if (!next[idx]) {
+        return p;
+      }
+
+      if (next[idx]._new) {
+        next.splice(idx, 1);
+      } else {
+        next[idx] = { ...next[idx], _deleted: true, _changed: false };
+      }
+
+      return {
+        ...p,
+        comitteeMembers: next.length > 0 ? next : [EMPTY_MEMBER()],
+      };
     });
   };
 
@@ -264,10 +424,32 @@ function ThesisFormModal({
     }
   };
 
+  const handleDownloadAttachment = async (att) => {
+    if (!item?.id) {
+      return;
+    }
+
+    try {
+      const response = await adminDownloadThesisAttachment(item.id, att.id);
+      const blobUrl = window.URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = att.fileName || "attachment";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch {
+      /* ignore */
+    }
+  };
+
   const validate = () => {
     const e = {};
     if (!form.title.trim()) e.title = true;
-    if (!form.studentName.trim()) e.studentName = true;
+    if (!form.gradeId) e.gradeId = true;
+    if (!form.enrollmentDate) e.enrollmentDate = true;
+    if (!form.registrationDate) e.registrationDate = true;
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -277,65 +459,68 @@ function ThesisFormModal({
     setSaving(true);
     setForbiddenError(false);
 
-    const newSupervs = form.supervisors.filter((s) => s._new && !s._deleted);
-    const deletedSupervs = form.supervisors.filter(
-      (s) => s._orig && s._deleted,
-    );
-    const updatedSupervs = form.supervisors.filter(
-      (s) => s._orig && !s._deleted && s._changed,
-    );
-    const newResearches = form.researches.filter((r) => r._new && !r._deleted);
-    const deletedResearches = form.researches.filter(
-      (r) => r._orig && r._deleted,
-    );
+    const currentMembers = form.comitteeMembers
+      .filter(
+        (member) => !member._deleted && member.name.trim() && member.jobLevelId,
+      )
+      .map((member) => ({
+        ...member,
+        name: member.name.trim(),
+      }));
+    const currentResearches = visibleResearches.map((research) => ({
+      ...research,
+    }));
 
     const payload = {
-      type: Number(form.type),
-      title: form.title,
-      studentName: form.studentName,
-      specialization: form.specialization || null,
-      gradeId: form.gradeId ? Number(form.gradeId) : null,
-      universityOrFaculty: form.universityOrFaculty || null,
-      registrationDate: form.registrationDate || null,
-      supervisionFormationDate: form.supervisionFormationDate || null,
+      type: form.type,
+      link: form.link || "",
+      title: form.title.trim(),
+      gradeId: form.gradeId,
+      enrollmentDate: form.enrollmentDate,
+      registrationDate: form.registrationDate,
+      internalGradeDate: form.internalGradeDate || null,
+      supervisionConfirmationDate: form.supervisionConfirmationDate || null,
       discussionDate: form.discussionDate || null,
-      grantingDate: form.grantingDate || null,
+      universityOrFaculty: form.universityOrFaculty || null,
+      facultyMemberId: userId,
     };
 
     if (isEdit) {
-      payload.supervisorsToAdd = newSupervs.map((s) => ({
-        name: s.name,
-        role: Number(s.role),
-        jobLevelId: s.jobLevelId ? Number(s.jobLevelId) : null,
-        authority: s.authority || null,
-      }));
-      payload.supervisorsToDelete = deletedSupervs
-        .map((s) => s.id)
-        .filter(Boolean);
-      payload.supervisorsToUpdate = updatedSupervs.map((s) => ({
-        id: s.id,
-        name: s.name,
-        role: Number(s.role),
-        jobLevelId: s.jobLevelId ? Number(s.jobLevelId) : null,
-        authority: s.authority || null,
-      }));
-      payload.researchesToAdd = newResearches.map((r) => ({ id: r.id }));
-      payload.researchesToDelete = deletedResearches
-        .map((r) => r.id)
-        .filter(Boolean);
-      payload.researchesToUpdate = [];
-    } else {
-      payload.supervisors = form.supervisors
-        .filter((s) => !s._deleted)
-        .map((s) => ({
-          name: s.name,
-          role: Number(s.role),
-          jobLevelId: s.jobLevelId ? Number(s.jobLevelId) : null,
-          authority: s.authority || null,
+      payload.supervisorsToAdd = currentMembers
+        .filter((member) => !member.id)
+        .map((member) => toMemberPayload(member, item.id));
+      payload.supervisorsToUpdate = currentMembers
+        .filter((member) => member.id && member._changed)
+        .map((member) => ({
+          id: member.id,
+          data: toMemberPayload(member, item.id),
         }));
-      payload.researches = form.researches
-        .filter((r) => !r._deleted)
-        .map((r) => ({ id: r.id }));
+      payload.supervisorsToDelete = initialMembers.filter(
+        (initialMember) =>
+          !currentMembers.some((member) => member.id === initialMember.id),
+      );
+      payload.researchesToAdd = currentResearches
+        .filter(
+          (research) =>
+            !initialResearches.some(
+              (initialResearch) => initialResearch.id === research.id,
+            ),
+        )
+        .map((research) => toResearchPayload(research));
+      payload.researchesToUpdate = [];
+      payload.researchesToDelete = initialResearches.filter(
+        (initialResearch) =>
+          !currentResearches.some(
+            (research) => research.id === initialResearch.id,
+          ),
+      );
+    } else {
+      payload.comitteeMembers = currentMembers.map((member) =>
+        toMemberPayload(member),
+      );
+      payload.researches = currentResearches.map((research) =>
+        toResearchPayload(research),
+      );
     }
 
     try {
@@ -361,9 +546,6 @@ function ThesisFormModal({
       setSaving(false);
     }
   };
-
-  const visibleSupervisors = form.supervisors.filter((s) => !s._deleted);
-  const visibleResearches = form.researches.filter((r) => !r._deleted);
 
   if (loadingItem) {
     return (
@@ -450,7 +632,7 @@ function ThesisFormModal({
             <Field label={t("fields.thesisType")}>
               <Select
                 value={form.type}
-                onChange={(e) => set("type", Number(e.target.value))}
+                onChange={(e) => set("type", e.target.value)}
                 options={THESIS_TYPES.map((x) => ({
                   value: x.value,
                   label: t(`fields.${x.labelKey}`),
@@ -461,14 +643,26 @@ function ThesisFormModal({
               <Select
                 value={form.gradeId}
                 onChange={(e) => set("gradeId", e.target.value)}
+                style={{ borderColor: errors.gradeId ? "#ef4444" : "#d1d5db" }}
                 options={[
                   { value: "", label: "—" },
                   ...(gradeLookups || []).map((g) => ({
                     value: g.id,
-                    label: g.name,
+                    label: getLookupLabel(g, isArabic),
                   })),
                 ]}
               />
+              {errors.gradeId && (
+                <div
+                  style={{
+                    color: "#ef4444",
+                    fontSize: "0.7rem",
+                    marginTop: "0.2rem",
+                  }}
+                >
+                  {t("validation.required")}
+                </div>
+              )}
             </Field>
           </div>
 
@@ -492,23 +686,40 @@ function ThesisFormModal({
             )}
           </Field>
 
-          {/* Student + specialization */}
+          {/* University or faculty */}
+          <Field label={t("fields.universityOrFaculty")}>
+            <>
+              <Input
+                value={form.universityOrFaculty}
+                onChange={(e) => set("universityOrFaculty", e.target.value)}
+                list="admin-theses-universities"
+              />
+              <datalist id="admin-theses-universities">
+                {universitySuggestions.map((name) => (
+                  <option key={name} value={name} />
+                ))}
+              </datalist>
+            </>
+          </Field>
+
+          {/* Dates */}
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
               gap: "0.8rem",
             }}
           >
-            <Field label={t("fields.studentName")}>
+            <Field label={t("fields.enrollmentDate")}>
               <Input
-                value={form.studentName}
-                onChange={(e) => set("studentName", e.target.value)}
+                type="date"
+                value={form.enrollmentDate}
+                onChange={(e) => set("enrollmentDate", e.target.value)}
                 style={{
-                  borderColor: errors.studentName ? "#ef4444" : "#d1d5db",
+                  borderColor: errors.enrollmentDate ? "#ef4444" : "#d1d5db",
                 }}
               />
-              {errors.studentName && (
+              {errors.enrollmentDate && (
                 <div
                   style={{
                     color: "#ef4444",
@@ -520,50 +731,40 @@ function ThesisFormModal({
                 </div>
               )}
             </Field>
-            <Field label={t("fields.specialization")}>
-              <Input
-                value={form.specialization}
-                onChange={(e) => set("specialization", e.target.value)}
-              />
-            </Field>
-          </div>
-
-          {/* University */}
-          <Field label={t("fields.universityOrFaculty")}>
-            <Select
-              value={form.universityOrFaculty}
-              onChange={(e) => set("universityOrFaculty", e.target.value)}
-              options={[
-                { value: "", label: "—" },
-                ...(universityLookups || []).map((u) => ({
-                  value: u.name || u.id,
-                  label: u.name,
-                })),
-              ]}
-            />
-          </Field>
-
-          {/* Dates */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "0.8rem",
-            }}
-          >
             <Field label={t("fields.registrationDate")}>
               <Input
                 type="date"
                 value={form.registrationDate}
                 onChange={(e) => set("registrationDate", e.target.value)}
+                style={{
+                  borderColor: errors.registrationDate ? "#ef4444" : "#d1d5db",
+                }}
               />
+              {errors.registrationDate && (
+                <div
+                  style={{
+                    color: "#ef4444",
+                    fontSize: "0.7rem",
+                    marginTop: "0.2rem",
+                  }}
+                >
+                  {t("validation.required")}
+                </div>
+              )}
             </Field>
-            <Field label={t("fields.supervisionFormationDate")}>
+            <Field label={t("fields.internalGradeDate")}>
               <Input
                 type="date"
-                value={form.supervisionFormationDate}
+                value={form.internalGradeDate}
+                onChange={(e) => set("internalGradeDate", e.target.value)}
+              />
+            </Field>
+            <Field label={t("fields.supervisionConfirmationDate")}>
+              <Input
+                type="date"
+                value={form.supervisionConfirmationDate}
                 onChange={(e) =>
-                  set("supervisionFormationDate", e.target.value)
+                  set("supervisionConfirmationDate", e.target.value)
                 }
               />
             </Field>
@@ -572,13 +773,6 @@ function ThesisFormModal({
                 type="date"
                 value={form.discussionDate}
                 onChange={(e) => set("discussionDate", e.target.value)}
-              />
-            </Field>
-            <Field label={t("fields.grantingDate")}>
-              <Input
-                type="date"
-                value={form.grantingDate}
-                onChange={(e) => set("grantingDate", e.target.value)}
               />
             </Field>
           </div>
@@ -601,170 +795,127 @@ function ThesisFormModal({
             >
               {t("fields.commiteeMembers")}
             </div>
-            {/* New supervisor row */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr 1fr auto",
-                gap: "0.5rem",
-                alignItems: "end",
-                marginBottom: "0.6rem",
-              }}
-            >
-              <div>
-                <Label>{t("fields.supervisorName")}</Label>
-                <Input
-                  value={newSupervisor.name}
-                  onChange={(e) =>
-                    setNewSupervisor((p) => ({ ...p, name: e.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label>{t("fields.supervisionRole")}</Label>
-                <Select
-                  value={newSupervisor.role}
-                  onChange={(e) =>
-                    setNewSupervisor((p) => ({
-                      ...p,
-                      role: Number(e.target.value),
-                    }))
-                  }
-                  options={SUPERVISOR_ROLES.map((x) => ({
-                    value: x.value,
-                    label: t(`fields.${x.labelKey}`),
-                  }))}
-                />
-              </div>
-              <div>
-                <Label>{t("fields.jobLevel")}</Label>
-                <Select
-                  value={newSupervisor.jobLevelId}
-                  onChange={(e) =>
-                    setNewSupervisor((p) => ({
-                      ...p,
-                      jobLevelId: e.target.value,
-                    }))
-                  }
-                  options={[
-                    { value: "", label: "—" },
-                    ...(jobRankLookups || []).map((j) => ({
-                      value: j.id,
-                      label: j.name,
-                    })),
-                  ]}
-                />
-              </div>
-              <div>
-                <Label>{t("fields.university")}</Label>
-                <Select
-                  value={newSupervisor.authority}
-                  onChange={(e) =>
-                    setNewSupervisor((p) => ({
-                      ...p,
-                      authority: e.target.value,
-                    }))
-                  }
-                  options={[
-                    { value: "", label: "—" },
-                    ...(universityLookups || []).map((u) => ({
-                      value: u.name || u.id,
-                      label: u.name,
-                    })),
-                  ]}
-                />
-              </div>
-              <button
-                onClick={addSupervisor}
-                disabled={!newSupervisor.name.trim()}
-                style={{
-                  padding: "0.4rem 0.8rem",
-                  borderRadius: "0.6rem",
-                  background: "#2563eb",
-                  color: "#fff",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.3rem",
-                  fontSize: "clamp(0.62rem,0.8vw,1.15rem)",
-                  whiteSpace: "nowrap",
-                  marginBottom: "0.05rem",
-                }}
-              >
-                <UserPlus style={{ width: 14, height: 14 }} />
-                {t("fields.addMember")}
-              </button>
-            </div>
-            {/* Supervisors list */}
-            {visibleSupervisors.length > 0 && (
+            {visibleMembers.length > 0 && (
               <div className="flex flex-col gap-1">
-                {visibleSupervisors.map((s, idx) => {
-                  const realIdx = form.supervisors.indexOf(s);
+                {visibleMembers.map((member) => {
+                  const realIdx = form.comitteeMembers.indexOf(member);
                   return (
                     <div
-                      key={s._id || s.id || idx}
-                      className="flex items-center gap-2 rounded-lg flex-wrap"
+                      key={member._id || member.id || realIdx}
+                      className="rounded-lg"
                       style={{
-                        padding: "0.35rem 0.6rem",
+                        padding: "0.6rem",
                         background: "#f9fafb",
                         border: "1px solid #e5e7eb",
                       }}
                     >
-                      <span
+                      <div
                         style={{
-                          flex: 1,
-                          fontSize: "clamp(0.62rem,0.8vw,1.15rem)",
-                          color: "#374151",
-                          minWidth: "6rem",
+                          display: "grid",
+                          gridTemplateColumns: "repeat(4, minmax(0, 1fr)) auto",
+                          gap: "0.5rem",
+                          alignItems: "end",
                         }}
                       >
-                        {s.name}
-                      </span>
-                      {s.role && (
-                        <span
+                        <div>
+                          <Label>{t("fields.supervisorName")}</Label>
+                          <Input
+                            value={member.name}
+                            onChange={(e) =>
+                              updateMember(realIdx, "name", e.target.value)
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label>{t("fields.supervisionRole")}</Label>
+                          <Select
+                            value={member.role}
+                            onChange={(e) =>
+                              updateMember(
+                                realIdx,
+                                "role",
+                                Number(e.target.value),
+                              )
+                            }
+                            options={SUPERVISOR_ROLES.map((option) => ({
+                              value: option.value,
+                              label: t(`fields.${option.labelKey}`),
+                            }))}
+                          />
+                        </div>
+                        <div>
+                          <Label>{t("fields.jobLevel")}</Label>
+                          <Select
+                            value={member.jobLevelId}
+                            onChange={(e) =>
+                              updateMember(
+                                realIdx,
+                                "jobLevelId",
+                                e.target.value,
+                              )
+                            }
+                            options={[
+                              { value: "", label: "—" },
+                              ...(jobRankLookups || []).map((jobRank) => ({
+                                value: jobRank.id,
+                                label: getLookupLabel(jobRank, isArabic),
+                              })),
+                            ]}
+                          />
+                        </div>
+                        <div>
+                          <Label>{t("fields.university")}</Label>
+                          <Input
+                            value={member.authority}
+                            onChange={(e) =>
+                              updateMember(realIdx, "authority", e.target.value)
+                            }
+                            list="admin-theses-member-universities"
+                          />
+                        </div>
+                        <button
+                          onClick={() => removeMember(realIdx)}
                           style={{
-                            fontSize: "0.6rem",
-                            background: "#eff6ff",
-                            color: "#2563eb",
-                            borderRadius: "0.4rem",
-                            padding: "0.1rem 0.4rem",
+                            padding: "0.4rem",
+                            borderRadius: "0.6rem",
+                            background: "#fef2f2",
+                            border: "1px solid #fca5a5",
+                            color: "#b91c1c",
+                            cursor: "pointer",
                           }}
                         >
-                          {t(
-                            `fields.${SUPERVISOR_ROLES.find((r) => r.value === Number(s.role))?.labelKey || ""}`,
-                          ) || s.role}
-                        </span>
-                      )}
-                      {s.authority && (
-                        <span
-                          style={{
-                            fontSize: "0.6rem",
-                            background: "#f5f3ff",
-                            color: "#7c3aed",
-                            borderRadius: "0.4rem",
-                            padding: "0.1rem 0.4rem",
-                          }}
-                        >
-                          {s.authority}
-                        </span>
-                      )}
-                      <button
-                        onClick={() => removeSupervisor(realIdx)}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          cursor: "pointer",
-                          color: "#ef4444",
-                        }}
-                      >
-                        <X style={{ width: 14, height: 14 }} />
-                      </button>
+                          <X style={{ width: 14, height: 14 }} />
+                        </button>
+                      </div>
                     </div>
                   );
                 })}
               </div>
             )}
+            <datalist id="admin-theses-member-universities">
+              {universitySuggestions.map((name) => (
+                <option key={`member-${name}`} value={name} />
+              ))}
+            </datalist>
+            <button
+              onClick={addMember}
+              style={{
+                marginTop: "0.6rem",
+                padding: "0.4rem 0.8rem",
+                borderRadius: "0.6rem",
+                background: "#2563eb",
+                color: "#fff",
+                border: "none",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.3rem",
+                fontSize: "clamp(0.62rem,0.8vw,1.15rem)",
+              }}
+            >
+              <UserPlus style={{ width: 14, height: 14 }} />
+              {t("fields.addMember")}
+            </button>
           </div>
 
           {/* ── Researches ── */}
@@ -791,11 +942,8 @@ function ThesisFormModal({
                 onChange={(e) => setResearchQuery(e.target.value)}
                 placeholder={t("fields.researchSearchPlaceholder")}
                 style={{ flex: 1 }}
-                onKeyDown={(e) => e.key === "Enter" && handleResearchSearch()}
               />
-              <button
-                onClick={handleResearchSearch}
-                disabled={researchSearching}
+              <div
                 className="flex items-center gap-1 rounded-xl font-medium"
                 style={{
                   padding: "0 clamp(0.7rem,1vw,1.6rem)",
@@ -804,7 +952,6 @@ function ThesisFormModal({
                   border: "1px solid #bfdbfe",
                   whiteSpace: "nowrap",
                   fontSize: "clamp(0.62rem,0.8vw,1.15rem)",
-                  cursor: "pointer",
                 }}
               >
                 {researchSearching ? (
@@ -816,7 +963,7 @@ function ThesisFormModal({
                   <Search style={{ width: 14, height: 14 }} />
                 )}
                 {t("search")}
-              </button>
+              </div>
             </div>
             {researchSearchError && (
               <div
@@ -938,19 +1085,21 @@ function ThesisFormModal({
                 <Paperclip
                   style={{ width: 14, height: 14, color: "#6b7280" }}
                 />
-                <a
-                  href={att.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => handleDownloadAttachment(att)}
                   style={{
                     flex: 1,
+                    textAlign: "start",
                     fontSize: "clamp(0.62rem,0.8vw,1.15rem)",
                     color: "#2563eb",
                     textDecoration: "underline",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
                   }}
                 >
                   {att.fileName || att.name}
-                </a>
+                </button>
                 <button
                   onClick={() => handleDeleteAttachment(att)}
                   disabled={deletingAttachment === att.id}
@@ -1128,6 +1277,17 @@ export default function AdminThesesPanel({ user }) {
     load();
   };
 
+  const gradeMap = useMemo(
+    () =>
+      new Map(
+        (gradeLookups || []).map((grade) => [
+          grade.id,
+          getLookupLabel(grade, i18n.language === "ar"),
+        ]),
+      ),
+    [gradeLookups, i18n.language],
+  );
+
   const typeLabel = (type) => {
     if (type === "PHD" || type === 1) return t("fields.phd");
     if (type === "Master" || type === 2) return t("fields.master");
@@ -1281,8 +1441,11 @@ export default function AdminThesesPanel({ user }) {
                   {[
                     t("fields.thesisTitle"),
                     t("cols.thesisType"),
-                    t("fields.studentName"),
+                    t("fields.grade"),
+                    t("fields.enrollmentDate"),
+                    t("fields.registrationDate"),
                     t("fields.discussionDate"),
+                    t("cols.attachments"),
                     t("actions"),
                   ].map((h) => (
                     <th
@@ -1345,7 +1508,33 @@ export default function AdminThesesPanel({ user }) {
                         color: "#374151",
                       }}
                     >
-                      {item.studentName || "—"}
+                      {gradeMap.get(item.gradeId) ||
+                        getLookupLabel(item.grade, i18n.language === "ar") ||
+                        "—"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "clamp(0.5rem,0.8vw,1.2rem)",
+                        fontSize: "clamp(0.62rem,0.82vw,1.2rem)",
+                        color: "#374151",
+                      }}
+                    >
+                      {formatDate(
+                        item.enrollmentDate,
+                        i18n.language === "ar" ? "ar-EG" : "en-GB",
+                      )}
+                    </td>
+                    <td
+                      style={{
+                        padding: "clamp(0.5rem,0.8vw,1.2rem)",
+                        fontSize: "clamp(0.62rem,0.82vw,1.2rem)",
+                        color: "#374151",
+                      }}
+                    >
+                      {formatDate(
+                        item.registrationDate,
+                        i18n.language === "ar" ? "ar-EG" : "en-GB",
+                      )}
                     </td>
                     <td
                       style={{
@@ -1355,8 +1544,22 @@ export default function AdminThesesPanel({ user }) {
                       }}
                     >
                       {item.discussionDate
-                        ? new Date(item.discussionDate).toLocaleDateString()
+                        ? formatDate(
+                            item.discussionDate,
+                            i18n.language === "ar" ? "ar-EG" : "en-GB",
+                          )
                         : "—"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "clamp(0.5rem,0.8vw,1.2rem)",
+                        fontSize: "clamp(0.62rem,0.82vw,1.2rem)",
+                        color: "#374151",
+                      }}
+                    >
+                      {Array.isArray(item.attachments)
+                        ? item.attachments.length
+                        : 0}
                     </td>
                     <td
                       style={{
