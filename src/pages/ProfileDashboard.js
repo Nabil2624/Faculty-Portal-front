@@ -19,7 +19,7 @@ import profileImage from "../assets/prof.jpg";
 import axiosInstance from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
-// ── Static blurred placeholder that visually represents a CV template ──────────
+
 const TEMPLATE_CONFIGS = {
   modern: {
     headerBg: "#19355a",

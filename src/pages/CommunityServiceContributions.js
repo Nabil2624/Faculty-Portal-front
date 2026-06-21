@@ -2,13 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
 import { HandHeart } from "lucide-react";
 import useCommunityServiceContribution from "../hooks/useCommunityServiceContribution";
-import useCommunityServiceContributionForm from "../hooks/useCommunityServiceContributionForm";
-
-import CommunityServiceContributionsCard from "../components/widgets/CommunityServiceContributions/CommunityServiceContributionsCard";
 import CommunityServiceContributionsModal from "../components/widgets/CommunityServiceContributions/CommunityServiceContributionsModal";
 
 import { deleteCommunityServiceContribution } from "../services/communityServiceContribution.service";

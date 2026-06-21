@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import DeleteArticleModal from "./DeleteArticleModal";
-import ArticleDetailsModal from "./ArticleDetailsModal";
 import AddArticleForm from "./AddArticleForm";
 import EditArticleForm from "./EditArticleForm";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
@@ -73,16 +72,6 @@ export default function ArticlesModals({
         </ModalWrapper>
       )}
 
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <ArticleDetailsModal
-            item={selectedItem}
-            t={t}
-            isArabic={isArabic}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
           <CustomizeResultsModal

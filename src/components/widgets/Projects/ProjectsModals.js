@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import DeleteProjectModal from "./DeleteProjectModal";
-import ProjectDetailsModal from "./ProjectDetailsModal";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function ProjectsModals({
   showDelete,
@@ -36,17 +35,7 @@ export default function ProjectsModals({
         </ModalWrapper>
       )}
 
-      {/* Details Modal */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <ProjectDetailsModal
-            item={selectedItem}
-            t={t}
-            isArabic={isArabic}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
+
       {/* ================= FILTER MODAL ================= */}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>

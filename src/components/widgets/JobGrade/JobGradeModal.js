@@ -2,7 +2,6 @@ import ModalWrapper from "../../ui/ModalWrapper";
 import JobGradeForm from "./JobGradeForm";
 import EditJobGrade from "./EditJobGrade";
 import JobGradeDeleteModal from "./JobGradeDeleteModal";
-import JobGradeDetailsModal from "./JobGradeDetailsModal";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function JobGradeModal({
   showAdd,
@@ -61,16 +60,7 @@ export default function JobGradeModal({
         </ModalWrapper>
       )}
 
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <JobGradeDetailsModal
-            item={selectedItem}
-            isArabic={isArabic}
-            t={t}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
+
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
           <CustomizeResultsModal

@@ -3,12 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
 
 import useTrainingPrograms from "../hooks/useTrainingPrograms";
 import { deleteTrainingProgram } from "../services/trainingPrograms.service";
-import TrainingProgramCard from "../components/widgets/TrainingProgram/TrainingProgramCard";
 import TrainingProgramModal from "../components/widgets/TrainingProgram/TrainingProgramModal";
 import TrainingProgramsTable from "../components/widgets/TrainingProgram/TrainingProgramsTable";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";

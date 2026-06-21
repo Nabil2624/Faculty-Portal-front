@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import DeleteGeneralExperienceModal from "./DeleteGeneralExperienceModal";
-import GeneralExperienceDetailsModal from "./GeneralExperienceDetailsModal";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function GeneralExperienceModals({
   showDelete,
@@ -34,15 +33,7 @@ export default function GeneralExperienceModals({
         </ModalWrapper>
       )}
 
-      {/* Details Modal */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <GeneralExperienceDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
+
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
           <CustomizeResultsModal

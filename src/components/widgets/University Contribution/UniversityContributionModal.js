@@ -1,7 +1,6 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import UniversityContributionForm from "./UniversityContributionForm";
 import UniversityContributionDeleteModal from "./UniversityContributionDeleteModal";
-import UniversityContributionDetailsModal from "./UniversityContributionDetailsModal";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
 export default function UniversityContributionModal({
@@ -76,15 +75,6 @@ export default function UniversityContributionModal({
         </ModalWrapper>
       )}
 
-      {/* ================= DETAILS MODAL ================= */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <UniversityContributionDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
 
       {/* ================= FILTER MODAL ================= */}
       {showFilterModal && (

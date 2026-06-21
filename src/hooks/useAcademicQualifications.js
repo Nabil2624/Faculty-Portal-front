@@ -48,10 +48,10 @@ export default function useAcademicQualifications(
       qualificationIds,
       gradeIds,
       dispatchIds,
-    ], // مهم جدًا: إضافة search كـ dependency
+    ], 
   );
 
-  // تحميل البيانات عند تغيّر الصفحة أو البحث
+ 
   useEffect(() => {
     loadData();
   }, [loadData]);

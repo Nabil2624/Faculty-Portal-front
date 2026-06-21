@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import PrizeDeleteModal from "./PrizeDeleteModal";
-import PrizeDetailsModal from "./PrizesDetailsModal";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function PrizesAndRewardsModal({
   showDelete,
@@ -37,16 +36,7 @@ export default function PrizesAndRewardsModal({
         </ModalWrapper>
       )}
 
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <PrizeDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
-            t={t}
-            isArabic={isArabic}
-          />
-        </ModalWrapper>
-      )}
+
       {/* ================= FILTER MODAL ================= */}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>

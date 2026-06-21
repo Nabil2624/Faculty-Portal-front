@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { BookType } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
 
 import useScientificWriting from "../hooks/useScientificWriting";
 import { deleteScientificWriting } from "../services/scientific-writing.service";

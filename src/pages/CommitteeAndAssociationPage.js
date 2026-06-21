@@ -1,12 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-
-import LoadingSpinner from "../components/LoadingSpinner";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import CommitteeCard from "../components/widgets/CommitteeAndAssociation/CommitteeCard";
-import Pagination from "../components/ui/Pagination";
-import PageHeader from "../components/ui/PageHeader";
 import useCommitteeLookups from "../hooks/useCommitteeLookups";
 import CommitteesModals from "../components/widgets/CommitteeAndAssociation/CommitteesModals";
 import useCommitteesAndAssociations from "../hooks/useCommitteesAndAssociations";

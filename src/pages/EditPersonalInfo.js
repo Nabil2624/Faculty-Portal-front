@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { FiUpload, FiCalendar, FiSave, FiX } from "react-icons/fi";
 import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
-import LoadingSpinner from "./LoadingSpinner";
-import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 import subPicture from "../assets/prof.jpg";
 
 export const handleProfilePictureUpload = (entityId, oldAttachmentId, files) => {

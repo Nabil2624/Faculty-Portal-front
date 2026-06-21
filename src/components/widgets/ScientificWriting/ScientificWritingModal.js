@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import ScientificWritingDeleteModal from "./ScientificWritingDeleteModal";
-import ScientificWritingDetailsModal from "./ScientificWritingDetailsModal";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function ScientificWritingModal({
   showDelete,
@@ -35,15 +34,6 @@ export default function ScientificWritingModal({
         </ModalWrapper>
       )}
 
-      {/* Details Modal */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <ScientificWritingDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
           <CustomizeResultsModal

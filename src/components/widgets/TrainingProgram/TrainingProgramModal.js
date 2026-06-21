@@ -1,7 +1,6 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 import TrainingProgramDeleteModal from "./TrainingProgramDeleteModal";
-import TrainingProgramDetailsModal from "./TrainingProgramDetailsModal";
 
 export default function UniversityContributionModal({
   mode,
@@ -28,14 +27,7 @@ export default function UniversityContributionModal({
   currentFilters,
   handleResetFilters,
 }) {
-  const formTitle =
-    mode === "add"
-      ? isArabic
-        ? "إضافة مساهمة جامعية"
-        : "Add University Contribution"
-      : isArabic
-        ? "تعديل المساهمة الجامعية"
-        : "Edit University Contribution";
+
 
   return (
     <>
@@ -51,15 +43,7 @@ export default function UniversityContributionModal({
         </ModalWrapper>
       )}
 
-      {/* ================= DETAILS MODAL ================= */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <TrainingProgramDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
+
       {/* ================= FILTER MODAL ================= */}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>

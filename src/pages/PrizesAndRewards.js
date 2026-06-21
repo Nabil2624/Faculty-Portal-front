@@ -3,13 +3,11 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
+
 
 import usePrizesAndRewards from "../hooks/usePrizesAndRewards";
 import { deletePrizeOrReward } from "../services/prizesAndRewards.service";
 import usePrizesAndRewardsLookups from "../hooks/usePrizesAndRewardsLookups";
-import PrizeCard from "../components/widgets/PrizesAndRewards/PrizesCard";
 import PrizesAndRewardsModal from "../components/widgets/PrizesAndRewards/PrizesAndRewardsModal";
 import PrizesRewardsTable from "../components/widgets/PrizesAndRewards/PrizesRewardsTable";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";

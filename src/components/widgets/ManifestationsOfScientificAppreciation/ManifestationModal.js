@@ -1,6 +1,6 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import ManifestationDeleteModal from "./ManifestationDeleteModal";
-import ManifestationDetailsModal from "./ManifestationDetailsModal";
+
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function ManifestationModal({
   showDelete,
@@ -31,16 +31,6 @@ export default function ManifestationModal({
             deleteError={deleteError}
             onConfirm={onDelete}
             onCancel={() => setShowDelete(false)}
-          />
-        </ModalWrapper>
-      )}
-
-      {/* Details Modal */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <ManifestationDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
           />
         </ModalWrapper>
       )}

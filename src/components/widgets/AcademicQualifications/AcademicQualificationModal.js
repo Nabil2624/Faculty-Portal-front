@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import AcademicQualificationDeleteModal from "./AcademicQualificationDeleteModal";
-import AcademicQualificationDetailsModal from "./AcademicQualificationDetailsModal";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function AcademicQualificationModal({
   showDelete,
@@ -35,16 +34,7 @@ export default function AcademicQualificationModal({
         </ModalWrapper>
       )}
 
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <AcademicQualificationDetailsModal
-            item={selectedItem}
-            isArabic={isArabic}
-            t={t}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
+
       {/* ================= FILTER MODAL ================= */}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
