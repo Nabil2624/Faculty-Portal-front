@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
+
 import useSeminarsAndConferences from "../hooks/useSeminarsAndConferences";
-import SeminarCard from "../components/widgets/SeminarAndConferences/SeminarCard";
+
 import SeminarModal from "../components/widgets/SeminarAndConferences/SeminarModal";
 import { useNavigate } from "react-router-dom";
 import useSeminarParticipationType from "../hooks/useSeminarParticipationType";

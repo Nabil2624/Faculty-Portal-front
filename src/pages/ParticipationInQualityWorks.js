@@ -2,13 +2,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { ShieldCheck } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
-
 import useParticipationInQuallityWorks from "../hooks/useParticipationInQuallityWorks";
-import useParticipationForm from "../hooks/useParticipationForm";
-
-import ParticipationInQualityWorkCard from "../components/widgets/ParticipationinQualityWork/ParticipationInQualityWorkCard";
 import ParticipationInQualityWorkModal from "../components/widgets/ParticipationinQualityWork/ParticipationInQualityWorkModal";
 
 import { deleteParticipation } from "../services/participationInQualityWork.service";

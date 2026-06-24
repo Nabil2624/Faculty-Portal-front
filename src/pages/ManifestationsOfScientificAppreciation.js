@@ -3,17 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
 import { Medal } from "lucide-react";
 import useManifestations from "../hooks/useManifestations";
 import { deleteManifestation } from "../services/manifestationsOfScientificAppreciation";
-
-import ManifestationCard from "../components/widgets/ManifestationsOfScientificAppreciation/ManifestationCard";
 import ManifestationModal from "../components/widgets/ManifestationsOfScientificAppreciation/ManifestationModal";
-
-import ManifestationDeleteModal from "../components/widgets/ManifestationsOfScientificAppreciation/ManifestationDeleteModal";
 import ManifestationsTable from "../components/widgets/ManifestationsOfScientificAppreciation/ManifestationsTable";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 

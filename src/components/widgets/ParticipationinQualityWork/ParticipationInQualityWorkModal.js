@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import ParticipationInQualityWorkDeleteModal from "./ParticipationInQualityWorkDeleteModal";
-import ParticipationInQualityWorkDetailsModal from "./ParticipationInQualityWorkDetailsModal";
 import ParticipationInQualityWorkForm from "./ParticipationInQualityWorkForm";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
@@ -76,15 +75,7 @@ export default function ParticipationInQualityWorkModal({
         </ModalWrapper>
       )}
 
-      {/* ================= DETAILS MODAL ================= */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <ParticipationInQualityWorkDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
+
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
           <CustomizeResultsModal

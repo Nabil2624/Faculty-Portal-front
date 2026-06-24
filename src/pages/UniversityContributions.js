@@ -2,15 +2,11 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
 import { School } from "lucide-react";
 import useUniversityContribution from "../hooks/useUniversityContribution";
 import useUniversityContributionForm from "../hooks/useUniversityContributionForm";
 import useAddUniversityContributionForm from "../hooks/useAddUniversityContributionForm";
 import useContributionTypeLookups from "../hooks/useContributionTypeLookups";
-
-import UniversityContributionCard from "../components/widgets/University Contribution/UniversityContributionCard";
 import UniversityContributionModal from "../components/widgets/University Contribution/UniversityContributionModal";
 import { useNavigate } from "react-router-dom";
 import { deleteUniversityContribution } from "../services/universityContribution.service";

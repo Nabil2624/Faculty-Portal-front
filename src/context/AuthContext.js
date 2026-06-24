@@ -52,7 +52,6 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
     setIsAuthenticated(true);
 
-    console.log("Waiting before AuthMe...");
 
     await new Promise((resolve) =>
       setTimeout(resolve, 300)

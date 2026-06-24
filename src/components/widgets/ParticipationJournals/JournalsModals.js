@@ -2,7 +2,7 @@ import ModalWrapper from "../../ui/ModalWrapper";
 import AddJournalForm from "../ParticipationJournals/AddJournalForm";
 import EditJournalForm from "./EditJournalForm";
 import DeleteJournalModal from "./DeleteJournalModal";
-import JournalDetailsModal from "./JournalDetailsModal";
+
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
 export default function JournalsModals({
@@ -62,16 +62,6 @@ export default function JournalsModals({
         </ModalWrapper>
       )}
 
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <JournalDetailsModal
-            item={selectedItem}
-            isArabic={isArabic}
-            t={t}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
       {/* ================= FILTER MODAL ================= */}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>

@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
 import { Briefcase } from "lucide-react";
 import useAdminPosition from "../hooks/useAdminPosition";
 import { deleteAdminPosition } from "../services/adminstrativePosition.service";
-
-import AdminPositionCard from "../components/widgets/AdminPosition/AdminPositionCard";
 import AdminPositionModal from "../components/widgets/AdminPosition/AdminPositionModal";
 import AdministrativePositionsTable from "../components/widgets/AdminPosition/AdministrativePositionsTable";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";

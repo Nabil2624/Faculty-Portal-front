@@ -1,8 +1,7 @@
-import { useState, memo, useCallback, useEffect } from "react";
+import { useState, memo,  useEffect } from "react";
 import {
   GraduationCap,
   Calendar,
-  Building2,
   MapPin,
   FileText,
   Award,
@@ -19,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import ActionIcons from "../../ui/ActionIcons";
 import { downloadAcademicQualificationAttachment } from "../../../services/academicQualifications.service";
 
-// --- 1. مساعدات التنسيق ---
+
 function formatDate(dateString, i18n, t) {
   if (!dateString) return t("present") || "Present";
   const date = new Date(dateString);
@@ -30,7 +29,7 @@ function formatDate(dateString, i18n, t) {
   });
 }
 
-// --- 2. مكون الهيدر (Memoized) ---
+
 const TableHeader = memo(
   ({
     searchTerm,

@@ -109,6 +109,12 @@ function RoleFilterChip({ label, value, active, onClick }) {
   );
 }
 
+function normalizePermissionType(type, code) {
+  if (type === 13 || type === "13") return "Reports";
+  if (typeof type === "string" && type.trim()) return type;
+  return code?.split(".")?.[0] || type;
+}
+
 // ─── Permission section metadata ─────────────────────────────────────────────
 
 const SECTION_META = {
@@ -194,24 +200,22 @@ function EditActionSelectorModal({
   }, []);
   const isManagementAdmin = currentUserRoles.includes("ManagementAdmin");
 
-  // Group admin permissions by type → determine read / update capability per type
+  // Group admin permissions by type.
+  // A module should be visible if the admin has at least one permission on it.
   const typeMap = {};
   (adminPermissions || []).forEach((p) => {
-    const parts = p.code?.split(".");
-    if (!parts || parts.length < 2) return;
-    const type = parts[0];
+    const parts = p.code?.split(".") || [];
+    const type = normalizePermissionType(p.type, p.code) || parts[0];
     const action = parts[1];
-    if (!typeMap[type]) typeMap[type] = { canRead: false, canUpdate: false };
-    if (action === "Read") typeMap[type].canRead = true;
+    if (!type) return;
+    if (!typeMap[type]) typeMap[type] = { hasAny: false, canUpdate: false };
+    typeMap[type].hasAny = true;
     if (action === "Update") typeMap[type].canUpdate = true;
   });
 
   const sections = Object.entries(typeMap)
     .filter(
-      ([type, caps]) =>
-        type !== "Tickets" &&
-        !(isManagementAdmin && type === "Reports") &&
-        (caps.canRead || caps.canUpdate),
+      ([type, caps]) => type !== "Tickets" && type !== "Reports" && caps.hasAny,
     )
     .map(([type, caps]) => ({ type, ...caps }));
 
@@ -219,6 +223,7 @@ function EditActionSelectorModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
       onClick={(e) => e.target === e.currentTarget && onClose()}
+      style={{ animation: "usersFadeIn 180ms ease-out" }}
     >
       <div
         className="bg-white rounded-2xl shadow-2xl flex flex-col"
@@ -229,6 +234,7 @@ function EditActionSelectorModal({
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
+          animation: "usersModalIn 220ms cubic-bezier(.2,.8,.2,1)",
         }}
       >
         {/* Header */}
@@ -316,14 +322,14 @@ function EditActionSelectorModal({
                   style={{
                     width: "clamp(30px, 2.5vw, 48px)",
                     height: "clamp(30px, 2.5vw, 48px)",
-                    backgroundColor: canUpdate ? "#eff6ff" : "#f0fdf4",
+                    backgroundColor: "#f3f4f6",
                   }}
                 >
                   <Icon
                     style={{
                       width: "clamp(14px, 1.3vw, 22px)",
                       height: "clamp(14px, 1.3vw, 22px)",
-                      color: canUpdate ? "#2563eb" : "#059669",
+                      color: "#374151",
                     }}
                   />
                 </div>
@@ -344,18 +350,6 @@ function EditActionSelectorModal({
                   }}
                 >
                   {t(`sections.${type}.desc`, meta.desc || "")}
-                </div>
-                <div
-                  style={{
-                    marginTop: "0.4rem",
-                    fontSize: "clamp(0.55rem, 0.7vw, 0.85rem)",
-                    fontWeight: 600,
-                    color: canUpdate ? "#2563eb" : "#059669",
-                  }}
-                >
-                  {canUpdate
-                    ? t("editActionSelector.viewEdit")
-                    : t("editActionSelector.viewOnly")}
                 </div>
               </button>
             );
@@ -474,6 +468,15 @@ export default function UsersPage() {
     { label: t("roles.SupportAdmin"), value: "SupportAdmin" },
   ];
 
+  const currentUserRoles = React.useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("userRoles") || "[]");
+    } catch {
+      return [];
+    }
+  }, []);
+  const isManagementAdmin = currentUserRoles.includes("ManagementAdmin");
+
   // Keep a local ref to the target even after the hook clears it
   const [cachedTarget, setCachedTarget] = React.useState(null);
 
@@ -520,6 +523,12 @@ export default function UsersPage() {
         <SubModuleSelectorModal
           moduleType={subSelectorModule}
           targetUser={permSelectorTarget}
+          hiddenSubModules={
+            isManagementAdmin &&
+            subSelectorModule === "FacultyMemberHigherStudiesData"
+              ? ["recommendedThesesSupervisings"]
+              : []
+          }
           onSelect={handleSubModuleSelect}
           onClose={() => setSubSelectorOpen(false)}
         />
@@ -812,11 +821,12 @@ export default function UsersPage() {
         {/* ── Main Content: Table + Details Panel ── */}
         {!loading && !error && (
           <div
+            className="users-main-grid"
             style={{
               display: "grid",
               gridTemplateColumns: selectedUser
-                ? "1fr clamp(280px, 32vw, 680px)"
-                : "1fr",
+                ? "minmax(0, 1fr) minmax(320px, 36%)"
+                : "minmax(0, 1fr)",
               gap: "clamp(0.8rem, 1.2vw, 2rem)",
               alignItems: "start",
             }}
@@ -831,7 +841,14 @@ export default function UsersPage() {
 
             {/* Details / Permissions panel */}
             {selectedUser && (
-              <div style={{ position: "sticky", top: "1rem" }}>
+              <div
+                key={selectedUser.id}
+                style={{
+                  position: "sticky",
+                  top: "1rem",
+                  animation: "usersPanelIn 240ms cubic-bezier(.2,.8,.2,1)",
+                }}
+              >
                 <UserPermissionsPanel
                   user={selectedUser}
                   actionLoading={actionLoading}
@@ -849,8 +866,27 @@ export default function UsersPage() {
         )}
       </div>
 
-      {/* Spinner keyframes here */}
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      {/* Local keyframes */}
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes usersFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes usersModalIn {
+          from { opacity: 0; transform: translateY(10px) scale(0.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes usersPanelIn {
+          from { opacity: 0; transform: translateX(14px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @media (max-width: 1024px) {
+          .users-main-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+          }
+        }
+      `}</style>
     </ResponsiveLayoutProvider>
   );
 }

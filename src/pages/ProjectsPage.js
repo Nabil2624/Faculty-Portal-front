@@ -3,13 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import LoadingSpinner from "../components/LoadingSpinner";
-import ProjectCard from "../components/widgets/Projects/ProjectCard";
 import ProjectsModals from "../components/widgets/Projects/ProjectsModals";
 import useProjects from "../hooks/useProjects";
-import Pagination from "../components/ui/Pagination";
 import { deleteProject } from "../services/projects.service";
-import PageHeader from "../components/ui/PageHeader";
 import { useProjectLookups } from "../hooks/useProjectLookups";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";
 import { Layers } from "lucide-react";

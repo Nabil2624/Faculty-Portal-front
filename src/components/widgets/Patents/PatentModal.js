@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import PatentDeleteModal from "./PatentDeleteModal";
-import PatentDetailsModal from "./PatentDetailsModal";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function PatentModal({
   showDelete,
@@ -34,15 +33,6 @@ export default function PatentModal({
         </ModalWrapper>
       )}
 
-      {/* Details */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <PatentDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
       {/* ================= FILTER MODAL ================= */}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>

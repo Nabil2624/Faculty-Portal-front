@@ -1,7 +1,6 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import AddAdminstrativePosition from "./AddAdministrativePosition";
 import AdminPositionDeleteModal from "./AdminPositionDeleteModal";
-import AdminPositionDetailsModal from "./AdminPositionDetailsModal";
 import EditAdminPosition from "./EditAdminPosition";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 export default function AdminPositionModal({
@@ -60,16 +59,7 @@ export default function AdminPositionModal({
         </ModalWrapper>
       )}
 
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <AdminPositionDetailsModal
-            item={selectedItem}
-            isArabic={isArabic}
-            t={t}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
+
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
           <CustomizeResultsModal

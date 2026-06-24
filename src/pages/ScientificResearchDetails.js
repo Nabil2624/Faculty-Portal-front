@@ -13,7 +13,7 @@ import ScientificResearchDetailsDesktop from "../components/widgets/ScientificRe
 import PageHeaderAction from "../components/ui/PageHeaderAction";
 import ResearchTitle from "../components/ui/ResearchTitle";
 
-import { getResearchDetails } from "../services/scientificResearchService";
+
 
 export default function ScientificResearchDetails() {
   const { t, i18n } = useTranslation("ScientificResearchDetails");

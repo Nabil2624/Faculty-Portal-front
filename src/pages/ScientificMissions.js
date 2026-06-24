@@ -4,8 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { PlaneTakeoff } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
 
 import useScientificMissions from "../hooks/useScientificMissions";
 import { deleteScientificMission } from "../services/scientificMission.service";

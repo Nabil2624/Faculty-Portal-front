@@ -11,20 +11,17 @@ import { axiosEvent } from "../utils/axiosInstance";
 import ProtectedRoute from "./ProtectedRoute";
 
 // --- استيراد المكونات ---
-import RegisterPage from "../components/RegistrationPage";
-import LoginPage from "../components/LoginPage";
-import ForgotPasswordPage from "../components/ForgotPasswordPage";
-import EditPersonalInfo from "../components/EditPersonalInfo";
-import ContactInfo from "../components/ContactInfo";
-import IdentificationCard from "../components/IdentificationCard";
-import SocialNetworkingPages from "../components/SocialNetworkingPages";
-import EditContactInfo from "../components/EditContactInfo";
-import EditSocialNetworking from "../components/EditSocialNetworking";
-import EditIdentificationCard from "../components/EditIdentificationCard";
-import ErrorPage from "../components/ErrorPage";
-import OtpPage from "../components/OtpPage";
-import UnderDevelopment from "../components/UnderDevelopment";
-import ResetPasswordPage from "../components/ResetPasswordPage";
+import RegisterPage from "../pages/RegistrationPage";
+import LoginPage from "../pages/LoginPage";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import EditPersonalInfo from "../pages/EditPersonalInfo";
+import EditContactInfo from "../pages/EditContactInfo";
+import EditSocialNetworking from "../pages/EditSocialNetworking";
+import EditIdentificationCard from "../pages/EditIdentificationCard";
+import ErrorPage from "../pages/ErrorPage";
+import OtpPage from "../pages/OtpPage";
+import UnderDevelopment from "../pages/UnderDevelopment";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 import AddScientificMission from "../pages/AddScientificMission";
 import EditScientificMission from "../pages/EditScientificMission";
 import AddAcademicQualification from "../pages/AddAcademicQualification";
@@ -56,8 +53,6 @@ import AddTeachingExperience from "../pages/AddTeachingExperience";
 import EditTeachingExperience from "../pages/EditTeachingExperience";
 import NominatedScientificResearch from "../pages/NominatedResearch";
 import SupervisionInfo from "../pages/SupervisionInfo";
-import ScientificResearchFullDetails from "../pages/ScientificResearchFullDetails";
-import ResearcherProfile from "../pages/ResearcherProfile";
 import AddThesis from "../pages/AddThesis";
 import AddScientificResearch from "../pages/AddScientificResearch";
 import EditScientificResearch from "../pages/EditScientificResearch";
@@ -80,7 +75,6 @@ import ProfileDashboard from "../pages/ProfileDashboard";
 import ScientificWriting from "../pages/ScientificWriting";
 import AddScientificWriting from "../pages/AddScientificWriting";
 import EditScientificWriting from "../pages/EditScientificWriting";
-import RecommendedSupervisions from "../pages/RecommendedSupervisions";
 import JobGrade from "../pages/JobGrade";
 import AdminstrativePosition from "../pages/AdminstrativePosition";
 import PersonalData from "../pages/PersonalData";
@@ -117,7 +111,6 @@ import SupportAdminTicketingPage from "../pages/SupportAdminTicketingPage";
 import ChatPage from "../pages/ChatPage";
 import CVPage from "../pages/CVPage";
 import ManageCVPage from "../pages/ManageCVPage";
-import Login from "../components/Login";
 import UsersList from "../pages/UsersList";
 import Dashboard from "../pages/Dashboard";
 import ResearchSourceChart from "../components/widgets/DetailedDashboard/ResearchSourceChart";
@@ -128,7 +121,6 @@ import CategoriesPage from "../pages/CategoriesPage";
 import InternalConferenceCategoryPage from "../pages/InternalConferenceCategoryPage";
 import ExternalConferenceCategoryPage from "../pages/ExternalConferenceCategoryPage";
 import ScientificMissionCategoryPage from "../pages/ScientificMissionCategoryPage";
-import ExternalConferenceForm from "../pages/ExternalConferenceForm";
 import OrderTrackerPage from "../pages/OrderTrackerPage";
 import ConferenceFormPage from "../pages/ConferenceFormPage"
 import HistoryPage from "../pages/HistoryPage";
@@ -222,16 +214,11 @@ function AppRouterInner() {
           <Route path="/profile" element={<ProfileDashboard />} />
           <Route path="/personal-data" element={<PersonalData />} />
           <Route path="/editpersonal" element={<EditPersonalInfo />} />
-          <Route path="/contact-info" element={<ContactInfo />} />
           <Route path="/edit-contact-info" element={<EditContactInfo />} />
-          <Route path="/identification-card" element={<IdentificationCard />} />
+
           <Route
             path="/edit-identification-card"
             element={<EditIdentificationCard />}
-          />
-          <Route
-            path="/social-networking"
-            element={<SocialNetworkingPages />}
           />
           <Route path="/edit-Social" element={<EditSocialNetworking />} />
 
@@ -279,10 +266,6 @@ function AppRouterInner() {
             element={<ScientificResearchDetails />}
           />
           <Route
-            path="/scientific-research-full-details"
-            element={<ScientificResearchFullDetails />}
-          />
-          <Route
             path="/nominated-research"
             element={<NominatedScientificResearch />}
           />
@@ -301,10 +284,6 @@ function AppRouterInner() {
           <Route
             path="/edit-supervision"
             element={<EditSupervisionOrJudgement />}
-          />
-          <Route
-            path="/recommended-supervisions"
-            element={<RecommendedSupervisions />}
           />
 
           <Route path="/scientific-missions" element={<ScientificMissions />} />
@@ -462,7 +441,6 @@ function AppRouterInner() {
             element={<EditParticipationInQualityWork />}
           />
 
-          <Route path="/researcher-profile" element={<ResearcherProfile />} />
           <Route
             path="/InternalProfile"
             element={<ScientificResearchInternalProfile />}

@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import TeachingExperienceDeleteModal from "./TeachingExperienceDeleteModal";
-import TeachingExperienceDetailsModal from "./TeachingExperienceDetailsModal";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
 export default function TeachingExperienceModal({
@@ -38,15 +37,6 @@ export default function TeachingExperienceModal({
         </ModalWrapper>
       )}
 
-      {/* Details Modal */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <TeachingExperienceDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
 
       {/* Customize Results Modal */}
       {showCustomize && (

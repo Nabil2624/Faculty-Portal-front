@@ -1011,6 +1011,12 @@ export const adminDeleteThesisAttachment = (entityId, attachmentId) =>
     { skipGlobalErrorHandler: true },
   );
 
+export const adminDownloadThesisAttachment = (entityId, attachmentId) =>
+  axiosInstance.get(`/Attachments/${entityId}/${attachmentId}?context=Thesis`, {
+    responseType: "blob",
+    skipGlobalErrorHandler: true,
+  });
+
 // ─── Lookups for Higher Studies ───────────────────────────────────────────────
 
 export const adminGetUniversitiesLookup = () =>

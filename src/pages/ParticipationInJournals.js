@@ -2,10 +2,6 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Newspaper } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import LoadingSpinner from "../components/LoadingSpinner";
-import PageHeader from "../components/ui/PageHeader";
-import JournalCard from "../components/widgets/ParticipationJournals/JournalCard";
-import Pagination from "../components/ui/Pagination";
 import JournalsModals from "../components/widgets/ParticipationJournals/JournalsModals";
 
 import useJournals from "../hooks/useJournals";

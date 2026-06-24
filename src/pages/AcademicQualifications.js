@@ -3,9 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
-import AcademicQualificationCard from "../components/widgets/AcademicQualifications/AcademicQualificationCard";
 import AcademicQualificationsModal from "../components/widgets/AcademicQualifications/AcademicQualificationModal";
 import { GraduationCap } from "lucide-react";
 import useAcademicQualifications from "../hooks/useAcademicQualifications";

@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import SeminarDeleteModal from "./SeminarDeleteModal";
-import SeminarDetailsModal from "./SeminarDetailsModal";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
 export default function SeminarModal({
@@ -34,15 +33,6 @@ export default function SeminarModal({
         </ModalWrapper>
       )}
 
-      {/* Details Modal */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <SeminarDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
       {/* ================= FILTER MODAL ================= */}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>

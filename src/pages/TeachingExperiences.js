@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
 import { Presentation } from "lucide-react";
 import useTeachingExperiences from "../hooks/useTeachingExperiences";
 import { deleteTeachingExperience } from "../services/teachingExperiences.service";
-import TeachingExperienceCard from "../components/widgets/TeachingExperiences/TeachingExperienceCard";
 import TeachingExperienceModal from "../components/widgets/TeachingExperiences/TeachingExperienceModal";
 import TeachingExperiencesTable from "../components/widgets/TeachingExperiences/TeachingExperiencesTable";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";

@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import Pagination from "../components/ui/Pagination";
-import LoadingSpinner from "../components/LoadingSpinner";
 import useJobGradeLookups from "../hooks/useJobGradeLookups";
 import useJobGrades from "../hooks/useJobGrades";
 import { deleteJobRank } from "../services/jobGrade.service";
-import JobGradeCard from "../components/widgets/JobGrade/JobGradeCard";
 import JobGradeModal from "../components/widgets/JobGrade/JobGradeModal";
 import JobRanksTable from "../components/widgets/JobGrade/JobRanksTable";
 import PageHeaderNoAction from "../components/ui/PageHeaderNoAction";

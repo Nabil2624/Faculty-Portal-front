@@ -1,6 +1,5 @@
 import ModalWrapper from "../../ui/ModalWrapper";
 import CommunityServiceContributionsDeleleModal from "./CommunityServiceContributionsDeleleModal";
-import CommunityServiceContributionsDetailsModal from "./CommunityServiceContributionsDetailsModal";
 import CommunityServiceContributionsForm from "./CommunityServiceContributionsForm";
 import CustomizeResultsModal from "../../ui/CustomizeResultsPopup";
 
@@ -76,15 +75,6 @@ export default function CommunityServiceContributionsModal({
         </ModalWrapper>
       )}
 
-      {/* ================= DETAILS MODAL ================= */}
-      {showDetails && selectedItem && (
-        <ModalWrapper onClose={() => setShowDetails(false)}>
-          <CommunityServiceContributionsDetailsModal
-            item={selectedItem}
-            onClose={() => setShowDetails(false)}
-          />
-        </ModalWrapper>
-      )}
       {showFilterModal && (
         <ModalWrapper onClose={() => setShowFilterModal(false)}>
           <CustomizeResultsModal

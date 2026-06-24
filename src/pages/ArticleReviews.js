@@ -2,9 +2,6 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import PageHeader from "../components/ui/PageHeader";
-import ArticleCard from "../components/widgets/ArticleReview/ArticleCard";
-import Pagination from "../components/ui/Pagination";
 import ArticlesModals from "../components/widgets/ArticleReview/ArticlesModals";
 
 import useArticleReviews from "../hooks/useArticleReviews";

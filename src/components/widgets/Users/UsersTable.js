@@ -51,23 +51,23 @@ export default function UsersTable({
   const { t } = useTranslation("Users");
 
   const headers = [
-    { key: "no", label: t("table.no"), width: "4%" },
-    { key: "name", label: t("table.name"), width: "26%" },
-    { key: "email", label: t("table.email"), width: "27%" },
-    { key: "nationalId", label: t("table.nationalId"), width: "19%" },
-    { key: "role", label: t("table.role"), width: "20%" },
-    { key: "actions", label: t("table.actions"), width: "8%" },
+    { key: "no", label: t("table.no"), width: "5%" },
+    { key: "name", label: t("table.name"), width: "23%" },
+    { key: "email", label: t("table.email"), width: "24%" },
+    { key: "nationalId", label: t("table.nationalId"), width: "16%" },
+    { key: "role", label: t("table.role"), width: "18%" },
+    { key: "actions", label: t("table.actions"), width: "14%" },
   ];
 
   return (
     <div
-      className="w-full overflow-x-auto rounded-2xl shadow"
+      className="w-full overflow-hidden rounded-2xl shadow"
       style={{ border: "1px solid #e5e7eb" }}
     >
-      {/* table-layout:fixed + colgroup guarantee header and body columns line up */}
+      {/* Keep columns aligned while allowing the table to stay fluid on smaller widths */}
       <table
         className="w-full border-collapse"
-        style={{ minWidth: "680px", tableLayout: "fixed" }}
+        style={{ tableLayout: "fixed" }}
       >
         <colgroup>
           {headers.map((h) => (
@@ -92,9 +92,9 @@ export default function UsersTable({
                   fontSize: "clamp(0.68rem, 0.9vw, 1.35rem)",
                   fontWeight: 600,
                   color: "#374151",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
+                  whiteSpace: h.key === "actions" ? "normal" : "nowrap",
+                  overflow: "visible",
+                  textOverflow: "clip",
                 }}
               >
                 {h.label}

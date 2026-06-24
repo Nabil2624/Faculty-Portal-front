@@ -3,8 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Globe } from "lucide-react";
 import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
-import LoadingSpinner from "../components/LoadingSpinner";
-import PageHeader from "../components/ui/PageHeader";
 // استيراد المكون الجديد
 import GeneralExperiencesTable from "../components/widgets/GeneralExperiences/GeneralExperiencesTable";
 import GeneralExperienceModals from "../components/widgets/GeneralExperiences/GeneralExperienceModals";

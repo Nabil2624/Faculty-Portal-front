@@ -225,23 +225,18 @@ function ModuleSelectorModal({
     ...Object.keys(MODULE_SUBMODULES),
   ];
 
-  // Filter modules to only those the support admin has permission for
+  // Filter modules to only those the support admin has at least one permission for
   const typeMap = {};
   (adminPermissions || []).forEach((p) => {
-    const parts = p.code?.split(".");
-    if (!parts || parts.length < 2) return;
-    const type = parts[0];
-    const action = parts[1];
-    if (!typeMap[type]) typeMap[type] = { canRead: false, canUpdate: false };
-    if (action === "Read") typeMap[type].canRead = true;
-    if (action === "Update") typeMap[type].canUpdate = true;
+    const parts = p.code?.split(".") || [];
+    const type = p.type || parts[0];
+    if (!type) return;
+    if (!typeMap[type]) typeMap[type] = { hasAny: false };
+    typeMap[type].hasAny = true;
   });
   const permittedTypes = new Set(
     Object.entries(typeMap)
-      .filter(
-        ([type, caps]) =>
-          type !== "Tickets" && (caps.canRead || caps.canUpdate),
-      )
+      .filter(([type, caps]) => type !== "Tickets" && caps.hasAny)
       .map(([type]) => type),
   );
   const modules =

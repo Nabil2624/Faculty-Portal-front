@@ -1,92 +1,83 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FiSave, FiX, FiMail, FiPhone } from "react-icons/fi";
+import { FiSave, FiX, FiShare2, FiGlobe } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import LoadingSpinner from "../components/LoadingSpinner";
-import ResponsiveLayoutProvider from "./ResponsiveLayoutProvider";
+import ResponsiveLayoutProvider from "../components/ResponsiveLayoutProvider";
 
-export default function EditContactInfo() {
-  const navigate = useNavigate();
-  const { t, i18n } = useTranslation("contactinfo");
+export default function EditSocialNetworking() {
+  const { t, i18n } = useTranslation("socialnetworkingpages");
   const isArabic = i18n.language === "ar";
+  const navigate = useNavigate();
 
-  const [contactData, setContactData] = useState(null);
+  const [socialData, setSocialData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // ----------------------------------------------------------
-  // Fetch contact data
+  // FETCH API
   // ----------------------------------------------------------
-  const fetchContactData = async () => {
+  const fetchSocial = async () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(
-        "/FacultyMemberData/ContactData",
+        "/FacultyMemberData/SocialMediaPlatforms",
         { skipGlobalErrorHandler: true }
       );
-      setContactData(response.data || {});
+      setSocialData(response.data || {});
     } catch (err) {
-      console.error("Error fetching contact info:", err);
+      console.error(err);
       if (err.response?.status === 401) navigate("/login");
-      setContactData({});
+      setSocialData({});
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchContactData();
+    fetchSocial();
   }, []);
 
   // ----------------------------------------------------------
-  // Handle input changes
+  // Input change
   // ----------------------------------------------------------
-  const handleChange = (field, value) => {
-    setContactData((prev) => ({
+  const handleChange = (key, value) => {
+    setSocialData((prev) => ({
       ...prev,
-      [field]: value,
+      [key]: value,
     }));
   };
 
   // ----------------------------------------------------------
-  // Save (PUT)
+  // SAVE
   // ----------------------------------------------------------
   const handleSave = async () => {
     try {
       await axiosInstance.put(
-        "/FacultyMemberData/UpdateContactData",
-        contactData,
-        { skipGlobalErrorHandler: true }
+        "/FacultyMemberData/UpdateSocialMediaPlatforms",
+        socialData
       );
       navigate("/personal-data");
     } catch (err) {
-      console.error("Error updating contact info:", err);
+      console.error(err);
       if (err.response?.status === 401) navigate("/login");
     }
   };
 
-  // ----------------------------------------------------------
-  // Structure
-  // ----------------------------------------------------------
-  const contactFields = [
-    { label: t("officialEmail"), key: "officialEmail", editable: false },
-    { label: t("mainMobile"), key: "mainPhoneNumber", editable: false },
-    { label: t("personalEmail"), key: "personalEmail", editable: true },
-    { label: t("alternativeEmail"), key: "alternativeEmail", editable: true },
-    { label: t("homePhone"), key: "homePhoneNumber", editable: true },
-    { label: t("workPhone"), key: "workPhoneNumber", editable: true },
-    { label: t("fax"), key: "faxNumber", editable: true },
-    { label: t("address"), key: "address", editable: true },
+  const socialNetworkingFields = [
+    { label: t("PersonalWebsite"), key: "personalWebsite" },
+    { label: t("Facebook"), key: "facebook" },
+    { label: t("Twitter"), key: "x" },
+    { label: t("LinkedIn"), key: "linkedIn" },
+    { label: t("Instagram"), key: "instagram" },
+    { label: t("YouTube"), key: "youTube" },
   ];
 
-  if (loading || !contactData) return <LoadingSpinner />;
+  if (loading || socialData === null) return <LoadingSpinner />;
 
   return (
     <ResponsiveLayoutProvider>
       <style>{`
-        .no-scroll-textarea::-webkit-scrollbar { width: 4px; }
-        .no-scroll-textarea::-webkit-scrollbar-thumb { background: #b38e19; border-radius: 10px; }
-        
         :root {
           --fluid-text-xs: clamp(0.75rem, 0.7vw + 0.5rem, 0.875rem);
           --fluid-h2: clamp(1.125rem, 1.5vw + 0.5rem, 1.5rem);
@@ -108,17 +99,17 @@ export default function EditContactInfo() {
         <div className="w-full flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border-b-[3px] border-[#b38e19] mb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-[#19355a]/5 border-2 border-gray-100 flex items-center justify-center text-[#19355a] shrink-0">
-              <FiPhone size={24} />
+              <FiShare2 size={22} />
             </div>
             <div>
               <h2
                 className="text-[#19355a] font-semibold leading-tight tracking-tight"
                 style={{ fontSize: "var(--fluid-h2)" }}
               >
-                {t("editContactInfo")}
+                {t("editsocialNetworkingPages")}
               </h2>
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider opacity-70">
-                {isArabic ? "بيانات التواصل" : "Contact Information"}
+                {isArabic ? "مواقع التواصل" : "Social Presence"}
               </p>
             </div>
           </div>
@@ -140,29 +131,42 @@ export default function EditContactInfo() {
 
         {/* Main Grid Section */}
         <div className="flex-grow bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col overflow-hidden">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 dynamic-grid">
-            {contactFields.map((item) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 dynamic-grid">
+            {socialNetworkingFields.map((item) => (
               <div key={item.key} className="flex flex-col">
                 <label className="fluid-label font-black text-[#19355a]/50 mb-1 px-1 uppercase tracking-tight">
                   {item.label}
                 </label>
-                <div className="relative">
+                <div className="relative group">
                   <input
                     type="text"
-                    disabled={!item.editable}
-                    value={contactData[item.key] || ""}
+                    value={socialData[item.key] || ""}
                     onChange={(e) => handleChange(item.key, e.target.value)}
-                    className={`w-full h-10 px-3 rounded-xl border-2 transition-all outline-none fluid-input text-center ${
-                      !item.editable
-                        ? "bg-gray-50 border-gray-100 text-gray-300 font-semibold cursor-not-allowed"
-                        : "bg-white border-gray-100 focus:border-[#b38e19] focus:ring-[4px] focus:ring-[#b38e19]/5 shadow-sm font-medium"
-                    }`}
+                    placeholder="https://..."
+                    className="w-full h-10 px-3 rounded-xl border-2 transition-all outline-none fluid-input text-center bg-white border-gray-100 focus:border-[#b38e19] focus:ring-[4px] focus:ring-[#b38e19]/5 shadow-sm font-medium"
+                  />
+                  <FiGlobe 
+                    className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-3' : 'right-3'} text-gray-300 group-focus-within:text-[#b38e19] transition-colors`} 
+                    size={14} 
                   />
                 </div>
               </div>
             ))}
           </div>
-          
+
+          {/* Tips Section */}
+          <div className="mt-auto pt-6 border-t border-gray-50 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-3 rounded-xl bg-gray-50/50 border border-gray-100">
+                <p className="text-[10px] font-bold text-[#19355a] uppercase mb-1 opacity-60">
+                    {isArabic ? "نصيحة" : "Pro Tip"}
+                </p>
+                <p className="text-[11px] text-gray-500">
+                    {isArabic 
+                      ? "تأكد من إضافة الرابط كاملاً (http://) لضمان عمل الروابط بشكل صحيح في ملفك الشخصي." 
+                      : "Ensure you include the full URL (http://) to make sure the links work correctly on your profile."}
+                </p>
+            </div>
+          </div>
         </div>
       </div>
     </ResponsiveLayoutProvider>
